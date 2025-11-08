@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>案件情報 - 就労継続支援B型事業所 統合プラットフォーム</title>
+    
+    <link rel="stylesheet" href="colors.css">
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+    <div class="app-layout">
+        
+        <aside class="sidebar">
+            <div class="logo">p2508e</div>
+            
+            <nav class="global-nav">
+                <ul>
+                    <li class="nav-item"><a href="#">トップ</a></li>
+                    
+                    <li class="nav-category">基本情報</li>
+                    <li class="nav-accordion">
+                        <details><summary>施設情報</summary>
+                            <ul class="nav-accordion-menu">
+                                <li><a href="#">法人情報</a></li>
+                                <li><a href="#">事業所情報</a></li>
+                            </ul>
+                        </details>
+                    </li>
+                    <li class="nav-accordion">
+                        <details><summary>関係者情報</summary>
+                            <ul class="nav-accordion-menu">
+                                <li><a href="#">職員情報</a></li>
+                                <li><a href="#">取引先情報</a></li>
+                                <li><a href="#">利用者情報</a></li>
+                            </ul>
+                        </details>
+                    </li>
+                    <li class="nav-accordion">
+                        <details><summary>スキル情報</summary>
+                            <ul class="nav-accordion-menu">
+                                <li><a href="#">スキル設定</a></li>
+                                <li><a href="#">スキル評価</a></li>
+                            </ul>
+                        </details>
+                    </li>
+                    <li class="nav-accordion">
+                        <details><summary>工賃・控除情報</summary>
+                            <ul class="nav-accordion-menu">
+                                <li><a href="#">工賃設定</a></li>
+                                <li><a href="#">控除設定 <span class="nav-comment">：事業所情報で...</span></a></li>
+                                <li><a href="#">工賃レベル評価</a></li>
+                            </ul>
+                        </details>
+                    </li>
+                    <li class="nav-item"><a href="#">積立金情報</a></li>
+
+                    <li class="nav-category">活動記録</li>
+                    <li class="nav-item"><a href="#">出欠情報</a></li>
+                    <li class="nav-accordion">
+                        <details open>
+                            <summary>案件管理</summary>
+                            <ul class="nav-accordion-menu">
+                                <li><a href="projects.html" style="background-color: var(--color-sidebar-active-item-background);">案件情報</a></li>
+                                <li><a href="index.html">進捗表</a></li>
+                                </ul>
+                        </details>
+                    </li>
+                    <li class="nav-accordion">
+                        <details><summary>福祉事業活動</summary>
+                            <ul class="nav-accordion-menu">
+                                <li><a href="#">個別支援計画</a></li>
+                                <li><a href="#">(その他...)</a></li>
+                            </ul>
+                        </details>
+                    </li>
+
+                    <li class="nav-category">集計・分析</li>
+                    <li class="nav-accordion">
+                        <details><summary>会計</summary>
+                            <ul class="nav-accordion-menu">
+                                <li><a href="#">月次会計 <span class="nav-comment">（顧客請求、国保連...</span></a></li>
+                                <li><a href="#">年次会計</a></li>
+                            </ul>
+                        </details>
+                    </li>
+                    <li class="nav-accordion">
+                        <details><summary>分析</summary>
+                            <ul class="nav-accordion-menu">
+                                <li><a href="#">(分析ダッシュボード)</a></li>
+                            </ul>
+                        </details>
+                    </li>
+                    
+                    <li class="nav-category">設定</li>
+                    <li class="nav-item"><a href="#">ユーザーアカウント</a></li>
+                    <li class="nav-item"><a href="#">（その他設定）</a></li>
+
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-name">山田太郎</div>
+                <div class="user-role">管理者</div>
+                <div class="sidebar-logout">
+                    <a href="#">ログアウト</a>
+                </div>
+            </div>
+
+        </aside>
+
+        <main class="main-content">
+            <div class="content-body">
+                <div class="container">
+                    <h1>案件情報</h1>
+                    <div class="controls">
+                        <div class="search-filter">
+                            <input type="search" id="projectSearch" placeholder="案件名、取引先名などで検索...">
+                        </div>
+                        <div class="action-buttons">
+                            <button class="btn btn-primary">新規案件登録</button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="data-table" id="projects-table">
+                            <thead id="projects-table-head"></thead>
+                            <tbody id="projects-table-body"></tbody>
+                        </table>
+                    </div>
+                    </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // --- モックデータ定義 ---
+        const projectsMockData = [
+            {
+                id: 'P-001',
+                name: '案件A (箱折り)',
+                client: '株式会社S',
+                unitPrice: 10,
+                tasks: ['タスクA-1: 型抜き', 'タスクA-2: 組み立て', 'タスクA-3: 検品'],
+                deadline: '2025-11-20',
+                status: '進行中'
+            },
+            {
+                id: 'P-002',
+                name: '案件B (検品)',
+                client: 'M商事',
+                unitPrice: 5,
+                tasks: ['タスクB-1: 汚れ確認', 'タスクB-2: 個数カウント'],
+                deadline: '2025-11-15',
+                status: '完了'
+            },
+            {
+                id: 'P-003',
+                name: '案件C (シール貼り)',
+                client: 'N工業',
+                unitPrice: 3,
+                tasks: ['タスクC-1: シール貼り', 'タスクC-2: 梱包'],
+                deadline: '2025-11-30',
+                status: '進行中'
+            }
+        ];
+
+        // --- DOM要素の取得 ---
+        const tableHead = document.getElementById('projects-table-head');
+        const tableBody = document.getElementById('projects-table-body');
+
+        // --- レンダリング関数 ---
+
+        function renderProjectsTable() {
+            // 1. ヘッダー (<thead>) の生成
+            let headerHtml = '<tr>';
+            headerHtml += '<th>案件ID</th>';
+            headerHtml += '<th>案件名</th>';
+            headerHtml += '<th>取引先</th>';
+            headerHtml += '<th>単価</th>';
+            headerHtml += '<th>主な作業タスク</th>';
+            headerHtml += '<th>ステータス</th>';
+            headerHtml += '<th>操作</th>';
+            headerHtml += '</tr>';
+            tableHead.innerHTML = headerHtml;
+
+            // 2. ボディ (<tbody>) の生成
+            let bodyHtml = '';
+            projectsMockData.forEach(p => {
+                bodyHtml += '<tr>';
+                bodyHtml += `<td>${p.id}</td>`;
+                bodyHtml += `<td class="cell-wide">${p.name}</td>`;
+                bodyHtml += `<td class="cell-wide">${p.client}</td>`;
+                bodyHtml += `<td class="cell-number">${p.unitPrice.toLocaleString()} 円</td>`;
+                bodyHtml += `<td class="cell-wide">${p.tasks.join('、 ')}</td>`;
+                bodyHtml += `<td><span class="status-badge status-${p.status === '進行中' ? 'active' : 'completed'}">${p.status}</span></td>`;
+                bodyHtml += '<td><button class="btn btn-secondary btn-sm">詳細</button></td>';
+                bodyHtml += '</tr>';
+            });
+            tableBody.innerHTML = bodyHtml;
+        }
+
+        // --- 初期表示 ---
+        renderProjectsTable();
+    </script>
+    </body>
+</html>

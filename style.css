@@ -1,0 +1,427 @@
+@charset "UTF-8";
+
+/* ===== カラー定義 ===== */
+:root {
+    /* --- 第一階層: カラーパレット (L1) --- */
+    /* (colors.css にて定義) */
+    
+
+    /* --- 第二階層: 抽象的な定義 (L2) --- */
+    
+    /* テーマカラー (Theme) */
+    --theme-main: var(--palette-006);
+    --theme-sub: var(--palette-009);
+    --theme-accent: var(--palette-F90);
+
+    /* ベースカラー (Base) */
+    --base-primary: var(--palette-FFF);
+    --base-secondary: var(--palette-EEE);
+    --base-tertiary: var(--palette-333);
+    --base-quaternary: var(--palette-666);
+    --base-quinary: var(--palette-CCC);
+    
+    /* セマンティックカラー (Semantic) */
+    --semantic-success: var(--palette-006);
+    --semantic-alert: var(--palette-F99);
+    --semantic-error: var(--palette-F00);
+
+
+    /* --- 第三階層: 具体的な定義 (L3) --- */
+    /* (L2 の変数を参照して定義) */
+    
+    /* アプリケーション全体 */
+    --color-app-background: var(--base-secondary); 
+    --color-surface-primary: var(--base-primary);   
+    --color-surface-secondary: var(--base-secondary); 
+    --color-surface-row-stripe: var(--base-primary);   
+    --color-surface-row-hover: var(--base-secondary); 
+
+    /* テキスト */
+    --color-text-primary: var(--base-tertiary);   
+    --color-text-secondary: var(--base-quaternary); 
+    --color-text-disabled: var(--base-quaternary); 
+    --color-text-on-accent: var(--base-primary);   
+
+    /* 曜日・加算・控除 (セマンティック) */
+    --color-text-saturday: var(--semantic-success); 
+    --color-text-sunday-holiday: var(--semantic-error); 
+    --color-text-addition: var(--semantic-success); 
+    --color-text-deduction: var(--semantic-error); 
+
+
+    /* ボーダー (罫線) */
+    --color-border-primary: var(--base-secondary); 
+    --color-border-heavy: var(--base-quinary);   
+
+    /* サイドバー (白基調) */
+    --color-sidebar-background: var(--base-primary);   
+    --color-sidebar-logo-background: var(--base-primary);   
+    --color-sidebar-text: var(--color-text-primary); 
+    --color-sidebar-category-text: var(--color-text-secondary); 
+    --color-sidebar-hover-background: var(--base-secondary); 
+    --color-sidebar-accordion-background: var(--base-secondary); 
+    --color-sidebar-active-item-background: var(--base-secondary); 
+
+    /* コントロール */
+    --color-toggle-background: var(--base-secondary); 
+    --color-toggle-checked-background: var(--theme-main); 
+    --color-toggle-checked-text: var(--color-text-on-accent); 
+
+    /* ボタン */
+    --color-button-secondary-background: var(--base-primary);   
+    --color-button-secondary-border: var(--base-quinary);   
+    --color-button-secondary-hover: var(--base-secondary); 
+}
+
+/* --- 基本リセットと全体設定 --- */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: "Yu Gothic", "Hiragino Sans", "Noto Sans CJK JP", "Meiryo", sans-serif;
+    font-weight: 500; 
+    background-color: var(--color-app-background);
+    color: var(--color-text-primary);
+    font-size: 14px;
+    height: 100%;
+}
+* { box-sizing: border-box; }
+a { text-decoration: none; color: inherit; }
+
+/* --- 全体レイアウト --- */
+.app-layout { display: flex; height: 100vh; }
+
+/* --- 左側グローバルナビゲーション (調整済) --- */
+.sidebar {
+    width: 240px;
+    flex-shrink: 0;
+    background-color: var(--color-sidebar-background);
+    color: var(--color-sidebar-text);
+    height: 100vh;
+    box-shadow: 1px 0 4px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    padding: 0; 
+}
+
+.logo {
+    font-weight: 600; 
+    font-size: 18px;
+    padding: 22.5px 20px; 
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+    border-bottom: none; 
+    background-color: var(--color-sidebar-logo-background);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.global-nav { 
+    flex: 1; 
+    overflow-y: auto; 
+    padding: 10px 0 20px 0; 
+}
+
+.global-nav::-webkit-scrollbar {
+    display: none; 
+}
+.global-nav {
+    scrollbar-width: none; 
+}
+
+
+.global-nav ul { list-style: none; margin: 0; padding: 0; }
+
+.nav-category {
+    display: flex;
+    align-items: center; 
+    gap: 10px;           
+    font-size: inherit; 
+    text-transform: none; 
+    letter-spacing: normal; 
+    font-weight: 600; 
+    color: var(--color-text-secondary);
+    margin-top: 15px;
+    margin-bottom: 0;
+    margin-left: 20px;  
+    margin-right: 20px;
+    padding: 10px 0;    
+}
+.nav-category::before,
+.nav-category::after {
+    content: '';
+    flex: 1; 
+    border-bottom: 1px solid var(--color-border-heavy);
+}
+.nav-category:first-child { margin-top: 0; }
+
+.nav-item a { 
+    display: block; 
+    padding: 10px 20px 10px 20px; 
+    transition: background-color 0.2s; 
+    border-radius: 4px; 
+    margin: 0 10px; 
+    font-weight: 600;
+}
+.nav-item a:hover { background-color: var(--color-sidebar-hover-background); }
+
+.nav-accordion summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px 10px 20px; 
+    cursor: pointer;
+    transition: background-color 0.2s;
+    border-radius: 4px;
+    margin: 0 10px;
+    font-weight: 600;
+}
+.nav-accordion summary:hover { background-color: var(--color-sidebar-hover-background); }
+.nav-accordion summary::after {
+    content: '▼';
+    font-size: 10px;
+    transform: scaleY(0.8) rotate(0deg);
+    transition: transform 0.2s;
+}
+.nav-accordion[open] summary::after { transform: scaleY(0.8) rotate(180deg); }
+
+.nav-accordion-menu {
+    list-style: none;
+    padding: 5px 0; 
+    margin: 0;
+}
+
+.nav-accordion-menu li a {
+    display: block;
+    margin: 0 10px;
+    padding: 8px 10px 8px 40px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+.nav-accordion-menu li a:hover { background-color: var(--color-sidebar-hover-background); }
+
+.nav-comment {
+    font-size: 0.8em;
+    color: var(--color-text-disabled);
+    margin-left: 4px;
+    font-style: italic;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: 500;
+}
+
+
+.sidebar-footer {
+    flex-shrink: 0; 
+    padding: 15px 20px;
+    background-color: var(--color-sidebar-logo-background); 
+    text-align: center;
+    color: var(--color-text-primary);
+}
+.sidebar-footer .user-name {
+    font-weight: 600;
+    font-size: 15px; 
+}
+.sidebar-footer .user-role {
+    font-size: 11px; 
+    margin-top: 2px;
+    font-weight: 600;
+}
+
+.sidebar-logout {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--color-border-primary);
+}
+.sidebar-logout a {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+}
+.sidebar-logout a:hover {
+    color: var(--theme-main);
+    text-decoration: underline;
+}
+
+
+/* --- メインコンテンツ --- */
+.main-content { 
+    flex: 1; 
+    overflow-y: auto; 
+    height: 100vh; 
+}
+
+.content-body { padding: 24px; }
+.container {
+    max-width: none;
+    margin: 0;
+    background-color: var(--color-surface-primary);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-top: 0;
+    margin-bottom: 20px;
+    padding-bottom: 0;
+}
+
+/* --- 進捗表 (コントロール部の背景を白化) --- */
+.controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+.view-toggle {
+    display: flex;
+    border-radius: 4px;
+    overflow: hidden;
+}
+.view-toggle label {
+    padding: 8px 12px;
+    background-color: var(--color-toggle-background);
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--color-text-secondary);
+}
+.view-toggle input { display: none; }
+.view-toggle input:checked + label {
+    background-color: var(--color-toggle-checked-background);
+    color: var(--color-toggle-checked-text);
+    font-weight: 500;
+}
+
+.date-filter { display: flex; align-items: center; gap: 10px; }
+.date-filter input { padding: 8px 10px; border: 1px solid var(--color-border-primary); border-radius: 4px; font-size: 13px; background: var(--color-surface-primary); }
+.date-nav-btn { 
+    padding: 8px 10px; 
+    background-color: var(--color-button-secondary-background); 
+    border: 1px solid var(--color-button-secondary-border); 
+    border-radius: 4px; 
+    cursor: pointer; 
+}
+.date-nav-btn:hover { background-color: var(--color-button-secondary-hover); }
+
+/* --- テーブル (縦罫線を追加) --- */
+.table-container { 
+    width: 100%; 
+    overflow-x: auto; 
+}
+.progress-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1200px;
+}
+.progress-table th,
+.progress-table td {
+    border-right: 1px solid var(--color-border-primary); 
+    border-bottom: 1px solid var(--color-border-primary);
+    padding: 12px;
+    text-align: left;
+    vertical-align: top;
+    min-width: 160px;
+    white-space: nowrap;
+}
+.progress-table th:last-child,
+.progress-table td:last-child {
+    border-right: none;
+}
+
+.progress-table thead { 
+    background-color: var(--color-surface-primary);
+    position: sticky; 
+    top: 0; 
+    z-index: 2; 
+}
+.progress-table thead th {
+     border-bottom: 1px solid var(--color-border-heavy);
+}
+.progress-table th {
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    font-size: 13px;
+    text-align: center;
+}
+/* 固定列 (縦軸) のスタイル */
+.progress-table th.header-main {
+    text-align: left;
+    min-width: 160px;
+    position: sticky;
+    left: 0;
+    background-color: var(--color-surface-primary);
+    z-index: 3;
+    border-right: 1px solid var(--color-border-heavy); 
+}
+
+.progress-table tbody th {
+    font-weight: 500;
+    position: sticky;
+    left: 0;
+    background-color: var(--color-surface-primary);
+    z-index: 1;
+    border-right: 1px solid var(--color-border-heavy); 
+}
+
+.progress-table tbody tr { background-color: var(--color-surface-primary); }
+.progress-table tbody tr:nth-child(even) th,
+.progress-table tbody tr:nth-child(even) td { background-color: var(--color-surface-row-stripe); }
+
+.progress-table tbody tr:hover th,
+.progress-table tbody tr:hover td { background-color: var(--color-surface-row-hover); }
+
+.progress-cell-content { 
+    font-size: 13px; 
+    white-space: normal; 
+}
+.progress-cell-content div { 
+    padding: 1px 0; 
+}
+
+.progress-cell-content .status { 
+    font-weight: 600; 
+    font-size: 14px;
+}
+
+.progress-cell-content .time { 
+    font-family: 'Courier New', Courier, monospace; 
+    margin-left: 5px; 
+}
+
+.progress-cell-content .project,
+.progress-cell-content .user {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    margin-top: 4px; 
+}
+
+.day-label-sun { color: var(--color-text-sunday-holiday); }
+.day-label-sat { color: var(--color-text-saturday); }
+
+.progress-cell-content .additions {
+    font-size: 11px;
+    color: var(--color-text-secondary); 
+    font-weight: 400; 
+    margin-top: 4px; 
+}
+.progress-cell-content .deductions {
+    font-size: 11px;
+    color: var(--color-text-secondary); 
+    font-weight: 400; 
+    margin-top: 2px; 
+}
+
+.status-holiday {
+    color: var(--color-text-disabled);
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    padding-top: 10px;
+    background-color: var(--color-surface-primary);
+}
