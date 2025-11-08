@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>進捗表 - 就労継続支援B型事業所 統合プラットフォーム</title>
+    <style>
+        /* ===== カラー定義 ===== */
+        :root {
+            /* --- 第一階層: カラーパレット (絶対色) --- */
+            /* (第一階層は変更しない... としつつ Success のみ変更) */
+            --palette-main: #000066;
+            --palette-sub: #000099;
+            --palette-accent: #FF9900;
+            
+            /* (前回の修正) Successカラーを #000066 に変更 */
+            --palette-success: #000066;
+
+            --palette-alert: #FF9999;
+            --palette-error: #FF0000;
+            --palette-black: #000000;
+            --palette-gray-charcoal: #1A1A1A;
+            --palette-gray-dark: #333333;
+            --palette-gray-dark-medium: #666666;
+            --palette-gray-medium: #808080;
+            --palette-gray-light-medium: #999999;
+            --palette-gray-light: #CCCCCC;
+            --palette-gray-ash: #E6E6E6;
+            --palette-white: #FFFFFF;
+            --color-transparent-smoke: rgba(0, 0, 0, 0.2);
+            --color-transparent-shadow: rgba(0, 0, 0, 0.8);
+            --color-transparent-mist: rgba(255, 255, 255, 0.2);
+            --color-transparent-milk: rgba(255, 255, 255, 0.8);
+
+            
+            /* --- 第二階層: セマンティックUI (シンプル版) --- */
+            
+            /* アプリケーション全体 */
+            --color-app-background: var(--palette-gray-ash);
+            --color-surface-primary: var(--palette-white);
+            --color-surface-secondary: var(--palette-gray-ash);
+            --color-surface-row-stripe: var(--palette-white);
+            --color-surface-row-hover: var(--palette-gray-ash);
+
+            /* テキスト */
+            --color-text-primary: var(--palette-gray-dark);
+            --color-text-secondary: var(--palette-gray-dark-medium);
+            
+            /* (前回の修正) 視認性向上のため、薄いグレー(#999) を 中間グレー(#666) に変更 */
+            --color-text-disabled: var(--palette-gray-dark-medium);
+            
+            --color-text-on-accent: var(--palette-white);
+
+            /* (前回の修正) 曜日・加算・控除のセマンティックカラーを定義 */
+            --color-text-saturday: var(--palette-success);
+            --color-text-sunday-holiday: var(--palette-error);
+            --color-text-addition: var(--palette-success);
+            --color-text-deduction: var(--palette-error);
+
+
+            /* ボーダー (罫線) */
+            --color-border-primary: var(--palette-gray-ash); /* 薄い罫線 (E6E6E6) */
+            --color-border-heavy: var(--palette-gray-light); /* やや濃い罫線 (CCCCCC) */
+
+            /* サイドバー (白基調) */
+            --color-sidebar-background: var(--palette-white);
+            --color-sidebar-logo-background: var(--palette-white);
+            --color-sidebar-text: var(--palette-text-primary);
+            --color-sidebar-category-text: var(--palette-text-secondary);
+            --color-sidebar-hover-background: var(--palette-gray-ash);
+            --color-sidebar-accordion-background: var(--palette-gray-ash);
+            --color-sidebar-active-item-background: var(--palette-gray-ash);
+
+            /* コントロール */
+            --color-toggle-background: var(--palette-gray-ash);
+            /* 修正点 1: ボタン色をメインカラーに変更 */
+            --color-toggle-checked-background: var(--palette-main);
+            --color-toggle-checked-text: var(--color-text-on-accent);
+
+            /* ボタン */
+            --color-button-secondary-background: var(--palette-white);
+            --color-button-secondary-border: var(--palette-gray-light);
+            --color-button-secondary-hover: var(--palette-gray-ash);
+        }
+
+        /* --- 基本リセットと全体設定 --- */
+        body, html {
+            margin: 0;
+            padding: 0;
+            /* (今回の修正) フォントを游ゴシック Medium (500) に統一 */
+            font-family: "Yu Gothic", "Hiragino Sans", "Noto Sans CJK JP", "Meiryo", sans-serif;
+            font-weight: 500; /* Mediumウェイトを明示 */
+            background-color: var(--color-app-background);
+            color: var(--color-text-primary);
+            font-size: 14px;
+            height: 100%;
+        }
+        * { box-sizing: border-box; }
+        a { text-decoration: none; color: inherit; }
+
+        /* --- 全体レイアウト --- */
+        .app-layout { display: flex; height: 100vh; }
+
+        /* --- 左側グローバルナビゲーション (調整済) --- */
+        .sidebar {
+            width: 240px;
+            flex-shrink: 0;
+            background-color: var(--color-sidebar-background);
+            color: var(--color-sidebar-text);
+            height: 100vh;
+            box-shadow: 1px 0 4px rgba(0, 0, 0, 0.05);
+
+            /* (前回の修正) フッター固定のためFlexboxレイアウトに変更 */
+            display: flex;
+            flex-direction: column;
+            padding: 0; 
+        }
+        
+        .logo {
+            font-weight: bold;
+            font-size: 18px;
+            
+            /* (前回の修正) 上下の余白を1.5倍に (15px -> 22.5px) */
+            padding: 22.5px 20px; 
+            
+            display: flex;
+            align-items: center;
+            justify-content: center; /* 左右中央配置 */
+            border-bottom: none; 
+            background-color: var(--color-sidebar-logo-background);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        /* (前回の修正) ナビゲーションエリアをスクロール可能に変更 */
+        .global-nav { 
+            flex: 1; 
+            overflow-y: auto; 
+            padding: 10px 0 20px 0; 
+        }
+
+        /* (前回の修正) スクロールバー非表示設定 */
+        .global-nav::-webkit-scrollbar {
+            display: none; 
+        }
+        .global-nav {
+            scrollbar-width: none; 
+        }
+
+
+        .global-nav ul { list-style: none; margin: 0; padding: 0; }
+        
+        /* (前回の修正) カテゴリのスタイル (---- TEXT ---- 形式) */
+        .nav-category {
+            display: flex;
+            align-items: center; 
+            gap: 10px;           
+            font-size: inherit; 
+            text-transform: none; 
+            letter-spacing: normal; 
+            font-weight: 500; 
+            color: var(--color-text-secondary);
+            margin-top: 15px;
+            margin-bottom: 0;
+            margin-left: 20px;  
+            margin-right: 20px;
+            padding: 10px 0;    
+        }
+        .nav-category::before,
+        .nav-category::after {
+            content: '';
+            flex: 1; 
+            border-bottom: 1px solid var(--color-border-heavy);
+        }
+        .nav-category:first-child { margin-top: 0; }
+
+        .nav-item a { 
+            display: block; 
+            padding: 10px 20px 10px 20px; 
+            transition: background-color 0.2s; 
+            border-radius: 4px; 
+            margin: 0 10px; 
+        }
+        .nav-item a:hover { background-color: var(--color-sidebar-hover-background); }
+
+        .nav-accordion summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px 10px 20px; 
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border-radius: 4px;
+            margin: 0 10px;
+        }
+        .nav-accordion summary:hover { background-color: var(--color-sidebar-hover-background); }
+        .nav-accordion summary::after {
+            content: '▼';
+            font-size: 10px;
+            transform: scaleY(0.8) rotate(0deg);
+            transition: transform 0.2s;
+        }
+        .nav-accordion[open] summary::after { transform: scaleY(0.8) rotate(180deg); }
+        
+        /* (前回の修正) ulのpadding-leftを削除 */
+        .nav-accordion-menu {
+            list-style: none;
+            padding: 5px 0; 
+            margin: 0;
+        }
+        
+        /* (前回の修正) aタグにマージンとインデント(padding-left)を適用 */
+        .nav-accordion-menu li a {
+            display: block;
+            margin: 0 10px;
+            padding: 8px 10px 8px 40px;
+            border-radius: 4px;
+        }
+        .nav-accordion-menu li a:hover { background-color: var(--color-sidebar-hover-background); }
+        
+        .nav-comment {
+            font-size: 0.8em;
+            color: var(--color-text-disabled);
+            margin-left: 4px;
+            font-style: italic;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* (前回の修正) .nav-logout スタイルを削除 */
+
+
+        /* (前回の修正) フッターのスタイルを修正 */
+        .sidebar-footer {
+            flex-shrink: 0; 
+            padding: 15px 20px;
+            /* border-top: 1px solid var(--color-border-primary); (罫線を削除) */
+            background-color: var(--color-sidebar-logo-background); 
+            
+            /* 中央配置と通常の文字色 */
+            text-align: center;
+            color: var(--color-text-primary);
+        }
+        .sidebar-footer .user-name {
+            font-weight: 500;
+            font-size: 15px; /* 文字を大きく */
+        }
+        .sidebar-footer .user-role {
+            font-size: 11px; /* 文字を小さく */
+            margin-top: 2px;
+        }
+
+
+        /* --- メインコンテンツ --- */
+        .main-content { 
+            flex: 1; 
+            overflow-y: auto; 
+            height: 100vh; 
+        }
+        
+        .content-body { padding: 24px; }
+        .container {
+            max-width: none;
+            margin: 0;
+            background-color: var(--color-surface-primary);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-top: 0;
+            margin-bottom: 20px;
+            padding-bottom: 0;
+        }
+
+        /* --- 進捗表 (コントロール部の背景を白化) --- */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .view-toggle {
+            display: flex;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .view-toggle label {
+            padding: 8px 12px;
+            background-color: var(--color-toggle-background);
+            cursor: pointer;
+            font-size: 13px;
+            color: var(--color-text-secondary);
+        }
+        .view-toggle input { display: none; }
+        .view-toggle input:checked + label {
+            background-color: var(--color-toggle-checked-background);
+            color: var(--color-toggle-checked-text);
+            font-weight: 500;
+        }
+        
+        .date-filter { display: flex; align-items: center; gap: 10px; }
+        .date-filter input { padding: 8px 10px; border: 1px solid var(--color-border-primary); border-radius: 4px; font-size: 13px; background: var(--color-surface-primary); }
+        .date-nav-btn { 
+            padding: 8px 10px; 
+            background-color: var(--color-button-secondary-background); 
+            border: 1px solid var(--color-button-secondary-border); 
+            border-radius: 4px; 
+            cursor: pointer; 
+        }
+        .date-nav-btn:hover { background-color: var(--color-button-secondary-hover); }
+
+        /* --- テーブル (縦罫線を追加) --- */
+        .table-container { 
+            width: 100%; 
+            overflow-x: auto; 
+        }
+        .progress-table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 1200px;
+        }
+        .progress-table th,
+        .progress-table td {
+            border-right: 1px solid var(--color-border-primary); /* --- 薄い縦罫線 (変更点 1) --- */
+            border-bottom: 1px solid var(--color-border-primary);
+            padding: 12px;
+            text-align: left;
+            vertical-align: top;
+            
+            /* ▼▼▼【修正】セル幅を 160px に拡大 ▼▼▼ */
+            min-width: 160px;
+            /* ▲▲▲【修正】▲▲▲ */
+
+            white-space: nowrap;
+        }
+        /* テーブルの最後の列の縦線を消す (オプション) */
+        .progress-table th:last-child,
+        .progress-table td:last-child {
+            border-right: none;
+        }
+        
+        .progress-table thead { 
+            background-color: var(--color-surface-primary);
+            position: sticky; 
+            top: 0; 
+            z-index: 2; 
+        }
+        .progress-table thead th {
+             border-bottom: 1px solid var(--color-border-heavy);
+        }
+        .progress-table th {
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            font-size: 13px;
+            text-align: center;
+        }
+        /* 固定列 (縦軸) のスタイル */
+        .progress-table th.header-main {
+            text-align: left;
+            min-width: 160px;
+            position: sticky;
+            left: 0;
+            background-color: var(--color-surface-primary);
+            z-index: 3;
+            border-right: 1px solid var(--color-border-heavy); /* 固定列の右は濃い線 */
+        }
+        
+        .progress-table tbody th {
+            font-weight: 500;
+            position: sticky;
+            left: 0;
+            background-color: var(--color-surface-primary);
+            z-index: 1;
+            border-right: 1px solid var(--color-border-heavy); /* 固定列の右は濃い線 */
+        }
+        
+        .progress-table tbody tr { background-color: var(--color-surface-primary); }
+        .progress-table tbody tr:nth-child(even) th,
+        .progress-table tbody tr:nth-child(even) td { background-color: var(--color-surface-row-stripe); }
+        
+        .progress-table tbody tr:hover th,
+        .progress-table tbody tr:hover td { background-color: var(--color-surface-row-hover); }
+        
+        /* (前回の修正) セルのスタイル */
+        .progress-cell-content { 
+            font-size: 13px; 
+            white-space: normal; 
+        }
+        .progress-cell-content div { 
+            padding: 1px 0; 
+        }
+        
+        /* ▼▼▼【修正】ステータスを目立たせる ▼▼▼ */
+        .progress-cell-content .status { 
+            font-weight: 600; 
+            font-size: 14px;
+        }
+        /* ▲▲▲【修正】▲▲▲ */
+
+        .progress-cell-content .time { 
+            font-family: 'Courier New', Courier, monospace; 
+            margin-left: 5px; 
+        }
+
+        /* 案件 (利用者別/案件別 共通) */
+        .progress-cell-content .project,
+        .progress-cell-content .user {
+            font-size: 12px;
+            color: var(--color-text-secondary);
+            margin-top: 4px; 
+        }
+        
+        /* 曜日色 (ヘッダー) */
+        .day-label-sun { color: var(--color-text-sunday-holiday); }
+        .day-label-sat { color: var(--color-text-saturday); }
+        
+        /* ▼▼▼【修正】加算・控除を目立たなくする (色削除、太さ解除) ▼▼▼ */
+        .progress-cell-content .additions {
+            font-size: 11px;
+            color: var(--color-text-secondary); /* 色をグレーに変更 */
+            font-weight: 400; /* 太さを解除 */
+            margin-top: 4px; 
+        }
+        .progress-cell-content .deductions {
+            font-size: 11px;
+            color: var(--color-text-secondary); /* 色をグレーに変更 */
+            font-weight: 400; /* 太さを解除 */
+            margin-top: 2px; 
+        }
+        /* ▲▲▲【修正】▲▲▲ */
+
+        
+        .status-holiday {
+            color: var(--color-text-disabled);
+            /* ▼▼▼【修正】(休)(欠席)も目立たせる ▼▼▼ */
+            font-size: 14px;
+            font-weight: 600;
+            /* ▲▲▲【修正】▲▲▲ */
+            text-align: center;
+            padding-top: 10px;
+            background-color: var(--color-surface-primary);
+        }
+        
+        .day-sat { }
+        .day-sun { }
+    </style>
+</head>
+<body>
+
+    <div class="app-layout">
+        
+        <aside class="sidebar">
+            <div class="logo">p2508e</div>
+            
+            <nav class="global-nav">
+                <ul>
+                    <li class="nav-item"><a href="#">トップ</a></li>
+                    <li class="nav-category">基本情報</li>
+                    
+                    <li class="nav-accordion">
+                        <details><summary>施設情報</summary>
+                            <ul class="nav-accordion-menu">
+                                <li><a href="#">法人情報</a></li>
+                                <li><a href="#">事業所情報</a></li>
+                            </ul>
+                        </details>
+                    </li>
+                    <li class="nav-accordion">
+                        <details><summary>関係者情報</summary><ul class="nav-accordion-menu"><li><a href="#">職員情報</a></li><li><a href="#">取引先情報</a></li><li><a href="#">利用者情報</a></li></ul></details>
+                    </li>
+                    <li class="nav-accordion">
+                        <details><summary>スキル情報</summary><ul class="nav-accordion-menu"><li><a href="#">スキル設定</a></li><li><a href="#">スキル評価</a></li></ul></details>
+                    </li>
+                    <li class="nav-accordion">
+                        <details><summary>工賃・控除情報</summary><ul class="nav-accordion-menu"><li><a href="#">工賃設定</a></li><li><a href="#">控除設定 <span class="nav-comment">（事業所情報で...）</span></a></li><li><a href="#">工賃レベル評価</a></li></ul></deta>
+                    </li>
+                    <li class="nav-item"><a href="#">積立金情報</a></li>
+                    <li class="nav-item"><a href="#">案件情報 <span class="nav-comment">（種別, 分割...）</span></a></li>
+                    <li class="nav-category">活動記録</li>
+                    <li class="nav-accordion">
+                        <details open>
+                            <summary>生産活動</summary>
+                            <ul class="nav-accordion-menu">
+                                <li><a href="#" style="background-color: var(--color-sidebar-active-item-background);">進捗表</a></li>
+                            </ul>
+                        </details>
+                    </li>
+                    <li class="nav-accordion">
+                        <details><summary>福祉事業活動</summary><ul class="nav-accordion-menu"><li><a href="#">個別支援計画</a></li><li><a href="#">(その他...)</a></li></ul></details>
+                    </li>
+                    <li class="nav-category">集計・分析</li>
+                    <li class="nav-accordion">
+                        <details><summary>会計</summary><ul class="nav-accordion-menu"><li><a href="#">月次会計</a></li><li><a href="#">年次会計</a></li></ul></details>
+                    </li>
+                    <li class="nav-accordion">
+                        <details><summary>分析</summary><ul class="nav-accordion-menu"><li><a href="#">(分析ダッシュボード)</a></li></ul></details>
+                    </li>
+                    
+                    <li class="nav-category">その他</li>
+
+                    <li class="nav-item"><a href="#">ユーザーアカウント</a></li>
+                    <li class="nav-item"><a href="#">（その他設定）</a></li>
+
+                    <li class="nav-item">
+                        <a href="#">ログアウト</a>
+                    </li>
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-name">山田太郎</div>
+                <div class="user-role">管理者</div>
+            </div>
+
+        </aside>
+
+        <main class="main-content">
+            <div class="content-body">
+                <div class="container">
+                    <h1>進捗表</h1>
+                    <div class="controls">
+                        <div class="view-toggle" role="radiogroup" aria-label="表示切替">
+                            <input type="radio" id="viewUser" name="viewType" value="user" checked>
+                            <label for="viewUser">利用者別</label>
+                            <input type="radio" id="viewProject" name="viewType" value="project">
+                            <label for="viewProject">案件別</label>
+                        </div>
+                        <div class="date-filter">
+                            <button class="date-nav-btn" title="前の月">◀</button>
+                            <label for="progressMonth">対象月:</label>
+                            <input type="month" id="progressMonth" value="2025-11">
+                            <button class="date-nav-btn" title="次の月">▶</button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="progress-table">
+                            <thead id="progress-table-head"></thead>
+                            <tbody id="progress-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // --- モックデータ定義 ---
+        const dates = [
+            { date: '11/03', day: '月', holiday: true, dayClass: 'day-sun' }, // 祝日
+            { date: '11/04', day: '火', holiday: false, dayClass: '' },
+            { date: '11/05', day: '水', holiday: false, dayClass: '' },
+            { date: '11/06', day: '木', holiday: true, dayClass: '' }, // 仮に休み
+            { date: '11/07', day: '金', holiday: false, dayClass: '' },
+            { date: '11/08', day: '土', holiday: true, dayClass: 'day-sat' }, // 土曜
+            { date: '11/09', day: '日', holiday: true, dayClass: 'day-sun' }, // 日曜
+            { date: '11/10', day: '月', holiday: false, dayClass: '' },
+        ];
+        
+        /* (前回の修正) データ構造を仕様に合わせて変更 (時間形式、加算・控除) */
+        const userMockData = [
+            {
+                name: '山田 太郎',
+                records: [
+                    { status: '休' },
+                    { status: '通所', time: '10:00 - 14:30', projects: ['案件A', '案件B'], additions: ['挨拶'], deductions: ['昼食'] },
+                    { status: '通所', time: '10:00 - 15:00', projects: ['案件A'], deductions: ['昼食'] },
+                    { status: '欠席' },
+                    { status: '在宅', time: '10:00 - 14:00', projects: ['案件B', '案件C'], additions: ['掃除'] },
+                    { status: '休' },
+                    { status: '休' },
+                    { status: '通所', time: '10:00 - 14:30', projects: ['案件A'], deductions: ['昼食', '送迎'] },
+                ]
+            },
+            {
+                name: '鈴木 花子',
+                records: [
+                    { status: '休' },
+                    { status: '通所', time: '10:00 - 15:00', projects: ['案件A', '案件C'], deductions: ['昼食'] },
+                    { status: '通所', time: '10:00 - 15:00', projects: ['案件C'], deductions: ['昼食'] },
+                    { status: '通所', time: '13:00 - 15:00', projects: ['案件A'] },
+                    { status: '在宅', time: '10:00 - 15:00', projects: ['案件A', '案件C'] },
+                    { status: '休' },
+                    { status: '休' },
+                    { status: '通所', time: '10:00 - 15:00', projects: ['案件C'], deductions: ['昼食'] },
+                ]
+            },
+            {
+                name: '佐藤 一郎',
+                records: [
+                    { status: '休' },
+                    { status: '通所', time: '10:00 - 14:00', projects: ['案件B', '案件C'], additions: ['挨拶', '掃除'], deductions: ['昼食'] },
+                    { status: '通所', time: '10:00 - 14:00', projects: ['案件B'], deductions: ['昼食'] },
+                    { status: '通所', time: '10:00 - 14:00', projects: ['案件B'], deductions: ['昼食'] },
+                    { status: '休' },
+                    { status: '休' },
+                    { status: '休' },
+                    { status: '通所', time: '10:00 - 14:00', projects: ['案件B'], deductions: ['昼食'] },
+                ]
+            }
+        ];
+        const projectMockData = [
+            {
+                name: '案件A (箱折り)',
+                records: [
+                    { holiday: true },
+                    { users: ['山田', '鈴木'] },
+                    { users: ['山田'] },
+                    { users: ['鈴木'] },
+                    { users: ['鈴木'] },
+                    { holiday: true },
+                    { holiday: true },
+                    { users: ['山田'] },
+                ]
+            },
+            {
+                name: '案件B (検品)',
+                records: [
+                    { holiday: true },
+                    { users: ['山田', '佐藤'] },
+                    { users: ['佐藤'] },
+                    { users: ['佐藤'] },
+                    { users: ['山田'] },
+                    { holiday: true },
+                    { holiday: true },
+                    { users: ['佐藤'] },
+                ]
+            },
+            {
+                name: '案件C (シール貼り)',
+                records: [
+                    { holiday: true },
+                    { users: ['鈴木', '佐藤'] },
+                    { users: ['鈴木'] },
+                    { users: [] }, // 誰も作業しなかった日
+                    { users: ['山田', '鈴木'] },
+                    { holiday: true },
+                    { holiday: true },
+                    { users: ['鈴木'] },
+                ]
+            }
+        ];
+
+
+        // --- DOM要素の取得 ---
+        const viewToggles = document.querySelectorAll('input[name="viewType"]');
+        const tableHead = document.getElementById('progress-table-head');
+        const tableBody = document.getElementById('progress-table-body');
+
+        // --- イベントリスナーの設定 ---
+        viewToggles.forEach(toggle => {
+            toggle.addEventListener('change', (e) => {
+                renderTable(e.target.value);
+            });
+        });
+
+        // --- レンダリング関数 ---
+
+        /* (前回の修正) セルのHTML生成ロジックを (要求順序) に対応 */
+        function createCellContent(record, viewType) {
+            
+            // 案件別表示 (Project View)
+            if (viewType === 'project') {
+                if (record.holiday) {
+                    return '<td class="status-holiday">(休)</td>';
+                }
+                if (!record.users || record.users.length === 0) {
+                    return '<td>-</td>';
+                }
+                let usersHtml = record.users.map(user => 
+                    `<div class="user">${user}</div>`
+                ).join('');
+                return `<td><div class="progress-cell-content">${usersHtml}</div></td>`;
+            }
+
+            // 利用者別表示 (User View)
+            if (viewType === 'user') {
+                if (record.status === '休' || record.status === '欠席') {
+                    // status-holiday は (休) のスタイルだが、(欠席) にも流用する
+                    return `<td class="status-holiday">(${record.status})</td>`;
+                }
+                
+                let html = '';
+                
+                // 1. 利用ステータス + 時間 (Combined)
+                let statusLine = `<div class="status">${record.status}`;
+                if ((record.status === '通所' || record.status === '在宅') && record.time) {
+                    statusLine += ` <span class="time">${record.time}</span>`;
+                }
+                statusLine += `</div>`;
+                html += statusLine;
+
+                // 2. 加算項目 (Combined)
+                if (record.additions && record.additions.length > 0) {
+                    let additionsHtml = record.additions.map(a => `+${a}`).join(' ');
+                    html += `<div class="additions">${additionsHtml}</div>`;
+                }
+
+                // 3. 控除項目 (Combined)
+                if (record.deductions && record.deductions.length > 0) {
+                    let deductionsHtml = record.deductions.map(d => `-${d}`).join(' ');
+                    html += `<div class="deductions">${deductionsHtml}</div>`;
+                }
+
+                // 4. 作業内容 (Separate lines)
+                if (record.projects && record.projects.length > 0) {
+                    html += record.projects.map(p => 
+                        `<div class="project">${p}</div>`
+                    ).join('');
+                }
+                
+                return `<td><div class="progress-cell-content">${html}</div></td>`;
+            }
+
+            // デフォルト
+            return '<td></td>';
+        }
+
+
+        function renderTable(viewType) {
+            let data;
+            let mainHeaderTitle;
+            if (viewType === 'user') {
+                data = userMockData;
+                mainHeaderTitle = '利用者名';
+            } else {
+                data = projectMockData;
+                mainHeaderTitle = '案件名';
+            }
+
+            // 1. ヘッダー (<thead>) の生成
+            let headerHtml = '<tr>';
+            headerHtml += `<th class="header-main">${mainHeaderTitle}</th>`;
+            
+            /* (前回の修正) 曜日の色分けロジック */
+            dates.forEach(d => {
+                let holidayClass = d.dayClass;
+                let dayLabel = d.day;
+                let dayLabelClass = ''; // 曜日スパン用のクラス
+
+                if (d.dayClass === 'day-sun') {
+                    dayLabelClass = 'day-label-sun';
+                    if (d.holiday) dayLabel = '日';
+                } else if (d.dayClass === 'day-sat') {
+                    dayLabelClass = 'day-label-sat';
+                    if (d.holiday) dayLabel = '土';
+                } else if (d.holiday) {
+                    // 日曜・土曜以外の祝日 (例: 11/03 月)
+                    dayLabel = '祝';
+                    dayLabelClass = 'day-label-sun'; // 祝日も日曜と同じError色
+                }
+                
+                headerHtml += `<th class="${holidayClass}">${d.date} (<span class="${dayLabelClass}">${dayLabel}</span>)</th>`;
+            });
+            
+            headerHtml += '</tr>';
+            tableHead.innerHTML = headerHtml;
+
+            // 2. ボディ (<tbody>) の生成
+            let bodyHtml = '';
+            data.forEach(row => {
+                bodyHtml += '<tr>';
+                bodyHtml += `<th scope="row">${row.name}</th>`;
+                row.records.forEach(record => {
+                    /* (前回の修正) viewTypeを渡す */
+                    bodyHtml += createCellContent(record, viewType);
+                });
+                bodyHtml += '</tr>';
+            });
+            tableBody.innerHTML = bodyHtml;
+        }
+
+        // --- 初期表示 ---
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTable('user');
+        });
+    </script>
+
+</body>
+</html>
