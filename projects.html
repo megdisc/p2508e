@@ -4,11 +4,155 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>案件情報 - 就労継続支援B型事業所 統合プラットフォーム</title>
+    <title>案件情報</title>
     
     <link rel="stylesheet" href="colors.css">
     <link rel="stylesheet" href="style.css">
 
+    <style>
+        /* --- 1カラムレイアウト --- */
+        .card-layout-container {
+            /* 1カラムの縦積み */
+        }
+        
+        /* --- 案件カード --- */
+        .project-card {
+            background-color: var(--color-surface-primary);
+            border: 1px solid var(--color-border-primary);
+            border-radius: 0.5rem; /* 8px */
+            box-shadow: 0 0.125rem 0.3125rem rgba(0, 0, 0, 0.04); /* 0 2px 5px */
+            margin-bottom: 1.5rem; /* 24px */
+            overflow: hidden;
+            display: flex;
+        }
+        
+        /* --- 1. 案件情報エリア (左側) --- */
+        .project-info-area {
+            flex: 1;
+            padding: 1.25rem; /* 20px */
+            border-right: 1px solid var(--color-border-primary);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* 案件名 (メリハリ: L3 大) */
+        .project-name {
+            font-size: var(--font-size-lg); /* L3変数を参照 */
+            font-weight: 600;
+            color: var(--color-text-primary);
+            margin-top: 0;
+            margin-bottom: 0.5rem; /* 8px */
+            line-height: 1.3;
+        }
+        /* 顧客名 (メリハリ: L3 中) */
+        .project-client {
+            font-size: var(--font-size-md); /* L3変数を参照 */
+            font-weight: 500;
+            color: var(--color-text-primary);
+            margin: 0 0 1rem 0; /* 16px */
+        }
+        
+        /* 責任者・期間 (メリハリ: L3 基本) */
+        .project-meta {
+            font-size: var(--font-size-base); /* L3変数を参照 */
+            color: var(--color-text-secondary);
+            margin: 0 0 0.5rem 0; /* 8px */
+        }
+        .project-meta .label {
+            font-weight: 600;
+            display: inline-block;
+            width: 3.75rem; /* 60px (50px -> 3.125rem) */
+        }
+        
+        .project-status-badge-wrapper {
+            margin-top: auto;
+            padding-top: 1rem; /* 16px */
+        }
+
+
+        /* --- 2. タスク情報エリア (右側) --- */
+        .task-info-area {
+            flex: 1.5;
+            padding: 1rem 1.25rem; /* 16px 20px */
+            background-color: var(--color-surface-primary);
+        }
+
+        /* タスク行 (1タスク/1行) */
+        .task-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem; /* 12px */
+            padding: 0.5625rem 0; /* 9px 0 */
+            border-bottom: 1px solid var(--color-border-primary);
+            font-size: var(--font-size-base); /* L3変数を参照 */
+        }
+        .task-info-area .task-row:last-child {
+            border-bottom: none;
+        }
+        .task-info-area .task-row:first-child {
+            padding-top: 0.25rem; /* 4px */
+        }
+        
+        .task-name {
+            flex: 3;
+            font-weight: 500;
+            color: var(--color-text-primary);
+        }
+        .task-assignee {
+            flex: 2;
+            font-size: var(--font-size-sm); /* L3変数を参照 */
+            color: var(--color-text-secondary);
+        }
+        .task-gauge {
+            flex: 3;
+            min-width: 7.5rem; /* 120px */
+        }
+
+        /* --- 進捗バー (L3変数を参照) --- */
+        .progress-bar-container {
+            display: flex;
+            align-items: center;
+            gap: 0.375rem; /* 6px */
+        }
+        .progress-bar {
+            flex: 1;
+            height: 0.5rem; /* 8px */
+            background-color: var(--color-surface-secondary); /* L3 */
+            border-radius: 0.25rem; /* 4px */
+            overflow: hidden;
+        }
+        .progress-bar-inner {
+            height: 100%;
+            background-color: var(--color-progressbar-fill); /* L3変数を参照 */
+        }
+        .progress-percentage {
+            font-size: var(--font-size-sm); /* L3変数を参照 */
+            font-weight: 600;
+            font-family: 'Courier New', Courier, monospace;
+            color: var(--color-progressbar-text); /* L3変数を参照 */
+        }
+        
+        /* --- ステータスバッジ (L3変数を参照) --- */
+        .status-badge {
+            padding: 0.25rem 0.625rem; /* 4px 10px */
+            border-radius: 0.75rem; /* 12px */
+            font-size: var(--font-size-sm); /* L3変数を参照 */
+            font-weight: 600;
+            white-space: nowrap;
+            display: inline-block;
+        }
+        .status-active {
+            /* 進行中 -> L3 変数を参照 */
+            background-color: var(--color-badge-active-background); 
+            color: var(--color-badge-active-text);
+        }
+        .status-completed {
+            /* 完了 -> L3 変数を参照 */
+            background-color: var(--color-badge-completed-background);
+            color: var(--color-badge-completed-text);
+        }
+
+    </style>
 </head>
 <body>
 
@@ -51,7 +195,7 @@
                         <details><summary>工賃・控除情報</summary>
                             <ul class="nav-accordion-menu">
                                 <li><a href="#">工賃設定</a></li>
-                                <li><a href="#">控除設定 <span class="nav-comment">：事業所情報で...</span></a></li>
+                                <li><a href="#">控除設定</a></li>
                                 <li><a href="#">工賃レベル評価</a></li>
                             </ul>
                         </details>
@@ -109,101 +253,178 @@
                     <a href="#">ログアウト</a>
                 </div>
             </div>
-
         </aside>
 
         <main class="main-content">
             <div class="content-body">
                 <div class="container">
-                    <h1>案件情報</h1>
+                    <h1>案件情報</h1> 
+                    
                     <div class="controls">
                         <div class="search-filter">
-                            <input type="search" id="projectSearch" placeholder="案件名、取引先名などで検索...">
-                        </div>
+                            <input type="search" id="projectSearch" placeholder="案件名、顧客名、担当者名などで検索..." style="min-width: 18.75rem;"> </div>
                         <div class="action-buttons">
                             <button class="btn btn-primary">新規案件登録</button>
                         </div>
                     </div>
-                    <div class="table-container">
-                        <table class="data-table" id="projects-table">
-                            <thead id="projects-table-head"></thead>
-                            <tbody id="projects-table-body"></tbody>
-                        </table>
-                    </div>
-                    </div>
+                    
+                    <div id="project-card-container" class="card-layout-container">
+                        </div>
+                    
+                </div>
             </div>
         </main>
     </div>
 
     <script>
         // --- モックデータ定義 ---
+        
+        const PROJECT_STATUS = {
+            ACTIVE: { text: '進行中', class: 'status-active' },
+            COMPLETED: { text: '完了', class: 'status-completed' }
+        };
+
         const projectsMockData = [
             {
                 id: 'P-001',
                 name: '案件A (箱折り)',
+                status: PROJECT_STATUS.ACTIVE,
                 client: '株式会社S',
-                unitPrice: 10,
-                tasks: ['タスクA-1: 型抜き', 'タスクA-2: 組み立て', 'タスクA-3: 検品'],
+                manager: '山田 太郎',
+                orderDate: '2025-10-20',
                 deadline: '2025-11-20',
-                status: '進行中'
+                tasks: [
+                    { name: 'タスクA-1: 型抜き', progress: 100, assignee: '鈴木, 佐藤' },
+                    { name: 'タスクA-2: 組み立て', progress: 60, assignee: '鈴木, 高橋' },
+                    { name: 'タスクA-3: 検品・梱包', progress: 0, assignee: '山田' }
+                ]
             },
             {
                 id: 'P-002',
-                name: '案件B (検品)',
+                name: '案件B (DM検品・封入)',
+                status: PROJECT_STATUS.ACTIVE,
                 client: 'M商事',
-                unitPrice: 5,
-                tasks: ['タスクB-1: 汚れ確認', 'タスクB-2: 個数カウント'],
+                manager: '佐藤 一郎',
+                orderDate: '2025-11-01',
                 deadline: '2025-11-15',
-                status: '完了'
+                tasks: [
+                    { name: 'タスクB-1: 汚れ確認', progress: 30, assignee: '佐藤, 鈴木, 伊藤' },
+                    { name: 'タスクB-2: 封入', progress: 0, assignee: '佐藤, 鈴木, 伊藤' }
+                ]
             },
             {
                 id: 'P-003',
-                name: '案件C (シール貼り)',
-                client: 'N工業',
-                unitPrice: 3,
-                tasks: ['タスクC-1: シール貼り', 'タスクC-2: 梱包'],
-                deadline: '2025-11-30',
-                status: '進行中'
+                name: '案件C (Webアイコン制作)',
+                status: PROJECT_STATUS.COMPLETED,
+                client: 'N工業 (Web部)',
+                manager: '高橋 次郎',
+                orderDate: '2025-10-01',
+                deadline: '2025-10-31',
+                tasks: [
+                    { name: 'タスクC-1: デザイン案', progress: 100, assignee: '高橋, 鈴木' },
+                    { name: 'タスクC-2: SVGデータ化', progress: 100, assignee: '高橋' }
+                ]
             }
         ];
 
         // --- DOM要素の取得 ---
-        const tableHead = document.getElementById('projects-table-head');
-        const tableBody = document.getElementById('projects-table-body');
+        const cardContainer = document.getElementById('project-card-container');
 
         // --- レンダリング関数 ---
 
-        function renderProjectsTable() {
-            // 1. ヘッダー (<thead>) の生成
-            let headerHtml = '<tr>';
-            headerHtml += '<th>案件ID</th>';
-            headerHtml += '<th>案件名</th>';
-            headerHtml += '<th>取引先</th>';
-            headerHtml += '<th>単価</th>';
-            headerHtml += '<th>主な作業タスク</th>';
-            headerHtml += '<th>ステータス</th>';
-            headerHtml += '<th>操作</th>';
-            headerHtml += '</tr>';
-            tableHead.innerHTML = headerHtml;
+        // タスク進捗バーを生成するヘルパー
+        function createTaskProgressBar(progress) {
+            return `
+                <div class="progress-bar-container">
+                    <div class="progress-bar">
+                        <div class="progress-bar-inner" style="width: ${progress}%;"></div>
+                    </div>
+                    <span class="progress-percentage">${progress}%</span>
+                </div>
+            `;
+        }
 
-            // 2. ボディ (<tbody>) の生成
-            let bodyHtml = '';
+        // タスク行 (1行) を生成するヘルパー
+        function createTaskRow(task) {
+            return `
+                <div class="task-row">
+                    <span class="task-name">${task.name}</span>
+                    <span class="task-assignee">${task.assignee}</span>
+                    <div class="task-gauge">
+                        ${createTaskProgressBar(task.progress)}
+                    </div>
+                </div>
+            `;
+        }
+        
+        // 日付を短縮フォーマット
+        function formatDateShort(dateString) {
+            if (!dateString) return '';
+            const parts = dateString.split('-');
+            if (parts.length === 3) {
+                // MM/DD 形式
+                return `${parts[1].padStart(2, '0')}/${parts[2].padStart(2, '0')}`;
+            }
+            return dateString;
+        }
+
+        // 案件カードをレンダリングする
+        function renderProjectCards() {
+            let containerHtml = '';
+
             projectsMockData.forEach(p => {
-                bodyHtml += '<tr>';
-                bodyHtml += `<td>${p.id}</td>`;
-                bodyHtml += `<td class="cell-wide">${p.name}</td>`;
-                bodyHtml += `<td class="cell-wide">${p.client}</td>`;
-                bodyHtml += `<td class="cell-number">${p.unitPrice.toLocaleString()} 円</td>`;
-                bodyHtml += `<td class="cell-wide">${p.tasks.join('、 ')}</td>`;
-                bodyHtml += `<td><span class="status-badge status-${p.status === '進行中' ? 'active' : 'completed'}">${p.status}</span></td>`;
-                bodyHtml += '<td><button class="btn btn-secondary btn-sm">詳細</button></td>';
-                bodyHtml += '</tr>';
+                // タスクリストのHTMLを生成
+                let tasksHtml = p.tasks.map(createTaskRow).join('');
+                
+                // 期間をフォーマット
+                let periodHtml = `${formatDateShort(p.orderDate)} - ${formatDateShort(p.deadline)}`;
+
+                containerHtml += `
+                    <div class="project-card">
+                        <div class="project-info-area">
+                            <h2 class="project-name">${p.name}</h2>
+                            <p class="project-client">${p.client}</p>
+                            
+                            <p class="project-meta">
+                                <span class="label">責任者:</span> ${p.manager}
+                            </p>
+                            <p class="project-meta">
+                                <span class="label">期　間:</span> ${periodHtml}
+                            </p>
+
+                            <div class="project-status-badge-wrapper">
+                                <span class="status-badge ${p.status.class}">${p.status.text}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="task-info-area">
+                            ${tasksHtml}
+                        </div>
+                    </div>
+                `;
             });
-            tableBody.innerHTML = bodyHtml;
+
+            cardContainer.innerHTML = containerHtml;
         }
 
         // --- 初期表示 ---
-        renderProjectsTable();
+        renderProjectCards();
+
+        // --- 検索フィルター (簡易版) ---
+        document.getElementById('projectSearch').addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const cards = cardContainer.querySelectorAll('.project-card');
+            
+            cards.forEach(card => {
+                const cardText = card.textContent.toLowerCase();
+                if (cardText.includes(searchTerm)) {
+                    card.style.display = 'flex'; // display: block ではなく flex にする
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
     </script>
     </body>
 </html>
