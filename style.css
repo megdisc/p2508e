@@ -103,13 +103,13 @@
     --color-border-heavy: var(--base-quinary);   
 
     /* サイドバー (白基調) */
-    --color-sidebar-background: var(--base-primary);   
-    --color-sidebar-logo-background: var(--base-primary);   
-    --color-sidebar-text: var(--color-text-primary); 
-    --color-sidebar-category-text: var(--color-text-secondary); 
-    --color-sidebar-hover-background: var(--base-secondary); 
-    --color-sidebar-accordion-background: var(--base-secondary); 
-    --color-sidebar-active-item-background: var(--base-secondary); 
+    --color-sidebar-background: var(--theme-main);   
+    --color-sidebar-logo-background: var(--theme-main);   
+    --color-sidebar-text: var(--base-primary); 
+    --color-sidebar-category-text: var(--base-quinary); 
+    --color-sidebar-hover-background: var(--color-translucent-2551); 
+    --color-sidebar-accordion-background: var(--color-translucent-2551); 
+    --color-sidebar-active-item-background: var(--theme-sub); 
 
     /* コントロール */
     --color-toggle-background: var(--base-secondary); 
@@ -167,6 +167,7 @@ a { text-decoration: none; color: inherit; }
 }
 
 .logo {
+    color: var(--theme-accent);
     font-weight: 600; 
     font-size: var(--font-size-lg); /* L3変数を参照 */
     padding: 1.4rem 1.25rem; /* 22.5px -> 1.4rem, 20px -> 1.25rem */
@@ -278,7 +279,7 @@ a { text-decoration: none; color: inherit; }
     padding: 0.9375rem 1.25rem; /* 15px 20px */
     background-color: var(--color-sidebar-logo-background); 
     text-align: center;
-    color: var(--color-text-primary);
+    color: var(--base-primary);
 }
 .sidebar-footer .user-name {
     font-weight: 600;
@@ -298,7 +299,7 @@ a { text-decoration: none; color: inherit; }
 .sidebar-logout a {
     font-size: var(--font-size-sm); /* L3変数を参照 */
     font-weight: 600;
-    color: var(--color-text-secondary);
+    color: var(--base-quinary);
     text-decoration: none;
 }
 .sidebar-logout a:hover {
