@@ -818,3 +818,68 @@ h1 {
     flex: 3;
     min-width: 7.5rem; /* 120px */
 }
+
+/* ============================================= */
+/* style.css の末尾に以下を追記                  */
+/* ============================================= */
+
+/*
+ * 案件一覧ページ: アイコンビュー切替トグル
+ * (progress.html の .view-toggle とは別のスタイル)
+ */
+.view-toggle-icons {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem; /* 4px */
+    
+    /* 既存の .view-toggle の背景色 を流用 */
+    background-color: var(--color-toggle-background); 
+    
+    padding: 0.375rem; /* 6px */
+    border-radius: 50px; /* 角丸（カプセル型） */
+}
+
+/* トグル内のアイコンボタン (既存の .btn-icon をベース) */
+.view-toggle-icons .btn-icon {
+    /* * .btn-icon は
+     * width: 2.25rem; height: 2.25rem;
+     * border-radius: 50%;
+     *
+     */
+    
+    /* 非アクティブ時は無彩色（グレー）にする */
+    color: var(--color-text-disabled); 
+    background-color: transparent;
+}
+
+.view-toggle-icons .btn-icon:hover {
+    /* * .btn-icon:hover は
+     * background-color: var(--color-button-icon-hover-background);
+     *
+     */
+    background-color: var(--color-surface-row-hover);
+    color: var(--color-text-primary);
+}
+
+/* ★アクティブなトグルボタンのスタイル */
+.view-toggle-icons .btn-icon.active {
+    /* * .view-toggle input:checked + label は
+     * background-color: var(--color-toggle-checked-background); (濃い青)
+     * color: var(--color-toggle-checked-text); (白)
+     *
+     */
+    background-color: var(--color-toggle-checked-background);
+    color: var(--color-toggle-checked-text);
+}
+.view-toggle-icons .btn-icon.active:hover {
+    /* * .btn-primary:hover は
+     * background-color: var(--color-button-primary-hover); (少し濃い青)
+     *
+     */
+    background-color: var(--color-button-primary-hover);
+}
+
+/* ビュー切り替えコンテナ (JSで display を制御) */
+.view-content.active {
+    display: block;
+}

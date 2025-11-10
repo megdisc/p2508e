@@ -8,8 +8,105 @@
     
     <link rel="stylesheet" href="colors.css">
     <link rel="stylesheet" href="style.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-</head>
+    <style>
+        /* (既存の .progress-table 関連は .card-list-container に置き換わる) */
+
+        /* .controls の .view-toggle はそのまま流用 */
+        
+        /* 進捗記録カード (汎用) */
+        .progress-card {
+            background-color: var(--color-surface-primary);
+            border: 1px solid var(--color-border-primary);
+            border-radius: 0.5rem; /* 8px */
+            margin-bottom: 1rem; /* 16px */
+            display: flex;
+            flex-direction: column;
+        }
+        .progress-card-header {
+            padding: 1rem 1.25rem; /* 16px 20px */
+            border-bottom: 1px solid var(--color-border-primary);
+        }
+        .progress-card-title {
+            font-size: var(--font-size-md); /* */
+            font-weight: 600;
+            margin: 0;
+        }
+        .progress-card-subtitle {
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        .progress-card-body {
+            padding: 1.25rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem; /* 各入力行の間隔 */
+        }
+        
+        /* 進捗入力行 (共通) */
+        .progress-input-row {
+            display: flex;
+            align-items: center;
+            gap: 1rem; /* 16px */
+            border-bottom: 1px solid var(--color-border-primary);
+            padding-bottom: 1.25rem;
+        }
+        .progress-card-body .progress-input-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+        
+        .progress-input-label {
+            flex: 1;
+            font-weight: 500;
+            line-height: 1.4;
+        }
+        .progress-input-label .label-main {
+            display: block;
+            font-size: var(--font-size-base);
+            color: var(--color-text-primary);
+        }
+        .progress-input-label .label-sub {
+            display: block;
+            font-size: var(--font-size-sm);
+            color: var(--color-text-secondary);
+        }
+
+        /* 進捗入力フォーム要素 */
+        .progress-input-fields {
+            flex: 0 0 16rem; /* 256px */
+            display: flex;
+            gap: 0.75rem; /* 12px */
+            align-items: baseline;
+        }
+        .progress-input-fields label {
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            white-space: nowrap;
+        }
+        .progress-input-fields input[type="number"] {
+            width: 6rem; /* 96px */
+            padding: 0.625rem 0.75rem; /* 10px 12px */
+            font-size: var(--font-size-base);
+            border: 1px solid var(--color-border-heavy);
+            border-radius: 4px; /* 0.25rem */
+            text-align: right;
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: 600;
+        }
+        .progress-input-fields input[type="number"]:focus {
+             outline: none;
+            border-color: var(--theme-primary-button);
+            box-shadow: 0 0 0 2px var(--semantic-primary-background);
+        }
+
+    </style>
+    </head>
 <body>
 
     <div class="app-layout">
@@ -60,6 +157,7 @@
 
                     <li class="nav-category">活動記録</li>
                     <li class="nav-item"><a href="attendance.html">出欠管理</a></li>
+                    
                     <li class="nav-accordion">
                         <details open> <summary>案件管理</summary>
                             <ul class="nav-accordion-menu">
@@ -112,252 +210,195 @@
         </aside>
 
         <main class="main-content">
-            <div class="content-body">
-                <div class="container">
-                    <h1>進捗記録</h1> 
-                    <div class="controls">
-                        <div class="view-toggle" role="radiogroup" aria-label="表示切替">
-                            <input type="radio" id="viewUser" name="viewType" value="user" checked>
-                            <label for="viewUser">利用者別</label>
-                            <input type="radio" id="viewProject" name="viewType" value="project">
-                            <label for="viewProject">案件別</label>
-                        </div>
-                        <div class="date-filter">
-                            <button class="date-nav-btn" title="前の月">◀</button>
-                            <label for="progressMonth">対象月:</label>
-                            <input type="month" id="progressMonth" value="2025-11">
-                            <button class="date-nav-btn" title="次の月">▶</button>
-                        </div>
-                    </div>
-                    <div class="table-container">
-                        <table class="progress-table">
-                            <thead id="progress-table-head"></thead>
-                            <tbody id="progress-table-body"></tbody>
-                        </table>
-                    </div>
+            <h1>進捗記録</h1> 
+            <div class="controls">
+                <div class="view-toggle" role="radiogroup" aria-label="表示切替">
+                    <input type="radio" id="viewUser" name="viewType" value="user" checked>
+                    <label for="viewUser">利用者別</label>
+                    <input type="radio" id="viewProject" name="viewType" value="project">
+                    <label for="viewProject">案件別</label>
+                    <input type="radio" id="viewTask" name="viewType" value="task">
+                    <label for="viewTask">タスク別</label>
+                </div>
+                <div class="date-filter">
+                    <button class="date-nav-btn" title="前の月">◀</button>
+                    <label for="progressMonth">対象月:</label>
+                    <input type="month" id="progressMonth" value="2025-11">
+                    <button class="date-nav-btn" title="次の月">▶</button>
                 </div>
             </div>
-        </main>
+            
+            <div id="progress-card-container" class="card-list-container">
+                </div>
+            </main>
     </div>
 
     <script>
-        // --- モックデータ定義 ---
-        const dates = [
-            { date: '11/03', day: '月', holiday: true, dayClass: 'day-sun' },
-            { date: '11/04', day: '火', holiday: false, dayClass: '' },
-            { date: '11/05', day: '水', holiday: false, dayClass: '' },
-            { date: '11/06', day: '木', holiday: true, dayClass: '' },
-            { date: '11/07', day: '金', holiday: false, dayClass: '' },
-            { date: '11/08', day: '土', holiday: true, dayClass: 'day-sat' },
-            { date: '11/09', day: '日', holiday: true, dayClass: 'day-sun' },
-            { date: '11/10', day: '月', holiday: false, dayClass: '' },
-        ];
-        
-        const userMockData = [
-            {
-                name: '山田 太郎',
-                records: [
-                    { status: '休' },
-                    { status: '通所', time: '10:00 - 14:30', projects: ['案件A', '案件B'], additions: ['挨拶'], deductions: ['昼食'] },
-                    { status: '通所', time: '10:00 - 15:00', projects: ['案件A'], deductions: ['昼食'] },
-                    { status: '欠席' },
-                    { status: '在宅', time: '10:00 - 14:00', projects: ['案件B', '案件C'], additions: ['掃除'] },
-                    { status: '休' },
-                    { status: '休' },
-                    { status: '通所', time: '10:00 - 14:30', projects: ['案件A'], deductions: ['昼食', '送迎'] },
-                ]
-            },
-            {
-                name: '鈴木 花子',
-                records: [
-                    { status: '休' },
-                    { status: '通所', time: '10:00 - 15:00', projects: ['案件A', '案件C'], deductions: ['昼食'] },
-                    { status: '通所', time: '10:00 - 15:00', projects: ['案件C'], deductions: ['昼食'] },
-                    { status: '通所', time: '13:00 - 15:00', projects: ['案件A'] },
-                    { status: '在宅', time: '10:00 - 15:00', projects: ['案件A', '案件C'] },
-                    { status: '休' },
-                    { status: '休' },
-                    { status: '通所', time: '10:00 - 15:00', projects: ['案件C'], deductions: ['昼食'] },
-                ]
-            },
-            {
-                name: '佐藤 一郎',
-                records: [
-                    { status: '休' },
-                    { status: '通所', time: '10:00 - 14:00', projects: ['案件B', '案件C'], additions: ['挨拶', '掃除'], deductions: ['昼食'] },
-                    { status: '通所', time: '10:00 - 14:00', projects: ['案件B'], deductions: ['昼食'] },
-                    { status: '通所', time: '10:00 - 14:00', projects: ['案件B'], deductions: ['昼食'] },
-                    { status: '休' },
-                    { status: '休' },
-                    { status: '休' },
-                    { status: '通所', time: '10:00 - 14:00', projects: ['案件B'], deductions: ['昼食'] },
-                ]
-            }
-        ];
-        const projectMockData = [
-            {
-                name: '案件A (箱折り)',
-                records: [
-                    { holiday: true },
-                    { users: ['山田', '鈴木'] },
-                    { users: ['山田'] },
-                    { users: ['鈴木'] },
-                    { users: ['鈴木'] },
-                    { holiday: true },
-                    { holiday: true },
-                    { users: ['山田'] },
-                ]
-            },
-            {
-                name: '案件B (検品)',
-                records: [
-                    { holiday: true },
-                    { users: ['山田', '佐藤'] },
-                    { users: ['佐藤'] },
-                    { users: ['佐藤'] },
-                    { users: ['山田'] },
-                    { holiday: true },
-                    { holiday: true },
-                    { users: ['佐藤'] },
-                ]
-            },
-            {
-                name: '案件C (シール貼り)',
-                records: [
-                    { holiday: true },
-                    { users: ['鈴木', '佐藤'] },
-                    { users: ['鈴木'] },
-                    { users: [] },
-                    { users: ['山田', '鈴木'] },
-                    { holiday: true },
-                    { holiday: true },
-                    { users: ['鈴木'] },
-                ]
-            }
+        // --- モックデータ定義 (進捗記録用) ---
+        // (projects.html のデータと attendance.html のデータをマージしたイメージ)
+
+        const mockProgressData = [
+            // 日付, 利用者ID, 案件ID, タスク名, 実績数量, 実績時間
+            { date: '2025-11-04', userId: 'U-001', userName: '鈴木 花子', projectId: 'P-001', taskName: '型抜き', quantity: 200, hours: 3.0 },
+            { date: '2025-11-04', userId: 'U-001', userName: '鈴木 花子', projectId: 'P-001', taskName: '組み立て', quantity: 50, hours: 2.0 },
+            { date: '2025-11-04', userId: 'U-002', userName: '山田 太郎', projectId: 'P-002', taskName: '汚れ確認', quantity: 500, hours: 4.5 },
+            { date: '2025-11-05', userId: 'U-001', userName: '鈴木 花子', projectId: 'P-001', taskName: '組み立て', quantity: 150, hours: 5.0 },
+            { date: '2025-11-05', userId: 'U-003', userName: '佐藤 一郎', projectId: 'P-002', taskName: '封入', quantity: 300, hours: 4.0 },
+            { date: '2025-11-07', userId: 'U-002', userName: '山田 太郎', projectId: 'P-001', taskName: '検品・梱包', quantity: 100, hours: 2.5 },
+            { date: '2025-11-07', userId: 'U-003', userName: '佐藤 一郎', projectId: 'P-002', taskName: '封入', quantity: 200, hours: 3.0 }
         ];
 
+        // 案件マスタ (projects.html より)
+        const mockProjectMaster = {
+            'P-001': { name: '箱折り', tasks: ['型抜き', '組み立て', '検品・梱包'] },
+            'P-002': { name: 'DM検品・封入', tasks: ['汚れ確認', '封入'] },
+            'P-004': { name: '自主製品 (クッキー) 製造', tasks: ['生地準備', '焼成・梱包'] }
+        };
+
+        // 利用者マスタ (attendance.html より)
+        const mockUserMaster = {
+            'U-001': { name: '鈴木 花子' },
+            'U-002': { name: '山田 太郎' },
+            'U-003': { name: '佐藤 一郎' }
+        };
 
         // --- DOM要素の取得 ---
         const viewToggles = document.querySelectorAll('input[name="viewType"]');
-        const tableHead = document.getElementById('progress-table-head');
-        const tableBody = document.getElementById('progress-table-body');
+        const cardContainer = document.getElementById('progress-card-container');
 
         // --- イベントリスナーの設定 ---
         viewToggles.forEach(toggle => {
             toggle.addEventListener('change', (e) => {
-                renderTable(e.target.value);
+                renderProgressCards(e.target.value);
             });
         });
 
         // --- レンダリング関数 ---
 
-        function createCellContent(record, viewType) {
-            
-            // 案件別表示 (Project View)
-            if (viewType === 'project') {
-                if (record.holiday) {
-                    return '<td class="status-holiday">(休)</td>';
-                }
-                if (!record.users || record.users.length === 0) {
-                    return '<td>-</td>';
-                }
-                let usersHtml = record.users.map(user => 
-                    `<div class="user">${user}</div>`
-                ).join('');
-                return `<td><div class="progress-cell-content">${usersHtml}</div></td>`;
-            }
-
-            // 利用者別表示 (User View)
-            if (viewType === 'user') {
-                if (record.status === '休' || record.status === '欠席') {
-                    return `<td class="status-holiday">(${record.status})</td>`;
-                }
-                
-                let html = '';
-                
-                let statusLine = `<div class="status">${record.status}`;
-                if ((record.status === '通所' || record.status === '在宅') && record.time) {
-                    statusLine += ` <span class="time">${record.time}</span>`;
-                }
-                statusLine += `</div>`;
-                html += statusLine;
-
-                if (record.additions && record.additions.length > 0) {
-                    let additionsHtml = record.additions.map(a => `+${a}`).join(' ');
-                    html += `<div class="additions">${additionsHtml}</div>`;
-                }
-
-                if (record.deductions && record.deductions.length > 0) {
-                    let deductionsHtml = record.deductions.map(d => `-${d}`).join(' ');
-                    html += `<div class="deductions">${deductionsHtml}</div>`;
-                }
-
-                if (record.projects && record.projects.length > 0) {
-                    html += record.projects.map(p => 
-                        `<div class="project">${p}</div>`
-                    ).join('');
-                }
-                
-                return `<td><div class="progress-cell-content">${html}</div></td>`;
-            }
-
-            return '<td></td>';
+        /**
+         * 共通: 進捗入力行 (サブコンポーネント)
+         * @param {string} mainLabel - メインラベル (タスク名、利用者名など)
+         * @param {string} subLabel - サブラベル (案件名、担当者名など)
+         * @param {number} quantity - 現在の数量
+         * @param {number} hours - 現在の時間
+         */
+        function createProgressInputRow(mainLabel, subLabel, quantity = 0, hours = 0) {
+            return `
+                <div class="progress-input-row">
+                    <div class="progress-input-label">
+                        <span class="label-main">${mainLabel}</span>
+                        <span class="label-sub">${subLabel}</span>
+                    </div>
+                    <div class="progress-input-fields">
+                        <label for="qty_${mainLabel}">数量:</label>
+                        <input type="number" id="qty_${mainLabel}" value="${quantity}">
+                        <label for="hrs_${mainLabel}">時間:</label>
+                        <input type="number" id="hrs_${mainLabel}" value="${hours}" step="0.5">
+                    </div>
+                </div>
+            `;
         }
 
 
-        function renderTable(viewType) {
-            let data;
-            let mainHeaderTitle;
+        /**
+         * メイン: カード描画 (ビュー切替)
+         * @param {string} viewType - 'user', 'project', 'task'
+         */
+        function renderProgressCards(viewType = 'user') {
+            
+            let html = '';
+
             if (viewType === 'user') {
-                data = userMockData;
-                mainHeaderTitle = '利用者名';
-            } else {
-                data = projectMockData;
-                mainHeaderTitle = '案件名';
+                // --- 利用者別ビュー ---
+                Object.values(mockUserMaster).forEach(user => {
+                    // (デモのため、全案件の全タスクを入力欄として表示)
+                    let inputRowsHtml = '';
+                    Object.entries(mockProjectMaster).forEach(([projectId, project]) => {
+                        project.tasks.forEach(taskName => {
+                             // TODO: 本来は当月の実績値 (mockProgressData) から quantity, hours を取得する
+                            inputRowsHtml += createProgressInputRow(taskName, project.name, 0, 0);
+                        });
+                    });
+
+                    html += `
+                        <div class="progress-card">
+                            <div class="progress-card-header">
+                                <h2 class="progress-card-title">${user.name}</h2>
+                            </div>
+                            <div class="progress-card-body">
+                                ${inputRowsHtml}
+                            </div>
+                        </div>
+                    `;
+                });
+            } 
+            
+            else if (viewType === 'project') {
+                // --- 案件別ビュー ---
+                Object.entries(mockProjectMaster).forEach(([projectId, project]) => {
+                    let inputRowsHtml = '';
+                    project.tasks.forEach(taskName => {
+                        // (デモのため、全利用者を対象に入力欄を表示)
+                         Object.values(mockUserMaster).forEach(user => {
+                            // TODO: 本来は当月の実績値 (mockProgressData) から quantity, hours を取得する
+                            inputRowsHtml += createProgressInputRow(user.name, taskName, 0, 0);
+                        });
+                    });
+                    
+                    html += `
+                        <div class="progress-card">
+                            <div class="progress-card-header">
+                                <h2 class="progress-card-title">${project.name}</h2>
+                                <p class="progress-card-subtitle">ID: ${projectId}</p>
+                            </div>
+                            <div class="progress-card-body">
+                                ${inputRowsHtml}
+                            </div>
+                        </div>
+                    `;
+                });
+            } 
+            
+            else if (viewType === 'task') {
+                // --- タスク別ビュー ---
+                // (全案件からタスクをユニークに集計)
+                const allTasks = new Map();
+                Object.entries(mockProjectMaster).forEach(([projectId, project]) => {
+                    project.tasks.forEach(taskName => {
+                        if (!allTasks.has(taskName)) {
+                            allTasks.set(taskName, []);
+                        }
+                        allTasks.get(taskName).push(project.name);
+                    });
+                });
+
+                allTasks.forEach((projectNames, taskName) => {
+                     let inputRowsHtml = '';
+                     // (デモのため、全利用者を対象に入力欄を表示)
+                     Object.values(mockUserMaster).forEach(user => {
+                        // TODO: 本来は当月の実績値 (mockProgressData) から quantity, hours を取得する
+                        inputRowsHtml += createProgressInputRow(user.name, `担当案件: ${projectNames.join(', ')}`, 0, 0);
+                     });
+
+                    html += `
+                        <div class="progress-card">
+                            <div class="progress-card-header">
+                                <h2 class="progress-card-title">${taskName}</h2>
+                                <p class="progress-card-subtitle">関連案件: ${projectNames.join(', ')}</p>
+                            </div>
+                            <div class="progress-card-body">
+                                ${inputRowsHtml}
+                            </div>
+                        </div>
+                    `;
+                });
             }
 
-            // 1. ヘッダー (<thead>) の生成
-            let headerHtml = '<tr>';
-            headerHtml += `<th class="header-main">${mainHeaderTitle}</th>`;
-            
-            dates.forEach(d => {
-                let holidayClass = d.dayClass;
-                let dayLabel = d.day;
-                let dayLabelClass = ''; 
-
-                if (d.dayClass === 'day-sun') {
-                    dayLabelClass = 'day-label-sun';
-                    if (d.holiday) dayLabel = '日';
-                } else if (d.dayClass === 'day-sat') {
-                    dayLabelClass = 'day-label-sat';
-                    if (d.holiday) dayLabel = '土';
-                } else if (d.holiday) {
-                    dayLabel = '祝';
-                    dayLabelClass = 'day-label-sun'; 
-                }
-                
-                headerHtml += `<th class="${holidayClass}">${d.date} (<span class="${dayLabelClass}">${dayLabel}</span>)</th>`;
-            });
-            
-            headerHtml += '</tr>';
-            tableHead.innerHTML = headerHtml;
-
-            // 2. ボディ (<tbody>) の生成
-            let bodyHtml = '';
-            data.forEach(row => {
-                bodyHtml += '<tr>';
-                bodyHtml += `<th scope="row">${row.name}</th>`;
-                row.records.forEach(record => {
-                    bodyHtml += createCellContent(record, viewType);
-                });
-                bodyHtml += '</tr>';
-            });
-            tableBody.innerHTML = bodyHtml;
+            cardContainer.innerHTML = html;
         }
 
         // --- 初期表示 ---
-        renderTable('user');
+        renderProgressCards('user'); // デフォルトは利用者別
     </script>
-
-</body>
+    </body>
 </html>

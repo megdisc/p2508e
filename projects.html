@@ -4,13 +4,222 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>案件一覧</title>
+    <title>案件管理</title>
     
     <link rel="stylesheet" href="colors.css">
     <link rel="stylesheet" href="style.css">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
+    <style>
+        /* * 案件一覧ページ: アイコンビュー切替トグル
+         * (progress.html の .view-toggle とは別のスタイル)
+         */
+        .view-toggle-icons {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem; /* 4px */
+            background-color: var(--color-toggle-background); /* */
+            padding: 0.375rem; /* 6px */
+            border-radius: 50px; /* 角丸（カプセル型） */
+        }
+
+        /* トグル内のアイコンボタン (既存の .btn-icon をベース) */
+        .view-toggle-icons .btn-icon {
+            color: var(--color-text-disabled); 
+            background-color: transparent;
+        }
+
+        .view-toggle-icons .btn-icon:hover {
+            background-color: var(--color-surface-row-hover); /* */
+            color: var(--color-text-primary);
+        }
+
+        /* ★アクティブなトグルボタンのスタイル */
+        .view-toggle-icons .btn-icon.active {
+            background-color: var(--color-toggle-checked-background); /* */
+            color: var(--color-toggle-checked-text); /* */
+        }
+        .view-toggle-icons .btn-icon.active:hover {
+            background-color: var(--color-button-primary-hover); /* */
+        }
+
+        /* ビュー切り替えコンテナ (JSで display を制御) */
+        .view-content {
+            display: none; /* JSで 'block'/'flex' に切り替える */
+        }
+        .view-content.active {
+            display: block; /* デフォルトは 'block' */
+        }
+
+        /* ------------------------------ */
+        /* 汎用データテーブル (予算用) */
+        /* ------------------------------ */
+        .data-table-container {
+            background-color: var(--color-surface-primary);
+            border: 1px solid var(--color-border-primary);
+            border-radius: 0.5rem; /* 8px */
+            overflow: hidden;
+            padding: 1.25rem;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .data-table th,
+        .data-table td {
+            border-bottom: 1px solid var(--color-border-primary);
+            padding: 1rem 0.75rem; /* 16px 12px */
+            text-align: left;
+            vertical-align: top;
+        }
+        .data-table thead th {
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            font-size: var(--font-size-sm); /* */
+            border-bottom-width: 2px; /* 既存の .progress-table thead th に合わせる */
+            border-bottom-color: var(--color-border-heavy); /* */
+        }
+        .data-table tbody tr:hover td {
+            background-color: var(--color-surface-row-hover); /* */
+        }
+        .data-table .col-project { width: 30%; }
+        .data-table .col-number { 
+            text-align: right; 
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: 600;
+        }
+        
+        /* 予算テーブル固有 */
+        .budget-table .diff-plus {
+            color: var(--color-text-addition); /* */
+        }
+        .budget-table .diff-minus {
+            color: var(--color-text-deduction); /* */
+        }
+
+        /* (担当者テーブル .assignee-table 関連のスタイルは削除) */
+
+
+        /* ------------------------------ */
+        /* 簡易ガントチャート */
+        /* ------------------------------ */
+        .gantt-chart-container {
+            background-color: var(--color-surface-primary);
+            border: 1px solid var(--color-border-primary);
+            border-radius: 0.5rem; /* 8px */
+            overflow-x: auto;
+            padding: 1.25rem;
+        }
+        .gantt-chart {
+            display: grid;
+            /* 案件名列 + 31日分 (10/20 - 11/19) */
+            grid-template-columns: minmax(15rem, 1.5fr) repeat(31, minmax(2.5rem, 1fr));
+            width: 100%;
+            min-width: 1000px;
+        }
+        .gantt-header,
+        .gantt-project-name,
+        .gantt-day-cell {
+            border-bottom: 1px solid var(--color-border-primary);
+            border-right: 1px solid var(--color-border-primary);
+            padding: 0.5rem;
+            font-size: var(--font-size-sm);
+            text-align: center;
+        }
+        
+        /* ヘッダー行 */
+        .gantt-header {
+            font-weight: 600;
+            color: var(--color-text-secondary);
+            border-bottom: 2px solid var(--color-border-heavy);
+            position: sticky;
+            top: 0;
+            background-color: var(--color-surface-primary); /* */
+            z-index: 2;
+        }
+        .gantt-header.header-project {
+            text-align: left;
+            position: sticky;
+            left: 0;
+            z-index: 3;
+        }
+        .gantt-header.day-sat { color: var(--color-text-saturday); } /* */
+        .gantt-header.day-sun { color: var(--color-text-sunday-holiday); } /* */
+
+        /* データ行 (プロジェクト名) */
+        .gantt-project-name {
+            font-weight: 500;
+            text-align: left;
+            position: sticky;
+            left: 0;
+            background-color: var(--color-surface-primary); /* */
+            z-index: 1;
+        }
+        
+        /* データ行 (セル) */
+        .gantt-row {
+            /* 案件名 + 日付セル を1行として扱う */
+            display: contents; /* gridレイアウトの子として振る舞う */
+        }
+        .gantt-row:hover .gantt-project-name,
+        .gantt-row:hover .gantt-day-cell {
+            background-color: var(--color-surface-row-hover); /* */
+        }
+
+        .gantt-day-cell {
+            position: relative;
+            height: 3rem; /* バーの高さを確保 */
+            padding: 0;
+            overflow: hidden;
+        }
+
+        /* スケジュールバー */
+        .gantt-bar {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 1.5rem; /* 24px */
+            
+            /* (grid-column-start/end はJSで設定) */
+            grid-column-start: var(--gantt-start);
+            grid-column-end: var(--gantt-end);
+            
+            background-color: var(--semantic-primary-main); /* */
+            border: 1px solid var(--palette-004);
+            border-radius: 4px;
+            
+            color: var(--color-text-on-accent); /* */
+            font-size: var(--font-size-sm);
+            font-weight: 600;
+            
+            display: flex;
+            align-items: center;
+            padding-left: 0.5rem;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        
+        /* ステータス別バーの色 */
+        .gantt-bar.status-active {
+            background-color: var(--semantic-primary-main); /* */
+            border-color: var(--palette-004);
+        }
+        .gantt-bar.status-completed {
+            background-color: var(--semantic-success-main); /* */
+            border-color: var(--palette-044);
+        }
+        .gantt-bar.status-not-started {
+            background-color: var(--semantic-neutral-main); /* */
+            border-color: var(--palette-333);
+        }
+         .gantt-bar.status-cancelled {
+            background-color: var(--semantic-cancelled-main); /* */
+            border-color: var(--palette-000);
+            text-decoration: line-through;
+        }
+
+    </style>
     </head>
 <body>
 
@@ -62,6 +271,7 @@
 
                     <li class="nav-category">活動記録</li>
                     <li class="nav-item"><a href="attendance.html">出欠管理</a></li>
+                    
                     <li class="nav-accordion">
                         <details open> <summary>案件管理</summary>
                             <ul class="nav-accordion-menu">
@@ -124,18 +334,51 @@
             </div>
 
             <div class="controls">
+                
                 <div class="search-filter">
                     <input type="search" id="projectSearch" placeholder="案件名、顧客名、担当者名などで検索...">
                 </div>
+
+                <div class="view-toggle-icons" role="radiogroup" aria-label="表示切替">
+                    <button class="btn-icon view-toggle-btn active" data-view-target="view-cards" title="カード表示" aria-checked="true">
+                        <i class="fas fa-list"></i>
+                    </button>
+                    <button class="btn-icon view-toggle-btn" data-view-target="view-schedule" title="スケジュール表示" aria-checked="false">
+                        <i class="fas fa-chart-gantt"></i>
+                    </button>
+                    <button class="btn-icon view-toggle-btn" data-view-target="view-budget" title="予算表示" aria-checked="false">
+                        <i class="fas fa-coins"></i>
+                    </button>
+                </div>
             </div>
             
-            <div id="project-card-container" class="card-list-container">
+            <div class="view-content-area">
+
+                <div id="view-cards" class="view-content active">
+                    <div id="project-card-container" class="card-list-container">
+                        </div>
                 </div>
-        </main>
+
+                <div id="view-schedule" class="view-content">
+                    <div class="gantt-chart-container">
+                        <div id="gantt-chart-grid" class="gantt-chart">
+                            </div>
+                    </div>
+                </div>
+
+                <div id="view-budget" class="view-content">
+                    <div class="data-table-container">
+                        <table id="budget-table" class="data-table budget-table">
+                            </table>
+                    </div>
+                </div>
+
+                </div>
+            </main>
     </div>
 
     <script>
-        // --- モックデータ定義 ---
+        // --- モックデータ定義 (projects.html のデータ) ---
         
         const PROJECT_STATUS = {
             NOT_STARTED: { text: '未着手', class: 'status-not-started' },
@@ -145,7 +388,7 @@
         };
 
         const projectsMockData = [
-            {
+             {
                 id: 'P-001',
                 name: '箱折り',
                 status: PROJECT_STATUS.ACTIVE,
@@ -155,6 +398,8 @@
                 manager: '山田 太郎',
                 orderDate: '2025-10-20',
                 deadline: '2025-11-20',
+                budget: 150000,
+                actual: 95000,
                 tasks: [
                     { name: '型抜き', progress: 100, period: '1 - 5日', assignee: { name: '鈴木 花子', type: '利用者' } },
                     { name: '組み立て', progress: 60, period: '5 - 10日', assignee: { name: '鈴木 花子', type: '利用者' } },
@@ -171,6 +416,8 @@
                 manager: '佐藤 一郎',
                 orderDate: '2025-11-01',
                 deadline: '2025-11-15',
+                budget: 80000,
+                actual: 85000,
                 tasks: [
                     { name: '汚れ確認', progress: 30, period: '1 - 2日', assignee: { name: '佐藤 一郎', type: '職員' } },
                     { name: '封入', progress: 0, period: '3 - 5日', assignee: { name: '鈴木 花子', type: '利用者' } }
@@ -186,6 +433,8 @@
                 manager: '高橋 次郎',
                 orderDate: '2025-10-01',
                 deadline: '2025-10-31',
+                budget: 120000,
+                actual: 120000,
                 tasks: [
                     { name: 'デザイン案', progress: 100, period: '1 - 10日', assignee: { name: '高橋 次郎', type: '外注先' } },
                     { name: 'SVGデータ化', progress: 100, period: '11 - 15日', assignee: { name: '高橋 次郎', type: '外注先' } }
@@ -201,6 +450,8 @@
                 manager: '山田 太郎',
                 orderDate: '2025-12-01',
                 deadline: '2025-12-05',
+                budget: 50000,
+                actual: 0,
                 tasks: [
                     { name: '生地準備', progress: 0, period: '1日', assignee: { name: '厨房チーム', type: '利用者' } },
                     { name: '焼成・梱包', progress: 0, period: '2日', assignee: { name: '厨房チーム', type: '利用者' } }
@@ -216,6 +467,8 @@
                 manager: '佐藤 一郎',
                 orderDate: '2025-10-01',
                 deadline: '2026-03-31',
+                budget: 300000,
+                actual: 25000,
                 tasks: [
                     { name: '月次清掃', progress: 10, period: '毎月', assignee: { name: '清掃チーム', type: '利用者' } }
                 ]
@@ -223,12 +476,10 @@
         ];
 
 
-        // --- DOM要素の取得 ---
+        // --- 既存のDOM要素 ---
         const cardContainer = document.getElementById('project-card-container');
 
-        // --- レンダリング関数 ---
-
-        // タスク進捗バーを生成するヘルパー
+        // --- 既存のレンダリング関数 (カード表示用) ---
         function createTaskProgressBar(progress) {
             return `
                 <div class="progress-bar-container">
@@ -239,11 +490,7 @@
                 </div>
             `;
         }
-
-        // タスク行 (1行) を生成するヘルパー (修正)
         function createTaskRow(task) {
-            
-            // [修正] HTML構造を変更 (括弧削除)
             return `
                 <div class="task-row">
                     <span class="task-name">${task.name}</span>
@@ -258,40 +505,26 @@
                 </div>
             `;
         }
-        
-        // 日付を短縮フォーマット
         function formatDateShort(dateString) {
             if (!dateString) return '';
             const parts = dateString.split('-');
             if (parts.length === 3) {
-                // MM/DD 形式
                 return `${parts[1].padStart(2, '0')}/${parts[2].padStart(2, '0')}`;
             }
             return dateString;
         }
 
-        // 案件カードをレンダリングする (修正)
         function renderProjectCards() {
             let containerHtml = '';
-
             projectsMockData.forEach(p => {
-                // タスクリストのHTMLを生成
                 let tasksHtml = p.tasks.map(createTaskRow).join('');
-                
-                // 期間をフォーマット
                 let periodHtml = `${formatDateShort(p.orderDate)} - ${formatDateShort(p.deadline)}`;
-
-                // [追加] 事業区分バッジのテキストを決定 (外部受託の場合はクライアント名併記)
                 let typeBadgeText = p.type === '外部受託' ? `${p.type} (${p.client})` : p.type;
-
-                // [修正] HTML構造（案件区分タグの追加）
                 containerHtml += `
                     <div class="card">
-                        
                         <div class="card-header">
                             <div class="card-header-info">
                                 <span class="status-badge ${p.status.class} status-badge-large">${p.status.text}</span>
-                                
                                 <div class="title-wrapper">
                                     <h2 class="card-title">${p.name}</h2>
                                     <div class="project-badges-stack">
@@ -299,10 +532,8 @@
                                         <span class="project-category-badge">${p.frequency}</span>
                                     </div>
                                 </div>
-                                
                                 <p class="card-subtitle">${p.client}</p>
                             </div>
-                            
                             <div class="card-header-aside">
                                 <button class="btn btn-icon" title="編集">
                                     <i class="fas fa-pencil-alt"></i> </button>
@@ -310,43 +541,215 @@
                                     <i class="fas fa-trash"></i> </button>
                             </div>
                         </div>
-
                         <div class="card-body-columns">
-                        
                             <div class="card-section-detail"> 
                                 <p class="card-meta-item">${periodHtml}</p>
                                 <p class="card-meta-item">${p.manager}</p>
                             </div>
-                            
                             <div class="card-section-task">
                                 <div class="task-list-wrapper">
                                     ${tasksHtml}
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 `;
             });
-
             cardContainer.innerHTML = containerHtml;
         }
 
-        // --- 初期表示 ---
-        renderProjectCards();
 
-        // --- 検索フィルター (簡易版) ---
+        // --- 新規ビュー描画関数 ---
+
+        // 日付ユーティリティ (Dateオブジェクトを 'YYYY-MM-DD' 文字列に)
+        function toISODateString(date) {
+            return date.toISOString().split('T')[0];
+        }
+        // 2つの日付間の日数を計算
+        function daysBetween(dateStr1, dateStr2) {
+            const d1 = new Date(dateStr1);
+            const d2 = new Date(dateStr2);
+            const diffTime = Math.abs(d2 - d1);
+            return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        }
+
+
+        /**
+         * 2. スケジュール (ガントチャート) 描画
+         */
+        function renderGanttChart() {
+            const container = document.getElementById('gantt-chart-grid');
+            
+            // --- ガントチャートの期間設定 ---
+            // (ここではモックデータに基づき 10/20 から 31 日間 (11/19 まで) とします)
+            const ganttStartDate = new Date('2025-10-20');
+            const ganttTotalDays = 31;
+            const timelineDates = [];
+            for (let i = 0; i < ganttTotalDays; i++) {
+                const date = new Date(ganttStartDate);
+                date.setDate(ganttStartDate.getDate() + i);
+                timelineDates.push(date);
+            }
+
+            // --- 1. ヘッダー行の描画 ---
+            let headerHtml = `<div class="gantt-header header-project">案件名</div>`;
+            timelineDates.forEach(date => {
+                const day = date.getDay(); // 0:Sun, 6:Sat
+                let dayClass = '';
+                if (day === 0) dayClass = 'day-sun';
+                if (day === 6) dayClass = 'day-sat';
+                headerHtml += `
+                    <div class="gantt-header ${dayClass}">
+                        ${date.getDate()}/${date.getMonth() + 1}
+                    </div>
+                `;
+            });
+
+            // --- 2. データ行の描画 ---
+            let rowsHtml = '';
+            projectsMockData.forEach(p => {
+                
+                // プロジェクトの開始日・終了日とガントチャート開始日の差を計算
+                // (カラム番号は 1-based だが、案件名列が 1 なので、日付は 2 からスタート)
+                const ganttStartStr = toISODateString(ganttStartDate);
+                
+                // 開始日がガントチャートより早い場合は 1 (日付列の最初)
+                let startCol = Math.max(1, daysBetween(ganttStartStr, p.orderDate));
+                // 終了日
+                let endCol = daysBetween(ganttStartStr, p.deadline) + 1; // +1 でその日を含む
+
+                // ガントチャートの範囲内に丸める
+                startCol = Math.max(1, startCol);
+                endCol = Math.min(ganttTotalDays + 1, endCol);
+
+                // CSS Grid は 1-based index。 案件名列が 1 なので、日付列は 2 から (ganttTotalDays + 1) まで。
+                const cssVarStart = startCol + 1; // +1 は案件名列の分
+                const cssVarEnd = endCol + 1;     // +1 は案件名列の分
+
+                rowsHtml += `
+                    <div class="gantt-row">
+                        <div class="gantt-project-name">${p.name}</div>
+                        
+                        ${timelineDates.map(() => `<div class="gantt-day-cell"></div>`).join('')}
+                        
+                        <div class="gantt-bar ${p.status.class}" 
+                             style="--gantt-start: ${cssVarStart}; --gantt-end: ${cssVarEnd};">
+                            ${p.name}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = headerHtml + rowsHtml;
+        }
+
+        /**
+         * 3. 予算テーブル描画
+         */
+        function renderBudgetTable() {
+            const table = document.getElementById('budget-table');
+            const formatter = new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' });
+            
+            // --- 1. ヘッダー行 ---
+            let html = `
+                <thead>
+                    <tr>
+                        <th class="col-project">案件名</th>
+                        <th class="col-number">予算</th>
+                        <th class="col-number">実績</th>
+                        <th class="col-number">差異</th>
+                    </tr>
+                </thead>
+            `;
+
+            // --- 2. データ行 ---
+            html += `<tbody>`;
+            projectsMockData.forEach(p => {
+                const budget = p.budget || 0;
+                const actual = p.actual || 0;
+                const diff = budget - actual;
+                let diffClass = '';
+                if (diff > 0) diffClass = 'diff-plus'; // 予算余り
+                if (diff < 0) diffClass = 'diff-minus'; // 予算オーバー
+                
+                html += `
+                    <tr>
+                        <td>
+                            <span class="status-badge ${p.status.class}">${p.status.text}</span>
+                            <strong>${p.name}</strong>
+                            <div class="project-category-badge">${p.client}</div>
+                        </td>
+                        <td class="col-number">${formatter.format(budget)}</td>
+                        <td class="col-number">${formatter.format(actual)}</td>
+                        <td class="col-number ${diffClass}">${formatter.format(diff)}</td>
+                    </tr>
+                `;
+            });
+            html += `</tbody>`;
+            
+            table.innerHTML = html;
+        }
+        
+        /**
+         * (変更) 4. 担当者テーブル描画 (削除)
+         */
+        // function renderAssigneeTable() { ... }
+
+        // --- ▲▲▲ 新規ビュー描画関数 ここまで ▲▲▲ ---
+
+
+        // --- 初期表示 (全ビューを描画) ---
+        renderProjectCards();
+        renderGanttChart();
+        renderBudgetTable();
+        // (変更) renderAssigneeTable(); // 削除
+
+
+        // --- 既存の検索フィルター (簡易版) ---
         document.getElementById('projectSearch').addEventListener('input', (e) => {
             const searchTerm = e.target.value.toLowerCase();
-            // セレクタを .card に変更
-            const cards = cardContainer.querySelectorAll('.card');
             
+            // (注: 検索は現在カードビューにのみ連動)
+            const cards = cardContainer.querySelectorAll('.card');
             cards.forEach(card => {
                 const cardText = card.textContent.toLowerCase();
                 if (cardText.includes(searchTerm)) {
-                    card.style.display = 'flex'; // display: block ではなく flex にする
+                    card.style.display = 'flex';
                 } else {
                     card.style.display = 'none';
+                }
+            });
+        });
+
+        // --- (変更) ビュー切替リスナー ---
+        const toggleButtons = document.querySelectorAll('.view-toggle-btn');
+        const viewContents = document.querySelectorAll('.view-content');
+
+        toggleButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const targetId = button.getAttribute('data-view-target');
+
+                // 1. 全てのボタンの 'active' を解除
+                toggleButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                    btn.setAttribute('aria-checked', 'false');
+                });
+
+                // 2. クリックしたボタンを 'active' に
+                button.classList.add('active');
+                button.setAttribute('aria-checked', 'true');
+
+                // 3. 全てのビューを非表示
+                viewContents.forEach(content => {
+                    content.style.display = 'none';
+                    content.classList.remove('active');
+                });
+
+                // 4. 対象のビューを表示
+                const targetView = document.getElementById(targetId);
+                if (targetView) {
+                    targetView.style.display = 'block'; // 'block' で表示
+                    targetView.classList.add('active');
                 }
             });
         });
