@@ -5,7 +5,7 @@
 
 window.APP_CONSTANTS = {
     // --- アプリケーション基本情報 ---
-    APP_NAME: "Compath",
+    APP_NAME: "p2508e",
 
     // --- ページキー (HTMLの data-page-key と一致させる) ---
     PAGE_KEYS: {
@@ -66,7 +66,7 @@ window.APP_CONSTANTS = {
 
     // (以下、ダミーデータ用の定義)
     DUMMY_USER: {
-        name: "山田太郎 (JS読込)",
-        role: "管理者 (JS読込)",
+        name: "山田太郎",
+        role: "管理者",
     }
 };

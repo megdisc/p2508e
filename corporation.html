@@ -4,12 +4,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>トップ</title>
+    <title>法人情報</title>
     
     <link rel="stylesheet" href="colors.css">
     <link rel="stylesheet" href="style.css">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <style>
+        /* corporation.html 専用スタイル */
+        
+        /* 案件一覧 (projects.html) の .card-body に合わせる */
+        .card-body {
+            padding: 1.25rem;
+        }
+        
+        /* * 2カラムの定義リスト (dl) スタイル
+         * * style.css のフォント設定 (font-weight: 500) が
+         * * 適用されるよう、固有の font-family 指定を削除。
+         */
+        .info-list {
+            display: grid;
+            grid-template-columns: minmax(12rem, 1.5fr) 3fr;
+            gap: 0.5rem 1.5rem; /* 8px 24px */
+            font-size: var(--font-size-base);
+            padding-top: 1rem; /* カードボディ上端からの余白 */
+        }
+        .info-list dt {
+            font-weight: 600; /* ラベルは太字 */
+            color: var(--color-text-secondary); /* L3 */
+            padding: 0.625rem; /* 10px */
+            text-align: right;
+            border-bottom: 1px solid var(--color-border-primary); /* L3 */
+            background-color: var(--color-surface-secondary); /* L3 */
+        }
+        .info-list dd {
+            margin: 0;
+            /* font-weight: 500; (style.css から継承) */
+            color: var(--color-text-primary); /* L3 */
+            padding: 0.625rem 0.625rem; /* 10px */
+            border-bottom: 1px solid var(--color-border-primary); /* L3 */
+            line-height: 1.6;
+            /* * 固有の font-family: 'Courier New' を削除。
+             * style.css の基本フォントが適用されます。
+             */
+        }
+    </style>
 </head>
 <body data-page-key="CORPORATION">
 
@@ -19,10 +59,9 @@
             <div class="logo">p2508e</div>
             <nav class="global-nav"></nav>
             
-
             <div class="sidebar-footer">
-                <div class="user-name">山田太郎</div>
-                <div class="user-role">管理者</div>
+                <div class="user-name"></div>
+                <div class="user-role"></div>
                 <div class="sidebar-logout">
                     <a href="#">ログアウト</a>
                 </div>
@@ -31,11 +70,53 @@
 
         <main class="main-content">
             <h1></h1>
-            <p>ここに各種サマリーが表示されます</p>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-header-info">
+                        <h2 class="card-title">社会福祉法人 p2508e福祉会</h2>
+                    </div>
+                    <div class="card-header-aside">
+                        <button class="btn btn-icon btn-primary" title="法人情報を編集">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="card-body">
+                    <dl class="info-list">
+                        <dt>法人番号</dt>
+                        <dd>1234567890123</dd>
+                        
+                        <dt>代表者役職</dt>
+                        <dd>理事長</dd>
+                        
+                        <dt>代表者氏名</dt>
+                        <dd>山田 太郎</dd>
+                        
+                        <dt>設立年月日</dt>
+                        <dd>2010-04-01</dd>
+                        
+                        <dt>郵便番号</dt>
+                        <dd>100-0001</dd>
+                        
+                        <dt>所在地</dt>
+                        <dd>東京都千代田区千代田1-1</dd>
+                        
+                        <dt>電話番号</dt>
+                        <dd>03-1234-5678</dd>
+                        
+                        <dt>FAX番号</dt>
+                        <dd>03-1234-5679</dd>
+                    </dl>
+                </div>
+            </div>
+
         </main>
     </div>
 
-        <script src="constants.js"></script>
+    <script src="constants.js" defer></script>
     <script src="layout.js" defer></script>
-</body>
+    
+    </body>
 </html>
