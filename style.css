@@ -12,6 +12,8 @@
     --theme-main: var(--palette-024);
     --theme-sub: var(--palette-013);
     --theme-accent: var(--palette-FD0);
+    /* [追加] プライマリボタン色 */
+    --theme-primary-button: var(--palette-006); 
 
     /* ベースカラー (Base) */
     --base-primary: var(--palette-FFF);
@@ -41,6 +43,10 @@
     --semantic-neutral-main: var(--palette-666);      /* 濃い灰 (テキスト/強調用) */
     --semantic-neutral-background: var(--palette-EEE);  /* 薄い灰 (バッジ背景用) */
 
+    /* [追加] Neutral Dark (灰系: 中止) */
+    --semantic-cancelled-main: var(--palette-333);      /* 濃い灰 (テキスト/強調用) */
+    --semantic-cancelled-background: var(--palette-CCC);  /* 薄い灰 (バッジ背景用) */
+
 
     /* --- 第三階層: 具体的な定義 (L3) --- */
     /* (L2 の変数を参照して定義) */
@@ -57,13 +63,17 @@
     --color-text-secondary: var(--base-quaternary); 
     --color-text-disabled: var(--base-quaternary); 
     --color-text-on-accent: var(--base-primary);   
+    /* [削除] 担当者種別カラー (色分け不要のため) */
+
 
     /* フォントサイズ */
-    --font-size-base: 1em;
-    --font-size-sm: calc(var(--font-size-base) / 1.25);
-    --font-size-md: calc(var(--font-size-base) * 1.25);
-    --font-size-lg: calc(var(--font-size-md) * 1.25);
-    --font-size-xl: calc(var(--font-size-lg) * 1.25);
+    --font-size-base: 1em; /* 16px */
+    --font-size-sm: calc(var(--font-size-base) / 1.25); /* 12.8px */
+    --font-size-md: calc(var(--font-size-base) * 1.25); /* 20px */
+    --font-size-lg: calc(var(--font-size-md) * 1.25); /* 25px */
+    --font-size-xl: calc(var(--font-size-lg) * 1.25); /* 31.25px */
+    /* [削除] --font-size-xs は定義外のため削除 */
+
 
     /* 曜日・加算・控除 (L2セマンティックを参照) */
     --color-text-saturday: var(--semantic-primary-main);
@@ -71,7 +81,7 @@
     --color-text-addition: var(--semantic-primary-main);
     --color-text-deduction: var(--semantic-error-main);
 
-    /* L3 バッジ・ステータス (L2を具象化) */
+    /* [修正] L3 バッジ・ステータス (L2を具象化) */
     --color-badge-active-text: var(--semantic-primary-main);
     --color-badge-active-background: var(--semantic-primary-background);
     --color-badge-completed-text: var(--semantic-success-main);
@@ -80,8 +90,13 @@
     --color-badge-warning-background: var(--semantic-warning-background);
     --color-badge-error-text: var(--semantic-error-main);
     --color-badge-error-background: var(--semantic-error-background);
-    --color-badge-neutral-text: var(--semantic-neutral-main);
-    --color-badge-neutral-background: var(--semantic-neutral-background);
+    /* [修正] 'neutral' を 'not-started' に変更 (意味を明確化) */
+    --color-badge-not-started-text: var(--semantic-neutral-main);
+    --color-badge-not-started-background: var(--semantic-neutral-background);
+    /* [追加] 中止バッジ */
+    --color-badge-cancelled-text: var(--semantic-cancelled-main);
+    --color-badge-cancelled-background: var(--semantic-cancelled-background);
+
 
     /* ボーダー (罫線) */
     --color-border-primary: var(--base-secondary); 
@@ -102,6 +117,17 @@
     --color-toggle-checked-text: var(--color-text-on-accent); 
 
     /* ボタン */
+    /* [修正] L3 ボタン変数 */
+    --color-button-primary-background: var(--theme-primary-button);
+    --color-button-primary-text: var(--base-primary);
+    --color-button-primary-hover: var(--palette-008);
+    --color-button-danger-background: var(--semantic-error-main);
+    --color-button-danger-text: var(--base-primary);
+    --color-button-danger-hover: var(--palette-E00);
+    --color-button-icon-text: var(--color-text-secondary);
+    --color-button-icon-hover-background: var(--base-secondary);
+    --color-button-icon-danger-text: var(--semantic-error-main);
+
     --color-button-secondary-background: var(--base-primary);   
     --color-button-secondary-border: var(--base-quinary);   
     --color-button-secondary-hover: var(--base-secondary);
@@ -276,7 +302,7 @@ a { text-decoration: none; color: inherit; }
     text-decoration: none;
 }
 .sidebar-logout a:hover {
-    color: var(--color-toggle-checked-background); /* L3変数を参照 */
+    color: var(--color-toggle-checked-background); /* L3変数をB参照 */
     text-decoration: underline;
 }
 
@@ -307,13 +333,42 @@ h1 {
     padding-bottom: 0;
 }
 
-/* --- 進捗表 (コントロール部の背景を白化) --- */
+/* --- [修正] ヘッダーとコントロール --- */
+.header-with-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* [修正] h1 からマージンを移動 */
+    margin-bottom: 1.25rem; 
+}
+.header-with-actions h1 {
+    margin-bottom: 0; /* ラッパーにマージンを移したためリセット */
+}
+/* [修正] .controls にマージンを設定 */
 .controls {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1.25rem; /* 20px */
 }
+
+
+/* [追加] 検索ボックススタイル */
+.search-filter input[type="search"] {
+    min-width: 18.75rem; /* 300px */
+    padding: 0.625rem 0.75rem; /* 10px 12px */
+    font-size: var(--font-size-base);
+    border: 1px solid var(--color-border-heavy);
+    border-radius: 4px; /* 0.25rem */
+    background-color: var(--color-surface-primary);
+}
+.search-filter input[type="search"]:focus {
+    outline: none;
+    border-color: var(--theme-primary-button);
+    box-shadow: 0 0 0 2px var(--semantic-primary-background);
+}
+
+
 .view-toggle {
     display: flex;
     border-radius: 4px; /* 0.25rem */
@@ -462,11 +517,68 @@ h1 {
 }
 
 
-/* ===== NEW: projects.html から移動・汎用化 ===== */
+/* ===== projects.html / 汎用コンポーネント ===== */
 
-/* --- コンポーネント (汎用) --- */
+/* --- [追加] ボタン (汎用) --- */
+.btn {
+    padding: 0.625rem 1rem; /* 10px 16px */
+    font-size: var(--font-size-base);
+    font-weight: 600;
+    border: none;
+    border-radius: 4px; /* 0.25rem */
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+/* プライマリボタン (青) */
+.btn-primary {
+    background-color: var(--color-button-primary-background);
+    color: var(--color-button-primary-text);
+}
+.btn-primary:hover {
+    background-color: var(--color-button-primary-hover);
+}
 
-/* --- 進捗バー (projects.html から移動) --- */
+/* [修正] アイコンボタン (サイズ変更) */
+.btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem; /* 36px */
+    height: 2.25rem; /* 36px */
+    padding: 0;
+    border-radius: 50%; /* 円形 */
+    background-color: transparent;
+    color: var(--color-button-icon-text);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    font-size: var(--font-size-lg); /* [修正] mdからlgに変更 (アイコン大型化) */
+}
+.btn-icon:hover {
+    background-color: var(--color-button-icon-hover-background);
+}
+/* アイコンボタン (プライマリ) */
+.btn-icon.btn-primary {
+    background-color: var(--color-button-primary-background);
+    color: var(--color-button-primary-text);
+}
+.btn-icon.btn-primary:hover {
+    background-color: var(--color-button-primary-hover);
+}
+/* アイコンボタン (危険) */
+.btn-icon.btn-danger {
+    color: var(--color-button-icon-danger-text);
+}
+.btn-icon.btn-danger:hover {
+    background-color: var(--semantic-error-background);
+    color: var(--semantic-error-main);
+}
+/* [削除] アイコンプレースホルダーのスタイル不要 */
+
+
+/* --- 進捗バー --- */
 .progress-bar-container {
     display: flex;
     align-items: center;
@@ -490,50 +602,66 @@ h1 {
     color: var(--color-progressbar-text); /* L3変数を参照 */
 }
 
-/* --- ステータスバッジ (projects.html から移動・拡充) --- */
+/* --- [修正] ステータスバッジ (太文字化) --- */
 .status-badge {
     padding: 0.25rem 0.625rem; /* 4px 10px */
     border-radius: 0.75rem; /* 12px */
     font-size: var(--font-size-sm); /* L3変数を参照 */
-    font-weight: 600;
+    font-weight: 700; /* [修正] 600から700 (bold) に変更 */
     white-space: nowrap;
     display: inline-block;
 }
+/* [修正] 大きいバッジ (太さ継承) */
+.status-badge-large {
+    padding: 0.5rem 1rem; /* 8px 16px */
+    border-radius: 1.125rem; /* 18px */
+    font-size: var(--font-size-base); /* 1em */
+    /* font-weight: 700; は .status-badge から継承される */
+}
+
 .status-active {
-    /* 進行中 -> L3 変数を参照 */
     background-color: var(--color-badge-active-background); 
     color: var(--color-badge-active-text);
 }
 .status-completed {
-    /* 完了 -> L3 変数を参照 */
     background-color: var(--color-badge-completed-background);
     color: var(--color-badge-completed-text);
 }
 .status-warning {
-    /* 警告 -> L3 変数を参照 */
     background-color: var(--color-badge-warning-background);
     color: var(--color-badge-warning-text);
 }
 .status-error {
-    /* エラー -> L3 変数を参照 */
     background-color: var(--color-badge-error-background);
     color: var(--color-badge-error-text);
 }
-.status-neutral {
-    /* 中立・その他 -> L3 変数を参照 */
-    background-color: var(--color-badge-neutral-background);
-    color: var(--color-badge-neutral-text);
+/* [追加] ステータスバッジ (中止、未着手) */
+.status-not-started {
+    background-color: var(--color-badge-not-started-background);
+    color: var(--color-badge-not-started-text);
+}
+.status-cancelled {
+    background-color: var(--color-badge-cancelled-background);
+    color: var(--color-badge-cancelled-text);
+}
+
+/* [追加] 案件区分バッジ (自主/受託, 単発/継続) */
+.project-category-badge {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    padding: 0.25rem 0.625rem; /* 4px 10px */
+    border-radius: 4px; /* 0.25rem */
+    border: 1px solid var(--color-border-heavy);
+    color: var(--color-text-secondary);
+    background-color: var(--color-surface-primary);
+    white-space: nowrap;
 }
 
 
-/* --- カードレイアウト (projects.html から移動・汎用化) --- */
-
-/* 1カラムのカードリスト用コンテナ (旧 .card-layout-container) */
+/* --- カードレイアウト --- */
 .card-list-container {
-    /* (現在はラッパーとして機能) */
+    /* (ラッパー) */
 }
-
-/* カード本体 (旧 .project-card) */
 .card {
     background-color: var(--color-surface-primary);
     border: 1px solid var(--color-border-primary);
@@ -544,112 +672,148 @@ h1 {
     flex-direction: column;
 }
 
-/* カードヘッダー (旧 .project-summary-area) */
+/* [修正] カードヘッダー */
 .card-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: center; /* 中央揃え */
     padding: 1rem 1.25rem; /* 16px 20px */
     border-bottom: 1px solid var(--color-border-primary);
     gap: 1rem; /* 16px */
 }
-/* (旧 .project-summary-info) */
+/* [修正] カードヘッダー左側 (ステータス、案件名、顧客名) */
 .card-header-info {
     display: flex;
-    align-items: baseline; 
-    gap: 0.75rem; /* 12px */
+    align-items: baseline; /* ベースライン揃え */
+    gap: 0.75rem; /* [修正] 1remから0.75remに変更 */
     flex-wrap: wrap; 
 }
-/* (旧 .project-status-badge-wrapper) */
+/* [修正] カードヘッダー右側 (アイコン) */
 .card-header-aside {
-    margin: 0;
-    padding: 0;
     flex-shrink: 0;
+    display: flex;
+    gap: 0.25rem; /* 4px */
 }
 
-/* カード内のタイトル (旧 .project-name) */
+/* [修正] カードタイトル */
 .card-title {
     font-size: var(--font-size-lg); 
     font-weight: 600;
     color: var(--color-text-primary);
     line-height: 1.3;
 }
-/* カード内のサブタイトル (旧 .project-client) */
+/* [修正] カードサブタイトル (顧客名) */
 .card-subtitle {
-    font-size: var(--font-size-md); 
+    font-size: var(--font-size-base); /* mdからbaseに変更 */
     font-weight: 500;
-    color: var(--color-text-primary);
+    color: var(--color-text-primary); /* secondaryからprimaryに変更 */
 }
-/* ヘッダー内でのマージンリセット */
 .card-header .card-title,
 .card-header .card-subtitle {
     margin: 0;
 }
 
-/* カードボディ (カラム分割用ラッパー, 旧 .project-bottom-area) */
+/* [追加] 案件名と区分バッジのラッパー */
+.title-wrapper {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem; /* 12px */
+    flex-wrap: wrap; /* 折り返し許容 */
+}
+/* [追加] 区分バッジのスタック */
+.project-badges-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem; /* 4px */
+}
+
+
+/* カードボディ */
 .card-body-columns {
     display: flex;
 }
-
-/* カードボディのセクション(詳細), 旧 .project-detail-area */
+/* [修正] カード詳細 (左側: 納期、責任者) (flex: 10em) */
 .card-section-detail {
-    flex: 1;
+    flex: 0 0 10em; /* [修正] 10emに固定 */
     padding: 1.25rem; /* 20px */
     border-right: 1px solid var(--color-border-primary);
     display: flex;
     flex-direction: column;
+    gap: 0.5rem; /* 8px (マージンから変更) */
 }
-
-/* カードボディのセクション(タスク), 旧 .task-info-area */
+/* [修正] カードタスク (右側) (flex: 1) */
 .card-section-task {
-    flex: 1.5;
+    flex: 1; /* [修正] 1.5から1に変更 (残りの幅を全て占有) */
     padding: 1rem 1.25rem; /* 16px 20px */
     background-color: var(--color-surface-primary);
 }
 
-/* カード内のメタ情報 (旧 .project-meta) */
+/* [修正] カードメタ情報 (納期、責任者) */
 .card-meta-item {
-    font-size: var(--font-size-base); 
-    color: var(--color-text-secondary);
-    margin: 0 0 0.5rem 0; /* 8px */
+    font-size: var(--font-size-base); /* baseに変更 */
+    color: var(--color-text-primary); /* primaryに変更 */
+    margin: 0; /* マージンリセット (gapで対応) */
+    font-weight: 500;
 }
-/* (旧 .project-meta .label) */
-.card-meta-label {
-    font-weight: 600;
-    display: inline-block;
-    width: 3.75rem; /* 60px */
-}
+/* [削除] card-meta-label はHTMLから削除されたため不要 */
 
-/* カード内のタスクリスト (旧 .task-info-area 配下) */
+
+/* タスクリスト */
 .task-list-wrapper {
-    /* (タスク行をラップするコンテナ) */
+    /* (ラッパー) */
 }
-
+/* [修正] タスク行 */
 .task-row {
     display: flex;
-    align-items: center;
+    align-items: baseline; /* [修正] centerからbaselineに変更 */
     gap: 0.75rem; /* 12px */
     padding: 0.5625rem 0; /* 9px 0 */
     border-bottom: 1px solid var(--color-border-primary);
     font-size: var(--font-size-base); 
 }
-.task-list-wrapper .task-row:last-child {
-    border-bottom: none;
-}
-.task-list-wrapper .task-row:first-child {
-    padding-top: 0.25rem; /* 4px */
-}
+.task-list-wrapper .task-row:last-child { border-bottom: none; }
+.task-list-wrapper .task-row:first-child { padding-top: 0.25rem; }
 
+/* [修正] タスク名 */
 .task-name {
     flex: 3;
     font-weight: 500;
     color: var(--color-text-primary);
 }
-.task-assignee {
-    flex: 2;
-    font-size: var(--font-size-sm); 
+/* [追加] 担当期間 */
+.task-period {
+    flex: 1.5;
+    font-size: var(--font-size-sm);
     color: var(--color-text-secondary);
+    text-align: right;
+    white-space: nowrap;
 }
+/* [修正] 担当者 (1行表示・幅拡大) */
+.task-assignee {
+    flex: 3; /* [修正] 2から3に変更 (幅拡大) */
+    display: flex;
+    flex-direction: row; /* [修正] 1行表示 */
+    align-items: baseline; /* [修正] ベースライン揃え */
+    font-size: var(--font-size-base); 
+    color: var(--color-text-primary); 
+    font-weight: 500;
+    line-height: 1.4;
+    gap: 0.5em; /* [追加] 名前とステータスの間隔 */
+}
+/* [修正] 担当者種別 (色分け廃止・括弧削除) */
+.assignee-type {
+    font-size: var(--font-size-sm); /* [修正] xsからsmに変更 */
+    font-weight: 500; /* 600から変更 */
+    padding: 0;
+    border-radius: 0;
+    background-color: transparent; /* 背景色削除 */
+    color: var(--color-text-secondary); /* グレーに統一 */
+    margin-left: 0; /* gapで対応 */
+}
+/* [削除] 色分けスタイル削除 */
+
+
 .task-gauge {
     flex: 3;
     min-width: 7.5rem; /* 120px */

@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>進捗記録</title> 
+    
+    <link rel="stylesheet" href="colors.css">
+    <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+    <div class="app-layout">
+        
+        <aside class="sidebar">
+            <div class="logo">p2508e</div>
+            
+            <nav class="global-nav">
+                <ul>
+                    <li class="nav-item"><a href="index.html">トップ</a></li>
+                    
+                    <li class="nav-category">基本情報</li>
+                    <li class="nav-accordion">
+                        <details><summary>施設情報</summary>
+                            <ul class="nav-accordion-menu">
+                                <li><a href="#">法人情報</a></li>
+                                <li><a href="#">事業所情報</a></li>
+                            </ul>
+                        </details>
+                    </li>
+                    <li class="nav-accordion">
+                        <details><summary>関係者情報</summary>
+                            <ul class="nav-accordion-menu">
+                                <li><a href="#">職員情報</a></li>
+                                <li><a href="#">取引先情報</a></li>
+                                <li><a href="#">利用者情報</a></li>
+                            </ul>
+                        </details>
+                    </li>
+                    <li class="nav-accordion">
+                        <details><summary>スキル情報</summary>
+                            <ul class="nav-accordion-menu">
+                                <li><a href="#">スキル設定</a></li>
+                                <li><a href="#">スキル評価</a></li>
+                            </ul>
+                        </details>
+                    </li>
+                    <li class="nav-accordion">
+                        <details><summary>工賃・控除情報</summary>
+                            <ul class="nav-accordion-menu">
+                                <li><a href="#">工賃設定</a></li>
+                                <li><a href="#">控除設定</a></li>
+                                <li><a href="#">工賃レベル評価</a></li>
+                            </ul>
+                        </details>
+                    </li>
+                    <li class="nav-item"><a href="#">積立金情報</a></li>
+
+                    <li class="nav-category">活動記録</li>
+                    <li class="nav-item"><a href="attendance.html">出欠管理</a></li>
+                    <li class="nav-accordion">
+                        <details open> <summary>案件管理</summary>
+                            <ul class="nav-accordion-menu">
+                                <li><a href="projects.html">案件一覧</a></li>
+                                <li><a href="progress.html" style="background-color: var(--color-sidebar-active-item-background);">進捗記録</a></li>
+                                </ul>
+                        </details>
+                    </li>
+                    <li class="nav-accordion">
+                        <details><summary>福祉事業活動</summary>
+                            <ul class="nav-accordion-menu">
+                                <li><a href="#">個別支援計画</a></li>
+                                <li><a href="#">(その他...)</a></li>
+                            </ul>
+                        </details>
+                    </li>
+
+                    <li class="nav-category">集計・分析</li>
+                    <li class="nav-accordion">
+                        <details><summary>会計</summary>
+                            <ul class="nav-accordion-menu">
+                                <li><a href="#">月次会計（顧客請求、国保連請求、利用者工賃支払い、外注先支払い等）</a></li>
+                                <li><a href="#">年次会計</a></li>
+                            </ul>
+                        </details>
+                    </li>
+                    <li class="nav-accordion">
+                        <details><summary>分析</summary>
+                            <ul class="nav-accordion-menu">
+                                <li><a href="#">(分析ダッシュボード)</a></li>
+                            </ul>
+                        </details>
+                    </li>
+                    
+                    <li class="nav-category">設定</li>
+                    <li class="nav-item"><a href="#">ユーザーアカウント</a></li>
+                    <li class="nav-item"><a href="#">（その他設定）</a></li>
+
+                </ul>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-name">山田太郎</div>
+                <div class="user-role">管理者</div>
+                <div class="sidebar-logout">
+                    <a href="#">ログアウト</a>
+                </div>
+            </div>
+
+        </aside>
+
+        <main class="main-content">
+            <div class="content-body">
+                <div class="container">
+                    <h1>進捗記録</h1> 
+                    <div class="controls">
+                        <div class="view-toggle" role="radiogroup" aria-label="表示切替">
+                            <input type="radio" id="viewUser" name="viewType" value="user" checked>
+                            <label for="viewUser">利用者別</label>
+                            <input type="radio" id="viewProject" name="viewType" value="project">
+                            <label for="viewProject">案件別</label>
+                        </div>
+                        <div class="date-filter">
+                            <button class="date-nav-btn" title="前の月">◀</button>
+                            <label for="progressMonth">対象月:</label>
+                            <input type="month" id="progressMonth" value="2025-11">
+                            <button class="date-nav-btn" title="次の月">▶</button>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="progress-table">
+                            <thead id="progress-table-head"></thead>
+                            <tbody id="progress-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // --- モックデータ定義 ---
+        const dates = [
+            { date: '11/03', day: '月', holiday: true, dayClass: 'day-sun' },
+            { date: '11/04', day: '火', holiday: false, dayClass: '' },
+            { date: '11/05', day: '水', holiday: false, dayClass: '' },
+            { date: '11/06', day: '木', holiday: true, dayClass: '' },
+            { date: '11/07', day: '金', holiday: false, dayClass: '' },
+            { date: '11/08', day: '土', holiday: true, dayClass: 'day-sat' },
+            { date: '11/09', day: '日', holiday: true, dayClass: 'day-sun' },
+            { date: '11/10', day: '月', holiday: false, dayClass: '' },
+        ];
+        
+        const userMockData = [
+            {
+                name: '山田 太郎',
+                records: [
+                    { status: '休' },
+                    { status: '通所', time: '10:00 - 14:30', projects: ['案件A', '案件B'], additions: ['挨拶'], deductions: ['昼食'] },
+                    { status: '通所', time: '10:00 - 15:00', projects: ['案件A'], deductions: ['昼食'] },
+                    { status: '欠席' },
+                    { status: '在宅', time: '10:00 - 14:00', projects: ['案件B', '案件C'], additions: ['掃除'] },
+                    { status: '休' },
+                    { status: '休' },
+                    { status: '通所', time: '10:00 - 14:30', projects: ['案件A'], deductions: ['昼食', '送迎'] },
+                ]
+            },
+            {
+                name: '鈴木 花子',
+                records: [
+                    { status: '休' },
+                    { status: '通所', time: '10:00 - 15:00', projects: ['案件A', '案件C'], deductions: ['昼食'] },
+                    { status: '通所', time: '10:00 - 15:00', projects: ['案件C'], deductions: ['昼食'] },
+                    { status: '通所', time: '13:00 - 15:00', projects: ['案件A'] },
+                    { status: '在宅', time: '10:00 - 15:00', projects: ['案件A', '案件C'] },
+                    { status: '休' },
+                    { status: '休' },
+                    { status: '通所', time: '10:00 - 15:00', projects: ['案件C'], deductions: ['昼食'] },
+                ]
+            },
+            {
+                name: '佐藤 一郎',
+                records: [
+                    { status: '休' },
+                    { status: '通所', time: '10:00 - 14:00', projects: ['案件B', '案件C'], additions: ['挨拶', '掃除'], deductions: ['昼食'] },
+                    { status: '通所', time: '10:00 - 14:00', projects: ['案件B'], deductions: ['昼食'] },
+                    { status: '通所', time: '10:00 - 14:00', projects: ['案件B'], deductions: ['昼食'] },
+                    { status: '休' },
+                    { status: '休' },
+                    { status: '休' },
+                    { status: '通所', time: '10:00 - 14:00', projects: ['案件B'], deductions: ['昼食'] },
+                ]
+            }
+        ];
+        const projectMockData = [
+            {
+                name: '案件A (箱折り)',
+                records: [
+                    { holiday: true },
+                    { users: ['山田', '鈴木'] },
+                    { users: ['山田'] },
+                    { users: ['鈴木'] },
+                    { users: ['鈴木'] },
+                    { holiday: true },
+                    { holiday: true },
+                    { users: ['山田'] },
+                ]
+            },
+            {
+                name: '案件B (検品)',
+                records: [
+                    { holiday: true },
+                    { users: ['山田', '佐藤'] },
+                    { users: ['佐藤'] },
+                    { users: ['佐藤'] },
+                    { users: ['山田'] },
+                    { holiday: true },
+                    { holiday: true },
+                    { users: ['佐藤'] },
+                ]
+            },
+            {
+                name: '案件C (シール貼り)',
+                records: [
+                    { holiday: true },
+                    { users: ['鈴木', '佐藤'] },
+                    { users: ['鈴木'] },
+                    { users: [] },
+                    { users: ['山田', '鈴木'] },
+                    { holiday: true },
+                    { holiday: true },
+                    { users: ['鈴木'] },
+                ]
+            }
+        ];
+
+
+        // --- DOM要素の取得 ---
+        const viewToggles = document.querySelectorAll('input[name="viewType"]');
+        const tableHead = document.getElementById('progress-table-head');
+        const tableBody = document.getElementById('progress-table-body');
+
+        // --- イベントリスナーの設定 ---
+        viewToggles.forEach(toggle => {
+            toggle.addEventListener('change', (e) => {
+                renderTable(e.target.value);
+            });
+        });
+
+        // --- レンダリング関数 ---
+
+        function createCellContent(record, viewType) {
+            
+            // 案件別表示 (Project View)
+            if (viewType === 'project') {
+                if (record.holiday) {
+                    return '<td class="status-holiday">(休)</td>';
+                }
+                if (!record.users || record.users.length === 0) {
+                    return '<td>-</td>';
+                }
+                let usersHtml = record.users.map(user => 
+                    `<div class="user">${user}</div>`
+                ).join('');
+                return `<td><div class="progress-cell-content">${usersHtml}</div></td>`;
+            }
+
+            // 利用者別表示 (User View)
+            if (viewType === 'user') {
+                if (record.status === '休' || record.status === '欠席') {
+                    return `<td class="status-holiday">(${record.status})</td>`;
+                }
+                
+                let html = '';
+                
+                let statusLine = `<div class="status">${record.status}`;
+                if ((record.status === '通所' || record.status === '在宅') && record.time) {
+                    statusLine += ` <span class="time">${record.time}</span>`;
+                }
+                statusLine += `</div>`;
+                html += statusLine;
+
+                if (record.additions && record.additions.length > 0) {
+                    let additionsHtml = record.additions.map(a => `+${a}`).join(' ');
+                    html += `<div class="additions">${additionsHtml}</div>`;
+                }
+
+                if (record.deductions && record.deductions.length > 0) {
+                    let deductionsHtml = record.deductions.map(d => `-${d}`).join(' ');
+                    html += `<div class="deductions">${deductionsHtml}</div>`;
+                }
+
+                if (record.projects && record.projects.length > 0) {
+                    html += record.projects.map(p => 
+                        `<div class="project">${p}</div>`
+                    ).join('');
+                }
+                
+                return `<td><div class="progress-cell-content">${html}</div></td>`;
+            }
+
+            return '<td></td>';
+        }
+
+
+        function renderTable(viewType) {
+            let data;
+            let mainHeaderTitle;
+            if (viewType === 'user') {
+                data = userMockData;
+                mainHeaderTitle = '利用者名';
+            } else {
+                data = projectMockData;
+                mainHeaderTitle = '案件名';
+            }
+
+            // 1. ヘッダー (<thead>) の生成
+            let headerHtml = '<tr>';
+            headerHtml += `<th class="header-main">${mainHeaderTitle}</th>`;
+            
+            dates.forEach(d => {
+                let holidayClass = d.dayClass;
+                let dayLabel = d.day;
+                let dayLabelClass = ''; 
+
+                if (d.dayClass === 'day-sun') {
+                    dayLabelClass = 'day-label-sun';
+                    if (d.holiday) dayLabel = '日';
+                } else if (d.dayClass === 'day-sat') {
+                    dayLabelClass = 'day-label-sat';
+                    if (d.holiday) dayLabel = '土';
+                } else if (d.holiday) {
+                    dayLabel = '祝';
+                    dayLabelClass = 'day-label-sun'; 
+                }
+                
+                headerHtml += `<th class="${holidayClass}">${d.date} (<span class="${dayLabelClass}">${dayLabel}</span>)</th>`;
+            });
+            
+            headerHtml += '</tr>';
+            tableHead.innerHTML = headerHtml;
+
+            // 2. ボディ (<tbody>) の生成
+            let bodyHtml = '';
+            data.forEach(row => {
+                bodyHtml += '<tr>';
+                bodyHtml += `<th scope="row">${row.name}</th>`;
+                row.records.forEach(record => {
+                    bodyHtml += createCellContent(record, viewType);
+                });
+                bodyHtml += '</tr>';
+            });
+            tableBody.innerHTML = bodyHtml;
+        }
+
+        // --- 初期表示 ---
+        renderTable('user');
+    </script>
+
+</body>
+</html>
