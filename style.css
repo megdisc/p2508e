@@ -884,3 +884,16 @@ h1 {
 .view-content.active {
     display: block;
 }
+/* --- アクティブなナビゲーション項目 --- */
+.nav-item a.active,
+.nav-accordion-menu li a.active {
+    background-color: var(--color-sidebar-active-item-background);
+    font-weight: 700; /* 既存は600なので、少し太くする */
+}
+
+/* --- アクティブなナビゲーション項目 --- */
+.nav-item a.active,
+.nav-accordion-menu li a.active {
+    background-color: var(--color-sidebar-active-item-background);
+    font-weight: 700; /* 既存は600なので、少し太くする */
+}
