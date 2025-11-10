@@ -147,6 +147,7 @@ body, html {
     color: var(--color-text-primary);
     font-size: var(--font-size-base); /* L3変数を参照 (1rem = 16px) */
     height: 100%;
+    font-feature-settings: "palt";
 }
 * { box-sizing: border-box; }
 a { text-decoration: none; color: inherit; }
@@ -897,3 +898,4 @@ h1 {
     background-color: var(--color-sidebar-active-item-background);
     font-weight: 700; /* 既存は600なので、少し太くする */
 }
+

@@ -5,7 +5,7 @@
 
 window.APP_CONSTANTS = {
     // --- アプリケーション基本情報 ---
-    APP_NAME: "p2508e",
+    APP_NAME: "Compath",
 
     // --- ページキー (HTMLの data-page-key と一致させる) ---
     PAGE_KEYS: {
