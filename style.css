@@ -581,10 +581,6 @@ h1 {
     display: flex;
     align-items: center; 
     gap: 0.75rem; 
-    /* flex-wrap: wrap; REMOVED */
-    
-    /* ADDED: はみ出し防止 */
-    /* (タイトルとバッジのコンテナが縮小できるように) */
     min-width: 0;
 }
 .card-header-aside {
@@ -599,13 +595,8 @@ h1 {
     font-weight: var(--font-weight-heading); 
     color: var(--color-text-primary);
     line-height: 1.3;
-    
-    /* MODIFIED: white-space: nowrap; を削除。グリッド幅に応じて折り返しを許可する */
-    
-    /* ADDED: はみ出し防止 (タイトルが長い場合に...) */
     overflow: hidden;
     text-overflow: ellipsis;
-    /* (タイトル自体の nowrap は削除) */
 }
 .card-subtitle {
     font-size: var(--font-size-base); 
@@ -621,9 +612,6 @@ h1 {
     align-items: center; 
     gap: 0.75rem; 
     flex-wrap: nowrap; 
-
-    /* ADDED: はみ出し防止 */
-    /* (タイトルラッパーが縮小できるように) */
     min-width: 0;
 }
 .project-badges-stack {
@@ -636,7 +624,6 @@ h1 {
 /* --- 汎用カードボディ (corporation.html / projects.html 向け) --- */
 .card-body {
     padding: 1.25rem; 
-    /* ADDED: カードの高さを揃えるため、ボディを可変にする */
     flex-grow: 1;
 }
 
@@ -651,23 +638,13 @@ h1 {
     min-width: 18rem; 
 }
 
-/* --- MODIFIED: 汎用レイアウト: カードグリッド (offices.html 向け) --- */
+/* --- 汎用レイアウト: カードグリッド (offices.html 向け) --- */
 .card-grid-layout {
     display: grid;
-    /* MODIFIED:
-      "min-content" を "22rem" (固定値) に変更。
-      これにより、ウィンドウ幅が許す限り 22rem 以上の
-      均等なカラムが複数作成されます。
-    */
     grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
-    gap: 1.5rem; /* 均等な余白 */
-    
-    /* ADDED: 
-      全カードの高さを、グリッド内で最も高いカードに自動的に合わせる
-    */
+    gap: 1.5rem; 
     grid-auto-rows: 1fr;
 }
-/* (グリッド内のカードは高さを揃え、デフォルトマージンを無効化) */
 .card-grid-layout > .card {
     height: 100%;
     margin-bottom: 0;
@@ -675,17 +652,20 @@ h1 {
 
 
 /* --- 汎用データ表示: アイコンリスト (corporation.html 向け) --- */
+
+/* MODIFIED: .data-grid-icon-list を調整 (よりコンパクトに) */
 .data-grid-icon-list {
     display: grid;
-    grid-template-columns: 2.5rem 1fr; 
-    gap: 1.5rem 0.5rem; 
+    grid-template-columns: 2.25rem 1fr; /* MODIFIED: アイコン幅を縮小 */
+    gap: 1rem 0.5rem; /* MODIFIED: 縦gap(余白)を縮小 */
     align-items: flex-start; 
 }
+
 .data-grid-icon-list .data-grid-icon {
     color: var(--color-text-secondary);
     text-align: center;
     font-size: var(--font-size-lg);
-    padding-top: 0.25rem; 
+    padding-top: 0.125rem; /* MODIFIED: 垂直位置を微調整 */
     margin: 0; 
 }
 .data-grid-icon-list .data-grid-text-block {
