@@ -653,19 +653,29 @@ h1 {
 
 /* --- 汎用データ表示: アイコンリスト (corporation.html 向け) --- */
 
-/* MODIFIED: .data-grid-icon-list を調整 (よりコンパクトに) */
+/* MODIFIED: .data-grid-icon-list を調整 (よりコンパクトに + Flexアイテムとして機能させる) */
 .data-grid-icon-list {
     display: grid;
-    grid-template-columns: 2.25rem 1fr; /* MODIFIED: アイコン幅を縮小 */
-    gap: 1rem 0.5rem; /* MODIFIED: 縦gap(余白)を縮小 */
+    grid-template-columns: 2.25rem 1fr; 
+    gap: 1rem 0.5rem; 
     align-items: flex-start; 
+
+    /* ADDED: flexアイテムとしての振る舞いを定義 */
+    flex: 1; /* 伸びる */
+    min-width: 14rem; /* この幅を下回ると折り返す */
+}
+/* ADDED: カード内のデータセットを柔軟に折り返すためのラッパー */
+.data-group-wrapper {
+    display: flex;
+    flex-wrap: wrap; /* これがキー。自動で折り返す */
+    gap: 1rem 1.5rem; /* 縦横の余白 (行間 1rem, 列間 1.5rem) */
 }
 
 .data-grid-icon-list .data-grid-icon {
     color: var(--color-text-secondary);
     text-align: center;
     font-size: var(--font-size-lg);
-    padding-top: 0.125rem; /* MODIFIED: 垂直位置を微調整 */
+    padding-top: 0.125rem; 
     margin: 0; 
 }
 .data-grid-icon-list .data-grid-text-block {
