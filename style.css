@@ -1,6 +1,13 @@
 @charset "UTF-8";
 
-/* ===== カラー定義 ===== */
+/* =================================================================== */
+/* 1. グローバル設定・汎用コンポーネント
+/* (アプリ全体で共通して使用するスタイル)
+/* =================================================================== */
+
+/* ------------------------------------------------------------------- */
+/* 1-1. :root 変数定義 (カラー, フォント)
+/* ------------------------------------------------------------------- */
 :root {
     /* --- 第一階層: カラーパレット (L1) --- */
     /* (colors.css にて定義) */
@@ -12,7 +19,6 @@
     --theme-main: var(--palette-024);
     --theme-sub: var(--palette-013);
     --theme-accent: var(--palette-FD0);
-    /* [追加] プライマリボタン色 */
     --theme-primary-button: var(--palette-006); 
 
     /* ベースカラー (Base) */
@@ -23,34 +29,49 @@
     --base-quinary: var(--palette-CCC);
     
     /* セマンティックカラー (Semantic) */
-    /* Primary (青系: 進行中, 通知, 加算, 土曜) */
-    --semantic-primary-main: var(--palette-006);      /* 濃い青 (テキスト/強調用) */
-    --semantic-primary-background: var(--palette-CEF);  /* 薄い青 (バッジ背景用) */
+    --semantic-primary-main: var(--palette-006);      /* 濃い青 (進行中, 加算, 土曜) */
+    --semantic-primary-background: var(--palette-CEF);  /* 薄い青 (バッジ背景) */
+    --semantic-success-main: var(--palette-066);      /* 濃い青緑 (完了) */
+    --semantic-success-background: var(--palette-CEE);  /* 薄い青緑 (バッジ背景) */
+    --semantic-warning-main: var(--palette-B80);      /* 暗い黄 (注意) */
+    --semantic-warning-background: var(--palette-FFC);  /* 薄い黄 (バッジ背景) */
+    --semantic-error-main: var(--palette-C00);      /* 濃い赤 (エラー, 控除, 日曜) */
+    --semantic-error-background: var(--palette-FCC);  /* 薄い赤 (バッジ背景) */
+    --semantic-neutral-main: var(--palette-666);      /* 濃い灰 (未着手) */
+    --semantic-neutral-background: var(--palette-EEE);  /* 薄い灰 (バッジ背景) */
+    --semantic-cancelled-main: var(--palette-333);      /* 濃い灰 (中止) */
+    --semantic-cancelled-background: var(--palette-CCC);  /* 薄い灰 (バッジ背景) */
 
-    /* Success (青緑系: 完了, 成功) ※色覚配慮 */
-    --semantic-success-main: var(--palette-066);      /* 濃い青緑 (テキスト/強調用) */
-    --semantic-success-background: var(--palette-CEE);  /* 薄い青緑 (バッジ背景用) */
+    /* --- フォント (L2) --- */
+    --font-family-primary: "Yu Gothic", "Hiragino Sans", "Noto Sans CJK JP", "Meiryo", sans-serif;
+    --font-family-monospace: 'Courier New', Courier, monospace;
 
-    /* Warning (黄系: アラート, 注意) */
-    --semantic-warning-main: var(--palette-B80);      /* 暗い黄 (テキスト/強調用) */
-    --semantic-warning-background: var(--palette-FFC);  /* 薄い黄 (バッジ背景用) */
-
-    /* Error (赤系: エラー, 控除, 日曜) */
-    --semantic-error-main: var(--palette-C00);      /* 濃い赤 (テキスト/強調用) */
-    --semantic-error-background: var(--palette-FCC);  /* 薄い赤 (バッジ背景用) */
-
-    /* Neutral (灰系: 未着手, 無効) */
-    --semantic-neutral-main: var(--palette-666);      /* 濃い灰 (テキスト/強調用) */
-    --semantic-neutral-background: var(--palette-EEE);  /* 薄い灰 (バッジ背景用) */
-
-    /* [追加] Neutral Dark (灰系: 中止) */
-    --semantic-cancelled-main: var(--palette-333);      /* 濃い灰 (テキスト/強調用) */
-    --semantic-cancelled-background: var(--palette-CCC);  /* 薄い灰 (バッジ背景用) */
+    /* (使用されているウェイト) */
+    --font-weight-400: 400;
+    --font-weight-500: 500; /* base */
+    --font-weight-600: 600; /* semibold */
+    --font-weight-700: 700; /* bold */
 
 
     /* --- 第三階層: 具体的な定義 (L3) --- */
-    /* (L2 の変数を参照して定義) */
+
+    /* フォント (L3) */
+    --font-family-base: var(--font-family-primary);
+    --font-family-code: var(--font-family-monospace);
     
+    --font-weight-base: var(--font-weight-500);
+    --font-weight-heading: var(--font-weight-600);
+    --font-weight-label: var(--font-weight-600);
+    --font-weight-bold: var(--font-weight-700);
+    --font-weight-light: var(--font-weight-400);
+
+    /* フォントサイズ */
+    --font-size-base: 1em; /* 16px */
+    --font-size-sm: calc(var(--font-size-base) / 1.25); /* 12.8px */
+    --font-size-md: calc(var(--font-size-base) * 1.25); /* 20px */
+    --font-size-lg: calc(var(--font-size-md) * 1.25); /* 25px */
+    --font-size-xl: calc(var(--font-size-lg) * 1.25); /* 31.25px */
+
     /* アプリケーション全体 */
     --color-app-background: var(--base-secondary); 
     --color-surface-primary: var(--base-primary);   
@@ -63,25 +84,14 @@
     --color-text-secondary: var(--base-quaternary); 
     --color-text-disabled: var(--base-quaternary); 
     --color-text-on-accent: var(--base-primary);   
-    /* [削除] 担当者種別カラー (色分け不要のため) */
 
-
-    /* フォントサイズ */
-    --font-size-base: 1em; /* 16px */
-    --font-size-sm: calc(var(--font-size-base) / 1.25); /* 12.8px */
-    --font-size-md: calc(var(--font-size-base) * 1.25); /* 20px */
-    --font-size-lg: calc(var(--font-size-md) * 1.25); /* 25px */
-    --font-size-xl: calc(var(--font-size-lg) * 1.25); /* 31.25px */
-    /* [削除] --font-size-xs は定義外のため削除 */
-
-
-    /* 曜日・加算・控除 (L2セマンティックを参照) */
+    /* 意味論的テキストカラー (L2セマンティックを参照) */
     --color-text-saturday: var(--semantic-primary-main);
     --color-text-sunday-holiday: var(--semantic-error-main);
     --color-text-addition: var(--semantic-primary-main);
     --color-text-deduction: var(--semantic-error-main);
 
-    /* [修正] L3 バッジ・ステータス (L2を具象化) */
+    /* L3 バッジ・ステータス (L2を具象化) */
     --color-badge-active-text: var(--semantic-primary-main);
     --color-badge-active-background: var(--semantic-primary-background);
     --color-badge-completed-text: var(--semantic-success-main);
@@ -90,19 +100,16 @@
     --color-badge-warning-background: var(--semantic-warning-background);
     --color-badge-error-text: var(--semantic-error-main);
     --color-badge-error-background: var(--semantic-error-background);
-    /* [修正] 'neutral' を 'not-started' に変更 (意味を明確化) */
     --color-badge-not-started-text: var(--semantic-neutral-main);
     --color-badge-not-started-background: var(--semantic-neutral-background);
-    /* [追加] 中止バッジ */
     --color-badge-cancelled-text: var(--semantic-cancelled-main);
     --color-badge-cancelled-background: var(--semantic-cancelled-background);
-
 
     /* ボーダー (罫線) */
     --color-border-primary: var(--base-secondary); 
     --color-border-heavy: var(--base-quinary);   
 
-    /* サイドバー (白基調) */
+    /* サイドバー */
     --color-sidebar-background: var(--theme-main);   
     --color-sidebar-logo-background: var(--theme-main);   
     --color-sidebar-text: var(--base-primary); 
@@ -116,8 +123,7 @@
     --color-toggle-checked-background: var(--theme-main); 
     --color-toggle-checked-text: var(--color-text-on-accent); 
 
-    /* ボタン */
-    /* [修正] L3 ボタン変数 */
+    /* ボタン (L3) */
     --color-button-primary-background: var(--theme-primary-button);
     --color-button-primary-text: var(--base-primary);
     --color-button-primary-hover: var(--palette-008);
@@ -127,7 +133,6 @@
     --color-button-icon-text: var(--color-text-secondary);
     --color-button-icon-hover-background: var(--base-secondary);
     --color-button-icon-danger-text: var(--semantic-error-main);
-
     --color-button-secondary-background: var(--base-primary);   
     --color-button-secondary-border: var(--base-quinary);   
     --color-button-secondary-hover: var(--base-secondary);
@@ -137,27 +142,34 @@
     --color-progressbar-text: var(--theme-main);
 }
 
-/* --- 基本リセットと全体設定 --- */
+/* ------------------------------------------------------------------- */
+/* 1-2. 基本リセットと全体設定
+/* ------------------------------------------------------------------- */
 body, html {
     margin: 0;
     padding: 0;
-    font-family: "Yu Gothic", "Hiragino Sans", "Noto Sans CJK JP", "Meiryo", sans-serif;
-    font-weight: 500; 
+    font-family: var(--font-family-base); /* MODIFIED */
+    font-weight: var(--font-weight-base); /* MODIFIED */
     background-color: var(--color-app-background);
     color: var(--color-text-primary);
-    font-size: var(--font-size-base); /* L3変数を参照 (1rem = 16px) */
+    font-size: var(--font-size-base); 
     height: 100%;
-    font-feature-settings: "palt";
+    font-feature-settings: "palt"; /* Proportional setting */
 }
 * { box-sizing: border-box; }
 a { text-decoration: none; color: inherit; }
 
-/* --- 全体レイアウト --- */
-.app-layout { display: flex; height: 100vh; }
+/* ------------------------------------------------------------------- */
+/* 1-3. 全体レイアウト (ヘッダー, サイドバー, メイン)
+/* ------------------------------------------------------------------- */
+.app-layout { 
+    display: flex; 
+    height: 100vh; 
+}
 
-/* --- 左側グローバルナビゲーション (調整済) --- */
+/* --- サイドバー --- */
 .sidebar {
-    width: 240px; /* rem にすると影響が大きいため px を維持 */
+    width: 240px;
     flex-shrink: 0;
     background-color: var(--color-sidebar-background);
     color: var(--color-sidebar-text);
@@ -169,46 +181,37 @@ a { text-decoration: none; color: inherit; }
 
 .logo {
     color: var(--theme-accent);
-    font-weight: 600; 
-    font-size: var(--font-size-lg); /* L3変数を参照 */
-    padding: 1.4rem 1.25rem; /* 22.5px -> 1.4rem, 20px -> 1.25rem */
+    font-weight: var(--font-weight-heading); /* MODIFIED */
+    font-size: var(--font-size-lg); 
+    padding: 1.4rem 1.25rem; 
     display: flex;
     align-items: center;
     justify-content: center; 
-    border-bottom: none; 
     background-color: var(--color-sidebar-logo-background);
     position: sticky;
     top: 0;
     z-index: 10;
 }
 
+/* --- サイドバー: ナビゲーション --- */
 .global-nav { 
     flex: 1; 
     overflow-y: auto; 
-    padding: 0.625rem 0 1.25rem 0; /* 10px 0 20px 0 */
+    padding: 0.625rem 0 1.25rem 0; 
 }
-
-.global-nav::-webkit-scrollbar {
-    display: none; 
-}
-.global-nav {
-    scrollbar-width: none; 
-}
-
+.global-nav::-webkit-scrollbar { display: none; }
+.global-nav { scrollbar-width: none; }
 
 .global-nav ul { list-style: none; margin: 0; padding: 0; }
 
 .nav-category {
     display: flex;
     align-items: center; 
-    gap: 0.625rem; /* 10px */
-    font-size: inherit; /* var(--font-size-base) */
-    text-transform: none; 
-    letter-spacing: normal; 
-    font-weight: 600; 
+    gap: 0.625rem; 
+    font-weight: var(--font-weight-label); /* MODIFIED */
     color: var(--color-sidebar-category-text);
-    margin: 0.9375rem 1.25rem 0 1.25rem; /* 15px 20px 0 20px */
-    padding: 0.625rem 0; /* 10px 0 */
+    margin: 0.9375rem 1.25rem 0 1.25rem; 
+    padding: 0.625rem 0; 
 }
 .nav-category::before,
 .nav-category::after {
@@ -220,11 +223,11 @@ a { text-decoration: none; color: inherit; }
 
 .nav-item a { 
     display: block; 
-    padding: 0.625rem 1.25rem; /* 10px 20px */
+    padding: 0.625rem 1.25rem; 
     transition: background-color 0.2s; 
-    border-radius: 4px; /* 0.25rem */
-    margin: 0 0.625rem; /* 0 10px */
-    font-weight: 600;
+    border-radius: 4px; 
+    margin: 0 0.625rem; 
+    font-weight: var(--font-weight-label); /* MODIFIED */
 }
 .nav-item a:hover { background-color: var(--color-sidebar-hover-background); }
 
@@ -232,17 +235,17 @@ a { text-decoration: none; color: inherit; }
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.625rem 1.25rem; /* 10px 20px */
+    padding: 0.625rem 1.25rem; 
     cursor: pointer;
     transition: background-color 0.2s;
-    border-radius: 4px; /* 0.25rem */
-    margin: 0 0.625rem; /* 0 10px */
-    font-weight: 600;
+    border-radius: 4px; 
+    margin: 0 0.625rem; 
+    font-weight: var(--font-weight-label); /* MODIFIED */
 }
 .nav-accordion summary:hover { background-color: var(--color-sidebar-hover-background); }
 .nav-accordion summary::after {
     content: '▼';
-    font-size: var(--font-size-sm); /* xsから変更 */
+    font-size: var(--font-size-sm); 
     transform: scaleY(0.8) rotate(0deg);
     transition: transform 0.2s;
 }
@@ -250,61 +253,56 @@ a { text-decoration: none; color: inherit; }
 
 .nav-accordion-menu {
     list-style: none;
-    padding: 0.3125rem 0; /* 5px 0 */
+    padding: 0.3125rem 0; 
     margin: 0;
 }
 
 .nav-accordion-menu li a {
     display: block;
-    margin: 0 0.625rem; /* 0 10px */
-    padding: 0.5rem 0.625rem 0.5rem 2.5rem; /* 8px 10px 8px 40px */
-    border-radius: 4px; /* 0.25rem */
-    font-weight: 600;
+    margin: 0 0.625rem; 
+    padding: 0.5rem 0.625rem 0.5rem 2.5rem; 
+    border-radius: 4px; 
+    font-weight: var(--font-weight-label); /* MODIFIED */
 }
 .nav-accordion-menu li a:hover { background-color: var(--color-sidebar-hover-background); }
 
-.nav-comment {
-    font-size: var(--font-size-sm); /* L3変数を参照 */
-    color: var(--color-text-disabled);
-    margin-left: 0.25rem; /* 4px */
-    font-style: italic;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-weight: 500;
+/* アクティブなナビゲーション項目 */
+.nav-item a.active,
+.nav-accordion-menu li a.active {
+    background-color: var(--color-sidebar-active-item-background);
+    font-weight: var(--font-weight-bold); /* MODIFIED */
 }
 
-
+/* --- サイドバー: フッター --- */
 .sidebar-footer {
     flex-shrink: 0; 
-    padding: 0.9375rem 1.25rem; /* 15px 20px */
+    padding: 0.9375rem 1.25rem; 
     background-color: var(--color-sidebar-logo-background); 
     text-align: center;
     color: var(--base-primary);
 }
 .sidebar-footer .user-name {
-    font-weight: 600;
-    font-size: var(--font-size-md); /* L3変数を参照 */
+    font-weight: var(--font-weight-label); /* MODIFIED */
+    font-size: var(--font-size-md); 
 }
 .sidebar-footer .user-role {
-    font-size: var(--font-size-sm); /* L3変数を参照 */
-    margin-top: 0.125rem; /* 2px */
-    font-weight: 600;
+    font-size: var(--font-size-sm); 
+    margin-top: 0.125rem; 
+    font-weight: var(--font-weight-label); /* MODIFIED */
 }
-
 .sidebar-logout {
-    margin-top: 0.625rem; /* 10px */
-    padding-top: 0.625rem; /* 10px */
+    margin-top: 0.625rem; 
+    padding-top: 0.625rem; 
     border-top: 1px solid var(--color-border-primary);
 }
 .sidebar-logout a {
-    font-size: var(--font-size-sm); /* L3変数を参照 */
-    font-weight: 600;
+    font-size: var(--font-size-sm); 
+    font-weight: var(--font-weight-label); /* MODIFIED */
     color: var(--base-quinary);
     text-decoration: none;
 }
 .sidebar-logout a:hover {
-    color: var(--color-toggle-checked-background); /* L3変数をB参照 */
+    color: var(--color-toggle-checked-background); 
     text-decoration: underline;
 }
 
@@ -314,54 +312,111 @@ a { text-decoration: none; color: inherit; }
     flex: 1; 
     overflow-y: auto; 
     height: 100vh; 
-    padding: 1.5rem; /* 24px (projects.html から移動・統合) */
+    padding: 1.5rem; 
 }
 
-/* .content-body { padding: 1.5rem; } (↑ .main-content に統合) */
-
-.container {
-    max-width: none;
-    margin: 0;
-    background-color: var(--color-surface-primary);
-    padding: 1.25rem; /* 20px */
-    border-radius: 8px; /* 0.5rem */
-}
 h1 {
-    font-size: var(--font-size-xl); /* L3変数を参照 */
-    font-weight: 600;
+    font-size: var(--font-size-xl); 
+    font-weight: var(--font-weight-heading); /* MODIFIED */
     color: var(--color-text-primary);
     margin-top: 0;
-    margin-bottom: 1.25rem; /* 20px */
+    margin-bottom: 1.25rem; 
     padding-bottom: 0;
 }
 
-/* --- [修正] ヘッダーとコントロール --- */
+/* ページヘッダー (H1 + アクションボタン) */
 .header-with-actions {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    /* [修正] h1 からマージンを移動 */
     margin-bottom: 1.25rem; 
 }
 .header-with-actions h1 {
-    margin-bottom: 0; /* ラッパーにマージンを移したためリセット */
+    margin-bottom: 0; 
 }
-/* [修正] .controls にマージンを設定 */
+
+/* ページヘッダー (コントロールエリア) */
 .controls {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 1.25rem; /* 20px */
+    margin-bottom: 1.25rem; 
 }
 
+/* ------------------------------------------------------------------- */
+/* 1-4. 汎用コンポーネント (ボタン, カード, フォーム)
+/* ------------------------------------------------------------------- */
 
-/* [追加] 検索ボックススタイル */
+/* --- 汎用コンテナ --- */
+.container {
+    max-width: none;
+    margin: 0;
+    background-color: var(--color-surface-primary);
+    padding: 1.25rem; 
+    border-radius: 8px; 
+}
+
+/* --- 汎用ボタン --- */
+.btn {
+    padding: 0.625rem 1rem; 
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-label); /* MODIFIED */
+    border: none;
+    border-radius: 4px; 
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+.btn-primary {
+    background-color: var(--color-button-primary-background);
+    color: var(--color-button-primary-text);
+}
+.btn-primary:hover {
+    background-color: var(--color-button-primary-hover);
+}
+
+/* --- 汎用アイコンボタン --- */
+.btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem; /* 36px */
+    height: 2.25rem; /* 36px */
+    padding: 0;
+    border-radius: 50%; /* 円形 */
+    background-color: transparent;
+    color: var(--color-button-icon-text);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    font-size: var(--font-size-lg); 
+}
+.btn-icon:hover {
+    background-color: var(--color-button-icon-hover-background);
+}
+.btn-icon.btn-primary {
+    background-color: var(--color-button-primary-background);
+    color: var(--color-button-primary-text);
+}
+.btn-icon.btn-primary:hover {
+    background-color: var(--color-button-primary-hover);
+}
+.btn-icon.btn-danger {
+    color: var(--color-button-icon-danger-text);
+}
+.btn-icon.btn-danger:hover {
+    background-color: var(--semantic-error-background);
+    color: var(--semantic-error-main);
+}
+
+/* --- 汎用検索フィルター --- */
 .search-filter input[type="search"] {
     min-width: 18.75rem; /* 300px */
-    padding: 0.625rem 0.75rem; /* 10px 12px */
+    padding: 0.625rem 0.75rem; 
     font-size: var(--font-size-base);
     border: 1px solid var(--color-border-heavy);
-    border-radius: 4px; /* 0.25rem */
+    border-radius: 4px; 
     background-color: var(--color-surface-primary);
 }
 .search-filter input[type="search"]:focus {
@@ -370,28 +425,39 @@ h1 {
     box-shadow: 0 0 0 2px var(--semantic-primary-background);
 }
 
-
+/* --- 汎用トグル (テキスト) --- */
 .view-toggle {
     display: flex;
-    border-radius: 4px; /* 0.25rem */
+    border-radius: 4px; 
     overflow: hidden;
 }
 .view-toggle label {
-    padding: 0.5rem 0.75rem; /* 8px 12px */
+    padding: 0.5rem 0.75rem; 
     background-color: var(--color-toggle-background);
     cursor: pointer;
-    font-size: var(--font-size-sm); /* L3変数を参照 */
+    font-size: var(--font-size-sm); 
     color: var(--color-text-secondary);
 }
 .view-toggle input { display: none; }
 .view-toggle input:checked + label {
     background-color: var(--color-toggle-checked-background);
     color: var(--color-toggle-checked-text);
-    font-weight: 500;
+    font-weight: var(--font-weight-base); /* MODIFIED */
 }
 
-.date-filter { display: flex; align-items: center; gap: 0.625rem; } /* 10px */
-.date-filter input { padding: 0.5rem 0.625rem; border: 1px solid var(--color-border-primary); border-radius: 4px; font-size: var(--font-size-sm); background: var(--color-surface-primary); }
+/* --- 汎用日付フィルター --- */
+.date-filter { 
+    display: flex; 
+    align-items: center; 
+    gap: 0.625rem; 
+}
+.date-filter input { 
+    padding: 0.5rem 0.625rem; 
+    border: 1px solid var(--color-border-primary); 
+    border-radius: 4px; 
+    font-size: var(--font-size-sm); 
+    background: var(--color-surface-primary); 
+}
 .date-nav-btn { 
     padding: 0.5rem 0.625rem; 
     background-color: var(--color-button-secondary-background); 
@@ -401,7 +467,478 @@ h1 {
 }
 .date-nav-btn:hover { background-color: var(--color-button-secondary-hover); }
 
-/* --- テーブル (縦罫線を追加) --- */
+/* --- 汎用進捗バー --- */
+.progress-bar-container {
+    display: flex;
+    align-items: center;
+    gap: 0.375rem; 
+}
+.progress-bar {
+    flex: 1;
+    height: 0.5rem; 
+    background-color: var(--color-surface-secondary); 
+    border-radius: 0.25rem; 
+    overflow: hidden;
+}
+.progress-bar-inner {
+    height: 100%;
+    background-color: var(--color-progressbar-fill); 
+}
+.progress-percentage {
+    font-size: var(--font-size-sm); 
+    font-weight: var(--font-weight-label); /* MODIFIED */
+    font-family: var(--font-family-code); /* MODIFIED */
+    color: var(--color-progressbar-text); 
+}
+
+/* --- 汎用ステータスバッジ --- */
+.status-badge {
+    padding: 0.25rem 0.625rem; 
+    border-radius: 0.75rem; 
+    font-size: var(--font-size-sm); 
+    font-weight: var(--font-weight-bold); /* MODIFIED */
+    white-space: nowrap;
+    display: inline-block;
+}
+.status-badge-large {
+    padding: 0.5rem 1rem; 
+    border-radius: 1.125rem; 
+    font-size: var(--font-size-base); 
+}
+.status-active {
+    background-color: var(--color-badge-active-background); 
+    color: var(--color-badge-active-text);
+}
+.status-completed {
+    background-color: var(--color-badge-completed-background);
+    color: var(--color-badge-completed-text);
+}
+.status-warning {
+    background-color: var(--color-badge-warning-background);
+    color: var(--color-badge-warning-text);
+}
+.status-error {
+    background-color: var(--color-badge-error-background);
+    color: var(--color-badge-error-text);
+}
+.status-not-started {
+    background-color: var(--color-badge-not-started-background);
+    color: var(--color-badge-not-started-text);
+}
+.status-cancelled {
+    background-color: var(--color-badge-cancelled-background);
+    color: var(--color-badge-cancelled-text);
+}
+
+/* --- 汎用カテゴリバッジ --- */
+.project-category-badge {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-label); /* MODIFIED */
+    padding: 0.25rem 0.625rem; 
+    border-radius: 4px; 
+    border: 1px solid var(--color-border-heavy);
+    color: var(--color-text-secondary);
+    background-color: var(--color-surface-primary);
+    white-space: nowrap;
+}
+
+
+/* ------------------------------------------------------------------- */
+/* 1-5. 汎用コンポーネント (カードレイアウト)
+/* ------------------------------------------------------------------- */
+
+/* --- 汎用カード (基本) --- */
+.card {
+    background-color: var(--color-surface-primary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: 0.5rem; 
+    margin-bottom: 1.5rem; 
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+.card-list-container {
+    /* (カードリストのラッパー) */
+}
+
+/* --- 汎用カードヘッダー --- */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; 
+    padding: 1rem 1.25rem; 
+    border-bottom: 1px solid var(--color-border-primary);
+    gap: 1rem; 
+}
+.card-header-info {
+    display: flex;
+    align-items: baseline; 
+    gap: 0.75rem; 
+    flex-wrap: wrap; 
+}
+.card-header-aside {
+    flex-shrink: 0;
+    display: flex;
+    gap: 0.25rem; 
+}
+
+/* --- 汎用カードタイトル/サブタイトル --- */
+.card-title {
+    font-size: var(--font-size-lg); 
+    font-weight: var(--font-weight-heading); /* MODIFIED */
+    color: var(--color-text-primary);
+    line-height: 1.3;
+}
+.card-subtitle {
+    font-size: var(--font-size-base); 
+    font-weight: var(--font-weight-base); /* MODIFIED */
+    color: var(--color-text-primary); 
+}
+.card-header .card-title,
+.card-header .card-subtitle {
+    margin: 0;
+}
+.title-wrapper {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem; 
+    flex-wrap: wrap; 
+}
+.project-badges-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem; 
+}
+
+/* --- 汎用カードボディ (corporation.html / projects.html 向け) --- */
+.card-body {
+    padding: 1.25rem; 
+}
+
+/* --- 汎用レイアウト: フレキシブルグリッド (corporation.html 向け) --- */
+.flexible-grid-layout {
+    display: flex;
+    flex-wrap: wrap; 
+    gap: 2.5rem; 
+}
+.flexible-grid-column {
+    flex: 1; 
+    min-width: 18rem; 
+}
+
+/* --- 汎用データ表示: アイコンリスト (corporation.html 向け) --- */
+.data-grid-icon-list {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr; 
+    gap: 1.5rem 0.5rem; 
+    align-items: flex-start; 
+}
+.data-grid-icon-list .data-grid-icon {
+    color: var(--color-text-secondary);
+    text-align: center;
+    font-size: var(--font-size-lg);
+    padding-top: 0.25rem; 
+    margin: 0; 
+}
+.data-grid-icon-list .data-grid-text-block {
+    margin: 0; 
+    display: flex;
+    flex-direction: column; 
+}
+.data-grid-label {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    font-weight: var(--font-weight-base); /* MODIFIED */
+    line-height: 1.4; 
+}
+.data-grid-value {
+    font-size: var(--font-size-base);
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-base); /* MODIFIED */
+    line-height: 1.4; 
+    overflow-wrap: break-word;
+    word-break: break-all;
+}
+
+
+/* =================================================================== */
+/* 2. 画面固有スタイル
+/* (特定のHTMLファイルでのみ使用するスタイル)
+/* =================================================================== */
+
+/* ------------------------------------------------------------------- */
+/* 2-1. 案件管理 (projects.html)
+/* ------------------------------------------------------------------- */
+
+/* --- 案件カード: 2カラムボディ (projects.html) --- */
+.card-body-columns {
+    display: flex;
+}
+.card-section-detail {
+    flex: 0 0 10em; 
+    padding: 1.25rem; 
+    border-right: 1px solid var(--color-border-primary);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem; 
+}
+.card-section-task {
+    flex: 1; 
+    padding: 1rem 1.25rem; 
+    background-color: var(--color-surface-primary);
+}
+.card-meta-item {
+    font-size: var(--font-size-base); 
+    color: var(--color-text-primary); 
+    margin: 0; 
+    font-weight: var(--font-weight-base); /* MODIFIED */
+}
+
+/* --- 案件カード: タスクリスト (projects.html) --- */
+.task-list-wrapper {
+    /* (ラッパー) */
+}
+.task-row {
+    display: flex;
+    align-items: baseline; 
+    gap: 0.75rem; 
+    padding: 0.5625rem 0; 
+    border-bottom: 1px solid var(--color-border-primary);
+    font-size: var(--font-size-base); 
+}
+.task-list-wrapper .task-row:last-child { border-bottom: none; }
+.task-list-wrapper .task-row:first-child { padding-top: 0.25rem; }
+
+.task-name {
+    flex: 3;
+    font-weight: var(--font-weight-base); /* MODIFIED */
+    color: var(--color-text-primary);
+}
+.task-period {
+    flex: 1.5;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    text-align: right;
+    white-space: nowrap;
+}
+.task-assignee {
+    flex: 3; 
+    display: flex;
+    flex-direction: row; 
+    align-items: baseline; 
+    font-size: var(--font-size-base); 
+    color: var(--color-text-primary); 
+    font-weight: var(--font-weight-base); /* MODIFIED */
+    line-height: 1.4;
+    gap: 0.5em; 
+}
+.assignee-type {
+    font-size: var(--font-size-sm); 
+    font-weight: var(--font-weight-base); /* MODIFIED */
+    padding: 0;
+    border-radius: 0;
+    background-color: transparent; 
+    color: var(--color-text-secondary); 
+    margin-left: 0; 
+}
+.task-gauge {
+    flex: 3;
+    min-width: 7.5rem; /* 120px */
+}
+
+/* --- 案件一覧: アイコンビュー切替 (projects.html) --- */
+.view-toggle-icons {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem; /* 4px */
+    background-color: var(--color-toggle-background); 
+    padding: 0.375rem; /* 6px */
+    border-radius: 50px; /* カプセル型 */
+}
+.view-toggle-icons .btn-icon {
+    color: var(--color-text-disabled); 
+    background-color: transparent;
+}
+.view-toggle-icons .btn-icon:hover {
+    background-color: var(--color-surface-row-hover);
+    color: var(--color-text-primary);
+}
+.view-toggle-icons .btn-icon.active {
+    background-color: var(--color-toggle-checked-background);
+    color: var(--color-toggle-checked-text);
+}
+.view-toggle-icons .btn-icon.active:hover {
+    background-color: var(--color-button-primary-hover);
+}
+
+/* --- 案件一覧: ビュー切替コンテナ (projects.html) --- */
+.view-content {
+    display: none; /* JSで 'block'/'flex' に切り替える */
+}
+.view-content.active {
+    display: block; /* デフォルトは 'block' */
+}
+
+/* --- 案件一覧: 汎用データテーブル (projects.html/budget) --- */
+.data-table-container {
+    background-color: var(--color-surface-primary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: 0.5rem; /* 8px */
+    overflow: hidden;
+    padding: 1.25rem;
+}
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.data-table th,
+.data-table td {
+    border-bottom: 1px solid var(--color-border-primary);
+    padding: 1rem 0.75rem; /* 16px 12px */
+    text-align: left;
+    vertical-align: top;
+}
+.data-table thead th {
+    font-weight: var(--font-weight-label); /* MODIFIED */
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-sm); /* */
+    border-bottom-width: 2px; 
+    border-bottom-color: var(--color-border-heavy); /* */
+}
+.data-table tbody tr:hover td {
+    background-color: var(--color-surface-row-hover); /* */
+}
+.data-table .col-project { width: 30%; }
+.data-table .col-number { 
+    text-align: right; 
+    font-family: var(--font-family-code); /* MODIFIED */
+    font-weight: var(--font-weight-label); /* MODIFIED */
+}
+/* 予算テーブル固有 */
+.budget-table .diff-plus {
+    color: var(--color-text-addition); /* */
+}
+.budget-table .diff-minus {
+    color: var(--color-text-deduction); /* */
+}
+
+/* --- 案件一覧: ガントチャート (projects.html/schedule) --- */
+.gantt-chart-container {
+    background-color: var(--color-surface-primary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: 0.5rem; /* 8px */
+    overflow-x: auto;
+    padding: 1.25rem;
+}
+.gantt-chart {
+    display: grid;
+    /* (カラム数はJSで動的に設定される想定) */
+    grid-template-columns: minmax(15rem, 1.5fr) repeat(31, minmax(2.5rem, 1fr));
+    width: 100%;
+    min-width: 1000px;
+}
+.gantt-header,
+.gantt-project-name,
+.gantt-day-cell {
+    border-bottom: 1px solid var(--color-border-primary);
+    border-right: 1px solid var(--color-border-primary);
+    padding: 0.5rem;
+    font-size: var(--font-size-sm);
+    text-align: center;
+}
+/* ヘッダー行 */
+.gantt-header {
+    font-weight: var(--font-weight-label); /* MODIFIED */
+    color: var(--color-text-secondary);
+    border-bottom: 2px solid var(--color-border-heavy);
+    position: sticky;
+    top: 0;
+    background-color: var(--color-surface-primary); 
+    z-index: 2;
+}
+.gantt-header.header-project {
+    text-align: left;
+    position: sticky;
+    left: 0;
+    z-index: 3;
+}
+.gantt-header.day-sat { color: var(--color-text-saturday); } 
+.gantt-header.day-sun { color: var(--color-text-sunday-holiday); } 
+
+/* データ行 (プロジェクト名) */
+.gantt-project-name {
+    font-weight: var(--font-weight-base); /* MODIFIED */
+    text-align: left;
+    position: sticky;
+    left: 0;
+    background-color: var(--color-surface-primary); 
+    z-index: 1;
+}
+/* データ行 (セル) */
+.gantt-row {
+    display: contents; /* gridレイアウトの子として振る舞う */
+}
+.gantt-row:hover .gantt-project-name,
+.gantt-row:hover .gantt-day-cell {
+    background-color: var(--color-surface-row-hover); 
+}
+.gantt-day-cell {
+    position: relative;
+    height: 3rem; /* バーの高さを確保 */
+    padding: 0;
+    overflow: hidden;
+}
+/* スケジュールバー */
+.gantt-bar {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 1.5rem; /* 24px */
+    
+    /* (grid-column-start/end はJSで設定) */
+    grid-column-start: var(--gantt-start);
+    grid-column-end: var(--gantt-end);
+    
+    background-color: var(--semantic-primary-main); 
+    border: 1px solid var(--palette-004);
+    border-radius: 4px;
+    
+    color: var(--color-text-on-accent); 
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-label); /* MODIFIED */
+    
+    display: flex;
+    align-items: center;
+    padding-left: 0.5rem;
+    overflow: hidden;
+    white-space: nowrap;
+}
+/* ステータス別バーの色 */
+.gantt-bar.status-active {
+    background-color: var(--semantic-primary-main); 
+    border-color: var(--palette-004);
+}
+.gantt-bar.status-completed {
+    background-color: var(--semantic-success-main); 
+    border-color: var(--palette-044);
+}
+.gantt-bar.status-not-started {
+    background-color: var(--semantic-neutral-main); 
+    border-color: var(--palette-333);
+}
+ .gantt-bar.status-cancelled {
+    background-color: var(--semantic-cancelled-main); 
+    border-color: var(--palette-000);
+    text-decoration: line-through;
+}
+
+
+/* ------------------------------------------------------------------- */
+/* 2-2. 出欠管理 (attendance.html)
+/* ------------------------------------------------------------------- */
+
+/* --- 出欠管理テーブル (attendance.html) --- */
 .table-container { 
     width: 100%; 
     overflow-x: auto; 
@@ -409,16 +946,16 @@ h1 {
 .progress-table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 1200px; /* 75rem */
+    min-width: 1200px; 
 }
 .progress-table th,
 .progress-table td {
     border-right: 1px solid var(--color-border-primary); 
     border-bottom: 1px solid var(--color-border-primary);
-    padding: 0.75rem; /* 12px */
+    padding: 0.75rem; 
     text-align: left;
     vertical-align: top;
-    min-width: 10rem; /* 160px */
+    min-width: 10rem; 
     white-space: nowrap;
 }
 .progress-table th:last-child,
@@ -436,24 +973,23 @@ h1 {
      border-bottom: 1px solid var(--color-border-heavy);
 }
 .progress-table th {
-    font-weight: 600;
+    font-weight: var(--font-weight-label); /* MODIFIED */
     color: var(--color-text-secondary);
-    font-size: var(--font-size-sm); /* L3変数を参照 */
+    font-size: var(--font-size-sm); 
     text-align: center;
 }
-/* 固定列 (縦軸) のスタイル */
+/* 固定列 (縦軸) */
 .progress-table th.header-main {
     text-align: left;
-    min-width: 10rem; /* 160px */
+    min-width: 10rem; 
     position: sticky;
     left: 0;
     background-color: var(--color-surface-primary);
     z-index: 3;
     border-right: 1px solid var(--color-border-heavy); 
 }
-
 .progress-table tbody th {
-    font-weight: 500;
+    font-weight: var(--font-weight-base); /* MODIFIED */
     position: sticky;
     left: 0;
     background-color: var(--color-surface-primary);
@@ -468,434 +1004,139 @@ h1 {
 .progress-table tbody tr:hover th,
 .progress-table tbody tr:hover td { background-color: var(--color-surface-row-hover); }
 
+/* --- 出欠セル内コンテンツ (attendance.html) --- */
 .progress-cell-content { 
-    font-size: var(--font-size-sm); /* L3変数を参照 */
+    font-size: var(--font-size-sm); 
     white-space: normal; 
 }
 .progress-cell-content div { 
     padding: 1px 0; 
 }
-
 .progress-cell-content .status { 
-    font-weight: 600; 
-    font-size: var(--font-size-base); /* L3変数を参照 */
+    font-weight: var(--font-weight-label); /* MODIFIED */
+    font-size: var(--font-size-base); 
 }
-
 .progress-cell-content .time { 
-    font-family: 'Courier New', Courier, monospace; 
-    margin-left: 0.3125rem; /* 5px */
+    font-family: var(--font-family-code); /* MODIFIED */
+    margin-left: 0.3125rem; 
 }
-
 .progress-cell-content .project,
 .progress-cell-content .user {
-    font-size: var(--font-size-sm); /* L3変数を参照 */
+    font-size: var(--font-size-sm); 
     color: var(--color-text-secondary);
-    margin-top: 0.25rem; /* 4px */
+    margin-top: 0.25rem; 
 }
-
 .day-label-sun { color: var(--color-text-sunday-holiday); }
 .day-label-sat { color: var(--color-text-saturday); }
-
 .progress-cell-content .additions {
-    font-size: var(--font-size-sm); /* xsから変更 */
+    font-size: var(--font-size-sm); 
     color: var(--color-text-secondary); 
-    font-weight: 400; 
-    margin-top: 0.25rem; /* 4px */
+    font-weight: var(--font-weight-light); /* MODIFIED */
+    margin-top: 0.25rem; 
 }
 .progress-cell-content .deductions {
-    font-size: var(--font-size-sm); /* xsから変更 */
+    font-size: var(--font-size-sm); 
     color: var(--color-text-secondary); 
-    font-weight: 400; 
-    margin-top: 0.125rem; /* 2px */
+    font-weight: var(--font-weight-light); /* MODIFIED */
+    margin-top: 0.125rem; 
 }
-
 .status-holiday {
     color: var(--color-text-disabled);
-    font-size: var(--font-size-base); /* L3変数を参照 */
-    font-weight: 600;
+    font-size: var(--font-size-base); 
+    font-weight: var(--font-weight-label); /* MODIFIED */
     text-align: center;
-    padding-top: 0.625rem; /* 10px */
+    padding-top: 0.625rem; 
     background-color: var(--color-surface-primary);
 }
 
 
-/* ===== projects.html / 汎用コンポーネント ===== */
+/* ------------------------------------------------------------------- */
+/* 2-3. 進捗記録 (progress.html)
+/* ------------------------------------------------------------------- */
 
-/* --- [追加] ボタン (汎用) --- */
-.btn {
-    padding: 0.625rem 1rem; /* 10px 16px */
-    font-size: var(--font-size-base);
-    font-weight: 600;
-    border: none;
-    border-radius: 4px; /* 0.25rem */
-    cursor: pointer;
-    text-decoration: none;
-    display: inline-block;
-    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
-}
-/* プライマリボタン (青) */
-.btn-primary {
-    background-color: var(--color-button-primary-background);
-    color: var(--color-button-primary-text);
-}
-.btn-primary:hover {
-    background-color: var(--color-button-primary-hover);
-}
-
-/* [修正] アイコンボタン (サイズ変更) */
-.btn-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.25rem; /* 36px */
-    height: 2.25rem; /* 36px */
-    padding: 0;
-    border-radius: 50%; /* 円形 */
-    background-color: transparent;
-    color: var(--color-button-icon-text);
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.2s, color 0.2s;
-    font-size: var(--font-size-lg); /* [修正] mdからlgに変更 (アイコン大型化) */
-}
-.btn-icon:hover {
-    background-color: var(--color-button-icon-hover-background);
-}
-/* アイコンボタン (プライマリ) */
-.btn-icon.btn-primary {
-    background-color: var(--color-button-primary-background);
-    color: var(--color-button-primary-text);
-}
-.btn-icon.btn-primary:hover {
-    background-color: var(--color-button-primary-hover);
-}
-/* アイコンボタン (危険) */
-.btn-icon.btn-danger {
-    color: var(--color-button-icon-danger-text);
-}
-.btn-icon.btn-danger:hover {
-    background-color: var(--semantic-error-background);
-    color: var(--semantic-error-main);
-}
-/* [削除] アイコンプレースホルダーのスタイル不要 */
-
-
-/* --- 進捗バー --- */
-.progress-bar-container {
-    display: flex;
-    align-items: center;
-    gap: 0.375rem; /* 6px */
-}
-.progress-bar {
-    flex: 1;
-    height: 0.5rem; /* 8px */
-    background-color: var(--color-surface-secondary); /* L3 */
-    border-radius: 0.25rem; /* 4px */
-    overflow: hidden;
-}
-.progress-bar-inner {
-    height: 100%;
-    background-color: var(--color-progressbar-fill); /* L3変数を参照 */
-}
-.progress-percentage {
-    font-size: var(--font-size-sm); /* L3変数を参照 */
-    font-weight: 600;
-    font-family: 'Courier New', Courier, monospace;
-    color: var(--color-progressbar-text); /* L3変数を参照 */
-}
-
-/* --- [修正] ステータスバッジ (太文字化) --- */
-.status-badge {
-    padding: 0.25rem 0.625rem; /* 4px 10px */
-    border-radius: 0.75rem; /* 12px */
-    font-size: var(--font-size-sm); /* L3変数を参照 */
-    font-weight: 700; /* [修正] 600から700 (bold) に変更 */
-    white-space: nowrap;
-    display: inline-block;
-}
-/* [修正] 大きいバッジ (太さ継承) */
-.status-badge-large {
-    padding: 0.5rem 1rem; /* 8px 16px */
-    border-radius: 1.125rem; /* 18px */
-    font-size: var(--font-size-base); /* 1em */
-    /* font-weight: 700; は .status-badge から継承される */
-}
-
-.status-active {
-    background-color: var(--color-badge-active-background); 
-    color: var(--color-badge-active-text);
-}
-.status-completed {
-    background-color: var(--color-badge-completed-background);
-    color: var(--color-badge-completed-text);
-}
-.status-warning {
-    background-color: var(--color-badge-warning-background);
-    color: var(--color-badge-warning-text);
-}
-.status-error {
-    background-color: var(--color-badge-error-background);
-    color: var(--color-badge-error-text);
-}
-/* [追加] ステータスバッジ (中止、未着手) */
-.status-not-started {
-    background-color: var(--color-badge-not-started-background);
-    color: var(--color-badge-not-started-text);
-}
-.status-cancelled {
-    background-color: var(--color-badge-cancelled-background);
-    color: var(--color-badge-cancelled-text);
-}
-
-/* [追加] 案件区分バッジ (自主/受託, 単発/継続) */
-.project-category-badge {
-    font-size: var(--font-size-sm);
-    font-weight: 600;
-    padding: 0.25rem 0.625rem; /* 4px 10px */
-    border-radius: 4px; /* 0.25rem */
-    border: 1px solid var(--color-border-heavy);
-    color: var(--color-text-secondary);
-    background-color: var(--color-surface-primary);
-    white-space: nowrap;
-}
-
-
-/* --- カードレイアウト --- */
-.card-list-container {
-    /* (ラッパー) */
-}
-.card {
+/* --- 進捗記録カード (progress.html) --- */
+.progress-card {
     background-color: var(--color-surface-primary);
     border: 1px solid var(--color-border-primary);
     border-radius: 0.5rem; /* 8px */
-    margin-bottom: 1.5rem; /* 24px */
-    overflow: hidden;
+    margin-bottom: 1rem; /* 16px */
     display: flex;
     flex-direction: column;
 }
-
-/* [修正] カードヘッダー */
-.card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center; /* 中央揃え */
+.progress-card-header {
     padding: 1rem 1.25rem; /* 16px 20px */
     border-bottom: 1px solid var(--color-border-primary);
-    gap: 1rem; /* 16px */
 }
-/* [修正] カードヘッダー左側 (ステータス、案件名、顧客名) */
-.card-header-info {
-    display: flex;
-    align-items: baseline; /* ベースライン揃え */
-    gap: 0.75rem; /* [修正] 1remから0.75remに変更 */
-    flex-wrap: wrap; 
-}
-/* [修正] カードヘッダー右側 (アイコン) */
-.card-header-aside {
-    flex-shrink: 0;
-    display: flex;
-    gap: 0.25rem; /* 4px */
-}
-
-/* [修正] カードタイトル */
-.card-title {
-    font-size: var(--font-size-lg); 
-    font-weight: 600;
-    color: var(--color-text-primary);
-    line-height: 1.3;
-}
-/* [修正] カードサブタイトル (顧客名) */
-.card-subtitle {
-    font-size: var(--font-size-base); /* mdからbaseに変更 */
-    font-weight: 500;
-    color: var(--color-text-primary); /* secondaryからprimaryに変更 */
-}
-.card-header .card-title,
-.card-header .card-subtitle {
+.progress-card-title {
+    font-size: var(--font-size-md); /* */
+    font-weight: var(--font-weight-heading); /* MODIFIED */
     margin: 0;
 }
-
-/* [追加] 案件名と区分バッジのラッパー */
-.title-wrapper {
-    display: flex;
-    align-items: baseline;
-    gap: 0.75rem; /* 12px */
-    flex-wrap: wrap; /* 折り返し許容 */
-}
-/* [追加] 区分バッジのスタック */
-.project-badges-stack {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.25rem; /* 4px */
-}
-
-
-/* カードボディ */
-.card-body-columns {
-    display: flex;
-}
-/* [修正] カード詳細 (左側: 納期、責任者) (flex: 10em) */
-.card-section-detail {
-    flex: 0 0 10em; /* [修正] 10emに固定 */
-    padding: 1.25rem; /* 20px */
-    border-right: 1px solid var(--color-border-primary);
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem; /* 8px (マージンから変更) */
-}
-/* [修正] カードタスク (右側) (flex: 1) */
-.card-section-task {
-    flex: 1; /* [修正] 1.5から1に変更 (残りの幅を全て占有) */
-    padding: 1rem 1.25rem; /* 16px 20px */
-    background-color: var(--color-surface-primary);
-}
-
-/* [修正] カードメタ情報 (納期、責任者) */
-.card-meta-item {
-    font-size: var(--font-size-base); /* baseに変更 */
-    color: var(--color-text-primary); /* primaryに変更 */
-    margin: 0; /* マージンリセット (gapで対応) */
-    font-weight: 500;
-}
-/* [削除] card-meta-label はHTMLから削除されたため不要 */
-
-
-/* タスクリスト */
-.task-list-wrapper {
-    /* (ラッパー) */
-}
-/* [修正] タスク行 */
-.task-row {
-    display: flex;
-    align-items: baseline; /* [修正] centerからbaselineに変更 */
-    gap: 0.75rem; /* 12px */
-    padding: 0.5625rem 0; /* 9px 0 */
-    border-bottom: 1px solid var(--color-border-primary);
-    font-size: var(--font-size-base); 
-}
-.task-list-wrapper .task-row:last-child { border-bottom: none; }
-.task-list-wrapper .task-row:first-child { padding-top: 0.25rem; }
-
-/* [修正] タスク名 */
-.task-name {
-    flex: 3;
-    font-weight: 500;
-    color: var(--color-text-primary);
-}
-/* [追加] 担当期間 */
-.task-period {
-    flex: 1.5;
+.progress-card-subtitle {
     font-size: var(--font-size-sm);
     color: var(--color-text-secondary);
-    text-align: right;
-    white-space: nowrap;
+    margin-top: 0.25rem;
 }
-/* [修正] 担当者 (1行表示・幅拡大) */
-.task-assignee {
-    flex: 3; /* [修正] 2から3に変更 (幅拡大) */
+.progress-card-body {
+    padding: 1.25rem;
     display: flex;
-    flex-direction: row; /* [修正] 1行表示 */
-    align-items: baseline; /* [修正] ベースライン揃え */
-    font-size: var(--font-size-base); 
-    color: var(--color-text-primary); 
-    font-weight: 500;
-    line-height: 1.4;
-    gap: 0.5em; /* [追加] 名前とステータスの間隔 */
-}
-/* [修正] 担当者種別 (色分け廃止・括弧削除) */
-.assignee-type {
-    font-size: var(--font-size-sm); /* [修正] xsからsmに変更 */
-    font-weight: 500; /* 600から変更 */
-    padding: 0;
-    border-radius: 0;
-    background-color: transparent; /* 背景色削除 */
-    color: var(--color-text-secondary); /* グレーに統一 */
-    margin-left: 0; /* gapで対応 */
-}
-/* [削除] 色分けスタイル削除 */
-
-
-.task-gauge {
-    flex: 3;
-    min-width: 7.5rem; /* 120px */
+    flex-direction: column;
+    gap: 1.25rem; /* 各入力行の間隔 */
 }
 
-/* ============================================= */
-/* style.css の末尾に以下を追記                  */
-/* ============================================= */
-
-/*
- * 案件一覧ページ: アイコンビュー切替トグル
- * (progress.html の .view-toggle とは別のスタイル)
- */
-.view-toggle-icons {
+/* --- 進捗入力行 (progress.html) --- */
+.progress-input-row {
     display: flex;
     align-items: center;
-    gap: 0.25rem; /* 4px */
-    
-    /* 既存の .view-toggle の背景色 を流用 */
-    background-color: var(--color-toggle-background); 
-    
-    padding: 0.375rem; /* 6px */
-    border-radius: 50px; /* 角丸（カプセル型） */
+    gap: 1rem; /* 16px */
+    border-bottom: 1px solid var(--color-border-primary);
+    padding-bottom: 1.25rem;
 }
-
-/* トグル内のアイコンボタン (既存の .btn-icon をベース) */
-.view-toggle-icons .btn-icon {
-    /* * .btn-icon は
-     * width: 2.25rem; height: 2.25rem;
-     * border-radius: 50%;
-     *
-     */
-    
-    /* 非アクティブ時は無彩色（グレー）にする */
-    color: var(--color-text-disabled); 
-    background-color: transparent;
+.progress-card-body .progress-input-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
 }
-
-.view-toggle-icons .btn-icon:hover {
-    /* * .btn-icon:hover は
-     * background-color: var(--color-button-icon-hover-background);
-     *
-     */
-    background-color: var(--color-surface-row-hover);
+.progress-input-label {
+    flex: 1;
+    font-weight: var(--font-weight-base); /* MODIFIED */
+    line-height: 1.4;
+}
+.progress-input-label .label-main {
+    display: block;
+    font-size: var(--font-size-base);
     color: var(--color-text-primary);
 }
-
-/* ★アクティブなトグルボタンのスタイル */
-.view-toggle-icons .btn-icon.active {
-    /* * .view-toggle input:checked + label は
-     * background-color: var(--color-toggle-checked-background); (濃い青)
-     * color: var(--color-toggle-checked-text); (白)
-     *
-     */
-    background-color: var(--color-toggle-checked-background);
-    color: var(--color-toggle-checked-text);
-}
-.view-toggle-icons .btn-icon.active:hover {
-    /* * .btn-primary:hover は
-     * background-color: var(--color-button-primary-hover); (少し濃い青)
-     *
-     */
-    background-color: var(--color-button-primary-hover);
-}
-
-/* ビュー切り替えコンテナ (JSで display を制御) */
-.view-content.active {
+.progress-input-label .label-sub {
     display: block;
-}
-/* --- アクティブなナビゲーション項目 --- */
-.nav-item a.active,
-.nav-accordion-menu li a.active {
-    background-color: var(--color-sidebar-active-item-background);
-    font-weight: 700; /* 既存は600なので、少し太くする */
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
 }
 
-/* --- アクティブなナビゲーション項目 --- */
-.nav-item a.active,
-.nav-accordion-menu li a.active {
-    background-color: var(--color-sidebar-active-item-background);
-    font-weight: 700; /* 既存は600なので、少し太くする */
+/* --- 進捗入力フォーム (progress.html) --- */
+.progress-input-fields {
+    flex: 0 0 16rem; /* 256px */
+    display: flex;
+    gap: 0.75rem; /* 12px */
+    align-items: baseline;
 }
-
+.progress-input-fields label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-label); /* MODIFIED */
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+}
+.progress-input-fields input[type="number"] {
+    width: 6rem; /* 96px */
+    padding: 0.625rem 0.75rem; /* 10px 12px */
+    font-size: var(--font-size-base);
+    border: 1px solid var(--color-border-heavy);
+    border-radius: 4px; /* 0.25rem */
+    text-align: right;
+    font-family: var(--font-family-code); /* MODIFIED */
+    font-weight: var(--font-weight-label); /* MODIFIED */
+}
+.progress-input-fields input[type="number"]:focus {
+     outline: none;
+    border-color: var(--theme-primary-button);
+    box-shadow: 0 0 0 2px var(--semantic-primary-background);
+}
