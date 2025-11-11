@@ -139,7 +139,7 @@
 
     /* コンポーネント (プログレスバー) */
     --color-progressbar-fill: var(--theme-main);
-    --color-progressbar-text: var(--theme-main);
+    --color-progressbar-text: var(--color-progressbar-fill);
 }
 
 /* ------------------------------------------------------------------- */
@@ -148,8 +148,8 @@
 body, html {
     margin: 0;
     padding: 0;
-    font-family: var(--font-family-base); /* MODIFIED */
-    font-weight: var(--font-weight-base); /* MODIFIED */
+    font-family: var(--font-family-base); 
+    font-weight: var(--font-weight-base); 
     background-color: var(--color-app-background);
     color: var(--color-text-primary);
     font-size: var(--font-size-base); 
@@ -181,7 +181,7 @@ a { text-decoration: none; color: inherit; }
 
 .logo {
     color: var(--theme-accent);
-    font-weight: var(--font-weight-heading); /* MODIFIED */
+    font-weight: var(--font-weight-heading); 
     font-size: var(--font-size-lg); 
     padding: 1.4rem 1.25rem; 
     display: flex;
@@ -208,7 +208,7 @@ a { text-decoration: none; color: inherit; }
     display: flex;
     align-items: center; 
     gap: 0.625rem; 
-    font-weight: var(--font-weight-label); /* MODIFIED */
+    font-weight: var(--font-weight-label); 
     color: var(--color-sidebar-category-text);
     margin: 0.9375rem 1.25rem 0 1.25rem; 
     padding: 0.625rem 0; 
@@ -227,7 +227,7 @@ a { text-decoration: none; color: inherit; }
     transition: background-color 0.2s; 
     border-radius: 4px; 
     margin: 0 0.625rem; 
-    font-weight: var(--font-weight-label); /* MODIFIED */
+    font-weight: var(--font-weight-label); 
 }
 .nav-item a:hover { background-color: var(--color-sidebar-hover-background); }
 
@@ -240,7 +240,7 @@ a { text-decoration: none; color: inherit; }
     transition: background-color 0.2s;
     border-radius: 4px; 
     margin: 0 0.625rem; 
-    font-weight: var(--font-weight-label); /* MODIFIED */
+    font-weight: var(--font-weight-label); 
 }
 .nav-accordion summary:hover { background-color: var(--color-sidebar-hover-background); }
 .nav-accordion summary::after {
@@ -262,7 +262,7 @@ a { text-decoration: none; color: inherit; }
     margin: 0 0.625rem; 
     padding: 0.5rem 0.625rem 0.5rem 2.5rem; 
     border-radius: 4px; 
-    font-weight: var(--font-weight-label); /* MODIFIED */
+    font-weight: var(--font-weight-label); 
 }
 .nav-accordion-menu li a:hover { background-color: var(--color-sidebar-hover-background); }
 
@@ -270,7 +270,7 @@ a { text-decoration: none; color: inherit; }
 .nav-item a.active,
 .nav-accordion-menu li a.active {
     background-color: var(--color-sidebar-active-item-background);
-    font-weight: var(--font-weight-bold); /* MODIFIED */
+    font-weight: var(--font-weight-bold); 
 }
 
 /* --- サイドバー: フッター --- */
@@ -282,13 +282,13 @@ a { text-decoration: none; color: inherit; }
     color: var(--base-primary);
 }
 .sidebar-footer .user-name {
-    font-weight: var(--font-weight-label); /* MODIFIED */
+    font-weight: var(--font-weight-label); 
     font-size: var(--font-size-md); 
 }
 .sidebar-footer .user-role {
     font-size: var(--font-size-sm); 
     margin-top: 0.125rem; 
-    font-weight: var(--font-weight-label); /* MODIFIED */
+    font-weight: var(--font-weight-label); 
 }
 .sidebar-logout {
     margin-top: 0.625rem; 
@@ -297,7 +297,7 @@ a { text-decoration: none; color: inherit; }
 }
 .sidebar-logout a {
     font-size: var(--font-size-sm); 
-    font-weight: var(--font-weight-label); /* MODIFIED */
+    font-weight: var(--font-weight-label); 
     color: var(--base-quinary);
     text-decoration: none;
 }
@@ -317,7 +317,7 @@ a { text-decoration: none; color: inherit; }
 
 h1 {
     font-size: var(--font-size-xl); 
-    font-weight: var(--font-weight-heading); /* MODIFIED */
+    font-weight: var(--font-weight-heading); 
     color: var(--color-text-primary);
     margin-top: 0;
     margin-bottom: 1.25rem; 
@@ -360,7 +360,7 @@ h1 {
 .btn {
     padding: 0.625rem 1rem; 
     font-size: var(--font-size-base);
-    font-weight: var(--font-weight-label); /* MODIFIED */
+    font-weight: var(--font-weight-label); 
     border: none;
     border-radius: 4px; 
     cursor: pointer;
@@ -442,7 +442,7 @@ h1 {
 .view-toggle input:checked + label {
     background-color: var(--color-toggle-checked-background);
     color: var(--color-toggle-checked-text);
-    font-weight: var(--font-weight-base); /* MODIFIED */
+    font-weight: var(--font-weight-base); 
 }
 
 /* --- 汎用日付フィルター --- */
@@ -486,8 +486,8 @@ h1 {
 }
 .progress-percentage {
     font-size: var(--font-size-sm); 
-    font-weight: var(--font-weight-label); /* MODIFIED */
-    font-family: var(--font-family-code); /* MODIFIED */
+    font-weight: var(--font-weight-label); 
+    font-family: var(--font-family-code); 
     color: var(--color-progressbar-text); 
 }
 
@@ -496,14 +496,21 @@ h1 {
     padding: 0.25rem 0.625rem; 
     border-radius: 0.75rem; 
     font-size: var(--font-size-sm); 
-    font-weight: var(--font-weight-bold); /* MODIFIED */
+    font-weight: var(--font-weight-bold); 
     white-space: nowrap;
     display: inline-block;
 }
 .status-badge-large {
-    padding: 0.5rem 1rem; 
-    border-radius: 1.125rem; 
     font-size: var(--font-size-base); 
+    border-radius: 4px;
+    width: 4.5rem; 
+    height: 4.5rem;
+    padding: 0.5rem; 
+    display: inline-flex; 
+    align-items: center; 
+    justify-content: center; 
+    white-space: nowrap;
+    font-weight: var(--font-weight-bold); 
 }
 .status-active {
     background-color: var(--color-badge-active-background); 
@@ -533,7 +540,7 @@ h1 {
 /* --- 汎用カテゴリバッジ --- */
 .project-category-badge {
     font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-label); /* MODIFIED */
+    font-weight: var(--font-weight-label); 
     padding: 0.25rem 0.625rem; 
     border-radius: 4px; 
     border: 1px solid var(--color-border-heavy);
@@ -572,9 +579,13 @@ h1 {
 }
 .card-header-info {
     display: flex;
-    align-items: baseline; 
+    align-items: center; 
     gap: 0.75rem; 
-    flex-wrap: wrap; 
+    /* flex-wrap: wrap; REMOVED */
+    
+    /* ADDED: はみ出し防止 */
+    /* (タイトルとバッジのコンテナが縮小できるように) */
+    min-width: 0;
 }
 .card-header-aside {
     flex-shrink: 0;
@@ -585,13 +596,20 @@ h1 {
 /* --- 汎用カードタイトル/サブタイトル --- */
 .card-title {
     font-size: var(--font-size-lg); 
-    font-weight: var(--font-weight-heading); /* MODIFIED */
+    font-weight: var(--font-weight-heading); 
     color: var(--color-text-primary);
     line-height: 1.3;
+    
+    /* MODIFIED: white-space: nowrap; を削除。グリッド幅に応じて折り返しを許可する */
+    
+    /* ADDED: はみ出し防止 (タイトルが長い場合に...) */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* (タイトル自体の nowrap は削除) */
 }
 .card-subtitle {
     font-size: var(--font-size-base); 
-    font-weight: var(--font-weight-base); /* MODIFIED */
+    font-weight: var(--font-weight-base); 
     color: var(--color-text-primary); 
 }
 .card-header .card-title,
@@ -600,9 +618,13 @@ h1 {
 }
 .title-wrapper {
     display: flex;
-    align-items: baseline;
+    align-items: center; 
     gap: 0.75rem; 
-    flex-wrap: wrap; 
+    flex-wrap: nowrap; 
+
+    /* ADDED: はみ出し防止 */
+    /* (タイトルラッパーが縮小できるように) */
+    min-width: 0;
 }
 .project-badges-stack {
     display: flex;
@@ -614,6 +636,8 @@ h1 {
 /* --- 汎用カードボディ (corporation.html / projects.html 向け) --- */
 .card-body {
     padding: 1.25rem; 
+    /* ADDED: カードの高さを揃えるため、ボディを可変にする */
+    flex-grow: 1;
 }
 
 /* --- 汎用レイアウト: フレキシブルグリッド (corporation.html 向け) --- */
@@ -623,9 +647,32 @@ h1 {
     gap: 2.5rem; 
 }
 .flexible-grid-column {
-    flex: 1; 
+    flex: 0 1 auto; 
     min-width: 18rem; 
 }
+
+/* --- MODIFIED: 汎用レイアウト: カードグリッド (offices.html 向け) --- */
+.card-grid-layout {
+    display: grid;
+    /* MODIFIED:
+      "min-content" を "22rem" (固定値) に変更。
+      これにより、ウィンドウ幅が許す限り 22rem 以上の
+      均等なカラムが複数作成されます。
+    */
+    grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
+    gap: 1.5rem; /* 均等な余白 */
+    
+    /* ADDED: 
+      全カードの高さを、グリッド内で最も高いカードに自動的に合わせる
+    */
+    grid-auto-rows: 1fr;
+}
+/* (グリッド内のカードは高さを揃え、デフォルトマージンを無効化) */
+.card-grid-layout > .card {
+    height: 100%;
+    margin-bottom: 0;
+}
+
 
 /* --- 汎用データ表示: アイコンリスト (corporation.html 向け) --- */
 .data-grid-icon-list {
@@ -649,13 +696,13 @@ h1 {
 .data-grid-label {
     font-size: var(--font-size-sm);
     color: var(--color-text-secondary);
-    font-weight: var(--font-weight-base); /* MODIFIED */
+    font-weight: var(--font-weight-base); 
     line-height: 1.4; 
 }
 .data-grid-value {
     font-size: var(--font-size-base);
     color: var(--color-text-primary);
-    font-weight: var(--font-weight-base); /* MODIFIED */
+    font-weight: var(--font-weight-base); 
     line-height: 1.4; 
     overflow-wrap: break-word;
     word-break: break-all;
@@ -692,7 +739,7 @@ h1 {
     font-size: var(--font-size-base); 
     color: var(--color-text-primary); 
     margin: 0; 
-    font-weight: var(--font-weight-base); /* MODIFIED */
+    font-weight: var(--font-weight-base); 
 }
 
 /* --- 案件カード: タスクリスト (projects.html) --- */
@@ -712,7 +759,7 @@ h1 {
 
 .task-name {
     flex: 3;
-    font-weight: var(--font-weight-base); /* MODIFIED */
+    font-weight: var(--font-weight-base); 
     color: var(--color-text-primary);
 }
 .task-period {
@@ -729,13 +776,13 @@ h1 {
     align-items: baseline; 
     font-size: var(--font-size-base); 
     color: var(--color-text-primary); 
-    font-weight: var(--font-weight-base); /* MODIFIED */
+    font-weight: var(--font-weight-base); 
     line-height: 1.4;
     gap: 0.5em; 
 }
 .assignee-type {
     font-size: var(--font-size-sm); 
-    font-weight: var(--font-weight-base); /* MODIFIED */
+    font-weight: var(--font-weight-base); 
     padding: 0;
     border-radius: 0;
     background-color: transparent; 
@@ -800,7 +847,7 @@ h1 {
     vertical-align: top;
 }
 .data-table thead th {
-    font-weight: var(--font-weight-label); /* MODIFIED */
+    font-weight: var(--font-weight-label); 
     color: var(--color-text-secondary);
     font-size: var(--font-size-sm); /* */
     border-bottom-width: 2px; 
@@ -812,8 +859,8 @@ h1 {
 .data-table .col-project { width: 30%; }
 .data-table .col-number { 
     text-align: right; 
-    font-family: var(--font-family-code); /* MODIFIED */
-    font-weight: var(--font-weight-label); /* MODIFIED */
+    font-family: var(--font-family-code); 
+    font-weight: var(--font-weight-label); 
 }
 /* 予算テーブル固有 */
 .budget-table .diff-plus {
@@ -849,7 +896,7 @@ h1 {
 }
 /* ヘッダー行 */
 .gantt-header {
-    font-weight: var(--font-weight-label); /* MODIFIED */
+    font-weight: var(--font-weight-label); 
     color: var(--color-text-secondary);
     border-bottom: 2px solid var(--color-border-heavy);
     position: sticky;
@@ -868,7 +915,7 @@ h1 {
 
 /* データ行 (プロジェクト名) */
 .gantt-project-name {
-    font-weight: var(--font-weight-base); /* MODIFIED */
+    font-weight: var(--font-weight-base); 
     text-align: left;
     position: sticky;
     left: 0;
@@ -906,7 +953,7 @@ h1 {
     
     color: var(--color-text-on-accent); 
     font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-label); /* MODIFIED */
+    font-weight: var(--font-weight-label); 
     
     display: flex;
     align-items: center;
@@ -973,7 +1020,7 @@ h1 {
      border-bottom: 1px solid var(--color-border-heavy);
 }
 .progress-table th {
-    font-weight: var(--font-weight-label); /* MODIFIED */
+    font-weight: var(--font-weight-label); 
     color: var(--color-text-secondary);
     font-size: var(--font-size-sm); 
     text-align: center;
@@ -989,7 +1036,7 @@ h1 {
     border-right: 1px solid var(--color-border-heavy); 
 }
 .progress-table tbody th {
-    font-weight: var(--font-weight-base); /* MODIFIED */
+    font-weight: var(--font-weight-base); 
     position: sticky;
     left: 0;
     background-color: var(--color-surface-primary);
@@ -1013,11 +1060,11 @@ h1 {
     padding: 1px 0; 
 }
 .progress-cell-content .status { 
-    font-weight: var(--font-weight-label); /* MODIFIED */
+    font-weight: var(--font-weight-label); 
     font-size: var(--font-size-base); 
 }
 .progress-cell-content .time { 
-    font-family: var(--font-family-code); /* MODIFIED */
+    font-family: var(--font-family-code); 
     margin-left: 0.3125rem; 
 }
 .progress-cell-content .project,
@@ -1031,19 +1078,19 @@ h1 {
 .progress-cell-content .additions {
     font-size: var(--font-size-sm); 
     color: var(--color-text-secondary); 
-    font-weight: var(--font-weight-light); /* MODIFIED */
+    font-weight: var(--font-weight-light); 
     margin-top: 0.25rem; 
 }
 .progress-cell-content .deductions {
     font-size: var(--font-size-sm); 
     color: var(--color-text-secondary); 
-    font-weight: var(--font-weight-light); /* MODIFIED */
+    font-weight: var(--font-weight-light); 
     margin-top: 0.125rem; 
 }
 .status-holiday {
     color: var(--color-text-disabled);
     font-size: var(--font-size-base); 
-    font-weight: var(--font-weight-label); /* MODIFIED */
+    font-weight: var(--font-weight-label); 
     text-align: center;
     padding-top: 0.625rem; 
     background-color: var(--color-surface-primary);
@@ -1069,7 +1116,7 @@ h1 {
 }
 .progress-card-title {
     font-size: var(--font-size-md); /* */
-    font-weight: var(--font-weight-heading); /* MODIFIED */
+    font-weight: var(--font-weight-heading); 
     margin: 0;
 }
 .progress-card-subtitle {
@@ -1098,7 +1145,7 @@ h1 {
 }
 .progress-input-label {
     flex: 1;
-    font-weight: var(--font-weight-base); /* MODIFIED */
+    font-weight: var(--font-weight-base); 
     line-height: 1.4;
 }
 .progress-input-label .label-main {
@@ -1121,7 +1168,7 @@ h1 {
 }
 .progress-input-fields label {
     font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-label); /* MODIFIED */
+    font-weight: var(--font-weight-label); 
     color: var(--color-text-secondary);
     white-space: nowrap;
 }
@@ -1132,8 +1179,8 @@ h1 {
     border: 1px solid var(--color-border-heavy);
     border-radius: 4px; /* 0.25rem */
     text-align: right;
-    font-family: var(--font-family-code); /* MODIFIED */
-    font-weight: var(--font-weight-label); /* MODIFIED */
+    font-family: var(--font-family-code); 
+    font-weight: var(--font-weight-label); 
 }
 .progress-input-fields input[type="number"]:focus {
      outline: none;
