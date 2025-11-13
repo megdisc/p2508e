@@ -352,9 +352,10 @@ body {
     font: var(--font-page-default);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    /* ★游ゴシックのプロポーショナル設定を追加 */
     font-feature-settings: 'palt';
-    overflow: hidden; /* body 自体はスクロールさせない */
+    overflow: hidden;
+    font-kerning: normal;
+    text-rendering: optimizeLegibility;
 }
 
 /* -------------------------------------- */
@@ -376,6 +377,7 @@ h4 { font-size: var(--font-size-md); } /* H4 (20px) */
 p {
     margin: 0 0 var(--spacing-stack-sm) 0;
     line-height: var(--line-height-relaxed);
+    text-align: justify;
 }
 
 a {
