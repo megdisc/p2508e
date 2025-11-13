@@ -146,8 +146,11 @@
                 <div class="card">
                     <div class="card-body" style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center;">
                         <button class="btn btn-primary">Primary (16px, 600)</button>
-                        <button class="btn btn-secondary">Secondary</button>
+                        <button class="btn btn-success">Success</button>
+                        <button class="btn btn-warning">Warning</button>
                         <button class="btn btn-error">Error</button>
+                        <button class="btn btn-neutral">Neutral</button>
+                        <button class="btn btn-cancelled">Cancelled</button>
 
                         <div style="width: 100%; border-top: 1px solid var(--palette-EEE); margin: 8px 0;"></div>
 
@@ -157,9 +160,20 @@
                         <button class="btn btn-icon btn-icon-success">
                             <span class="material-symbols-outlined">edit</span>
                         </button>
+                        <button class="btn btn-icon btn-icon-warning">
+                            <span class="material-symbols-outlined">warning</span>
+                        </button>
                         <button class="btn btn-icon btn-icon-error">
                             <span class="material-symbols-outlined">delete</span>
                         </button>
+                        <button class="btn btn-icon btn-icon-neutral">
+                            <span class="material-symbols-outlined">settings</span>
+                        </button>
+                        <button class="btn btn-icon btn-icon-cancelled">
+                            <span class="material-symbols-outlined">cancel</span>
+                        </button>
+
+                        <div style="width: 100%; border-top: 1px solid var(--palette-EEE); margin: 8px 0;"></div>
 
                         <button class="btn btn-primary">
                             <span class="material-symbols-outlined">add</span>
@@ -171,9 +185,12 @@
                 <h1 style="margin-top: 48px;">3. バッジ</h1>
                 <div class="card">
                     <div class="card-body" style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center;">
+                        <span class="badge badge-primary">Primary</span>
                         <span class="badge badge-success">Success (12.8px, 700)</span>
                         <span class="badge badge-warning">Warning</span>
                         <span class="badge badge-error">Error</span>
+                        <span class="badge badge-neutral">Neutral</span>
+                        <span class="badge badge-cancelled">Cancelled</span>
                     </div>
                 </div>
 
@@ -385,7 +402,7 @@
                         <p>入力内容を保存してもよろしいですか？</p>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-secondary" onclick="hideModal('demo-modal')">
+                        <button class="btn btn-cancelled" onclick="hideModal('demo-modal')">
                             キャンセル
                         </button>
                         <button class="btn btn-primary" onclick="hideModal('demo-modal')">

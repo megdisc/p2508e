@@ -67,6 +67,7 @@
 
 /* -------------------------------------- */
 /* 5.3. ボタン (Button)
+/* (★セマンティックカラー全対応)
 /* -------------------------------------- */
 .btn {
     display: inline-flex;
@@ -93,22 +94,43 @@
     cursor: not-allowed;
 }
 
+/* (★背景=Main / テキスト=White) */
 .btn-primary {
+    /* (★) globals.css (L3) の定義を参照するように修正 */
     background-color: var(--color-button-primary-background);
     color: var(--color-button-primary-text);
     border-color: var(--color-button-primary-border);
 }
 
-.btn-secondary {
-    background-color: var(--color-button-secondary-background);
-    color: var(--color-button-secondary-text);
-    border-color: var(--color-button-secondary-border);
+.btn-success {
+    background-color: var(--color-semantic-success-main);
+    color: var(--color-base-primary);
+    border-color: var(--color-semantic-success-main);
+}
+
+.btn-warning {
+    background-color: var(--color-semantic-warning-main);
+    color: var(--color-base-primary);
+    border-color: var(--color-semantic-warning-main);
 }
 
 .btn-error {
-    background-color: var(--color-button-error-background);
-    color: var(--color-button-error-text);
-    border-color: var(--color-button-error-border);
+    background-color: var(--color-semantic-error-main);
+    color: var(--color-base-primary);
+    border-color: var(--color-semantic-error-main);
+}
+
+.btn-cancelled {
+    background-color: var(--color-semantic-cancelled-sub);
+    color: var(--color-semantic-cancelled-main);
+    border-color: var(--color-semantic-cancelled-sub);
+}
+
+/* (★背景=Sub / テキスト=Main) */
+.btn-neutral {
+    background-color: var(--color-semantic-neutral-sub);
+    color: var(--color-semantic-neutral-main);
+    border-color: var(--color-semantic-neutral-sub);
 }
 
 /* (★) アイコンボタン (ベース形状) */
@@ -119,37 +141,53 @@
     border-radius: 50%; /* (★) 円形 */
     font-size: 1.25rem; /* アイコンサイズ (20px) */
     
-    /* (★★) アイコンフォントをflexコンテナで
-中央揃えするための調整 */
+    /* (★★) アイコンフォントをflexコンテナで中央揃えするための調整 */
     line-height: 1; 
 }
 
-/* (★) アイコンボタン (Primary / 薄い青) */
+/* (★) アイコンボタン (背景=Sub / アイコン=Main) */
 .btn.btn-icon-primary {
-    background-color: var(--color-semantic-primary-sub); /* 薄い青 */
-    color: var(--color-semantic-primary-main); /* 濃い青 (アイコン色) */
-    border-color: var(--color-semantic-primary-sub); /* 薄い青 */
+    background-color: var(--color-semantic-primary-sub);
+    color: var(--color-semantic-primary-main);
+    border-color: var(--color-semantic-primary-sub);
 }
 
-/* (★) アイコンボタン (Success / 青緑) */
 .btn.btn-icon-success {
-    background-color: var(--color-semantic-success-sub); /* 薄い青緑 */
-    color: var(--color-semantic-success-main); /* 濃い青緑 (アイコン色) */
-    border-color: var(--color-semantic-success-sub); /* 薄い青緑 */
+    background-color: var(--color-semantic-success-sub);
+    color: var(--color-semantic-success-main);
+    border-color: var(--color-semantic-success-sub);
 }
 
-/* (★) アイコンボタン (Error / 薄い赤) */
+/* (★追記) */
+.btn.btn-icon-warning {
+    background-color: var(--color-semantic-warning-sub);
+    color: var(--color-semantic-warning-main);
+    border-color: var(--color-semantic-warning-sub);
+}
+
 .btn.btn-icon-error {
-    background-color: var(--color-semantic-error-sub); /* 薄い赤 */
-    color: var(--color-semantic-error-main); /* 濃い赤 (アイコン色) */
-    border-color: var(--color-semantic-error-sub); /* 薄い赤 */
+    background-color: var(--color-semantic-error-sub);
+    color: var(--color-semantic-error-main);
+    border-color: var(--color-semantic-error-sub);
 }
 
-/* (★) アイコンボタン (Neutral / 薄いグレー) */
 .btn.btn-icon-neutral {
-    background-color: var(--color-semantic-neutral-sub); /* 薄いグレー */
-    color: var(--color-semantic-neutral-main); /* 濃いグレー (アイコン色) */
-    border-color: var(--color-semantic-neutral-sub); /* 薄いグレー */
+    background-color: var(--color-semantic-neutral-sub);
+    color: var(--color-semantic-neutral-main);
+    border-color: var(--color-semantic-neutral-sub);
+}
+
+/* (★追記) */
+.btn.btn-icon-cancelled {
+    background-color: var(--color-semantic-cancelled-sub);
+    color: var(--color-semantic-cancelled-main);
+    border-color: var(--color-semantic-cancelled-sub);
+}
+
+/* (★) アイコンボタン内部のアイコン (span) のズレを微調整 */
+.btn.btn-icon > span {
+    position: relative;
+    left: 0.5px;
 }
 
 /* -------------------------------------- */
@@ -225,6 +263,7 @@ input[type="number"].input-field {
 
 /* -------------------------------------- */
 /* 5.5. バッジ (Badge)
+/* (★セマンティックカラー全対応)
 /* -------------------------------------- */
 .badge {
     display: inline-block;
@@ -234,6 +273,12 @@ input[type="number"].input-field {
     border-radius: var(--radius-badge);
     line-height: 1;
     text-transform: uppercase;
+}
+
+/* (★追記) */
+.badge-primary {
+    background-color: var(--color-semantic-primary-sub);
+    color: var(--color-semantic-primary-main);
 }
 
 .badge-success {
@@ -249,6 +294,18 @@ input[type="number"].input-field {
 .badge-error {
     background-color: var(--color-badge-error-background);
     color: var(--color-badge-error-text);
+}
+
+/* (★追記) */
+.badge-neutral {
+    background-color: var(--color-semantic-neutral-sub);
+    color: var(--color-semantic-neutral-main);
+}
+
+/* (★追記) */
+.badge-cancelled {
+    background-color: var(--color-semantic-cancelled-sub);
+    color: var(--color-semantic-cancelled-main);
 }
 
 /* -------------------------------------- */

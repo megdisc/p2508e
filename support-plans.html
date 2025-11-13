@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Compath - 個別支援計画</title>
+
+    <link rel="stylesheet" href="globals.css">
+    <link rel="stylesheet" href="ui.css">
+
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+    <script>
+        // モーダル
+        function showModal(id) {
+            document.getElementById(id).style.display = 'flex';
+        }
+        function hideModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        // タブ
+        function activateTab(tabGroup, tabId) {
+            // リンクのアクティブ状態を切り替え
+            // (注: シェル変数  と誤認されないよう ${...} とエスケープ)
+            const links = document.querySelectorAll(`#${tabGroup} .tab-link`);
+            links.forEach(link => link.classList.remove('is-active'));
+            document.querySelector(`#${tabGroup} .tab-link[onclick*="'${tabId}'"]`).classList.add('is-active');
+
+            // コンテンツの表示を切り替え
+            const contents = document.querySelectorAll(`#${tabGroup}-content .tab-content`);
+            contents.forEach(content => content.classList.remove('is-active'));
+            document.getElementById(tabId).classList.add('is-active');
+        }
+    </script>
+</head>
+
+<body>
+
+    <div class="page-wrapper">
+
+        <aside class="sidebar">
+
+            <div class="sidebar-header">
+                Compath
+            </div>
+
+            <nav class="sidebar-nav">
+
+                <a href="index.html" class="nav-link">トップ</a>
+
+                <details class="nav-accordion">
+                    <summary>施設情報</summary>
+                    <ul>
+                        <li><a href="corporation.html">法人情報</a></li>
+                        <li><a href="office.html">事業所情報</a></li>
+                        <li><a href="staff.html">職員情報</a></li>
+                    </ul>
+                </details>
+
+                <a href="partners.html" class="nav-link">取引先情報</a>
+
+                <a href="members.html" class="nav-link">利用者情報</a>
+
+                <details class="nav-accordion">
+                    <summary>スキル情報</summary>
+                    <ul>
+                        <li><a href="skills-settings.html">スキル設定</a></li>
+                        <li><a href="skills-evaluation.html">スキル評価</a></li>
+                    </ul>
+                </details>
+
+                <details class="nav-accordion">
+                    <summary>工賃・控除情報</summary>
+                    <ul>
+                        <li><a href="wages-settings.html">工賃設定</a></li>
+                        <li><a href="deductions-settings.html">控除設定</a></li>
+                        <li><a href="wages-evaluation.html">工賃レベル評価</a></li>
+                    </ul>
+                </details>
+
+                <a href="savings.html" class="nav-link">積立金情報</a>
+
+                <a href="attendance.html" class="nav-link">出欠管理</a>
+
+                <a href="projects.html" class="nav-link">案件管理</a>
+
+                <details class="nav-accordion">
+                    <summary>福祉事業活動</summary>
+                    <ul>
+                        <li><a href="support-plans.html">個別支援計画</a></li>
+                    </ul>
+                </details>
+
+                <details class="nav-accordion">
+                    <summary>会計</summary>
+                    <ul>
+                        <li><a href="accounting-monthly.html">月次会計</a></li>
+                        <li><a href="accounting-annual.html">年次会計</a></li>
+                    </ul>
+                </details>
+
+                <details class="nav-accordion">
+                    <summary>分析</summary>
+                    <ul>
+                        <li><a href="analytics.html">分析ダッシュボード</a></li>
+                    </ul>
+                </details>
+
+                <a href="account.html" class="nav-link">ユーザーアカウント</a>
+
+                <a href="settings.html" class="nav-link">（その他設定）</a>
+
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <span class="user-name">山田 太郎</span>
+                    <a href="#">ログアウト</a>
+                </div>
+            </div>
+
+        </aside>
+        <main class="main-content">
+
+            <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
+
+                <h1>個別支援計画</h1>
+
+                <div class="card">
+                    <div class="card-body">
+                        <p>これは「個別支援計画」ページです。ここに内容を記述します。</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+        </div>
+
+</body>
+
+</html>
