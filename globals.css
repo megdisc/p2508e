@@ -9,7 +9,6 @@
     /* -------------------------------------- */
     
     /* 有彩色 (Chromatic Colors) */
-    --palette-006: #000066;
     --palette-015: #001155;
     --palette-066: #006666;
     --palette-B80: #BB8800;
@@ -43,6 +42,7 @@
     --font-family-code: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
 
     /* フォントサイズスケール (★1.25倍率) */
+    --font-size-2xs: 0.64rem;     /* 10.24px (12.8 / 1.25) */
     --font-size-xs: 0.8rem;     /* 12.8px (16 / 1.25) */
     --font-size-sm: 1rem;       /* 16px (基準) */
     --font-size-md: 1.25rem;    /* 20px (16 * 1.25) */
@@ -164,6 +164,7 @@
     /* -------------------------------------- */
     --font-body: var(--font-weight-regular) var(--font-size-sm) / var(--line-height-normal) var(--font-family-base);
     --font-body-sm: var(--font-weight-regular) var(--font-size-xs) / var(--line-height-normal) var(--font-family-base);
+    --font-body-2sm: var(--font-weight-regular) var(--font-size-2xs) / var(--line-height-normal) var(--font-family-base);
     --font-heading-h1: var(--font-weight-bold) var(--font-size-3xl) / var(--line-height-tight) var(--font-family-heading);
     --font-heading-h2: var(--font-weight-bold) var(--font-size-2xl) / var(--line-height-tight) var(--font-family-heading);
     --font-heading-h3: var(--font-weight-bold) var(--font-size-xl) / var(--line-height-tight) var(--font-family-heading);
