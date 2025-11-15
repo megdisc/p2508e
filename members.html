@@ -130,7 +130,7 @@
 
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
                     <h1 style="margin: 0;">利用者情報</h1>
-                    <a href="#" class="btn btn-primary">
+                    <a href="#" class="btn btn-primary" onclick="showModal('modal-edit-member')">
                         <span class="material-symbols-outlined">add</span>
                         新規作成
                     </a>
@@ -171,8 +171,7 @@
                                 <option value="asc">古い順</option>
                             </select>
                         </div>
-
-                        </div>
+                    </div>
                 </div>
 
 
@@ -186,7 +185,7 @@
                                 <span class="badge badge-success">契約中 | 2023.04.01</span>
                             </div>
                             <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
-                                <button class="btn btn-icon btn-icon-success" title="修正">
+                                <button class="btn btn-icon btn-icon-success" title="修正" onclick="showModal('modal-edit-member')">
                                     <span class="material-symbols-outlined">edit</span>
                                 </button>
                                 <button class="btn btn-icon btn-icon-error" title="削除">
@@ -229,7 +228,7 @@
                                 <span class="badge badge-success">契約中 | 2022.10.01</span>
                             </div>
                             <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
-                                <button class="btn btn-icon btn-icon-success" title="修正">
+                                <button class="btn btn-icon btn-icon-success" title="修正" onclick="showModal('modal-edit-member')">
                                     <span class="material-symbols-outlined">edit</span>
                                 </button>
                                 <button class="btn btn-icon btn-icon-error" title="削除">
@@ -272,7 +271,7 @@
                                 <span class="badge badge-neutral">未契約 | （未定）</span>
                             </div>
                             <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
-                                <button class="btn btn-icon btn-icon-success" title="修正">
+                                <button class="btn btn-icon btn-icon-success" title="修正" onclick="showModal('modal-edit-member')">
                                     <span class="material-symbols-outlined">edit</span>
                                 </button>
                                 <button class="btn btn-icon btn-icon-error" title="削除">
@@ -315,7 +314,7 @@
                                 <span class="badge badge-cancelled">契約終了 | 2021.05.01 - 2023.04.30</span>
                             </div>
                             <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
-                                <button class="btn btn-icon btn-icon-success" title="修正">
+                                <button class="btn btn-icon btn-icon-success" title="修正" onclick="showModal('modal-edit-member')">
                                     <span class="material-symbols-outlined">edit</span>
                                 </button>
                                 <button class="btn btn-icon btn-icon-error" title="削除">
@@ -351,6 +350,161 @@
                     </div>
 
                 </div> </div>
+
+            <div class="modal-backdrop" id="modal-edit-member" style="display: none;">
+                <div class="modal-content" style="max-width: 800px;">
+                    <div class="modal-header">
+                        利用者情報の編集
+                        </div>
+                    <div class="modal-body">
+                        
+                        <nav class="tabs-nav" id="tab-group-edit">
+                            <a class="tab-link is-active" onclick="activateTab('tab-group-edit', 'tab-edit-1')">基本情報</a>
+                            <a class="tab-link" onclick="activateTab('tab-group-edit', 'tab-edit-2')">利用サービス</a>
+                            <a class="tab-link" onclick="activateTab('tab-group-edit', 'tab-edit-3')">受給者証</a>
+                        </nav>
+
+                        <div id="tab-group-edit-content">
+                            
+                            <div class="tab-content is-active" id="tab-edit-1">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4);">
+                                    
+                                    <div class="form-group" style="margin-bottom: var(--spacing-4);">
+                                        <label class="form-label" for="edit-name">氏名</label>
+                                        <input type="text" id="edit-name" class="input-field" value="山田 太郎">
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: var(--spacing-4);">
+                                        <label class="form-label" for="edit-kana">ふりがな</label>
+                                        <input type="text" id="edit-kana" class="input-field" value="やまだ たろう">
+                                    </div>
+                                    
+                                    <div class="form-group" style="margin-bottom: var(--spacing-4);">
+                                        <label class="form-label" for="edit-status">契約状態</label>
+                                        <select id="edit-status" class="input-field">
+                                            <option value="active" selected>契約中</option>
+                                            <option value="inactive">契約終了</option>
+                                            <option value="pending">未契約</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: var(--spacing-4);">
+                                        <label class="form-label" for="edit-contract-date">契約開始日</label>
+                                        <input type="date" id="edit-contract-date" class="input-field" value="2023-04-01">
+                                    </div>
+
+                                    <div class="form-group" style="margin-bottom: var(--spacing-4);">
+                                        <label class="form-label" for="edit-zip">郵便番号</label>
+                                        <input type="text" id="edit-zip" class="input-field" value="810-0001">
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: var(--spacing-4);">
+                                        <label class="form-label" for="edit-address">住所</label>
+                                        <input type="text" id="edit-address" class="input-field" value="福岡県福岡市中央区天神1-1-1">
+                                    </div>
+                                    
+                                    <div class="form-group" style="margin-bottom: var(--spacing-4);">
+                                        <label class="form-label" for="edit-phone">電話番号</label>
+                                        <input type="tel" id="edit-phone" class="input-field" value="090-1234-5678">
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: var(--spacing-4);">
+                                        <label class="form-label" for="edit-email">メールアドレス</label>
+                                        <input type="email" id="edit-email" class="input-field" value="taro.yamada@example.com">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="tab-content" id="tab-edit-2">
+                                <div class="table-container">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>曜日</th>
+                                                <th>利用ステータス</th>
+                                                <th>利用時間</th>
+                                                <th>サービス</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>日</td>
+                                                <td><span class="badge badge-neutral">お休み</span></td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                            <tr>
+                                                <td>月</td>
+                                                <td><span class="badge badge-primary">通所</span></td>
+                                                <td>10:00 - 15:00</td>
+                                                <td><span class="badge badge-neutral">昼食</span> <span class="badge badge-neutral">送迎(往復)</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>火</td>
+                                                <td><span class="badge badge-primary">通所</span></td>
+                                                <td>10:00 - 15:00</td>
+                                                <td><span class="badge badge-neutral">昼食</span> <span class="badge badge-neutral">送迎(往復)</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>水</td>
+                                                <td><span class="badge badge-primary">通所</span></td>
+                                                <td>10:00 - 15:00</td>
+                                                <td><span class="badge badge-neutral">昼食</span> <span class="badge badge-neutral">送迎(往復)</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>木</td>
+                                                <td><span class="badge badge-primary">通所</span></td>
+                                                <td>10:00 - 15:00</td>
+                                                <td><span class="badge badge-neutral">昼食</span> <span class="badge badge-neutral">送迎(往復)</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>金</td>
+                                                <td><span class="badge badge-primary">通所</span></td>
+                                                <td>10:00 - 15:00</td>
+                                                <td><span class="badge badge-neutral">昼食</span> <span class="badge badge-neutral">送迎(往復)</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>土</td>
+                                                <td><span class="badge badge-neutral">お休み</span></td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <div class="tab-content" id="tab-edit-3">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4);">
+                                    <div class="form-group" style="margin-bottom: var(--spacing-4);">
+                                        <label class="form-label" for="edit-cert-start">支給決定期間 (開始)</label>
+                                        <input type="date" id="edit-cert-start" class="input-field" value="2023-10-01">
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: var(--spacing-4);">
+                                        <label class="form-label" for="edit-cert-end">支給決定期間 (終了)</label>
+                                        <input type="date" id="edit-cert-end" class="input-field" value="2024-09-30">
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: var(--spacing-4);">
+                                        <label class="form-label" for="edit-cert-rate">利用者負担割合</label>
+                                        <input type="text" id="edit-cert-rate" class="input-field" value="1割">
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: var(--spacing-4);">
+                                        <label class="form-label" for="edit-cert-limit">利用者負担上限月額</label>
+                                        <input type="text" id="edit-cert-limit" class="input-field" value="9,300円">
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-neutral" onclick="hideModal('modal-edit-member')">
+                            キャンセル
+                        </button>
+                        <button class="btn btn-primary" onclick="hideModal('modal-edit-member')">
+                            保存する
+                        </button>
+                    </div>
+                </div>
+            </div>
+
 
             <div class="modal-backdrop" id="modal-service-1" style="display: none;">
                 <div class="modal-content">
