@@ -34,11 +34,11 @@
 
 .container {
     width: 100%;
-    max-width: var(--container-max-width);
+    /* max-width: var(--container-max-width); ★最大幅を削除 */
     margin-left: auto;
     margin-right: auto;
-    padding-left: var(--spacing-inset-md);
-    padding-right: var(--spacing-inset-md);
+    padding-left: var(--spacing-8); /* ★余白を 2rem (32px) に変更 */
+    padding-right: var(--spacing-8); /* ★余白を 2rem (32px) に変更 */
 }
 
 /* -------------------------------------- */

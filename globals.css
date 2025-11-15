@@ -179,7 +179,7 @@
     --spacing-inset-lg: var(--spacing-6);
     --spacing-stack-xs: var(--spacing-2);
     --spacing-stack-sm: var(--spacing-4);
-    --spacing-stack-md: var(--spacing-6);
+    --spacing-stack-md: var(--spacing-8); /* ★変更 (1.5rem -> 2rem) */
     --spacing-stack-lg: var(--spacing-8);
     
     /* -------------------------------------- */
@@ -318,7 +318,7 @@
     --color-data-list-label-text: var(--color-base-quaternary); /* #666 */
     --color-data-list-value-text: var(--color-base-tertiary); /* #333 */
     --color-data-list-border: var(--border-subtle); /* 補助罫線(EEE) */
-    --spacing-data-list-padding-y: var(--spacing-3); /* 12px */
+    --spacing-data-list-padding-y: var(--spacing-2); /* ★変更 (12px -> 8px) */
 }
 
 
