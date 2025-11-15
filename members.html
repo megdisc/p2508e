@@ -152,7 +152,7 @@
                             </select>
                         </div>
                         <div class="form-group" style="margin: 0;">
-                            <label class="form-label" for="search-shift">基本シフト（曜日）</label>
+                            <label class="form-label" for="search-shift">利用サービス（曜日）</label>
                             <select id="search-shift" class="input-field">
                                 <option value="">すべて</option>
                                 <option value="mon">月曜利用</option>
@@ -189,29 +189,30 @@
                         </div>
                         <div class="card-body">
                             <dl class="data-list">
-                                <dt>住所</dt>
-                                <dd>〒810-0001<br>福岡県福岡市中央区天神1-1-1</dd>
-                                <dt>電話番号</dt>
-                                <dd>090-1234-5678</dd>
-                                <dt>メールアドレス</dt>
-                                <dd>taro.yamada@example.com</dd>
-                                <dt>基本シフト</dt>
-                                <dd style="display: flex; flex-wrap: wrap; gap: var(--spacing-1);">
-                                    <span class="badge badge-neutral">日</span>
-                                    <span class="badge badge-primary">月</span>
-                                    <span class="badge badge-primary">火</span>
-                                    <span class="badge badge-primary">水</span>
-                                    <span class="badge badge-primary">木</span>
-                                    <span class="badge badge-primary">金</span>
-                                    <span class="badge badge-neutral">土</span>
-                                </dd>
-                                <dt>支給決定期間</dt>
-                                <dd>2023.10.01 - 2024.09.30</dd>
-                                <dt>利用者負担割合</dt>
-                                <dd>1割</dd>
-                                <dt>利用者負担上限月額</dt>
-                                <dd>9,300円</dd>
+                                <div>
+                                    <dt>住所</dt>
+                                    <dd>〒810-0001 福岡県福岡市中央区天神1-1-1</dd>
+                                </div>
+                                <div>
+                                    <dt>電話番号</dt>
+                                    <dd>090-1234-5678</dd>
+                                </div>
+                                <div>
+                                    <dt>メールアドレス</dt>
+                                    <dd>taro.yamada@example.com</dd>
+                                </div>
                             </dl>
+                            
+                            <div style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-default); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
+                                <button class="btn btn-neutral" onclick="showModal('modal-service-1')">
+                                    <span class="material-symbols-outlined" style="font-size: 1.25em; margin-right: var(--spacing-2);">format_list_bulleted</span>
+                                    利用サービス
+                                </button>
+                                <button class="btn btn-neutral" onclick="showModal('modal-certificate-1')">
+                                    <span class="material-symbols-outlined" style="font-size: 1.25em; margin-right: var(--spacing-2);">badge</span>
+                                    受給者証
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -233,29 +234,30 @@
                         </div>
                         <div class="card-body">
                             <dl class="data-list">
-                                <dt>住所</dt>
-                                <dd>〒812-0011<br>福岡県福岡市博多区博多駅前2-2-2</dd>
-                                <dt>電話番号</dt>
-                                <dd>080-9876-5432</dd>
-                                <dt>メールアドレス</dt>
-                                <dd>hanako.suzuki@example.com</dd>
-                                <dt>基本シフト</dt>
-                                <dd style="display: flex; flex-wrap: wrap; gap: var(--spacing-1);">
-                                    <span class="badge badge-neutral">日</span>
-                                    <span class="badge badge-primary">月</span>
-                                    <span class="badge badge-primary">火</span>
-                                    <span class="badge badge-neutral">水</span>
-                                    <span class="badge badge-primary">木</span>
-                                    <span class="badge badge-primary">金</span>
-                                    <span class="badge badge-neutral">土</span>
-                                </dd>
-                                <dt>支給決定期間</dt>
-                                <dd>2023.12.01 - 2024.11.30</dd>
-                                <dt>利用者負担割合</dt>
-                                <dd>1割</dd>
-                                <dt>利用者負担上限月額</dt>
-                                <dd>37,200円</dd>
+                                <div>
+                                    <dt>住所</dt>
+                                    <dd>〒812-0011 福岡県福岡市博多区博多駅前2-2-2</dd>
+                                </div>
+                                <div>
+                                    <dt>電話番号</dt>
+                                    <dd>080-9876-5432</dd>
+                                </div>
+                                <div>
+                                    <dt>メールアドレス</dt>
+                                    <dd>hanako.suzuki@example.com</dd>
+                                </div>
                             </dl>
+                            
+                            <div style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-default); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
+                                <button class="btn btn-neutral" onclick="showModal('modal-service-2')">
+                                    <span class="material-symbols-outlined" style="font-size: 1.25em; margin-right: var(--spacing-2);">format_list_bulleted</span>
+                                    利用サービス
+                                </button>
+                                <button class="btn btn-neutral" onclick="showModal('modal-certificate-2')">
+                                    <span class="material-symbols-outlined" style="font-size: 1.25em; margin-right: var(--spacing-2);">badge</span>
+                                    受給者証
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -277,29 +279,30 @@
                         </div>
                         <div class="card-body">
                             <dl class="data-list">
-                                <dt>住所</dt>
-                                <dd>〒811-1361<br>福岡県福岡市南区西長住3-3-3</dd>
-                                <dt>電話番号</dt>
-                                <dd>070-1111-2222</dd>
-                                <dt>メールアドレス</dt>
-                                <dd>ichiro.takahashi@example.com</dd>
-                                <dt>基本シフト</dt>
-                                <dd style="display: flex; flex-wrap: wrap; gap: var(--spacing-1);">
-                                    <span class="badge badge-neutral">日</span>
-                                    <span class="badge badge-primary">月</span>
-                                    <span class="badge badge-primary">火</span>
-                                    <span class="badge badge-primary">水</span>
-                                    <span class="badge badge-neutral">木</span>
-                                    <span class="badge badge-neutral">金</span>
-                                    <span class="badge badge-neutral">土</span>
-                                </dd>
-                                <dt>支給決定期間</dt>
-                                <dd>（未定）</dd>
-                                <dt>利用者負担割合</dt>
-                                <dd>（未設定）</dd>
-                                <dt>利用者負担上限月額</dt>
-                                <dd>（未設定）</dd>
+                                <div>
+                                    <dt>住所</dt>
+                                    <dd>〒811-1361 福岡県福岡市南区西長住3-3-3</dd>
+                                </div>
+                                <div>
+                                    <dt>電話番号</dt>
+                                    <dd>070-1111-2222</dd>
+                                </div>
+                                <div>
+                                    <dt>メールアドレス</dt>
+                                    <dd>ichiro.takahashi@example.com</dd>
+                                </div>
                             </dl>
+                            
+                            <div style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-default); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
+                                <button class="btn btn-neutral" onclick="showModal('modal-service-3')">
+                                    <span class="material-symbols-outlined" style="font-size: 1.25em; margin-right: var(--spacing-2);">format_list_bulleted</span>
+                                    利用サービス
+                                </button>
+                                <button class="btn btn-neutral" onclick="showModal('modal-certificate-3')">
+                                    <span class="material-symbols-outlined" style="font-size: 1.25em; margin-right: var(--spacing-2);">badge</span>
+                                    受給者証
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -320,34 +323,213 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <dl class="data-list">
-                                <dt>住所</dt>
-                                <dd>〒814-0001<br>福岡県福岡市早良区百道浜4-4-4</dd>
-                                <dt>電話番号</dt>
-                                <dd>090-3333-4444</dd>
-                                <dt>メールアドレス</dt>
-                                <dd>jiro.sato@example.com</dd>
-                                <dt>基本シフト</dt>
-                                <dd style="display: flex; flex-wrap: wrap; gap: var(--spacing-1);">
-                                    <span class="badge badge-neutral">日</span>
-                                    <span class="badge badge-primary">月</span>
-                                    <span class="badge badge-primary">火</span>
-                                    <span class="badge badge-primary">水</span>
-                                    <span class="badge badge-primary">木</span>
-                                    <span class="badge badge-primary">金</span>
-                                    <span class="badge badge-neutral">土</span>
-                                </dd>
-                                <dt>支給決定期間</dt>
-                                <dd>2022.06.01 - 2023.05.31</dd>
-                                <dt>利用者負担割合</dt>
-                                <dd>1割</dd>
-                                <dt>利用者負担上限月額</dt>
-                                <dd>9,300円</dd>
+                             <dl class="data-list">
+                                <div>
+                                    <dt>住所</dt>
+                                    <dd>〒814-0001 福岡県福岡市早良区百道浜4-4-4</dd>
+                                </div>
+                                <div>
+                                    <dt>電話番号</dt>
+                                    <dd>090-3333-4444</dd>
+                                </div>
+                                <div>
+                                    <dt>メールアドレス</dt>
+                                    <dd>jiro.sato@example.com</dd>
+                                </div>
                             </dl>
+                            
+                            <div style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-default); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
+                                <button class="btn btn-neutral" onclick="showModal('modal-service-4')">
+                                    <span class="material-symbols-outlined" style="font-size: 1.25em; margin-right: var(--spacing-2);">format_list_bulleted</span>
+                                    利用サービス
+                                </button>
+                                <button class="btn btn-neutral" onclick="showModal('modal-certificate-4')">
+                                    <span class="material-symbols-outlined" style="font-size: 1.25em; margin-right: var(--spacing-2);">badge</span>
+                                    受給者証
+                                </button>
+                            </div>
                         </div>
                     </div>
 
                 </div> </div>
+
+            <div class="modal-backdrop" id="modal-service-1" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">利用サービス (山田 太郎)</div>
+                    <div class="modal-body">
+                        <p>ここに利用サービス（基本シフト）の詳細を表示します。</p>
+                        <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-1);">
+                            <span class="badge badge-neutral">日</span>
+                            <span class="badge badge-primary">月</span>
+                            <span class="badge badge-primary">火</span>
+                            <span class="badge badge-primary">水</span>
+                            <span class="badge badge-primary">木</span>
+                            <span class="badge badge-primary">金</span>
+                            <span class="badge badge-neutral">土</span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-neutral" onclick="hideModal('modal-service-1')">閉じる</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-backdrop" id="modal-certificate-1" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">受給者証情報 (山田 太郎)</div>
+                    <div class="modal-body">
+                        <dl class="data-list" style="display: block;"> 
+                            <div style="padding: var(--spacing-2) 0;">
+                                <dt>支給決定期間</dt>
+                                <dd>2023.10.01 - 2024.09.30</dd>
+                            </div>
+                            <div style="padding: var(--spacing-2) 0;">
+                                <dt>利用者負担割合</dt>
+                                <dd>1割</dd>
+                            </div>
+                            <div style="padding: var(--spacing-2) 0;">
+                                <dt>利用者負担上限月額</dt>
+                                <dd>9,300円</dd>
+                            </div>
+                        </dl>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-neutral" onclick="hideModal('modal-certificate-1')">閉じる</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-backdrop" id="modal-service-2" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">利用サービス (鈴木 花子)</div>
+                    <div class="modal-body">
+                        <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-1);">
+                            <span class="badge badge-neutral">日</span>
+                            <span class="badge badge-primary">月</span>
+                            <span class="badge badge-primary">火</span>
+                            <span class="badge badge-neutral">水</span>
+                            <span class="badge badge-primary">木</span>
+                            <span class="badge badge-primary">金</span>
+                            <span class="badge badge-neutral">土</span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-neutral" onclick="hideModal('modal-service-2')">閉じる</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-backdrop" id="modal-certificate-2" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">受給者証情報 (鈴木 花子)</div>
+                    <div class="modal-body">
+                        <dl class="data-list" style="display: block;"> 
+                            <div style="padding: var(--spacing-2) 0;">
+                                <dt>支給決定期間</dt>
+                                <dd>2023.12.01 - 2024.11.30</dd>
+                            </div>
+                            <div style="padding: var(--spacing-2) 0;">
+                                <dt>利用者負担割合</dt>
+                                <dd>1割</dd>
+                            </div>
+                            <div style="padding: var(--spacing-2) 0;">
+                                <dt>利用者負担上限月額</dt>
+                                <dd>37,200円</dd>
+                            </div>
+                        </dl>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-neutral" onclick="hideModal('modal-certificate-2')">閉じる</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-backdrop" id="modal-service-3" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">利用サービス (高橋 一郎)</div>
+                    <div class="modal-body">
+                        <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-1);">
+                            <span class="badge badge-neutral">日</span>
+                            <span class="badge badge-primary">月</span>
+                            <span class="badge badge-primary">火</span>
+                            <span class="badge badge-primary">水</span>
+                            <span class="badge badge-neutral">木</span>
+                            <span class="badge badge-neutral">金</span>
+                            <span class="badge badge-neutral">土</span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-neutral" onclick="hideModal('modal-service-3')">閉じる</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-backdrop" id="modal-certificate-3" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">受給者証情報 (高橋 一郎)</div>
+                    <div class="modal-body">
+                        <dl class="data-list" style="display: block;"> 
+                            <div style="padding: var(--spacing-2) 0;">
+                                <dt>支給決定期間</dt>
+                                <dd>（未定）</dd>
+                            </div>
+                            <div style="padding: var(--spacing-2) 0;">
+                                <dt>利用者負担割合</dt>
+                                <dd>（未設定）</dd>
+                            </div>
+                            <div style="padding: var(--spacing-2) 0;">
+                                <dt>利用者負担上限月額</dt>
+                                <dd>（未設定）</dd>
+                            </div>
+                        </dl>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-neutral" onclick="hideModal('modal-certificate-3')">閉じる</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-backdrop" id="modal-service-4" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">利用サービス (佐藤 次郎)</div>
+                    <div class="modal-body">
+                         <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-1);">
+                            <span class="badge badge-neutral">日</span>
+                            <span class="badge badge-primary">月</span>
+                            <span class="badge badge-primary">火</span>
+                            <span class="badge badge-primary">水</span>
+                            <span class="badge badge-primary">木</span>
+                            <span class="badge badge-primary">金</span>
+                            <span class="badge badge-neutral">土</span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-neutral" onclick="hideModal('modal-service-4')">閉じる</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-backdrop" id="modal-certificate-4" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">受給者証情報 (佐藤 次郎)</div>
+                    <div class="modal-body">
+                        <dl class="data-list" style="display: block;"> 
+                            <div style="padding: var(--spacing-2) 0;">
+                                <dt>支給決定期間</dt>
+                                <dd>2022.06.01 - 2023.05.31</dd>
+                            </div>
+                            <div style="padding: var(--spacing-2) 0;">
+                                <dt>利用者負担割合</dt>
+                                <dd>1割</dd>
+                            </div>
+                            <div style="padding: var(--spacing-2) 0;">
+                                <dt>利用者負担上限月額</dt>
+                                <dd>9,300円</dd>
+                            </div>
+                        </dl>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-neutral" onclick="hideModal('modal-certificate-4')">閉じる</button>
+                    </div>
+                </div>
+            </div>
+
 
         </main>
         </div>

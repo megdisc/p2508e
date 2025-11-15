@@ -517,25 +517,40 @@ input[type="number"].input-field {
 .data-list {
     margin: 0;
     padding: 0;
+    
+    /* ★ フレキシブルレイアウトの定義 */
+    display: grid;
+    /* ★ 隙間は 縦:8px (spacing-2), 横:16px (spacing-4) */
+    gap: var(--spacing-2) var(--spacing-4); 
+    
+    /* ★ カラム定義: min 250px, max 1fr で自動フィット */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 }
-.data-list > dt {
+
+/* ★ dt/dd は div でラップすることを前提とする */
+.data-list > div {
+    /* ★ アイテム間の垂直方向のパディングを確保 (dt/ddのpadding-top/bottomの代わり) */
+    padding: var(--spacing-2) 0; /* 上下 8px */
+}
+
+/* ★ セレクタを div > dt に変更 */
+.data-list > div > dt {
     font-size: var(--font-size-xs); /* 12.8px */
     font-weight: var(--font-weight-light); /* (★ 300 に変更) */
     color: var(--color-data-list-label-text); /* #666 */
-    padding-top: var(--spacing-data-list-padding-y); /* 12px */
+    margin-bottom: var(--spacing-1); /* 4px (dt と dd の間のマージン) */
 }
-.data-list > dd {
+/* ★ セレクタを div > dd に変更 */
+.data-list > div > dd {
     font-size: var(--font-size-sm); /* 16px */
     font-weight: var(--font-weight-regular); /* 500 */
     color: var(--color-data-list-value-text); /* #333 */
     margin: 0;
-    padding-bottom: var(--spacing-data-list-padding-y); /* 12px */
-    /* ★ border-bottom: var(--color-data-list-border); (★罫線を削除) */
+    word-break: break-all; /* 長いテキストの折り返し */
 }
-.data-list > dt:not(:first-child) {
-    padding-top: var(--spacing-data-list-padding-y);
-}
-/* ★ :last-child の定義を削除 (不要になったため) */
+
+/* ★ 従来のセレクタ定義 (dt, dd, dt:not(:first-child)) は削除 (またはHTML構造が混在する場合は残す) */
+/* (今回は削除) */
 
 
 /* -------------------------------------- */
