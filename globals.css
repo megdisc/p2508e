@@ -216,14 +216,14 @@
     --color-card-background: var(--color-base-primary);
     --color-card-border: var(--border-default);
     --shadow-card: var(--box-shadow-md);
-    --radius-card: var(--border-radius-md);
+    --radius-card: var(--border-radius-lg); /* ★変更 (md -> lg) */
     --spacing-card-padding: var(--spacing-inset-md);
 
     /* -------------------------------------- */
     /* 3.3. ボタン (Button)
     /* -------------------------------------- */
-    --radius-button: var(--border-radius-sm);
-    --spacing-button-padding-y: var(--spacing-2);
+    --radius-button: var(--border-radius-full); /* ★変更 (sm -> full) */
+    --spacing-button-padding-y: var(--spacing-1); /* ★変更 (spacing-2 -> spacing-1) */
     --spacing-button-padding-x: var(--spacing-4);
     
     --color-button-primary-background: var(--color-theme-main);
@@ -248,8 +248,8 @@
     --color-input-border-focus: var(--color-theme-main);
     --color-input-border-error: var(--color-semantic-error-main);
     --color-input-text-error: var(--color-semantic-error-main);
-    --radius-input: var(--border-radius-sm);
-    --spacing-input-padding-y: var(--spacing-2);
+    --radius-input: var(--border-radius-full); /* ★変更 (sm -> full) */
+    --spacing-input-padding-y: var(--spacing-1); /* ★変更 (spacing-2 -> spacing-1) */
     --spacing-input-padding-x: var(--spacing-3);
     
     /* -------------------------------------- */
