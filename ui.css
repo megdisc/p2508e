@@ -154,11 +154,12 @@
 
 /* (★) アイコンボタン (ベース形状) */
 .btn.btn-icon {
-    width: 2.5rem; /* 40px */
-    height: 2.5rem; /* 40px */
+    /* ★変更: 高さを通常ボタンに合わせる (約34px) */
+    width: 2.125rem; /* 34px */
+    height: 2.125rem; /* 34px */
     padding: 0; /* (★) paddingリセット */
     border-radius: 50%; /* (★) 円形 */
-    font-size: 1.25rem; /* アイコンサイズ (20px) */
+    font-size: 1.25rem; /* ★変更: アイコンサイズ 20px */
     
     /* (★★) アイコンフォントをflexコンテナで中央揃えするための調整 */
     line-height: 1; 
@@ -207,6 +208,7 @@
 .btn.btn-icon > span {
     position: relative;
     left: 0.5px;
+    /* ★ 調整用の font-size 削除 */
 }
 
 /* -------------------------------------- */
@@ -337,7 +339,7 @@ input[type="number"].input-field {
     
     /* ↓ コメントを解除して、テーブルコンテナ自身の罫線を有効化 */
     border: var(--border-width-sm) solid var(--color-table-container-border);
-    border-radius: var(--radius-card);
+    border-radius: var(--radius-card); /* ★変更 (globals.css に合わせて lg) */
 }
 
 .table {
