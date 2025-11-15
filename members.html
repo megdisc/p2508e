@@ -417,53 +417,195 @@
                                         <thead>
                                             <tr>
                                                 <th>曜日</th>
-                                                <th>利用ステータス</th>
-                                                <th>利用時間</th>
-                                                <th>サービス</th>
+                                                <th>利用</th>
+                                                <th>利用時間 (開始)</th>
+                                                <th>利用時間 (終了)</th>
+                                                <th>昼食</th>
+                                                <th>送迎</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             <tr>
                                                 <td>日</td>
-                                                <td><span class="badge badge-neutral">お休み</span></td>
-                                                <td></td>
-                                                <td></td>
+                                                <td>
+                                                    <select class="input-field" style="min-width: 100px;">
+                                                        <option value="off" selected>お休み</option>
+                                                        <option value="on-site">通所</option>
+                                                        <option value="remote">在宅</option>
+                                                    </select>
+                                                </td>
+                                                <td><input type="time" class="input-field"></td>
+                                                <td><input type="time" class="input-field"></td>
+                                                <td>
+                                                    <select class="input-field" style="min-width: 80px;">
+                                                        <option value="none" selected>なし</option>
+                                                        <option value="yes">あり</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select class="input-field" style="min-width: 100px;">
+                                                        <option value="none" selected>なし</option>
+                                                        <option value="to">往</option>
+                                                        <option value="from">復</option>
+                                                        <option value="both">往復</option>
+                                                    </select>
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <td>月</td>
-                                                <td><span class="badge badge-primary">通所</span></td>
-                                                <td>10:00 - 15:00</td>
-                                                <td><span class="badge badge-neutral">昼食</span> <span class="badge badge-neutral">送迎(往復)</span></td>
+                                                <td>
+                                                    <select class="input-field" style="min-width: 100px;">
+                                                        <option value="off">お休み</option>
+                                                        <option value="on-site" selected>通所</option>
+                                                        <option value="remote">在宅</option>
+                                                    </select>
+                                                </td>
+                                                <td><input type="time" class="input-field" value="10:00"></td>
+                                                <td><input type="time" class="input-field" value="15:00"></td>
+                                                <td>
+                                                    <select class="input-field" style="min-width: 80px;">
+                                                        <option value="none">なし</option>
+                                                        <option value="yes" selected>あり</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select class="input-field" style="min-width: 100px;">
+                                                        <option value="none">なし</option>
+                                                        <option value="to">往</option>
+                                                        <option value="from">復</option>
+                                                        <option value="both" selected>往復</option>
+                                                    </select>
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <td>火</td>
-                                                <td><span class="badge badge-primary">通所</span></td>
-                                                <td>10:00 - 15:00</td>
-                                                <td><span class="badge badge-neutral">昼食</span> <span class="badge badge-neutral">送迎(往復)</span></td>
+                                                <td>
+                                                    <select class="input-field" style="min-width: 100px;">
+                                                        <option value="off">お休み</option>
+                                                        <option value="on-site" selected>通所</option>
+                                                        <option value="remote">在宅</option>
+                                                    </select>
+                                                </td>
+                                                <td><input type="time" class="input-field" value="10:00"></td>
+                                                <td><input type="time" class="input-field" value="15:00"></td>
+                                                <td>
+                                                    <select class="input-field" style="min-width: 80px;">
+                                                        <option value="none">なし</option>
+                                                        <option value="yes" selected>あり</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select class="input-field" style="min-width: 100px;">
+                                                        <option value="none">なし</option>
+                                                        <option value="to">往</option>
+                                                        <option value="from">復</option>
+                                                        <option value="both" selected>往復</option>
+                                                    </select>
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <td>水</td>
-                                                <td><span class="badge badge-primary">通所</span></td>
-                                                <td>10:00 - 15:00</td>
-                                                <td><span class="badge badge-neutral">昼食</span> <span class="badge badge-neutral">送迎(往復)</span></td>
+                                                <td>
+                                                    <select class="input-field" style="min-width: 100px;">
+                                                        <option value="off">お休み</option>
+                                                        <option value="on-site" selected>通所</option>
+                                                        <option value="remote">在宅</option>
+                                                    </select>
+                                                </td>
+                                                <td><input type="time" class="input-field" value="10:00"></td>
+                                                <td><input type="time" class="input-field" value="15:00"></td>
+                                                <td>
+                                                    <select class="input-field" style="min-width: 80px;">
+                                                        <option value="none">なし</option>
+                                                        <option value="yes" selected>あり</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select class="input-field" style="min-width: 100px;">
+                                                        <option value="none">なし</option>
+                                                        <option value="to">往</option>
+                                                        <option value="from">復</option>
+                                                        <option value="both" selected>往復</option>
+                                                    </select>
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <td>木</td>
-                                                <td><span class="badge badge-primary">通所</span></td>
-                                                <td>10:00 - 15:00</td>
-                                                <td><span class="badge badge-neutral">昼食</span> <span class="badge badge-neutral">送迎(往復)</span></td>
+                                                <td>
+                                                    <select class="input-field" style="min-width: 100px;">
+                                                        <option value="off">お休み</option>
+                                                        <option value="on-site" selected>通所</option>
+                                                        <option value="remote">在宅</option>
+                                                    </select>
+                                                </td>
+                                                <td><input type="time" class="input-field" value="10:00"></td>
+                                                <td><input type="time" class="input-field" value="15:00"></td>
+                                                <td>
+                                                    <select class="input-field" style="min-width: 80px;">
+                                                        <option value="none">なし</option>
+                                                        <option value="yes" selected>あり</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select class="input-field" style="min-width: 100px;">
+                                                        <option value="none">なし</option>
+                                                        <option value="to">往</option>
+                                                        <option value="from">復</option>
+                                                        <option value="both" selected>往復</option>
+                                                    </select>
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <td>金</td>
-                                                <td><span class="badge badge-primary">通所</span></td>
-                                                <td>10:00 - 15:00</td>
-                                                <td><span class="badge badge-neutral">昼食</span> <span class="badge badge-neutral">送迎(往復)</span></td>
+                                                <td>
+                                                    <select class="input-field" style="min-width: 100px;">
+                                                        <option value="off">お休み</option>
+                                                        <option value="on-site" selected>通所</option>
+                                                        <option value="remote">在宅</option>
+                                                    </select>
+                                                </td>
+                                                <td><input type="time" class="input-field" value="10:00"></td>
+                                                <td><input type="time" class="input-field" value="15:00"></td>
+                                                <td>
+                                                    <select class="input-field" style="min-width: 80px;">
+                                                        <option value="none">なし</option>
+                                                        <option value="yes" selected>あり</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select class="input-field" style="min-width: 100px;">
+                                                        <option value="none">なし</option>
+                                                        <option value="to">往</option>
+                                                        <option value="from">復</option>
+                                                        <option value="both" selected>往復</option>
+                                                    </select>
+                                                </td>
                                             </tr>
                                             <tr>
                                                 <td>土</td>
-                                                <td><span class="badge badge-neutral">お休み</span></td>
-                                                <td></td>
-                                                <td></td>
+                                                <td>
+                                                    <select class="input-field" style="min-width: 100px;">
+                                                        <option value="off" selected>お休み</option>
+                                                        <option value="on-site">通所</option>
+                                                        <option value="remote">在宅</option>
+                                                    </select>
+                                                </td>
+                                                <td><input type="time" class="input-field"></td>
+                                                <td><input type="time" class="input-field"></td>
+                                                <td>
+                                                    <select class="input-field" style="min-width: 80px;">
+                                                        <option value="none" selected>なし</option>
+                                                        <option value="yes">あり</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select class="input-field" style="min-width: 100px;">
+                                                        <option value="none" selected>なし</option>
+                                                        <option value="to">往</option>
+                                                        <option value="from">復</option>
+                                                        <option value="both">往復</option>
+                                                    </select>
+                                                </td>
                                             </tr>
                                         </tbody>
                                     </table>
