@@ -530,14 +530,13 @@ input[type="number"].input-field {
     color: var(--color-data-list-value-text); /* #333 */
     margin: 0;
     padding-bottom: var(--spacing-data-list-padding-y); /* 12px */
-    border-bottom: var(--color-data-list-border); /* 補助罫線(EEE) */
+    /* ★ border-bottom: var(--color-data-list-border); (★罫線を削除) */
 }
 .data-list > dt:not(:first-child) {
     padding-top: var(--spacing-data-list-padding-y);
 }
-.data-list > dd:last-child {
-    border-bottom: none;
-}
+/* ★ :last-child の定義を削除 (不要になったため) */
+
 
 /* -------------------------------------- */
 /* 5.13. サイドバー (Sidebar) (★変更)

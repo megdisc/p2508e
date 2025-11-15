@@ -353,7 +353,8 @@ body {
     font: var(--font-page-default);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-feature-settings: 'palt';
+    font-feature-settings: 'palt'; /* ★プロポーショナルメトリクス */
+    font-variant-ligatures: common-ligatures; /* ★標準の合字 */
     overflow: hidden;
     font-kerning: normal;
     text-rendering: optimizeLegibility;
@@ -378,7 +379,7 @@ h4 { font-size: var(--font-size-md); } /* H4 (20px) */
 p {
     margin: 0 0 var(--spacing-stack-sm) 0;
     line-height: var(--line-height-relaxed);
-    text-align: justify;
+    text-align: justify; /* ★両端揃え (長文ブロックのみ) */
 }
 
 a {
