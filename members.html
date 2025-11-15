@@ -128,83 +128,197 @@
 
             <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
 
-                <h1>利用者情報</h1>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
+                    <h1 style="margin: 0;">利用者情報</h1>
+                    <a href="#" class="btn btn-primary">
+                        <span class="material-symbols-outlined">add</span>
+                        新規作成
+                    </a>
+                </div>
 
                 <div class="card-grid">
 
                     <div class="card">
-                        <div class="card-header">
-                            山田 太郎
+                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                            <span>山田 太郎</span>
+                            <div style="display: flex; gap: var(--spacing-2);">
+                                <button class="btn btn-icon btn-icon-success" title="修正">
+                                    <span class="material-symbols-outlined">edit</span>
+                                </button>
+                                <button class="btn btn-icon btn-icon-error" title="削除">
+                                    <span class="material-symbols-outlined">delete</span>
+                                </button>
+                            </div>
                         </div>
                         <div class="card-body">
                             <dl class="data-list">
-                                <dt>ステータス</dt>
-                                <dd><span class="badge badge-success">利用中</span></dd>
-                                <dt>生年月日</dt>
-                                <dd>2000年 4月 1日</dd>
-                                <dt>連絡先</dt>
+                                <dt>契約状態</dt>
+                                <dd><span class="badge badge-success">契約中</span></dd>
+                                <dt>ふりがな</dt>
+                                <dd>やまだ たろう</dd>
+                                <dt>契約期間</dt>
+                                <dd>2023年 4月 1日 ～ 2024年 3月 31日</dd>
+                                <dt>住所</dt>
+                                <dd>〒810-0001<br>福岡県福岡市中央区天神1-1-1</dd>
+                                <dt>電話番号</dt>
                                 <dd>090-1234-5678</dd>
+                                <dt>メールアドレス</dt>
+                                <dd>taro.yamada@example.com</dd>
+                                <dt>基本シフト</dt>
+                                <dd style="display: flex; flex-wrap: wrap; gap: var(--spacing-1);">
+                                    <span class="badge badge-neutral">日</span>
+                                    <span class="badge badge-primary">月</span>
+                                    <span class="badge badge-primary">火</span>
+                                    <span class="badge badge-primary">水</span>
+                                    <span class="badge badge-primary">木</span>
+                                    <span class="badge badge-primary">金</span>
+                                    <span class="badge badge-neutral">土</span>
+                                </dd>
+                                <dt>支給決定期間</dt>
+                                <dd>2023年 10月 1日 ～ 2024年 9月 30日</dd>
+                                <dt>利用者負担割合</dt>
+                                <dd>1割</dd>
+                                <dt>利用者負担上限月額</dt>
+                                <dd>9,300円</dd>
                             </dl>
-                            <div style="margin-top: 16px; text-align: right;">
-                                <a href="#" class="btn btn-primary">詳細</a>
-                            </div>
                         </div>
                     </div>
 
                     <div class="card">
-                        <div class="card-header">
-                            鈴木 花子
+                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                            <span>鈴木 花子</span>
+                            <div style="display: flex; gap: var(--spacing-2);">
+                                <button class="btn btn-icon btn-icon-success" title="修正">
+                                    <span class="material-symbols-outlined">edit</span>
+                                </button>
+                                <button class="btn btn-icon btn-icon-error" title="削除">
+                                    <span class="material-symbols-outlined">delete</span>
+                                </button>
+                            </div>
                         </div>
                         <div class="card-body">
                             <dl class="data-list">
-                                <dt>ステータス</dt>
-                                <dd><span class="badge badge-success">利用中</span></dd>
-                                <dt>生年月日</dt>
-                                <dd>1998年 12月 10日</dd>
-                                <dt>連絡先</dt>
+                                <dt>契約状態</dt>
+                                <dd><span class="badge badge-success">契約中</span></dd>
+                                <dt>ふりがな</dt>
+                                <dd>すずき はなこ</dd>
+                                <dt>契約期間</dt>
+                                <dd>2022年 10月 1日 ～ 2023年 9月 30日</dd>
+                                <dt>住所</dt>
+                                <dd>〒812-0011<br>福岡県福岡市博多区博多駅前2-2-2</dd>
+                                <dt>電話番号</dt>
                                 <dd>080-9876-5432</dd>
+                                <dt>メールアドレス</dt>
+                                <dd>hanako.suzuki@example.com</dd>
+                                <dt>基本シフト</dt>
+                                <dd style="display: flex; flex-wrap: wrap; gap: var(--spacing-1);">
+                                    <span class="badge badge-neutral">日</span>
+                                    <span class="badge badge-primary">月</span>
+                                    <span class="badge badge-primary">火</span>
+                                    <span class="badge badge-neutral">水</span>
+                                    <span class="badge badge-primary">木</span>
+                                    <span class="badge badge-primary">金</span>
+                                    <span class="badge badge-neutral">土</span>
+                                </dd>
+                                <dt>支給決定期間</dt>
+                                <dd>2023年 12月 1日 ～ 2024年 11月 30日</dd>
+                                <dt>利用者負担割合</dt>
+                                <dd>1割</dd>
+                                <dt>利用者負担上限月額</dt>
+                                <dd>37,200円</dd>
                             </dl>
-                            <div style="margin-top: 16px; text-align: right;">
-                                <a href="#" class="btn btn-primary">詳細</a>
-                            </div>
                         </div>
                     </div>
 
                     <div class="card">
-                        <div class="card-header">
-                            高橋 一郎
+                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                            <span>高橋 一郎</span>
+                            <div style="display: flex; gap: var(--spacing-2);">
+                                <button class="btn btn-icon btn-icon-success" title="修正">
+                                    <span class="material-symbols-outlined">edit</span>
+                                </button>
+                                <button class="btn btn-icon btn-icon-error" title="削除">
+                                    <span class="material-symbols-outlined">delete</span>
+                                </button>
+                            </div>
                         </div>
                         <div class="card-body">
                             <dl class="data-list">
-                                <dt>ステータス</dt>
-                                <dd><span class="badge badge-neutral">体験中</span></dd>
-                                <dt>生年月日</dt>
-                                <dd>2002年 8月 5日</dd>
-                                <dt>連絡先</dt>
+                                <dt>契約状態</dt>
+                                <dd><span class="badge badge-neutral">未契約</span></dd>
+                                <dt>ふりがな</dt>
+                                <dd>たかはし いちろう</dd>
+                                <dt>契約期間</dt>
+                                <dd>N/A</dd>
+                                <dt>住所</dt>
+                                <dd>〒811-1361<br>福岡県福岡市南区西長住3-3-3</dd>
+                                <dt>電話番号</dt>
                                 <dd>070-1111-2222</dd>
+                                <dt>メールアドレス</dt>
+                                <dd>ichiro.takahashi@example.com</dd>
+                                <dt>基本シフト</dt>
+                                <dd style="display: flex; flex-wrap: wrap; gap: var(--spacing-1);">
+                                    <span class="badge badge-neutral">日</span>
+                                    <span class="badge badge-primary">月</span>
+                                    <span class="badge badge-primary">火</span>
+                                    <span class="badge badge-primary">水</span>
+                                    <span class="badge badge-neutral">木</span>
+                                    <span class="badge badge-neutral">金</span>
+                                    <span class="badge badge-neutral">土</span>
+                                </dd>
+                                <dt>支給決定期間</dt>
+                                <dd>N/A</dd>
+                                <dt>利用者負担割合</dt>
+                                <dd>N/A</dd>
+                                <dt>利用者負担上限月額</dt>
+                                <dd>N/A</dd>
                             </dl>
-                            <div style="margin-top: 16px; text-align: right;">
-                                <a href="#" class="btn btn-primary">詳細</a>
-                            </div>
                         </div>
                     </div>
 
                     <div class="card">
-                        <div class="card-header">
-                            佐藤 次郎
+                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                            <span>佐藤 次郎</span>
+                            <div style="display: flex; gap: var(--spacing-2);">
+                                <button class="btn btn-icon btn-icon-success" title="修正">
+                                    <span class="material-symbols-outlined">edit</span>
+                                </button>
+                                <button class="btn btn-icon btn-icon-error" title="削除">
+                                    <span class="material-symbols-outlined">delete</span>
+                                </button>
+                            </div>
                         </div>
                         <div class="card-body">
                             <dl class="data-list">
-                                <dt>ステータス</dt>
-                                <dd><span class="badge badge-cancelled">利用終了</span></dd>
-                                <dt>生年月日</dt>
-                                <dd>1995年 1月 15日</dd>
-                                <dt>連絡先</dt>
+                                <dt>契約状態</dt>
+                                <dd><span class="badge badge-cancelled">契約終了</span></dd>
+                                <dt>ふりがな</dt>
+                                <dd>さとう じろう</dd>
+                                <dt>契約期間</dt>
+                                <dd>2021年 5月 1日 ～ 2023年 4月 30日</dd>
+                                <dt>住所</dt>
+                                <dd>〒814-0001<br>福岡県福岡市早良区百道浜4-4-4</dd>
+                                <dt>電話番号</dt>
                                 <dd>090-3333-4444</dd>
+                                <dt>メールアドレス</dt>
+                                <dd>jiro.sato@example.com</dd>
+                                <dt>基本シフト</dt>
+                                <dd style="display: flex; flex-wrap: wrap; gap: var(--spacing-1);">
+                                    <span class="badge badge-neutral">日</span>
+                                    <span class="badge badge-primary">月</span>
+                                    <span class="badge badge-primary">火</span>
+                                    <span class="badge badge-primary">水</span>
+                                    <span class="badge badge-primary">木</span>
+                                    <span class="badge badge-primary">金</span>
+                                    <span class="badge badge-neutral">土</span>
+                                </dd>
+                                <dt>支給決定期間</dt>
+                                <dd>2022年 6月 1日 ～ 2023年 5月 31日</dd>
+                                <dt>利用者負担割合</dt>
+                                <dd>1割</dd>
+                                <dt>利用者負担上限月額</dt>
+                                <dd>9,300円</dd>
                             </dl>
-                            <div style="margin-top: 16px; text-align: right;">
-                                <a href="#" class="btn btn-primary">詳細</a>
-                            </div>
                         </div>
                     </div>
 
