@@ -367,18 +367,17 @@
                         <div id="tab-group-edit-content">
                             
                             <div class="tab-content is-active" id="tab-edit-1">
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4);">
-                                    
-                                    <div class="form-group" style="margin-bottom: var(--spacing-4);">
+                                
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-4);">
+                                    <div class="form-group" style="margin-bottom: 0;">
                                         <label class="form-label" for="edit-name">氏名</label>
                                         <input type="text" id="edit-name" class="input-field" value="山田 太郎">
                                     </div>
-                                    <div class="form-group" style="margin-bottom: var(--spacing-4);">
+                                    <div class="form-group" style="margin-bottom: 0;">
                                         <label class="form-label" for="edit-kana">ふりがな</label>
                                         <input type="text" id="edit-kana" class="input-field" value="やまだ たろう">
                                     </div>
-                                    
-                                    <div class="form-group" style="margin-bottom: var(--spacing-4);">
+                                    <div class="form-group" style="margin-bottom: 0;">
                                         <label class="form-label" for="edit-status">契約状態</label>
                                         <select id="edit-status" class="input-field">
                                             <option value="active" selected>契約中</option>
@@ -386,25 +385,50 @@
                                             <option value="pending">未契約</option>
                                         </select>
                                     </div>
-                                    <div class="form-group" style="margin-bottom: var(--spacing-4);">
-                                        <label class="form-label" for="edit-contract-date">契約開始日</label>
-                                        <input type="date" id="edit-contract-date" class="input-field" value="2023-04-01">
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-3);">
+                                        <div class="form-group" style="margin-bottom: 0;">
+                                            <label class="form-label" for="edit-contract-date">契約開始日</label>
+                                            <input type="date" id="edit-contract-date" class="input-field" value="2023-04-01">
+                                        </div>
+                                        <div class="form-group" style="margin-bottom: 0;">
+                                            <label class="form-label" for="edit-contract-end-date">契約終了日</label>
+                                            <input type="date" id="edit-contract-end-date" class="input-field">
+                                        </div>
                                     </div>
+                                </div>
 
-                                    <div class="form-group" style="margin-bottom: var(--spacing-4);">
-                                        <label class="form-label" for="edit-zip">郵便番号</label>
-                                        <input type="text" id="edit-zip" class="input-field" value="810-0001">
-                                    </div>
-                                    <div class="form-group" style="margin-bottom: var(--spacing-4);">
-                                        <label class="form-label" for="edit-address">住所</label>
-                                        <input type="text" id="edit-address" class="input-field" value="福岡県福岡市中央区天神1-1-1">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-6);">
+                                    <div class="form-group" style="margin-bottom: 0; grid-column: 1 / 2;">
+                                        <label class="form-label" for="edit-zip1">郵便番号</label>
+                                        <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                            <input type="text" id="edit-zip1" class="input-field" value="810" style="width: 5em;">
+                                            <span>-</span>
+                                            <input type="text" id="edit-zip2" class="input-field" value="0001" style="width: 7em;">
+                                        </div>
                                     </div>
                                     
-                                    <div class="form-group" style="margin-bottom: var(--spacing-4);">
-                                        <label class="form-label" for="edit-phone">電話番号</label>
-                                        <input type="tel" id="edit-phone" class="input-field" value="090-1234-5678">
+                                    <div class="form-group" style="margin-bottom: 0; grid-column: 1 / -1;">
+                                        <label class="form-label" for="edit-address1">住所</label>
+                                        <div style="display: grid; grid-template-columns: 1fr 1.5fr 1.5fr; gap: var(--spacing-3);">
+                                            <select id="edit-address1" class="input-field">
+                                                <option value="">都道府県</option>
+                                                <option value="北海道">北海道</option>
+                                                <option value="青森県">青森県</option>
+                                                <option value="福岡県" selected>福岡県</option>
+                                                <option value="沖縄県">沖縄県</option>
+                                            </select>
+                                            <input type="text" id="edit-address2" class="input-field" value="福岡市中央区天神1-1-1" placeholder="市区町村丁目番地">
+                                            <input type="text" id="edit-address3" class="input-field" value="" placeholder="建物名・部屋番号">
+                                        </div>
                                     </div>
-                                    <div class="form-group" style="margin-bottom: var(--spacing-4);">
+                                </div>
+
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-6);">
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label class="form-label" for="edit-phone">電話番号 (ハイフン不要)</label>
+                                        <input type="number" id="edit-phone" class="input-field" value="09012345678" placeholder="09012345678">
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: 0;">
                                         <label class="form-label" for="edit-email">メールアドレス</label>
                                         <input type="email" id="edit-email" class="input-field" value="taro.yamada@example.com">
                                     </div>
@@ -623,12 +647,12 @@
                                         <input type="date" id="edit-cert-end" class="input-field" value="2024-09-30">
                                     </div>
                                     <div class="form-group" style="margin-bottom: var(--spacing-4);">
-                                        <label class="form-label" for="edit-cert-rate">利用者負担割合</label>
-                                        <input type="text" id="edit-cert-rate" class="input-field" value="1割">
+                                        <label class="form-label" for="edit-cert-rate">利用者負担割合 (%)</label>
+                                        <input type="number" id="edit-cert-rate" class="input-field" value="10">
                                     </div>
                                     <div class="form-group" style="margin-bottom: var(--spacing-4);">
-                                        <label class="form-label" for="edit-cert-limit">利用者負担上限月額</label>
-                                        <input type="text" id="edit-cert-limit" class="input-field" value="9,300円">
+                                        <label class="form-label" for="edit-cert-limit">利用者負担上限月額 (円)</label>
+                                        <input type="number" id="edit-cert-limit" class="input-field" value="9300">
                                     </div>
                                 </div>
                             </div>

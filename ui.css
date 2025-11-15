@@ -405,23 +405,37 @@ input[type="number"].input-field {
     width: 90%;
     max-width: 600px;
     z-index: var(--z-index-modal);
+    
+    /* ★以下3行を追加 */
+    max-height: 90vh; /* 画面の高さの90%を上限とする */
+    display: flex;
+    flex-direction: column;
 }
 
 .modal-header {
     font-size: var(--font-size-md); /* ★ 20px */
     font-weight: var(--font-weight-bold);
     margin-bottom: var(--spacing-stack-md);
+    
+    /* ★以下1行を追加 */
+    flex-shrink: 0; /* ヘッダーは縮まないようにする */
 }
 
 .modal-body {
     margin-bottom: var(--spacing-stack-md);
+
+    /* ★以下2行を追加 */
+    overflow-y: auto; /* 内容が溢れた場合のみ縦スクロール */
+    flex-grow: 1; /* ヘッダー・フッター以外の高さをすべて占有 */
 }
 
+/* ★ modal-footer にも flex-shrink を追加 */
 .modal-footer {
     text-align: right;
     display: flex;
     justify-content: flex-end;
     gap: var(--spacing-stack-sm);
+    flex-shrink: 0; /* フッターは縮まないようにする */
 }
 
 /* -------------------------------------- */

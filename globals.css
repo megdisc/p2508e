@@ -243,7 +243,7 @@
     /* -------------------------------------- */
     --color-input-background: var(--color-base-primary);
     --color-input-text: var(--color-base-tertiary);
-    --color-input-placeholder: var(--color-base-quaternary);
+    --color-input-placeholder: var(--color-base-quinary);
     --color-input-border: var(--color-base-quinary);
     --color-input-border-focus: var(--color-theme-main);
     --color-input-border-error: var(--color-semantic-error-main);
