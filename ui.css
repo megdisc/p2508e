@@ -588,10 +588,10 @@ input[type="number"].input-field {
     margin-bottom: var(--spacing-stack-xs);
 }
 .nav-accordion summary {
-    padding: var(--spacing-2) var(--spacing-3);
+    padding: var(--spacing-2) var(--spacing-4); /* ★左右パディング変更 */
     cursor: pointer;
     border-radius: var(--radius-button);
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-medium); /* ★変更 (太字に統一) */
     list-style: none; /* マーカーを消す */
     display: flex;
     justify-content: space-between;
@@ -615,10 +615,10 @@ input[type="number"].input-field {
 
 .nav-link {
     display: block; 
-    padding: var(--spacing-2) var(--spacing-3);
+    padding: var(--spacing-2) var(--spacing-4); /* ★左右パディング変更 */
     margin-bottom: var(--spacing-stack-xs);
     border-radius: var(--radius-button);
-    font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-medium); /* ★変更 (太字に統一) */
     color: var(--color-base-primary); 
     text-decoration: none;
     transition: background-color var(--transition-duration-fast) var(--transition-timing-ease);
@@ -637,11 +637,10 @@ input[type="number"].input-field {
     display: block;
     color: var(--color-base-primary);
     text-decoration: none;
-    /* (★) 修正: padding-left を --spacing-8 (2rem) に変更 */
-    padding: var(--spacing-2) var(--spacing-3) var(--spacing-2) var(--spacing-8);
+    padding: var(--spacing-2) var(--spacing-4) var(--spacing-2) var(--spacing-8); /* ★右パディング変更、左(インデント)は維持 */
     border-radius: var(--radius-button);
     font-size: var(--font-size-sm);
-    font-weight: var(--font-weight-regular);
+    font-weight: var(--font-weight-medium); /* ★変更 (太字に統一) */
     transition: background-color var(--transition-duration-fast) var(--transition-timing-ease);
 }
 .sidebar-nav ul a:hover {
