@@ -78,10 +78,10 @@
      * レスポンシブ・グリッド定義:
      * 1. auto-fill: コンテナ幅に収まる限り、列を自動的に充填する
      * 2. minmax(300px, 1fr):
-     * - 各列（カード）の最小幅を 300px に
+     * - 各列（カード）の最小幅を 320px に
      * - 最小幅を超えた場合、残りのスペースを均等に分割 (1fr)
      */
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
 }
 
 /* -------------------------------------- */
