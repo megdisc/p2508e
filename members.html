@@ -268,7 +268,7 @@
                             <div>
                                 <span style="font: var(--font-body-sm); color: var(--color-base-quaternary);">たかはし いちろう</span>
                                 <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">高橋 一郎</div>
-                                <span class="badge badge-neutral">未契約 | （未定）</span>
+                                <span class="badge badge-neutral">未契約</span>
                             </div>
                             <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
                                 <button class="btn btn-icon btn-icon-success" title="修正" onclick="showModal('modal-edit-member')">
@@ -401,22 +401,16 @@
                                     <div class="form-group" style="margin-bottom: 0; grid-column: 1 / 2;">
                                         <label class="form-label" for="edit-zip1">郵便番号</label>
                                         <div style="display: flex; align-items: center; gap: var(--spacing-2);">
-                                            <input type="text" id="edit-zip1" class="input-field" value="810" style="width: 5em;">
+                                            <input type="text" id="edit-zip1" class="input-field" value="810" placeholder="810">
                                             <span>-</span>
-                                            <input type="text" id="edit-zip2" class="input-field" value="0001" style="width: 7em;">
+                                            <input type="text" id="edit-zip2" class="input-field" value="0001" placeholder="0001">
                                         </div>
                                     </div>
                                     
                                     <div class="form-group" style="margin-bottom: 0; grid-column: 1 / -1;">
                                         <label class="form-label" for="edit-address1">住所</label>
                                         <div style="display: grid; grid-template-columns: 1fr 1.5fr 1.5fr; gap: var(--spacing-3);">
-                                            <select id="edit-address1" class="input-field">
-                                                <option value="">都道府県</option>
-                                                <option value="北海道">北海道</option>
-                                                <option value="青森県">青森県</option>
-                                                <option value="福岡県" selected>福岡県</option>
-                                                <option value="沖縄県">沖縄県</option>
-                                            </select>
+                                            <input type="text" id="edit-address1" class="input-field" value="福岡県" placeholder="都道府県">
                                             <input type="text" id="edit-address2" class="input-field" value="福岡市中央区天神1-1-1" placeholder="市区町村丁目番地">
                                             <input type="text" id="edit-address3" class="input-field" value="" placeholder="建物名・部屋番号">
                                         </div>
@@ -425,8 +419,14 @@
 
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-6);">
                                     <div class="form-group" style="margin-bottom: 0;">
-                                        <label class="form-label" for="edit-phone">電話番号 (ハイフン不要)</label>
-                                        <input type="number" id="edit-phone" class="input-field" value="09012345678" placeholder="09012345678">
+                                        <label class="form-label" for="edit-phone1">電話番号</label>
+                                        <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                            <input type="text" id="edit-phone1" class="input-field" value="090">
+                                            <span>-</span>
+                                            <input type="text" id="edit-phone2" class="input-field" value="1234">
+                                            <span>-</span>
+                                            <input type="text" id="edit-phone3" class="input-field" value="5678">
+                                        </div>
                                     </div>
                                     <div class="form-group" style="margin-bottom: 0;">
                                         <label class="form-label" for="edit-email">メールアドレス</label>
@@ -575,7 +575,7 @@
                                                         <option value="none">なし</option>
                                                         <option value="to">往</option>
                                                         <option value="from">復</option>
-                                                        <option value="both" selected>往復</option>
+                                                        <option value="both" selected>往복</option>
                                                     </select>
                                                 </td>
                                             </tr>

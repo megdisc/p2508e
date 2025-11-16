@@ -134,7 +134,7 @@
                     
                     <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
                         <div>
-                            <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">社会福祉法人 Compath</div>
+                            <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">株式会社こんぱす</div>
                             </div>
                         <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
                             
@@ -187,11 +187,11 @@
                     
                     <form id="corporation-edit-form">
                         
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4);">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4);">
                             
                             <div class="form-group" style="margin-bottom: 0;">
                                 <label class="form-label" for="corp-name">法人名</label>
-                                <input type="text" id="corp-name" class="input-field" value="社会福祉法人 Compath">
+                                <input type="text" id="corp-name" class="input-field" value="株式会社こんぱす">
                             </div>
                             
                             <div class="form-group" style="margin-bottom: 0;">
@@ -199,7 +199,7 @@
                                 <input type="number" id="corp-number" class="input-field" value="1234567890123" placeholder="13桁の半角数字">
                             </div>
 
-                            <div class="form-group" style="margin-bottom: 0; grid-column: 1 / -1;">
+                            <div class="form-group" style="margin-bottom: 0;">
                                 <label class="form-label" for="corp-representative">代表者名</label>
                                 <input type="text" id="corp-representative" class="input-field" value="代表 太郎">
                             </div>
@@ -210,9 +210,9 @@
                             <div class="form-group" style="margin-bottom: 0; grid-column: 1 / 2;">
                                 <label class="form-label" for="corp-zip1">郵便番号</label>
                                 <div style="display: flex; align-items: center; gap: var(--spacing-2);">
-                                    <input type="text" id="corp-zip1" class="input-field" value="810" style="width: 5em;" placeholder="810">
+                                    <input type="text" id="corp-zip1" class="input-field" value="810" placeholder="810">
                                     <span>-</span>
-                                    <input type="text" id="corp-zip2" class="input-field" value="0001" style="width: 7em;" placeholder="0001">
+                                    <input type="text" id="corp-zip2" class="input-field" value="0001" placeholder="0001">
                                 </div>
                             </div>
                             
@@ -230,19 +230,36 @@
                         </div>
 
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-6);">
+                            
                             <div class="form-group" style="margin-bottom: 0;">
-                                <label class="form-label" for="corp-phone">電話番号 (ハイフン不要)</label>
-                                <input type="number" id="corp-phone" class="input-field" value="0921234567" placeholder="0921234567">
+                                <label class="form-label" for="corp-phone1">電話番号</label>
+                                <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                    <input type="text" id="corp-phone1" class="input-field" value="092">
+                                    <span>-</span>
+                                    <input type="text" id="corp-phone2" class="input-field" value="123">
+                                    <span>-</span>
+                                    <input type="text" id="corp-phone3" class="input-field" value="4567">
+                                </div>
                             </div>
+                            
                             <div class="form-group" style="margin-bottom: 0;">
-                                <label class="form-label" for="corp-fax">FAX番号 (ハイフン不要)</label>
-                                <input type="number" id="corp-fax" class="input-field" value="0921234568" placeholder="0921234568">
+                                <label class="form-label" for="corp-fax1">FAX番号</label>
+                                <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                    <input type="text" id="corp-fax1" class="input-field" value="092">
+                                    <span>-</span>
+                                    <input type="text" id="corp-fax2" class="input-field" value="123">
+                                    <span>-</span>
+                                    <input type="text" id="corp-fax3" class="input-field" value="4568">
+                                </div>
                             </div>
-                            <div class="form-group" style="margin-bottom: 0; grid-column: 1 / -1;">
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-6);">
+                            <div class="form-group" style="margin-bottom: 0;">
                                 <label class="form-label" for="corp-email">メールアドレス</label>
                                 <input type="email" id="corp-email" class="input-field" value="info@compath.example.com">
                             </div>
-                            </div>
+                        </div>
 
                     </form>
                 </div>

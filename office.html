@@ -128,18 +128,293 @@
 
             <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
 
-                <h1>事業所情報</h1>
-
-                <div class="card">
-                    <div class="card-body">
-                        <p>これは「事業所情報」ページです。ここに内容を記述します。</p>
-                    </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
+                    <h1 style="margin: 0;">事業所情報</h1>
+                    <a href="#" class="btn btn-primary" onclick="showModal('modal-edit-office')">
+                        <span class="material-symbols-outlined">add</span>
+                        新規作成
+                    </a>
                 </div>
 
-            </div>
+                <div class="card-grid">
+
+                    <div class="card">
+                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">
+                                    Compath 天神事業所
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
+                                <button class="btn btn-icon btn-icon-success" title="修正" onclick="showModal('modal-edit-office')">
+                                    <span class="material-symbols-outlined">edit</span>
+                                </button>
+                                <button class="btn btn-icon btn-icon-error" title="削除">
+                                    <span class="material-symbols-outlined">delete</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <dl class="data-list">
+                                <div>
+                                    <dt>事業所番号</dt>
+                                    <dd>4010000123</dd>
+                                </div>
+                                <div>
+                                    <dt>管理者名</dt>
+                                    <dd>管理者 一郎</dd>
+                                </div>
+                                <div>
+                                    <dt>住所</dt>
+                                    <dd>〒810-0001<br>福岡県福岡市中央区天神1-2-3<br>天神ビル 5F</dd>
+                                </div>
+                                <div>
+                                    <dt>電話番号</dt>
+                                    <dd>092-123-4567</dd>
+                                </div>
+                                <div>
+                                    <dt>FAX番号</dt>
+                                    <dd>092-123-4568</dd>
+                                </div>
+                                <div>
+                                    <dt>メールアドレス</dt>
+                                    <dd>tenjin@compath.example.com</dd>
+                                </div>
+                            </dl>
+
+                            <div style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
+                                <button class="btn btn-neutral" onclick="showModal('modal-service-office-1')">
+                                    提供サービス
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">
+                                    Compath 博多事業所
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
+                                <button class="btn btn-icon btn-icon-success" title="修正" onclick="showModal('modal-edit-office')">
+                                    <span class="material-symbols-outlined">edit</span>
+                                </button>
+                                <button class="btn btn-icon btn-icon-error" title="削除">
+                                    <span class="material-symbols-outlined">delete</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <dl class="data-list">
+                                <div>
+                                    <dt>事業所番号</dt>
+                                    <dd>4010000456</dd>
+                                </div>
+                                <div>
+                                    <dt>管理者名</dt>
+                                    <dd>管理者 二郎</dd>
+                                </div>
+                                <div>
+                                    <dt>住所</dt>
+                                    <dd>〒812-0011<br>福岡県福岡市博多区博多駅前2-3-4<br>博多ビル 3F</dd>
+                                </div>
+                                <div>
+                                    <dt>電話番号</dt>
+                                    <dd>092-234-5678</dd>
+                                </div>
+                                <div>
+                                    <dt>FAX番号</dt>
+                                    <dd>092-234-5679</dd>
+                                </div>
+                                <div>
+                                    <dt>メールアドレス</dt>
+                                    <dd>hakata@compath.example.com</dd>
+                                </div>
+                            </dl>
+
+                            <div style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
+                                <button class="btn btn-neutral" onclick="showModal('modal-service-office-2')">
+                                    提供サービス
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div> </div>
 
         </main>
+        
+        <div class="modal-backdrop" id="modal-edit-office" style="display: none;">
+            <div class="modal-content" style="max-width: 800px;">
+                <div class="modal-header">
+                    事業所情報の編集
+                </div>
+                <div class="modal-body">
+                    
+                    <form id="office-edit-form">
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4);">
+                            
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label class="form-label" for="office-name">事業所名</label>
+                                <input type="text" id="office-name" class="input-field" value="Compath 天神事業所">
+                            </div>
+                            
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label class="form-label" for="office-number">事業所番号</label>
+                                <input type="number" id="office-number" class="input-field" value="4010000123" placeholder="10桁の半角数字">
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label class="form-label" for="office-manager">管理者名</label>
+                                <input type="text" id="office-manager" class="input-field" value="管理者 一郎">
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-6);">
+
+                            <div class="form-group" style="margin-bottom: 0; grid-column: 1 / 2;">
+                                <label class="form-label" for="office-zip1">郵便番号</label>
+                                <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                    <input type="text" id="office-zip1" class="input-field" value="810" placeholder="810">
+                                    <span>-</span>
+                                    <input type="text" id="office-zip2" class="input-field" value="0001" placeholder="0001">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group" style="margin-bottom: 0; grid-column: 1 / -1;">
+                                <label class="form-label" for="office-address1">住所</label>
+                                <div style="display: grid; grid-template-columns: 1fr 1.5fr 1.5fr; gap: var(--spacing-3);">
+                                    <select id="office-address1" class="input-field">
+                                        <option value="">都道府県</option>
+                                        <option value="福岡県" selected>福岡県</option>
+                                        </select>
+                                    <input type="text" id="office-address2" class="input-field" value="福岡市中央区天神1-2-3" placeholder="市区町村丁目番地">
+                                    <input type="text" id="office-address3" class="input-field" value="天神ビル 5F" placeholder="建物名・部屋番号">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-6);">
+                            
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label class="form-label" for="office-phone1">電話番号</label>
+                                <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                    <input type="text" id="office-phone1" class="input-field" value="092">
+                                    <span>-</span>
+                                    <input type="text" id="office-phone2" class="input-field" value="123">
+                                    <span>-</span>
+                                    <input type="text" id="office-phone3" class="input-field" value="4567">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label class="form-label" for="office-fax1">FAX番号</label>
+                                <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                    <input type="text" id="office-fax1" class="input-field" value="092">
+                                    <span>-</span>
+                                    <input type="text" id="office-fax2" class="input-field" value="123">
+                                    <span>-</span>
+                                    <input type="text" id="office-fax3" class="input-field" value="4568">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-6);">
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label class="form-label" for="office-email">メールアドレス</label>
+                                <input type="email" id="office-email" class="input-field" value="tenjin@compath.example.com">
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-neutral" onclick="hideModal('modal-edit-office')">
+                        キャンセル
+                    </button>
+                    <button class="btn btn-primary" onclick="hideModal('modal-edit-office'); alert('保存処理を実行');">
+                        保存する
+                    </button>
+                </div>
+            </div>
         </div>
+
+        <div class="modal-backdrop" id="modal-service-office-1" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">提供サービス (Compath 天神事業所)</div>
+                <div class="modal-body">
+                    <p>ここに事業所の提供サービス（昼食、送迎など）の詳細を表示します。</p>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>サービス</th>
+                                    <th>詳細</th>
+                                    <th>提供日</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>昼食</td>
+                                    <td>あり (自己負担 300円)</td>
+                                    <td>月〜金</td>
+                                </tr>
+                                <tr>
+                                    <td>送迎</td>
+                                    <td>あり (往復)</td>
+                                    <td>月〜金</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-neutral" onclick="hideModal('modal-service-office-1')">閉じる</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-backdrop" id="modal-service-office-2" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">提供サービス (Compath 博多事業所)</div>
+                <div class="modal-body">
+                    <p>ここに事業所の提供サービス（昼食、送迎など）の詳細を表示します。</p>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>サービス</th>
+                                    <th>詳細</th>
+                                    <th>提供日</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>昼食</td>
+                                    <td>あり (自己負担 350円)</td>
+                                    <td>月〜金</td>
+                                </tr>
+                                <tr>
+                                    <td>送迎</td>
+                                    <td>なし</td>
+                                    <td>-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-neutral" onclick="hideModal('modal-service-office-2')">閉じる</button>
+                </div>
+            </div>
+        </div>
+
+
+    </div>
 
 </body>
 
