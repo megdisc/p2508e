@@ -128,18 +128,241 @@
 
             <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
 
-                <h1 style="margin: 0 0 var(--spacing-stack-md) 0;">職員情報</h1>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
+                    <h1 style="margin: 0;">職員情報</h1>
+                    <a href="#" class="btn btn-primary" onclick="showModal('modal-edit-staff')">
+                        <span class="material-symbols-outlined">add</span>
+                        新規作成
+                    </a>
+                </div>
 
-                <div class="card">
-                    <div class="card-body">
-                        <p>これは「職員情報」ページです。ここに内容を記述します。</p>
+                <div class="card" style="margin-bottom: var(--spacing-stack-md);">
+                    <div class="card-body" style="display: grid; grid-template-columns: 1fr 1fr auto 1fr 1fr; gap: var(--spacing-4); align-items: flex-end;">
+                        
+                        <div class="form-group" style="margin: 0;">
+                            <label class="form-label" for="search-name">氏名・ふりがな</label>
+                            <input type="text" id="search-name" class="input-field" placeholder="氏名検索...">
+                        </div>
+                        
+                        <div class="form-group" style="margin: 0;">
+                            <label class="form-label" for="search-role">役職・職種</label>
+                            <select id="search-role" class="input-field">
+                                <option value="">すべて</option>
+                                <option value="admin">管理者</option>
+                                <option value="savic">サービス管理責任者</option>
+                                <option value="instructor">職業指導員</option>
+                                <option value="assistant">生活支援員</option>
+                            </select>
+                        </div>
+
+                        <div style="width: 1px; height: 42px; background-color: var(--color-base-secondary); margin-bottom: 0;"></div>
+
+                        <div class="form-group" style="margin: 0;">
+                            <label class="form-label" for="sort-name">氏名</label>
+                            <select id="sort-name" class="input-field">
+                                <option value="asc">昇順 (あ→ん)</option>
+                                <option value="desc">降順 (ん→あ)</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group" style="margin: 0;">
+                            <label class="form-label" for="sort-date">入社日</label>
+                            <select id="sort-date" class="input-field">
+                                <option value="desc">新しい順</option>
+                                <option value="asc">古い順</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
+
+                <div class="card-grid">
+
+                    <div class="card">
+                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <span style="font: var(--font-body-sm); color: var(--color-base-quaternary);">やまだ たろう</span>
+                                <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">山田 太郎</div>
+                                <span class="badge badge-primary">管理者</span>
+                                <span class="badge badge-neutral">勤続 5年 | 2020.04.01</span>
+                            </div>
+                            <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
+                                <button class="btn btn-icon btn-icon-success" title="修正" onclick="showModal('modal-edit-staff')">
+                                    <span class="material-symbols-outlined">edit</span>
+                                </button>
+                                <button class="btn btn-icon btn-icon-error" title="削除">
+                                    <span class="material-symbols-outlined">delete</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <dl class="data-list">
+                                <div>
+                                    <dt>所属事業所</dt>
+                                    <dd>こんぱす天神</dd>
+                                </div>
+                                <div>
+                                    <dt>電話番号</dt>
+                                    <dd>090-1111-2222</dd>
+                                </div>
+                                <div>
+                                    <dt>メールアドレス</dt>
+                                    <dd>taro.yamada@compath.example.com</dd>
+                                </div>
+                            </dl>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <span style="font: var(--font-body-sm); color: var(--color-base-quaternary);">すずき はなこ</span>
+                                <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">鈴木 花子</div>
+                                <span class="badge badge-primary">サービス管理責任者</span>
+                                <span class="badge badge-neutral">勤続 3年 | 2022.10.01</span>
+                            </div>
+                            <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
+                                <button class="btn btn-icon btn-icon-success" title="修正" onclick="showModal('modal-edit-staff')">
+                                    <span class="material-symbols-outlined">edit</span>
+                                </button>
+                                <button class="btn btn-icon btn-icon-error" title="削除">
+                                    <span class="material-symbols-outlined">delete</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <dl class="data-list">
+                                <div>
+                                    <dt>所属事業所</dt>
+                                    <dd>こんぱす天神</dd>
+                                </div>
+                                <div>
+                                    <dt>電話番号</dt>
+                                    <dd>080-3333-4444</dd>
+                                </div>
+                                <div>
+                                    <dt>メールアドレス</dt>
+                                    <dd>hanako.suzuki@compath.example.com</dd>
+                                </div>
+                            </dl>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <span style="font: var(--font-body-sm); color: var(--color-base-quaternary);">たかはし いちろう</span>
+                                <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">高橋 一郎</div>
+                                <span class="badge badge-primary">職業指導員</span>
+                                <span class="badge badge-neutral">勤続 1年 | 2024.04.01</span>
+                            </div>
+                            <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
+                                <button class="btn btn-icon btn-icon-success" title="修正" onclick="showModal('modal-edit-staff')">
+                                    <span class="material-symbols-outlined">edit</span>
+                                </button>
+                                <button class="btn btn-icon btn-icon-error" title="削除">
+                                    <span class="material-symbols-outlined">delete</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <dl class="data-list">
+                                <div>
+                                    <dt>所属事業所</dt>
+                                    <dd>こんぱす博多</dd>
+                                </div>
+                                <div>
+                                    <dt>電話番号</dt>
+                                    <dd>070-5555-6666</dd>
+                                </div>
+                                <div>
+                                    <dt>メールアドレス</dt>
+                                    <dd>ichiro.takahashi@compath.example.com</dd>
+                                </div>
+                            </dl>
+                        </div>
+                    </div>
+
+                </div> </div>
+
+            <div class="modal-backdrop" id="modal-edit-staff" style="display: none;">
+                <div class="modal-content" style="max-width: 800px;">
+                    <div class="modal-header">
+                        職員情報の編集
+                    </div>
+                    <div class="modal-body">
+                        
+                        <div id="tab-group-edit-content">
+                            <div class="tab-content is-active" id="tab-edit-1">
+                                
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-4);">
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label class="form-label" for="edit-staff-name">氏名</label>
+                                        <input type="text" id="edit-staff-name" class="input-field" value="山田 太郎">
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label class="form-label" for="edit-staff-kana">ふりがな</label>
+                                        <input type="text" id="edit-staff-kana" class="input-field" value="やまだ たろう">
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label class="form-label" for="edit-staff-role">役職・職種</label>
+                                        <select id="edit-staff-role" class="input-field">
+                                            <option value="admin" selected>管理者</option>
+                                            <option value="savic">サービス管理責任者</option>
+                                            <option value="instructor">職業指導員</option>
+                                            <option value="assistant">生活支援員</option>
+                                            <option value="other">その他</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label class="form-label" for="edit-staff-hire-date">入社日</label>
+                                        <input type="date" id="edit-staff-hire-date" class="input-field" value="2020-04-01">
+                                    </div>
+                                </div>
+
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-6);">
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label class="form-label" for="edit-staff-office">所属事業所</label>
+                                        <select id="edit-staff-office" class="input-field">
+                                            <option value="tenjin" selected>こんぱす天神</option>
+                                            <option value="hakata">こんぱす博多</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-6);">
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label class="form-label" for="edit-staff-phone1">電話番号</label>
+                                        <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                            <input type="text" id="edit-staff-phone1" class="input-field" value="090">
+                                            <span>-</span>
+                                            <input type="text" id="edit-staff-phone2" class="input-field" value="1111">
+                                            <span>-</span>
+                                            <input type="text" id="edit-staff-phone3" class="input-field" value="2222">
+                                        </div>
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label class="form-label" for="edit-staff-email">メールアドレス</label>
+                                        <input type="email" id="edit-staff-email" class="input-field" value="taro.yamada@compath.example.com">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-neutral" onclick="hideModal('modal-edit-staff')">
+                            キャンセル
+                        </button>
+                        <button class="btn btn-primary" onclick="hideModal('modal-edit-staff')">
+                            保存する
+                        </button>
+                    </div>
+                </div>
             </div>
 
         </main>
-        </div>
+    </div>
 
 </body>
 
