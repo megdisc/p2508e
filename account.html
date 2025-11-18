@@ -134,7 +134,7 @@
                 </div>
 
                 <div class="card" style="margin-bottom: var(--spacing-stack-md);">
-                    <div class="card-body" style="display: grid; grid-template-columns: 1fr 1fr auto 1fr 1fr; gap: var(--spacing-4); align-items: flex-end;">
+                    <div class="card-body" style="display: grid; grid-template-columns: 1fr 1fr auto 1fr; gap: var(--spacing-4); align-items: flex-end;">
                         
                         <div class="form-group" style="margin: 0;">
                             <label class="form-label" for="search-keyword">キーワード検索</label>
@@ -142,26 +142,17 @@
                         </div>
                         
                         <div class="form-group" style="margin: 0;">
-                            <label class="form-label" for="search-type">アカウント種別</label>
-                            <select id="search-type" class="input-field">
-                                <option value="">すべて</option>
-                                <option value="staff">職員</option>
-                                <option value="member">利用者</option>
-                            </select>
-                        </div>
-
-                        <div style="width: 1px; height: 42px; background-color: var(--color-base-secondary); margin-bottom: 0;"></div>
-
-                        <div class="form-group" style="margin: 0;">
-                            <label class="form-label" for="search-role">権限ロール</label>
+                            <label class="form-label" for="search-role">ロール</label>
                             <select id="search-role" class="input-field">
                                 <option value="">すべて</option>
                                 <option value="admin">システム管理者</option>
                                 <option value="manager">施設管理者</option>
-                                <option value="staff">一般職員</option>
-                                <option value="user">一般利用者</option>
+                                <option value="staff">職員</option>
+                                <option value="user">利用者</option>
                             </select>
                         </div>
+
+                        <div style="width: 1px; height: 42px; background-color: var(--color-base-secondary); margin-bottom: 0;"></div>
                         
                         <div class="form-group" style="margin: 0;">
                             <label class="form-label" for="search-status">ステータス</label>
@@ -181,11 +172,8 @@
                             <thead>
                                 <tr>
                                     <th>アカウント名</th>
-                                    <th>種別</th>
+                                    <th>ロール</th>
                                     <th>メールアドレス (ID)</th>
-                                    <th>権限ロール</th>
-                                    <th>ステータス</th>
-                                    <th>最終ログイン</th>
                                     <th>操作</th>
                                 </tr>
                             </thead>
@@ -193,81 +181,86 @@
                                 <tr>
                                     <td>
                                         <div style="font-weight: var(--font-weight-bold);">田中 健司</div>
-                                        <div style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">管理者</div>
                                     </td>
-                                    <td><span class="badge badge-primary">職員</span></td>
+                                    <td><span class="badge badge-primary">システム管理者</span></td>
                                     <td>kenji.tanaka@compath.example.com</td>
-                                    <td>システム管理者</td>
-                                    <td><span class="badge badge-success">有効</span></td>
-                                    <td>2025-11-18 09:15</td>
                                     <td>
-                                        <button class="btn btn-icon btn-icon-neutral" onclick="showModal('modal-edit-account')">
-                                            <span class="material-symbols-outlined">edit</span>
-                                        </button>
+                                        <div style="display: flex; gap: var(--spacing-2);">
+                                            <button class="btn btn-icon btn-icon-success" onclick="showModal('modal-edit-account')">
+                                                <span class="material-symbols-outlined">edit</span>
+                                            </button>
+                                            <button class="btn btn-icon btn-icon-error" onclick="alert('削除します')">
+                                                <span class="material-symbols-outlined">delete</span>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
                                         <div style="font-weight: var(--font-weight-bold);">伊藤 良子</div>
-                                        <div style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">サービス管理責任者</div>
                                     </td>
-                                    <td><span class="badge badge-primary">職員</span></td>
+                                    <td><span class="badge badge-primary">施設管理者</span></td>
                                     <td>yoshiko.ito@compath.example.com</td>
-                                    <td>施設管理者</td>
-                                    <td><span class="badge badge-success">有効</span></td>
-                                    <td>2025-11-17 18:30</td>
                                     <td>
-                                        <button class="btn btn-icon btn-icon-neutral" onclick="showModal('modal-edit-account')">
-                                            <span class="material-symbols-outlined">edit</span>
-                                        </button>
+                                        <div style="display: flex; gap: var(--spacing-2);">
+                                            <button class="btn btn-icon btn-icon-success" onclick="showModal('modal-edit-account')">
+                                                <span class="material-symbols-outlined">edit</span>
+                                            </button>
+                                            <button class="btn btn-icon btn-icon-error" onclick="alert('削除します')">
+                                                <span class="material-symbols-outlined">delete</span>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
                                         <div style="font-weight: var(--font-weight-bold);">渡辺 三郎</div>
-                                        <div style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">職業指導員</div>
                                     </td>
                                     <td><span class="badge badge-primary">職員</span></td>
                                     <td>saburo.watanabe@compath.example.com</td>
-                                    <td>一般職員</td>
-                                    <td><span class="badge badge-success">有効</span></td>
-                                    <td>2025-11-18 08:45</td>
                                     <td>
-                                        <button class="btn btn-icon btn-icon-neutral" onclick="showModal('modal-edit-account')">
-                                            <span class="material-symbols-outlined">edit</span>
-                                        </button>
+                                        <div style="display: flex; gap: var(--spacing-2);">
+                                            <button class="btn btn-icon btn-icon-success" onclick="showModal('modal-edit-account')">
+                                                <span class="material-symbols-outlined">edit</span>
+                                            </button>
+                                            <button class="btn btn-icon btn-icon-error" onclick="alert('削除します')">
+                                                <span class="material-symbols-outlined">delete</span>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
                                         <div style="font-weight: var(--font-weight-bold);">山田 太郎</div>
-                                        <div style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">利用者</div>
                                     </td>
                                     <td><span class="badge badge-neutral">利用者</span></td>
                                     <td>taro.yamada@example.com</td>
-                                    <td>一般利用者</td>
-                                    <td><span class="badge badge-success">有効</span></td>
-                                    <td>2025-11-15 12:00</td>
                                     <td>
-                                        <button class="btn btn-icon btn-icon-neutral" onclick="showModal('modal-edit-account')">
-                                            <span class="material-symbols-outlined">edit</span>
-                                        </button>
+                                        <div style="display: flex; gap: var(--spacing-2);">
+                                            <button class="btn btn-icon btn-icon-success" onclick="showModal('modal-edit-account')">
+                                                <span class="material-symbols-outlined">edit</span>
+                                            </button>
+                                            <button class="btn btn-icon btn-icon-error" onclick="alert('削除します')">
+                                                <span class="material-symbols-outlined">delete</span>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
                                         <div style="font-weight: var(--font-weight-bold);">鈴木 花子</div>
-                                        <div style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">利用者</div>
                                     </td>
                                     <td><span class="badge badge-neutral">利用者</span></td>
                                     <td>hanako.suzuki@example.com</td>
-                                    <td>一般利用者</td>
-                                    <td><span class="badge badge-error">ロック中</span></td>
-                                    <td>2025-10-20 10:00</td>
                                     <td>
-                                        <button class="btn btn-icon btn-icon-neutral" onclick="showModal('modal-edit-account')">
-                                            <span class="material-symbols-outlined">edit</span>
-                                        </button>
+                                        <div style="display: flex; gap: var(--spacing-2);">
+                                            <button class="btn btn-icon btn-icon-success" onclick="showModal('modal-edit-account')">
+                                                <span class="material-symbols-outlined">edit</span>
+                                            </button>
+                                            <button class="btn btn-icon btn-icon-error" onclick="alert('削除します')">
+                                                <span class="material-symbols-outlined">delete</span>
+                                            </button>
+                                        </div>
                                     </td>
                                 </tr>
                             </tbody>
@@ -293,26 +286,23 @@
                     <form id="account-edit-form">
                         
                         <div class="form-group">
-                            <label class="form-label" for="account-type">アカウント種別</label>
-                            <div style="display: flex; gap: var(--spacing-4);">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="account-type" id="type-staff" checked>
-                                    <label class="form-check-label" for="type-staff">職員</label>
-                                </div>
-                                <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="account-type" id="type-member">
-                                    <label class="form-check-label" for="type-member">利用者</label>
-                                </div>
-                            </div>
+                            <label class="form-label" for="account-role-select">ロール</label>
+                            <select id="account-role-select" class="input-field">
+                                <option value="admin">システム管理者</option>
+                                <option value="manager">施設管理者</option>
+                                <option value="staff">職員</option>
+                                <option value="user">利用者</option>
+                            </select>
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label" for="account-link">紐付け対象 (職員/利用者)</label>
+                            <label class="form-label" for="account-link">紐付け対象</label>
                             <select id="account-link" class="input-field">
                                 <option value="">選択してください</option>
-                                <option value="1" selected>田中 健司 (管理者)</option>
-                                <option value="2">伊藤 良子 (サービス管理責任者)</option>
-                                <option value="3">渡辺 三郎 (職業指導員)</option>
+                                <option value="1">田中 健司</option>
+                                <option value="2">伊藤 良子</option>
+                                <option value="3">渡辺 三郎</option>
+                                <option value="4">山田 太郎</option>
                             </select>
                             <div style="font-size: var(--font-size-xs); color: var(--color-base-quaternary); margin-top: var(--spacing-1);">
                                 ※紐付けた情報の氏名等が自動的に使用されます。
@@ -321,7 +311,7 @@
 
                         <div class="form-group">
                             <label class="form-label" for="account-email">メールアドレス (ログインID)</label>
-                            <input type="email" id="account-email" class="input-field" value="kenji.tanaka@compath.example.com">
+                            <input type="email" id="account-email" class="input-field" value="">
                         </div>
 
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4);">
@@ -338,16 +328,6 @@
                                     <option value="inactive">無効</option>
                                 </select>
                             </div>
-                        </div>
-
-                        <div class="form-group" style="margin-bottom: 0;">
-                            <label class="form-label" for="account-role">システム権限ロール</label>
-                            <select id="account-role" class="input-field">
-                                <option value="admin" selected>システム管理者 (全権限)</option>
-                                <option value="manager">施設管理者 (承認権限あり)</option>
-                                <option value="staff">一般職員 (記録・閲覧のみ)</option>
-                                <option value="user">一般利用者 (マイページのみ)</option>
-                            </select>
                         </div>
 
                     </form>

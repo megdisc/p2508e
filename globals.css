@@ -154,10 +154,10 @@
     --color-semantic-warning-sub: var(--palette-FFC);
     --color-semantic-error-main: var(--palette-D22);
     --color-semantic-error-sub: var(--palette-FDD);
-    --color-semantic-neutral-main: var(--palette-666);
-    --color-semantic-neutral-sub: var(--palette-EEE);
-    --color-semantic-cancelled-main: var(--palette-333);
-    --color-semantic-cancelled-sub: var(--palette-CCC);
+    --color-semantic-neutral-main: var(--palette-333);
+    --color-semantic-neutral-sub: var(--palette-CCC);
+    --color-semantic-cancelled-main: var(--palette-666);
+    --color-semantic-cancelled-sub: var(--palette-EEE);
 
     /* -------------------------------------- */
     /* 2.2. タイポグラフィ (Typography) (★変更)
