@@ -248,7 +248,7 @@
     --color-input-border-focus: var(--color-theme-main);
     --color-input-border-error: var(--color-semantic-error-main);
     --color-input-text-error: var(--color-semantic-error-main);
-    --radius-input: var(--border-radius-full); /* ★変更 (sm -> full) */
+    --radius-input: 20px; /* ★変更 (sm -> full) */
     --spacing-input-padding-y: var(--spacing-1); /* ★変更 (spacing-2 -> spacing-1) */
     --spacing-input-padding-x: var(--spacing-3);
     

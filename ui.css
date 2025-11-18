@@ -263,9 +263,6 @@
 }
 
 /* (★ <select> のスタイルを .input-field と共通化) */
-textarea.input-field {
-    border-radius: var(--border-radius-lg);
-}
 
 select.input-field {
     appearance: none;
