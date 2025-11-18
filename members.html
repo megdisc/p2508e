@@ -74,12 +74,10 @@
                     
                     <div class="card" style="flex: 1; min-width: 320px;">
                         <div class="card-body" style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
-                            
                             <div class="form-group" style="margin: 0; flex: 1; min-width: 160px;">
                                 <label class="form-label" for="search-name">氏名・ふりがな</label>
                                 <input type="text" id="search-name" class="input-field" placeholder="氏名検索...">
                             </div>
-                            
                             <div class="form-group" style="margin: 0; flex: 1; min-width: 160px;">
                                 <label class="form-label" for="search-office">利用事業所</label>
                                 <select id="search-office" class="input-field">
@@ -88,7 +86,6 @@
                                     <option value="hakata">こんぱす博多</option>
                                 </select>
                             </div>
-                            
                             <div class="form-group" style="margin: 0; flex: 1; min-width: 160px;">
                                 <label class="form-label" for="search-status">契約状態</label>
                                 <select id="search-status" class="input-field">
@@ -98,13 +95,11 @@
                                     <option value="pending">未契約</option>
                                 </select>
                             </div>
-
                         </div>
                     </div>
 
                     <div class="card" style="flex: 0 0 auto;">
                         <div class="card-body" style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
-                            
                             <div class="form-group" style="margin: 0; width: 160px;">
                                 <label class="form-label" for="sort-name">氏名</label>
                                 <select id="sort-name" class="input-field">
@@ -112,7 +107,6 @@
                                     <option value="desc">降順 (ん→あ)</option>
                                 </select>
                             </div>
-                            
                             <div class="form-group" style="margin: 0; width: 160px;">
                                 <label class="form-label" for="sort-date">登録日</label>
                                 <select id="sort-date" class="input-field">
@@ -120,7 +114,6 @@
                                     <option value="asc">古い順</option>
                                 </select>
                             </div>
-
                         </div>
                     </div>
 
@@ -306,7 +299,6 @@
                         <div id="tab-group-edit-content">
                             
                             <div class="tab-content is-active" id="tab-edit-1">
-                                
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-4);">
                                     <div class="form-group" style="margin-bottom: 0;">
                                         <label class="form-label" for="edit-name">氏名</label>
@@ -316,7 +308,6 @@
                                         <label class="form-label" for="edit-kana">ふりがな</label>
                                         <input type="text" id="edit-kana" class="input-field" value="やまだ たろう">
                                     </div>
-
                                     <div class="form-group" style="margin-bottom: 0; grid-column: 1 / -1;">
                                         <label class="form-label" for="edit-office">利用事業所</label>
                                         <select id="edit-office" class="input-field">
@@ -324,7 +315,6 @@
                                             <option value="hakata">こんぱす博多</option>
                                         </select>
                                     </div>
-
                                     <div class="form-group" style="margin-bottom: 0;">
                                         <label class="form-label" for="edit-status">契約状態</label>
                                         <select id="edit-status" class="input-field">
@@ -344,7 +334,6 @@
                                         </div>
                                     </div>
                                 </div>
-
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-6);">
                                     <div class="form-group" style="margin-bottom: 0; grid-column: 1 / 2;">
                                         <label class="form-label" for="edit-zip1">郵便番号</label>
@@ -354,7 +343,6 @@
                                             <input type="text" id="edit-zip2" class="input-field" value="0001" placeholder="0001">
                                         </div>
                                     </div>
-                                    
                                     <div class="form-group" style="margin-bottom: 0; grid-column: 1 / -1;">
                                         <label class="form-label" for="edit-address1">住所</label>
                                         <div style="display: grid; grid-template-columns: 1fr 1.5fr 1.5fr; gap: var(--spacing-3);">
@@ -364,7 +352,6 @@
                                         </div>
                                     </div>
                                 </div>
-
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-6);">
                                     <div class="form-group" style="margin-bottom: 0;">
                                         <label class="form-label" for="edit-phone1">電話番号</label>
@@ -393,21 +380,61 @@
                                         <tbody>
                                             <tr>
                                                 <td>日</td>
-                                                <td><select class="input-field"><option value="off" selected>お休み</option></select></td>
+                                                <td><select class="input-field"><option value="off" selected>お休み</option><option value="on-site">通所</option><option value="remote">在宅</option></select></td>
                                                 <td><input type="time" class="input-field"></td>
                                                 <td><input type="time" class="input-field"></td>
-                                                <td><select class="input-field"><option value="none" selected>なし</option></select></td>
-                                                <td><select class="input-field"><option value="none" selected>なし</option></select></td>
+                                                <td><select class="input-field"><option value="none" selected>なし</option><option value="yes">あり</option></select></td>
+                                                <td><select class="input-field"><option value="none" selected>なし</option><option value="to">往</option><option value="from">復</option><option value="both">往復</option></select></td>
                                             </tr>
                                             <tr>
                                                 <td>月</td>
-                                                <td><select class="input-field"><option value="on-site" selected>通所</option></select></td>
+                                                <td><select class="input-field"><option value="off">お休み</option><option value="on-site" selected>通所</option><option value="remote">在宅</option></select></td>
                                                 <td><input type="time" class="input-field" value="10:00"></td>
                                                 <td><input type="time" class="input-field" value="15:00"></td>
-                                                <td><select class="input-field"><option value="yes" selected>あり</option></select></td>
-                                                <td><select class="input-field"><option value="both" selected>往復</option></select></td>
+                                                <td><select class="input-field"><option value="none">なし</option><option value="yes" selected>あり</option></select></td>
+                                                <td><select class="input-field"><option value="none">なし</option><option value="to">往</option><option value="from">復</option><option value="both" selected>往復</option></select></td>
                                             </tr>
-                                            </tbody>
+                                            <tr>
+                                                <td>火</td>
+                                                <td><select class="input-field"><option value="off">お休み</option><option value="on-site" selected>通所</option><option value="remote">在宅</option></select></td>
+                                                <td><input type="time" class="input-field" value="10:00"></td>
+                                                <td><input type="time" class="input-field" value="15:00"></td>
+                                                <td><select class="input-field"><option value="none">なし</option><option value="yes" selected>あり</option></select></td>
+                                                <td><select class="input-field"><option value="none">なし</option><option value="to">往</option><option value="from">復</option><option value="both" selected>往復</option></select></td>
+                                            </tr>
+                                            <tr>
+                                                <td>水</td>
+                                                <td><select class="input-field"><option value="off">お休み</option><option value="on-site" selected>通所</option><option value="remote">在宅</option></select></td>
+                                                <td><input type="time" class="input-field" value="10:00"></td>
+                                                <td><input type="time" class="input-field" value="15:00"></td>
+                                                <td><select class="input-field"><option value="none">なし</option><option value="yes" selected>あり</option></select></td>
+                                                <td><select class="input-field"><option value="none">なし</option><option value="to">往</option><option value="from">復</option><option value="both" selected>往復</option></select></td>
+                                            </tr>
+                                            <tr>
+                                                <td>木</td>
+                                                <td><select class="input-field"><option value="off">お休み</option><option value="on-site" selected>通所</option><option value="remote">在宅</option></select></td>
+                                                <td><input type="time" class="input-field" value="10:00"></td>
+                                                <td><input type="time" class="input-field" value="15:00"></td>
+                                                <td><select class="input-field"><option value="none">なし</option><option value="yes" selected>あり</option></select></td>
+                                                <td><select class="input-field"><option value="none">なし</option><option value="to">往</option><option value="from">復</option><option value="both" selected>往復</option></select></td>
+                                            </tr>
+                                            <tr>
+                                                <td>金</td>
+                                                <td><select class="input-field"><option value="off">お休み</option><option value="on-site" selected>通所</option><option value="remote">在宅</option></select></td>
+                                                <td><input type="time" class="input-field" value="10:00"></td>
+                                                <td><input type="time" class="input-field" value="15:00"></td>
+                                                <td><select class="input-field"><option value="none">なし</option><option value="yes" selected>あり</option></select></td>
+                                                <td><select class="input-field"><option value="none">なし</option><option value="to">往</option><option value="from">復</option><option value="both" selected>往復</option></select></td>
+                                            </tr>
+                                            <tr>
+                                                <td>土</td>
+                                                <td><select class="input-field"><option value="off" selected>お休み</option><option value="on-site">通所</option><option value="remote">在宅</option></select></td>
+                                                <td><input type="time" class="input-field"></td>
+                                                <td><input type="time" class="input-field"></td>
+                                                <td><select class="input-field"><option value="none" selected>なし</option><option value="yes">あり</option></select></td>
+                                                <td><select class="input-field"><option value="none" selected>なし</option><option value="to">往</option><option value="from">復</option><option value="both">往復</option></select></td>
+                                            </tr>
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>
@@ -448,10 +475,144 @@
             </div>
             
             <div class="modal-backdrop" id="modal-service-1" style="display: none;">
-                 <div class="modal-content"><div class="modal-header">利用サービス</div><div class="modal-body">...</div><div class="modal-footer"><button class="btn btn-neutral" onclick="hideModal('modal-service-1')">閉じる</button></div></div>
+                <div class="modal-content">
+                    <div class="modal-header">利用サービス (山田 太郎)</div>
+                    <div class="modal-body">
+                        <div class="table-container">
+                            <table class="table">
+                                <thead><tr><th>曜日</th><th>利用ステータス</th><th>利用時間</th><th>サービス</th></tr></thead>
+                                <tbody>
+                                    <tr><td>日</td><td><span class="badge badge-neutral">お休み</span></td><td></td><td></td></tr>
+                                    <tr><td>月</td><td><span class="badge badge-primary">通所</span></td><td>10:00 - 15:00</td><td>昼食, 送迎(往復)</td></tr>
+                                    <tr><td>火</td><td><span class="badge badge-primary">通所</span></td><td>10:00 - 15:00</td><td>昼食, 送迎(往復)</td></tr>
+                                    <tr><td>水</td><td><span class="badge badge-primary">通所</span></td><td>10:00 - 15:00</td><td>昼食, 送迎(往復)</td></tr>
+                                    <tr><td>木</td><td><span class="badge badge-primary">通所</span></td><td>10:00 - 15:00</td><td>昼食, 送迎(往復)</td></tr>
+                                    <tr><td>金</td><td><span class="badge badge-primary">通所</span></td><td>10:00 - 15:00</td><td>昼食, 送迎(往復)</td></tr>
+                                    <tr><td>土</td><td><span class="badge badge-neutral">お休み</span></td><td></td><td></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer"><button class="btn btn-neutral" onclick="hideModal('modal-service-1')">閉じる</button></div>
+                </div>
             </div>
-            </main>
+            <div class="modal-backdrop" id="modal-certificate-1" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">受給者証情報 (山田 太郎)</div>
+                    <div class="modal-body">
+                        <dl class="data-list" style="display: block;"> 
+                            <div style="padding: var(--spacing-2) 0;"><dt>支給決定期間</dt><dd>2023.10.01 - 2024.09.30</dd></div>
+                            <div style="padding: var(--spacing-2) 0;"><dt>利用者負担割合</dt><dd>1割</dd></div>
+                            <div style="padding: var(--spacing-2) 0;"><dt>利用者負担上限月額</dt><dd>9,300円</dd></div>
+                        </dl>
+                    </div>
+                    <div class="modal-footer"><button class="btn btn-neutral" onclick="hideModal('modal-certificate-1')">閉じる</button></div>
+                </div>
+            </div>
+
+            <div class="modal-backdrop" id="modal-service-2" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">利用サービス (鈴木 花子)</div>
+                    <div class="modal-body">
+                        <div class="table-container">
+                            <table class="table">
+                                <thead><tr><th>曜日</th><th>利用ステータス</th><th>利用時間</th><th>サービス</th></tr></thead>
+                                <tbody>
+                                    <tr><td>日</td><td><span class="badge badge-neutral">お休み</span></td><td></td><td></td></tr>
+                                    <tr><td>月</td><td><span class="badge badge-primary">通所</span></td><td>10:00 - 15:00</td><td>昼食</td></tr>
+                                    <tr><td>火</td><td><span class="badge badge-primary">通所</span></td><td>10:00 - 15:00</td><td>昼食</td></tr>
+                                    <tr><td>水</td><td><span class="badge badge-neutral">お休み</span></td><td></td><td></td></tr>
+                                    <tr><td>木</td><td><span class="badge badge-primary">通所</span></td><td>10:00 - 15:00</td><td>昼食</td></tr>
+                                    <tr><td>金</td><td><span class="badge badge-primary">通所</span></td><td>10:00 - 15:00</td><td>昼食</td></tr>
+                                    <tr><td>土</td><td><span class="badge badge-neutral">お休み</span></td><td></td><td></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer"><button class="btn btn-neutral" onclick="hideModal('modal-service-2')">閉じる</button></div>
+                </div>
+            </div>
+            <div class="modal-backdrop" id="modal-certificate-2" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">受給者証情報 (鈴木 花子)</div>
+                    <div class="modal-body">
+                        <dl class="data-list" style="display: block;"> 
+                            <div style="padding: var(--spacing-2) 0;"><dt>支給決定期間</dt><dd>2023.12.01 - 2024.11.30</dd></div>
+                            <div style="padding: var(--spacing-2) 0;"><dt>利用者負担割合</dt><dd>1割</dd></div>
+                            <div style="padding: var(--spacing-2) 0;"><dt>利用者負担上限月額</dt><dd>37,200円</dd></div>
+                        </dl>
+                    </div>
+                    <div class="modal-footer"><button class="btn btn-neutral" onclick="hideModal('modal-certificate-2')">閉じる</button></div>
+                </div>
+            </div>
+
+            <div class="modal-backdrop" id="modal-service-3" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">利用サービス (高橋 一郎)</div>
+                    <div class="modal-body">
+                        <div class="table-container">
+                            <table class="table">
+                                <thead><tr><th>曜日</th><th>利用ステータス</th><th>利用時間</th><th>サービス</th></tr></thead>
+                                <tbody>
+                                    <tr><td>日</td><td><span class="badge badge-neutral">お休み</span></td><td></td><td></td></tr>
+                                    <tr><td>月</td><td><span class="badge badge-neutral">お休み</span></td><td></td><td></td></tr>
+                                    <tr><td>火</td><td><span class="badge badge-neutral">お休み</span></td><td></td><td></td></tr>
+                                    <tr><td>水</td><td><span class="badge badge-neutral">お休み</span></td><td></td><td></td></tr>
+                                    <tr><td>木</td><td><span class="badge badge-neutral">お休み</span></td><td></td><td></td></tr>
+                                    <tr><td>金</td><td><span class="badge badge-neutral">お休み</span></td><td></td><td></td></tr>
+                                    <tr><td>土</td><td><span class="badge badge-neutral">お休み</span></td><td></td><td></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer"><button class="btn btn-neutral" onclick="hideModal('modal-service-3')">閉じる</button></div>
+                </div>
+            </div>
+            <div class="modal-backdrop" id="modal-certificate-3" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">受給者証情報 (高橋 一郎)</div>
+                    <div class="modal-body">
+                        <p>受給者証情報は未登録です。</p>
+                    </div>
+                    <div class="modal-footer"><button class="btn btn-neutral" onclick="hideModal('modal-certificate-3')">閉じる</button></div>
+                </div>
+            </div>
+
+            <div class="modal-backdrop" id="modal-service-4" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">利用サービス (佐藤 次郎)</div>
+                    <div class="modal-body">
+                        <div class="table-container">
+                            <table class="table">
+                                <thead><tr><th>曜日</th><th>利用ステータス</th><th>利用時間</th><th>サービス</th></tr></thead>
+                                <tbody>
+                                    <tr><td>日</td><td><span class="badge badge-neutral">お休み</span></td><td></td><td></td></tr>
+                                    <tr><td>月</td><td><span class="badge badge-cancelled">契約終了</span></td><td>09:30 - 15:30</td><td>昼食, 送迎(往)</td></tr>
+                                    <tr><td>火</td><td><span class="badge badge-cancelled">契約終了</span></td><td>09:30 - 15:30</td><td>昼食, 送迎(往)</td></tr>
+                                    <tr><td>水</td><td><span class="badge badge-cancelled">契約終了</span></td><td>09:30 - 15:30</td><td>昼食, 送迎(往)</td></tr>
+                                    <tr><td>木</td><td><span class="badge badge-cancelled">契約終了</span></td><td>09:30 - 15:30</td><td>昼食, 送迎(往)</td></tr>
+                                    <tr><td>金</td><td><span class="badge badge-cancelled">契約終了</span></td><td>09:30 - 15:30</td><td>昼食, 送迎(往)</td></tr>
+                                    <tr><td>土</td><td><span class="badge badge-neutral">お休み</span></td><td></td><td></td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer"><button class="btn btn-neutral" onclick="hideModal('modal-service-4')">閉じる</button></div>
+                </div>
+            </div>
+            <div class="modal-backdrop" id="modal-certificate-4" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">受給者証情報 (佐藤 次郎)</div>
+                    <div class="modal-body">
+                        <p>契約終了済みのため、有効な受給者証情報はありません。</p>
+                    </div>
+                    <div class="modal-footer"><button class="btn btn-neutral" onclick="hideModal('modal-certificate-4')">閉じる</button></div>
+                </div>
+            </div>
+
+        </main>
     </div>
 
 </body>
+
 </html>
