@@ -359,7 +359,8 @@ input[type="number"].input-field {
 
 /* (★ヘッダー(TH)のスタイルを「ラベル」に合わせる) */
 .table th {
-    background-color: var(--color-table-header-background);
+    /* ★変更: 背景色をボディと同じ(--color-base-primary)に変更 */
+    background-color: var(--color-base-primary);
     font-weight: var(--font-weight-light); /* (★ 300) */
     font-size: var(--font-size-xs);
     color: var(--color-base-quaternary); /* (★ #666) */
