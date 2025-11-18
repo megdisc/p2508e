@@ -15,8 +15,18 @@
 
     <script>
         // モーダル
-        function showModal(id) {
+        function showModal(id, mode = null) {
             document.getElementById(id).style.display = 'flex';
+            
+            // 新規作成・編集の切り替えロジック (必要に応じて実装)
+            if (id === 'modal-edit-partner') {
+                const header = document.querySelector('#modal-edit-partner .modal-header');
+                if (mode === 'create') {
+                    if (header) header.textContent = '取引先 新規登録';
+                } else if (mode === 'edit') {
+                    if (header) header.textContent = '取引先情報の編集';
+                }
+            }
         }
         function hideModal(id) {
             document.getElementById(id).style.display = 'none';
@@ -24,13 +34,10 @@
 
         // タブ
         function activateTab(tabGroup, tabId) {
-            // リンクのアクティブ状態を切り替え
-            // (注: シェル変数  と誤認されないよう ${...} とエスケープ)
             const links = document.querySelectorAll(`#${tabGroup} .tab-link`);
             links.forEach(link => link.classList.remove('is-active'));
             document.querySelector(`#${tabGroup} .tab-link[onclick*="'${tabId}'"]`).classList.add('is-active');
 
-            // コンテンツの表示を切り替え
             const contents = document.querySelectorAll(`#${tabGroup}-content .tab-content`);
             contents.forEach(content => content.classList.remove('is-active'));
             document.getElementById(tabId).classList.add('is-active');
@@ -43,103 +50,387 @@
     <div class="page-wrapper">
 
         <aside class="sidebar">
-
-            <div class="sidebar-header">
-                Compath
-            </div>
-
+            <div class="sidebar-header">Compath</div>
             <nav class="sidebar-nav">
-
                 <a href="index.html" class="nav-link">トップ</a>
-
-                <details class="nav-accordion">
-                    <summary>施設情報</summary>
-                    <ul>
-                        <li><a href="corporation.html">法人情報</a></li>
-                        <li><a href="office.html">事業所情報</a></li>
-                        <li><a href="staff.html">職員情報</a></li>
-                    </ul>
-                </details>
-
+                <details class="nav-accordion"><summary>施設情報</summary><ul><li><a href="corporation.html">法人情報</a></li><li><a href="office.html">事業所情報</a></li><li><a href="staff.html">職員情報</a></li></ul></details>
                 <a href="partners.html" class="nav-link">取引先情報</a>
-
                 <a href="members.html" class="nav-link">利用者情報</a>
-
-                <details class="nav-accordion">
-                    <summary>スキル情報</summary>
-                    <ul>
-                        <li><a href="skills-settings.html">スキル設定</a></li>
-                        <li><a href="skills-evaluation.html">スキル評価</a></li>
-                    </ul>
-                </details>
-
-                <details class="nav-accordion">
-                    <summary>工賃・控除情報</summary>
-                    <ul>
-                        <li><a href="wages-settings.html">工賃設定</a></li>
-                        <li><a href="deductions-settings.html">控除設定</a></li>
-                        <li><a href="wages-evaluation.html">工賃レベル評価</a></li>
-                    </ul>
-                </details>
-
+                <details class="nav-accordion"><summary>スキル情報</summary><ul><li><a href="skills-settings.html">スキル設定</a></li><li><a href="skills-evaluation.html">スキル評価</a></li></ul></details>
+                <details class="nav-accordion"><summary>工賃・控除情報</summary><ul><li><a href="wages-settings.html">工賃設定</a></li><li><a href="deductions-settings.html">控除設定</a></li><li><a href="wages-evaluation.html">工賃レベル評価</a></li></ul></details>
                 <a href="savings.html" class="nav-link">積立金情報</a>
-
                 <a href="attendance.html" class="nav-link">出欠管理</a>
-
                 <a href="projects.html" class="nav-link">案件管理</a>
-
-                <details class="nav-accordion">
-                    <summary>福祉事業活動</summary>
-                    <ul>
-                        <li><a href="support-plans.html">個別支援計画</a></li>
-                    </ul>
-                </details>
-
-                <details class="nav-accordion">
-                    <summary>会計</summary>
-                    <ul>
-                        <li><a href="accounting-monthly.html">月次会計</a></li>
-                        <li><a href="accounting-annual.html">年次会計</a></li>
-                    </ul>
-                </details>
-
-                <details class="nav-accordion">
-                    <summary>分析</summary>
-                    <ul>
-                        <li><a href="analytics.html">分析ダッシュボード</a></li>
-                    </ul>
-                </details>
-
+                <details class="nav-accordion"><summary>福祉事業活動</summary><ul><li><a href="support-plans.html">個別支援計画</a></li></ul></details>
+                <details class="nav-accordion"><summary>会計</summary><ul><li><a href="accounting-monthly.html">月次会計</a></li><li><a href="accounting-annual.html">年次会計</a></li></ul></details>
+                <details class="nav-accordion"><summary>分析</summary><ul><li><a href="analytics.html">分析ダッシュボード</a></li></ul></details>
                 <a href="account.html" class="nav-link">ユーザーアカウント</a>
-
                 <a href="settings.html" class="nav-link">（その他設定）</a>
-
             </nav>
-
             <div class="sidebar-footer">
-                <div class="user-info">
-                    <span class="user-name">田中 健司</span>
-                    <a href="#">ログアウト</a>
-                </div>
+                <div class="user-info"><span class="user-name">田中 健司</span><a href="#">ログアウト</a></div>
             </div>
-
         </aside>
+
         <main class="main-content">
 
             <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
 
-                <h1 style="margin: 0 0 var(--spacing-stack-md) 0;">取引先情報</h1>
-
-                <div class="card">
-                    <div class="card-body">
-                        <p>これは「取引先情報」ページです。ここに内容を記述します。</p>
-                    </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
+                    <h1 style="margin: 0;">取引先情報</h1>
+                    <button class="btn btn-primary" onclick="showModal('modal-edit-partner', 'create')">
+                        <span class="material-symbols-outlined">add</span>
+                        新規作成
+                    </button>
                 </div>
+
+                <div style="display: flex; gap: var(--spacing-stack-md); flex-wrap: wrap; margin-bottom: var(--spacing-stack-md);">
+                    
+                    <div class="card" style="flex: 1; min-width: 320px;">
+                        <div class="card-body" style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
+                            
+                            <div class="form-group" style="margin: 0; flex: 1; min-width: 160px;">
+                                <label class="form-label" for="search-name">取引先名</label>
+                                <input type="text" id="search-name" class="input-field" placeholder="名称検索...">
+                            </div>
+                            
+                            <div class="form-group" style="margin: 0; flex: 1; min-width: 160px;">
+                                <label class="form-label" for="search-type">取引区分</label>
+                                <select id="search-type" class="input-field">
+                                    <option value="">すべて</option>
+                                    <option value="client">受注先 (売上)</option>
+                                    <option value="supplier">発注先 (仕入/外注)</option>
+                                    <option value="other">その他</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group" style="margin: 0; flex: 1; min-width: 160px;">
+                                <label class="form-label" for="search-status">ステータス</label>
+                                <select id="search-status" class="input-field">
+                                    <option value="">すべて</option>
+                                    <option value="active">取引中</option>
+                                    <option value="inactive">取引停止</option>
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <div class="card" style="flex: 0 0 auto;">
+                        <div class="card-body" style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
+                            
+                            <div class="form-group" style="margin: 0; width: 160px;">
+                                <label class="form-label" for="sort-name">名称</label>
+                                <select id="sort-name" class="input-field">
+                                    <option value="asc">昇順 (あ→ん)</option>
+                                    <option value="desc">降順 (ん→あ)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group" style="margin: 0; width: 160px;">
+                                <label class="form-label" for="sort-date">登録日</label>
+                                <select id="sort-date" class="input-field">
+                                    <option value="desc">新しい順</option>
+                                    <option value="asc">古い順</option>
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="card-grid">
+
+                    <div class="card">
+                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <span style="font: var(--font-body-sm); color: var(--color-base-quaternary);">かぶしきがいしゃ ふくおかこうげい</span>
+                                <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">株式会社 福岡工芸</div>
+                                <span class="badge badge-primary" style="margin-right: var(--spacing-2);">受注先</span>
+                                <span class="badge badge-success">取引中</span>
+                            </div>
+                            <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
+                                <button class="btn btn-icon btn-icon-success" title="修正" onclick="showModal('modal-edit-partner', 'edit')">
+                                    <span class="material-symbols-outlined">edit</span>
+                                </button>
+                                <button class="btn btn-icon btn-icon-error" title="削除">
+                                    <span class="material-symbols-outlined">delete</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <dl class="data-list">
+                                <div>
+                                    <dt>住所</dt>
+                                    <dd>〒812-0011<br>福岡県福岡市博多区博多駅前3-3-3</dd>
+                                </div>
+                                <div>
+                                    <dt>電話番号</dt>
+                                    <dd>092-111-2222</dd>
+                                </div>
+                            </dl>
+                            
+                            <div style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
+                                <button class="btn btn-neutral" onclick="showModal('modal-contact-1')">
+                                    担当者
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <span style="font: var(--font-body-sm); color: var(--color-base-quaternary);">てんじんおふぃすさぷらい</span>
+                                <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">天神オフィスサプライ</div>
+                                <span class="badge badge-neutral" style="margin-right: var(--spacing-2);">発注先</span>
+                                <span class="badge badge-success">取引中</span>
+                            </div>
+                            <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
+                                <button class="btn btn-icon btn-icon-success" title="修正" onclick="showModal('modal-edit-partner', 'edit')">
+                                    <span class="material-symbols-outlined">edit</span>
+                                </button>
+                                <button class="btn btn-icon btn-icon-error" title="削除">
+                                    <span class="material-symbols-outlined">delete</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <dl class="data-list">
+                                <div>
+                                    <dt>住所</dt>
+                                    <dd>〒810-0001<br>福岡県福岡市中央区天神2-2-2</dd>
+                                </div>
+                                <div>
+                                    <dt>電話番号</dt>
+                                    <dd>092-333-4444</dd>
+                                </div>
+                            </dl>
+                            
+                            <div style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
+                                <button class="btn btn-neutral" onclick="showModal('modal-contact-2')">
+                                    担当者
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <span style="font: var(--font-body-sm); color: var(--color-base-quaternary);">はかたしょくひん</span>
+                                <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">博多食品 株式会社</div>
+                                <span class="badge badge-neutral" style="margin-right: var(--spacing-2);">発注先</span>
+                                <span class="badge badge-neutral">取引停止中</span>
+                            </div>
+                            <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
+                                <button class="btn btn-icon btn-icon-success" title="修正" onclick="showModal('modal-edit-partner', 'edit')">
+                                    <span class="material-symbols-outlined">edit</span>
+                                </button>
+                                <button class="btn btn-icon btn-icon-error" title="削除">
+                                    <span class="material-symbols-outlined">delete</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <dl class="data-list">
+                                <div>
+                                    <dt>住所</dt>
+                                    <dd>〒812-0044<br>福岡県福岡市博多区千代1-1-1</dd>
+                                </div>
+                                <div>
+                                    <dt>電話番号</dt>
+                                    <dd>092-555-6666</dd>
+                                </div>
+                            </dl>
+                            
+                            <div style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
+                                <button class="btn btn-neutral" onclick="showModal('modal-contact-3')">
+                                    担当者
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div> 
 
             </div>
 
+            <div class="modal-backdrop" id="modal-edit-partner" style="display: none;">
+                <div class="modal-content" style="max-width: 800px;">
+                    <div class="modal-header">
+                        取引先情報の編集
+                    </div>
+                    <div class="modal-body">
+                        
+                        <nav class="tabs-nav" id="tab-group-edit">
+                            <a class="tab-link is-active" onclick="activateTab('tab-group-edit', 'tab-edit-1')">基本情報</a>
+                            <a class="tab-link" onclick="activateTab('tab-group-edit', 'tab-edit-2')">口座情報</a>
+                        </nav>
+
+                        <div id="tab-group-edit-content">
+                            <div class="tab-content is-active" id="tab-edit-1">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-4);">
+                                    
+                                    <div class="form-group" style="margin-bottom: 0; grid-column: 1 / -1;">
+                                        <label class="form-label" for="edit-name">取引先名</label>
+                                        <input type="text" id="edit-name" class="input-field" value="株式会社 福岡工芸">
+                                    </div>
+                                    
+                                    <div class="form-group" style="margin-bottom: 0; grid-column: 1 / -1;">
+                                        <label class="form-label" for="edit-kana">ふりがな</label>
+                                        <input type="text" id="edit-kana" class="input-field" value="かぶしきがいしゃ ふくおかこうげい">
+                                    </div>
+
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label class="form-label" for="edit-type">取引区分</label>
+                                        <select id="edit-type" class="input-field">
+                                            <option value="client" selected>受注先 (売上)</option>
+                                            <option value="supplier">発注先 (仕入/外注)</option>
+                                            <option value="other">その他</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label class="form-label" for="edit-status">ステータス</label>
+                                        <select id="edit-status" class="input-field">
+                                            <option value="active" selected>取引中</option>
+                                            <option value="inactive">取引停止</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-6);">
+                                    <div class="form-group" style="margin-bottom: 0; grid-column: 1 / 2;">
+                                        <label class="form-label" for="edit-zip1">郵便番号</label>
+                                        <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                            <input type="text" id="edit-zip1" class="input-field" value="812" placeholder="812">
+                                            <span>-</span>
+                                            <input type="text" id="edit-zip2" class="input-field" value="0011" placeholder="0011">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group" style="margin-bottom: 0; grid-column: 1 / -1;">
+                                        <label class="form-label" for="edit-address1">住所</label>
+                                        <div style="display: grid; grid-template-columns: 1fr 1.5fr 1.5fr; gap: var(--spacing-3);">
+                                            <input type="text" id="edit-address1" class="input-field" value="福岡県" placeholder="都道府県">
+                                            <input type="text" id="edit-address2" class="input-field" value="福岡市博多区博多駅前3-3-3" placeholder="市区町村丁目番地">
+                                            <input type="text" id="edit-address3" class="input-field" value="" placeholder="建物名・部屋番号">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-6);">
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label class="form-label" for="edit-phone">電話番号</label>
+                                        <input type="text" id="edit-phone" class="input-field" value="092-111-2222">
+                                    </div>
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label class="form-label" for="edit-fax">FAX番号</label>
+                                        <input type="text" id="edit-fax" class="input-field" value="092-111-2223">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="tab-content" id="tab-edit-2">
+                                <div class="form-group">
+                                    <label class="form-label">銀行情報</label>
+                                    <p style="font-size: var(--font-size-sm); color: var(--color-base-quaternary);">
+                                        請求・支払に関連する口座情報を登録します（省略）
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-neutral" onclick="hideModal('modal-edit-partner')">
+                            キャンセル
+                        </button>
+                        <button class="btn btn-primary" onclick="hideModal('modal-edit-partner')">
+                            保存する
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-backdrop" id="modal-contact-1" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">担当者一覧 (株式会社 福岡工芸)</div>
+                    <div class="modal-body">
+                        <div class="table-container is-standalone">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>氏名</th>
+                                        <th>部署・役職</th>
+                                        <th>連絡先</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>工芸 太郎</td>
+                                        <td>営業部 部長</td>
+                                        <td>090-xxxx-xxxx</td>
+                                    </tr>
+                                    <tr>
+                                        <td>工芸 花子</td>
+                                        <td>経理担当</td>
+                                        <td>hanako@example.com</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-neutral" onclick="hideModal('modal-contact-1')">閉じる</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-backdrop" id="modal-contact-2" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">担当者一覧 (天神オフィスサプライ)</div>
+                    <div class="modal-body">
+                        <div class="table-container is-standalone">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>氏名</th>
+                                        <th>部署・役職</th>
+                                        <th>連絡先</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>天神 次郎</td>
+                                        <td>代表</td>
+                                        <td>092-333-4444</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-neutral" onclick="hideModal('modal-contact-2')">閉じる</button>
+                    </div>
+                </div>
+            </div>
+
+             <div class="modal-backdrop" id="modal-contact-3" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">担当者一覧 (博多食品 株式会社)</div>
+                    <div class="modal-body">
+                        <p>担当者情報は登録されていません。</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-neutral" onclick="hideModal('modal-contact-3')">閉じる</button>
+                    </div>
+                </div>
+            </div>
+
         </main>
-        </div>
+    </div>
 
 </body>
 
