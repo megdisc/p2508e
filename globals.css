@@ -9,14 +9,14 @@
     /* -------------------------------------- */
     
     /* 有彩色 (Chromatic Colors) */
-    --palette-015: #001155;
+    --palette-126: #112266;
     --palette-066: #006666;
     --palette-B80: #BB8800;
-    --palette-D22: #DD2222;
+    --palette-F44: #FF4444;
     --palette-CEE: #CCEEEE;
     --palette-CEF: #CCEEFF;
     --palette-FDD: #FFDDDD;
-    --palette-DA0: #DDAA00;
+    --palette-FC0: #FFCC00;
     --palette-FFC: #FFFFCC;
 
     /* 無彩色 (Achromatic Colors) */
@@ -133,9 +133,9 @@
     /* -------------------------------------- */
     
     /* テーマカラー (Theme) */
-    --color-theme-main: var(--palette-015);
+    --color-theme-main: var(--palette-126);
     --color-theme-sub: var(--palette-CCC);
-    --color-theme-accent: var(--palette-DA0);
+    --color-theme-accent: var(--palette-FC0);
     /* (★) --color-theme-accent-text: var(--color-base-tertiary); (★) 削除 */
 
     /* ベースカラー (Base) (★役割を明確化) */
@@ -146,13 +146,13 @@
     --color-base-quinary: var(--palette-CCC);   /* 薄いグレー (基本罫線) */
     
     /* セマンティック (状態) */
-    --color-semantic-primary-main: var(--palette-015);
+    --color-semantic-primary-main: var(--palette-126);
     --color-semantic-primary-sub: var(--palette-CEF);
     --color-semantic-success-main: var(--palette-066);
     --color-semantic-success-sub: var(--palette-CEE);
     --color-semantic-warning-main: var(--palette-B80);
     --color-semantic-warning-sub: var(--palette-FFC);
-    --color-semantic-error-main: var(--palette-D22);
+    --color-semantic-error-main: var(--palette-F44);
     --color-semantic-error-sub: var(--palette-FDD);
     --color-semantic-neutral-main: var(--palette-333);
     --color-semantic-neutral-sub: var(--palette-CCC);
