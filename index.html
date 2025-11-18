@@ -231,30 +231,59 @@
                 </div>
 
                 <h1 style="margin-top: 48px;">6. テーブル</h1>
+                
+                <h4 style="margin-top: 24px;">A. セクション内表示 (カード内部などに配置)</h4>
                 <div class="card">
-                    <div class="table-container">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>利用者名 (TH 12.8px, 300)</th>
-                                    <th>作業内容</th>
-                                    <th>ステータス</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>山田 太郎 (TD 16px, 500)</td>
-                                    <td>部品組み立て</td>
-                                    <td><span class="badge badge-success">完了</span></td>
-                                </tr>
-                                <tr>
-                                    <td>鈴木 花子</td>
-                                    <td>データ入力</td>
-                                    <td><span class="badge badge-warning">確認中</span></td>
-                                </tr>
-                            </tbody>
-                        </table>
+                    <div class="card-body">
+                        <p style="margin-bottom: 16px;">カードの中に配置する場合は、標準の <code>.table-container</code> を使用します。</p>
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>利用者名</th>
+                                        <th>ステータス</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>山田 太郎</td>
+                                        <td><span class="badge badge-success">完了</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>鈴木 花子</td>
+                                        <td><span class="badge badge-warning">確認中</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
+                </div>
+
+                <h4 style="margin-top: 24px;">B. 単体表示 (独立したコンポーネントとして配置)</h4>
+                <p style="margin-bottom: 16px;">カードで囲わずに配置する場合は <code>.table-container.is-standalone</code> を使用します。カードと同じ影と背景色が適用されます。</p>
+                
+                <div class="table-container is-standalone">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>利用者名</th>
+                                <th>作業内容</th>
+                                <th>ステータス</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>高橋 一郎</td>
+                                <td>データ入力</td>
+                                <td><span class="badge badge-primary">作業中</span></td>
+                            </tr>
+                            <tr>
+                                <td>佐藤 次郎</td>
+                                <td>清掃作業</td>
+                                <td><span class="badge badge-neutral">休憩中</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
 
                 <h1 style="margin-top: 48px;">7. モーダル</h1>
@@ -318,7 +347,37 @@
                 <h1 style="margin-top: 48px;">11. データリスト</h1>
                 <div class="card">
                     <div class="card-header">利用者情報</div>
-                    <div class="card-body"></div>
+                    <div class="card-body">
+                        <dl class="data-list">
+                            <div>
+                                <dt>ユーザーID</dt>
+                                <dd>US-12345678</dd>
+                            </div>
+                            <div>
+                                <dt>登録日</dt>
+                                <dd>2023年4月1日</dd>
+                            </div>
+                            <div>
+                                <dt>ステータス</dt>
+                                <dd><span class="badge badge-success">有効</span></dd>
+                            </div>
+                            <div>
+                                <dt>プラン</dt>
+                                <dd>スタンダードプラン</dd>
+                            </div>
+                            <div>
+                                <dt>担当者</dt>
+                                <dd>山田 太郎</dd>
+                            </div>
+                            <div>
+                                <dt>連絡先</dt>
+                                <dd>03-1234-5678</dd>
+                            </div>
+                            <div>
+                                <dt>備考</dt>
+                                <dd>これはデータリストコンポーネントの表示サンプルです。ラベル(dt)と値(dd)がペアになってグリッド状に表示されます。画面幅に応じて自動的に列数が調整されます。</dd>
+                            </div>
+                        </dl></div>
                 </div>
 
                 <h1 style="margin-top: 48px;">12. カードグリッド</h1>

@@ -343,6 +343,12 @@ input[type="number"].input-field {
     border-radius: var(--radius-card); /* ★変更 (globals.css に合わせて lg) */
 }
 
+/* 単体表示用テーブル (カードと同じ影と背景) */
+.table-container.is-standalone {
+    background-color: var(--color-card-background);
+    box-shadow: var(--shadow-card);
+}
+
 .table {
     width: 100%;
     border-collapse: collapse;
@@ -375,9 +381,6 @@ input[type="number"].input-field {
     font-weight: var(--font-weight-regular); /* (★ 500) */
 }
 
-.table tbody tr:hover {
-    background-color: var(--color-table-row-background-hover);
-}
 
 .table tr:last-child td {
     border-bottom: none;
