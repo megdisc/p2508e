@@ -1,56 +1,32 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
     <title>Compath スタイルガイド (v5 分割版)</title>
-
     <link rel="stylesheet" href="globals.css">
     <link rel="stylesheet" href="ui.css">
-
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <script>
-        // モーダル
-        function showModal(id) {
-            document.getElementById(id).style.display = 'flex';
-        }
-        function hideModal(id) {
-            document.getElementById(id).style.display = 'none';
-        }
-
-        // タブ
+        function showModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function hideModal(id) { document.getElementById(id).style.display = 'none'; }
         function activateTab(tabGroup, tabId) {
-            // リンクのアクティブ状態を切り替え
             const links = document.querySelectorAll(`#${tabGroup} .tab-link`);
             links.forEach(link => link.classList.remove('is-active'));
             document.querySelector(`#${tabGroup} .tab-link[onclick*="'${tabId}'"]`).classList.add('is-active');
-
-            // コンテンツの表示を切り替え
             const contents = document.querySelectorAll(`#${tabGroup}-content .tab-content`);
             contents.forEach(content => content.classList.remove('is-active'));
             document.getElementById(tabId).classList.add('is-active');
         }
     </script>
 </head>
-
 <body>
-
     <div class="page-wrapper">
-
         <aside class="sidebar">
-
-            <div class="sidebar-header">
-                Compath
-            </div>
-
+            <div class="sidebar-header">Compath</div>
             <nav class="sidebar-nav">
-
                 <a href="index.html" class="nav-link">トップ</a>
-
                 <details class="nav-accordion">
                     <summary>施設情報</summary>
                     <ul>
@@ -59,11 +35,8 @@
                         <li><a href="staff.html">職員情報</a></li>
                     </ul>
                 </details>
-
                 <a href="partners.html" class="nav-link">取引先情報</a>
-
                 <a href="members.html" class="nav-link">利用者情報</a>
-
                 <details class="nav-accordion">
                     <summary>スキル情報</summary>
                     <ul>
@@ -71,7 +44,6 @@
                         <li><a href="skills-evaluation.html">スキル評価</a></li>
                     </ul>
                 </details>
-
                 <details class="nav-accordion">
                     <summary>工賃・控除情報</summary>
                     <ul>
@@ -80,20 +52,15 @@
                         <li><a href="wages-evaluation.html">工賃レベル評価</a></li>
                     </ul>
                 </details>
-
                 <a href="savings.html" class="nav-link">積立金情報</a>
-
                 <a href="attendance.html" class="nav-link">出欠管理</a>
-
                 <a href="projects.html" class="nav-link">案件管理</a>
-
                 <details class="nav-accordion">
                     <summary>福祉事業活動</summary>
                     <ul>
                         <li><a href="support-plans.html">個別支援計画</a></li>
                     </ul>
                 </details>
-
                 <details class="nav-accordion">
                     <summary>会計</summary>
                     <ul>
@@ -101,35 +68,26 @@
                         <li><a href="accounting-annual.html">年次会計</a></li>
                     </ul>
                 </details>
-
                 <details class="nav-accordion">
                     <summary>分析</summary>
                     <ul>
                         <li><a href="analytics.html">分析ダッシュボード</a></li>
                     </ul>
                 </details>
-
                 <a href="account.html" class="nav-link">ユーザーアカウント</a>
-
                 <a href="settings.html" class="nav-link">（その他設定）</a>
-
             </nav>
-
             <div class="sidebar-footer">
                 <div class="user-info">
                     <span class="user-name">田中 健司</span>
                     <a href="#">ログアウト</a>
                 </div>
             </div>
-
         </aside>
-
         <main class="main-content">
-
             <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
-
                 <p style="font: var(--font-body-sm); color: var(--color-page-heading);">スタイルガイド</p>
-
+                
                 <h1 style="margin-top: 0;">1. タイポグラフィ</h1>
                 <div class="card">
                     <div class="card-body">
@@ -146,39 +104,7 @@
                 <h1 style="margin-top: 48px;">2. ボタン</h1>
                 <div class="card">
                     <div class="card-body" style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center;">
-                        
-                        <div style="width: 100%; margin: 8px 0; font-size: var(--font-size-xs); color: var(--color-base-quaternary);">Disabled State (Click Impossible)</div>
-                        <button class="btn btn-primary" disabled>Primary</button>
-                        <button class="btn btn-success" disabled>Success</button>
-                        <button class="btn btn-warning" disabled>Warning</button>
-                        <button class="btn btn-error" disabled>Error</button>
-                        <button class="btn btn-neutral" disabled>Neutral</button>
-                        <button class="btn btn-cancelled" disabled>Cancelled</button>
-                        <br><br>
-                        <button class="btn btn-icon btn-icon-primary" disabled><span class="material-symbols-outlined">add</span></button>
-                        <button class="btn btn-icon btn-icon-success" disabled><span class="material-symbols-outlined">edit</span></button>
-                        <button class="btn btn-icon btn-icon-warning" disabled><span class="material-symbols-outlined">warning</span></button>
-                        <button class="btn btn-icon btn-icon-error" disabled><span class="material-symbols-outlined">delete</span></button>
-                        <button class="btn btn-icon btn-icon-neutral" disabled><span class="material-symbols-outlined">settings</span></button>
-                        <button class="btn btn-icon btn-icon-cancelled" disabled><span class="material-symbols-outlined">cancel</span></button>
-                        <div style="width: 100%; border-top: 1px solid var(--palette-EEE); margin: 16px 0;"></div>
                         <button class="btn btn-primary">Primary (16px, 600)</button>
-                        
-                        <div style="width: 100%; margin: 8px 0; font-size: var(--font-size-xs); color: var(--color-base-quaternary);">Disabled State (Click Impossible)</div>
-                        <button class="btn btn-primary" disabled>Primary</button>
-                        <button class="btn btn-success" disabled>Success</button>
-                        <button class="btn btn-warning" disabled>Warning</button>
-                        <button class="btn btn-error" disabled>Error</button>
-                        <button class="btn btn-neutral" disabled>Neutral</button>
-                        <button class="btn btn-cancelled" disabled>Cancelled</button>
-                        <br><br>
-                        <button class="btn btn-icon btn-icon-primary" disabled><span class="material-symbols-outlined">add</span></button>
-                        <button class="btn btn-icon btn-icon-success" disabled><span class="material-symbols-outlined">edit</span></button>
-                        <button class="btn btn-icon btn-icon-warning" disabled><span class="material-symbols-outlined">warning</span></button>
-                        <button class="btn btn-icon btn-icon-error" disabled><span class="material-symbols-outlined">delete</span></button>
-                        <button class="btn btn-icon btn-icon-neutral" disabled><span class="material-symbols-outlined">settings</span></button>
-                        <button class="btn btn-icon btn-icon-cancelled" disabled><span class="material-symbols-outlined">cancel</span></button>
-                        <div style="width: 100%; border-top: 1px solid var(--palette-EEE); margin: 16px 0;"></div>
                         <button class="btn btn-success">Success</button>
                         <button class="btn btn-warning">Warning</button>
                         <button class="btn btn-error">Error</button>
@@ -187,63 +113,41 @@
 
                         <div style="width: 100%; border-top: 1px solid var(--palette-EEE); margin: 8px 0;"></div>
 
-                        <button class="btn btn-icon btn-icon-primary">
-                            <span class="material-symbols-outlined">add</span>
-                        </button>
-                        <button class="btn btn-icon btn-icon-success">
-                            <span class="material-symbols-outlined">edit</span>
-                        </button>
-                        <button class="btn btn-icon btn-icon-warning">
-                            <span class="material-symbols-outlined">warning</span>
-                        </button>
-                        <button class="btn btn-icon btn-icon-error">
-                            <span class="material-symbols-outlined">delete</span>
-                        </button>
-                        <button class="btn btn-icon btn-icon-neutral">
-                            <span class="material-symbols-outlined">settings</span>
-                        </button>
-                        <button class="btn btn-icon btn-icon-cancelled">
-                            <span class="material-symbols-outlined">cancel</span>
-                        </button>
+                        <button class="btn btn-icon btn-icon-primary"><span class="material-symbols-outlined">add</span></button>
+                        <button class="btn btn-icon btn-icon-success"><span class="material-symbols-outlined">edit</span></button>
+                        <button class="btn btn-icon btn-icon-warning"><span class="material-symbols-outlined">warning</span></button>
+                        <button class="btn btn-icon btn-icon-error"><span class="material-symbols-outlined">delete</span></button>
+                        <button class="btn btn-icon btn-icon-neutral"><span class="material-symbols-outlined">settings</span></button>
+                        <button class="btn btn-icon btn-icon-cancelled"><span class="material-symbols-outlined">cancel</span></button>
 
                         <div style="width: 100%; border-top: 1px solid var(--palette-EEE); margin: 8px 0;"></div>
 
-                        
-                        <div style="width: 100%; margin: 8px 0; font-size: var(--font-size-xs); color: var(--color-base-quaternary);">Disabled State (Click Impossible)</div>
-                        <button class="btn btn-primary" disabled>Primary</button>
-                        <button class="btn btn-success" disabled>Success</button>
-                        <button class="btn btn-warning" disabled>Warning</button>
-                        <button class="btn btn-error" disabled>Error</button>
-                        <button class="btn btn-neutral" disabled>Neutral</button>
-                        <button class="btn btn-cancelled" disabled>Cancelled</button>
-                        <br><br>
-                        <button class="btn btn-icon btn-icon-primary" disabled><span class="material-symbols-outlined">add</span></button>
-                        <button class="btn btn-icon btn-icon-success" disabled><span class="material-symbols-outlined">edit</span></button>
-                        <button class="btn btn-icon btn-icon-warning" disabled><span class="material-symbols-outlined">warning</span></button>
-                        <button class="btn btn-icon btn-icon-error" disabled><span class="material-symbols-outlined">delete</span></button>
-                        <button class="btn btn-icon btn-icon-neutral" disabled><span class="material-symbols-outlined">settings</span></button>
-                        <button class="btn btn-icon btn-icon-cancelled" disabled><span class="material-symbols-outlined">cancel</span></button>
-                        <div style="width: 100%; border-top: 1px solid var(--palette-EEE); margin: 16px 0;"></div>
                         <button class="btn btn-primary">
-                        
-                        <div style="width: 100%; margin: 8px 0; font-size: var(--font-size-xs); color: var(--color-base-quaternary);">Disabled State (Click Impossible)</div>
-                        <button class="btn btn-primary" disabled>Primary</button>
-                        <button class="btn btn-success" disabled>Success</button>
-                        <button class="btn btn-warning" disabled>Warning</button>
-                        <button class="btn btn-error" disabled>Error</button>
-                        <button class="btn btn-neutral" disabled>Neutral</button>
-                        <button class="btn btn-cancelled" disabled>Cancelled</button>
-                        <br><br>
-                        <button class="btn btn-icon btn-icon-primary" disabled><span class="material-symbols-outlined">add</span></button>
-                        <button class="btn btn-icon btn-icon-success" disabled><span class="material-symbols-outlined">edit</span></button>
-                        <button class="btn btn-icon btn-icon-warning" disabled><span class="material-symbols-outlined">warning</span></button>
-                        <button class="btn btn-icon btn-icon-error" disabled><span class="material-symbols-outlined">delete</span></button>
-                        <button class="btn btn-icon btn-icon-neutral" disabled><span class="material-symbols-outlined">settings</span></button>
-                        <button class="btn btn-icon btn-icon-cancelled" disabled><span class="material-symbols-outlined">cancel</span></button>
-                        <div style="width: 100%; border-top: 1px solid var(--palette-EEE); margin: 16px 0;"></div>
                             <span class="material-symbols-outlined">add</span>
                             追加する
                         </button>
+
+                        <div style="width: 100%; border-top: 1px solid var(--palette-EEE); margin: 16px 0;"></div>
+
+                        <div style="width: 100%; margin-bottom: 8px; font-size: var(--font-size-xs); color: var(--color-base-quaternary);">Disabled State (Click Impossible)</div>
+                        
+                        <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                            <button class="btn btn-primary" disabled>Primary</button>
+                            <button class="btn btn-success" disabled>Success</button>
+                            <button class="btn btn-warning" disabled>Warning</button>
+                            <button class="btn btn-error" disabled>Error</button>
+                            <button class="btn btn-neutral" disabled>Neutral</button>
+                            <button class="btn btn-cancelled" disabled>Cancelled</button>
+                        </div>
+                        
+                        <div style="width: 100%; margin-top: 16px; display: flex; gap: 16px; flex-wrap: wrap;">
+                            <button class="btn btn-icon btn-icon-primary" disabled><span class="material-symbols-outlined">add</span></button>
+                            <button class="btn btn-icon btn-icon-success" disabled><span class="material-symbols-outlined">edit</span></button>
+                            <button class="btn btn-icon btn-icon-warning" disabled><span class="material-symbols-outlined">warning</span></button>
+                            <button class="btn btn-icon btn-icon-error" disabled><span class="material-symbols-outlined">delete</span></button>
+                            <button class="btn btn-icon btn-icon-neutral" disabled><span class="material-symbols-outlined">settings</span></button>
+                            <button class="btn btn-icon btn-icon-cancelled" disabled><span class="material-symbols-outlined">cancel</span></button>
+                        </div>
                     </div>
                 </div>
 
@@ -262,28 +166,22 @@
                 <h1 style="margin-top: 48px;">4. フォーム (テキスト系)</h1>
                 <div class="card" style="margin-bottom: 24px;">
                     <div class="card-body">
-
                         <div class="form-group">
                             <label class="form-label" for="form-text">テキスト入力 (ラベル 12.8px, 300)</label>
-                            <input type="text" id="form-text" class="input-field"
-                                placeholder="プレースホルダーテキスト (16px, 500)">
+                            <input type="text" id="form-text" class="input-field" placeholder="プレースホルダーテキスト (16px, 500)">
                         </div>
-
                         <div class="form-group">
                             <label class="form-label" for="form-num">数値入力</label>
                             <input type="number" id="form-num" class="input-field" placeholder="0">
                         </div>
-
                         <div class="form-group">
                             <label class="form-label" for="form-date">日付ピッカー</label>
                             <input type="date" id="form-date" class="input-field">
                         </div>
-
                         <div class="form-group">
                             <label class="form-label" for="form-time">時刻ピッカー</label>
                             <input type="time" id="form-time" class="input-field">
                         </div>
-
                         <div class="form-group">
                             <label class="form-label" for="form-select">プルダウン (select)</label>
                             <select id="form-select" class="input-field">
@@ -292,19 +190,14 @@
                                 <option value="2">オプション 2</option>
                             </select>
                         </div>
-
                         <div class="form-group">
                             <label class="form-label" for="form-textarea">テキストエリア</label>
-                            <textarea id="form-textarea" class="input-field" rows="3"
-                                placeholder="複数行の入力..."></textarea>
+                            <textarea id="form-textarea" class="input-field" rows="3" placeholder="複数行の入力..."></textarea>
                         </div>
-
                         <div class="form-group">
                             <label class="form-label" for="form-error">エラー状態</label>
                             <input type="text" id="form-error" class="input-field is-error" value="不正な入力値">
-                            <div class="form-error-message">
-                                エラーメッセージ (12.8px)
-                            </div>
+                            <div class="form-error-message">エラーメッセージ (12.8px)</div>
                         </div>
                     </div>
                 </div>
@@ -316,37 +209,26 @@
                             <label class="form-label">チェックボックス</label>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="chk1" checked>
-                                <label class="form-check-label" for="chk1">
-                                    承諾する (16px, 500)
-                                </label>
+                                <label class="form-check-label" for="chk1">承諾する (16px, 500)</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="chk2">
-                                <label class="form-check-label" for="chk2">
-                                    通知を受け取る
-                                </label>
+                                <label class="form-check-label" for="chk2">通知を受け取る</label>
                             </div>
                         </div>
-
                         <div class="form-group">
                             <label class="form-label">ラジオボタン</label>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" id="rad1" name="radio-group" checked>
-                                <label class="form-check-label" for="rad1">
-                                    オプション A
-                                </label>
+                                <label class="form-check-label" for="rad1">オプション A</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" id="rad2" name="radio-group">
-                                <label class="form-check-label" for="rad2">
-                                    オプション B
-                                </label>
+                                <label class="form-check-label" for="rad2">オプション B</label>
                             </div>
                         </div>
-
                     </div>
                 </div>
-
 
                 <h1 style="margin-top: 48px;">6. テーブル</h1>
                 <div class="card">
@@ -378,9 +260,7 @@
                 <h1 style="margin-top: 48px;">7. モーダル</h1>
                 <div class="card">
                     <div class="card-body">
-                        <button class="btn btn-primary" onclick="showModal('demo-modal')">
-                            モーダルを開く
-                        </button>
+                        <button class="btn btn-primary" onclick="showModal('demo-modal')">モーダルを開く</button>
                     </div>
                 </div>
 
@@ -400,12 +280,10 @@
                 <div class="card">
                     <div class="card-body">
                         <nav class="tabs-nav" id="tab-group-1">
-                            <a class="tab-link is-active" onclick="activateTab('tab-group-1', 'tab-1-1')">基本情報 (16px,
-                                600)</a>
+                            <a class="tab-link is-active" onclick="activateTab('tab-group-1', 'tab-1-1')">基本情報 (16px, 600)</a>
                             <a class="tab-link" onclick="activateTab('tab-group-1', 'tab-1-2')">支援記録</a>
                             <a class="tab-link" onclick="activateTab('tab-group-1', 'tab-1-3')">工賃履歴</a>
                         </nav>
-
                         <div id="tab-group-1-content">
                             <div class="tab-content is-active" id="tab-1-1">
                                 <h3>基本情報 (25px)</h3>
@@ -440,69 +318,48 @@
                 <h1 style="margin-top: 48px;">11. データリスト</h1>
                 <div class="card">
                     <div class="card-header">利用者情報</div>
-                    <div class="card-body">
-                    </div>
+                    <div class="card-body"></div>
                 </div>
 
                 <h1 style="margin-top: 48px;">12. カードグリッド</h1>
                 <div class="card-grid">
-
                     <div class="card">
-                        <div class="card-header">
-                            山田 太郎
-                        </div>
+                        <div class="card-header">山田 太郎</div>
                         <div class="card-body">
                             <p>ここに利用者のサマリーを表示します。最小幅320pxで、可能な限り横に並びます。</p>
                             <span class="badge badge-success">利用中</span>
                         </div>
                     </div>
-
                     <div class="card">
-                        <div class="card-header">
-                            鈴木 花子
-                        </div>
+                        <div class="card-header">鈴木 花子</div>
                         <div class="card-body">
                             <p>ここに利用者のサマリーを表示します。</p>
                             <span class="badge badge-success">利用中</span>
                         </div>
                     </div>
-
                     <div class="card">
-                        <div class="card-header">
-                            高橋 一郎
-                        </div>
+                        <div class="card-header">高橋 一郎</div>
                         <div class="card-body">
                             <p>ここに利用者のサマリーを表示します。</p>
                             <span class="badge badge-neutral">体験中</span>
                         </div>
                     </div>
-
                 </div>
-                </div>
+            </div>
 
             <div class="modal-backdrop" id="demo-modal" style="display: none;">
                 <div class="modal-content">
-                    <div class="modal-header">
-                        利用者の記録を保存
-                    </div>
+                    <div class="modal-header">利用者の記録を保存</div>
                     <div class="modal-body">
                         <p>入力内容を保存してもよろしいですか？</p>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-cancelled" onclick="hideModal('demo-modal')">
-                            キャンセル
-                        </button>
-                        <button class="btn btn-primary" onclick="hideModal('demo-modal')">
-                            保存する
-                        </button>
+                        <button class="btn btn-neutral" onclick="hideModal('demo-modal')">キャンセル</button>
+                        <button class="btn btn-primary" onclick="hideModal('demo-modal')">保存する</button>
                     </div>
                 </div>
             </div>
-
         </main>
-
     </div>
-
 </body>
-
 </html>
