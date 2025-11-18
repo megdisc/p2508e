@@ -24,13 +24,10 @@
 
         // タブ
         function activateTab(tabGroup, tabId) {
-            // リンクのアクティブ状態を切り替え
-            // (注: シェル変数  と誤認されないよう ${...} とエスケープ)
             const links = document.querySelectorAll(`#${tabGroup} .tab-link`);
             links.forEach(link => link.classList.remove('is-active'));
             document.querySelector(`#${tabGroup} .tab-link[onclick*="'${tabId}'"]`).classList.add('is-active');
 
-            // コンテンツの表示を切り替え
             const contents = document.querySelectorAll(`#${tabGroup}-content .tab-content`);
             contents.forEach(content => content.classList.remove('is-active'));
             document.getElementById(tabId).classList.add('is-active');
@@ -130,15 +127,22 @@
 
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
                     <h1 style="margin: 0;">職員情報</h1>
-                    
                 </div>
 
                 <div class="card" style="margin-bottom: var(--spacing-stack-md);">
-                    <div class="card-body" style="display: grid; grid-template-columns: 1fr 1fr auto 1fr 1fr; gap: var(--spacing-4); align-items: flex-end;">
+                    <div class="card-body" style="display: grid; grid-template-columns: 1fr 1fr 1fr auto 1fr 1fr; gap: var(--spacing-4); align-items: flex-end;">
                         
                         <div class="form-group" style="margin: 0;">
                             <label class="form-label" for="search-name">氏名・ふりがな</label>
                             <input type="text" id="search-name" class="input-field" placeholder="氏名検索...">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label class="form-label" for="search-office">所属事業所</label>
+                            <select id="search-office" class="input-field">
+                                <option value="">すべて</option>
+                                <option value="tenjin">こんぱす天神</option>
+                                <option value="hakata">こんぱす博多</option>
+                            </select>
                         </div>
                         
                         <div class="form-group" style="margin: 0;">
@@ -162,6 +166,13 @@
                             </select>
                         </div>
                         
+                        <div class="form-group" style="margin: 0;">
+                            <label class="form-label" for="sort-date">登録日</label>
+                            <select id="sort-date" class="input-field">
+                                <option value="desc">新しい順</option>
+                                <option value="asc">古い順</option>
+                            </select>
+                        </div>
                         
                     </div>
                 </div>
@@ -176,7 +187,6 @@
                                 <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">田中 健司</div>
                                 <span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
                                 <span class="badge badge-primary">管理者</span>
-                                
                             </div>
                             <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
                                 <button class="btn btn-icon btn-icon-success" title="修正" onclick="showModal('modal-edit-staff')">
@@ -189,12 +199,14 @@
                         </div>
                         <div class="card-body">
                             <dl class="data-list">
-                                
+                                <div>
+                                    <dt>住所</dt>
+                                    <dd>〒810-0001<br>福岡県福岡市中央区天神1-1-1</dd>
+                                </div>
                                 <div>
                                     <dt>電話番号</dt>
                                     <dd>090-1111-2222</dd>
                                 </div>
-                                
                             </dl>
                         </div>
                     </div>
@@ -206,7 +218,6 @@
                                 <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">伊藤 良子</div>
                                 <span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
                                 <span class="badge badge-primary">サービス管理責任者</span>
-                                
                             </div>
                             <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
                                 <button class="btn btn-icon btn-icon-success" title="修正" onclick="showModal('modal-edit-staff')">
@@ -219,12 +230,14 @@
                         </div>
                         <div class="card-body">
                             <dl class="data-list">
-                                
+                                <div>
+                                    <dt>住所</dt>
+                                    <dd>〒810-0001<br>福岡県福岡市中央区天神1-1-1</dd>
+                                </div>
                                 <div>
                                     <dt>電話番号</dt>
                                     <dd>080-3333-4444</dd>
                                 </div>
-                                
                             </dl>
                         </div>
                     </div>
@@ -236,7 +249,6 @@
                                 <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">渡辺 三郎</div>
                                 <span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
                                 <span class="badge badge-primary">職業指導員</span>
-                                
                             </div>
                             <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
                                 <button class="btn btn-icon btn-icon-success" title="修正" onclick="showModal('modal-edit-staff')">
@@ -249,17 +261,20 @@
                         </div>
                         <div class="card-body">
                             <dl class="data-list">
-                                
+                                <div>
+                                    <dt>住所</dt>
+                                    <dd>〒810-0001<br>福岡県福岡市中央区天神1-1-1</dd>
+                                </div>
                                 <div>
                                     <dt>電話番号</dt>
                                     <dd>070-5555-6666</dd>
                                 </div>
-                                
                             </dl>
                         </div>
                     </div>
 
-                </div> </div>
+                </div>
+            </div>
 
             <div class="modal-backdrop" id="modal-edit-staff" style="display: none;">
                 <div class="modal-content" style="max-width: 800px;">
@@ -280,6 +295,16 @@
                                         <label class="form-label" for="edit-staff-kana">ふりがな</label>
                                         <input type="text" id="edit-staff-kana" class="input-field" value="たなか けんじ">
                                     </div>
+                                </div>
+
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); margin-top: var(--spacing-4);">
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label class="form-label" for="edit-staff-office">所属事業所</label>
+                                        <select id="edit-staff-office" class="input-field">
+                                            <option value="tenjin" selected>こんぱす天神</option>
+                                            <option value="hakata">こんぱす博多</option>
+                                        </select>
+                                    </div>
                                     <div class="form-group" style="margin-bottom: 0;">
                                         <label class="form-label" for="edit-staff-role">役職・職種</label>
                                         <select id="edit-staff-role" class="input-field">
@@ -290,16 +315,25 @@
                                             <option value="other">その他</option>
                                         </select>
                                     </div>
-                                    
                                 </div>
 
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-6);">
-                                    <div class="form-group" style="margin-bottom: 0;">
-                                        <label class="form-label" for="edit-staff-office">所属事業所</label>
-                                        <select id="edit-staff-office" class="input-field">
-                                            <option value="tenjin" selected>こんぱす天神</option>
-                                            <option value="hakata">こんぱす博多</option>
-                                        </select>
+                                    <div class="form-group" style="margin-bottom: 0; grid-column: 1 / 2;">
+                                        <label class="form-label" for="edit-staff-zip1">郵便番号</label>
+                                        <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                            <input type="text" id="edit-staff-zip1" class="input-field" value="810" placeholder="810">
+                                            <span>-</span>
+                                            <input type="text" id="edit-staff-zip2" class="input-field" value="0001" placeholder="0001">
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-group" style="margin-bottom: 0; grid-column: 1 / -1;">
+                                        <label class="form-label" for="edit-staff-address1">住所</label>
+                                        <div style="display: grid; grid-template-columns: 1fr 1.5fr 1.5fr; gap: var(--spacing-3);">
+                                            <input type="text" id="edit-staff-address1" class="input-field" value="福岡県" placeholder="都道府県">
+                                            <input type="text" id="edit-staff-address2" class="input-field" value="福岡市中央区天神1-1-1" placeholder="市区町村丁目番地">
+                                            <input type="text" id="edit-staff-address3" class="input-field" value="" placeholder="建物名・部屋番号">
+                                        </div>
                                     </div>
                                 </div>
 
@@ -314,8 +348,8 @@
                                             <input type="text" id="edit-staff-phone3" class="input-field" value="2222">
                                         </div>
                                     </div>
-                                    
                                 </div>
+
                             </div>
                         </div>
 
