@@ -263,6 +263,10 @@
 }
 
 /* (★ <select> のスタイルを .input-field と共通化) */
+textarea.input-field {
+    border-radius: var(--border-radius-lg);
+}
+
 select.input-field {
     appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23666666'%3E%3Cpath fill-rule='evenodd' d='M10 13.293l-4.646-4.647a.5.5 0 0 1 .708-.708L10 11.879l4.939-4.939a.5.5 0 0 1 .708.708L10 13.293z' clip-rule='evenodd'/%3E%3C/svg%3E");
