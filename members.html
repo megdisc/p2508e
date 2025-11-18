@@ -179,6 +179,7 @@
                             <div>
                                 <span style="font: var(--font-body-sm); color: var(--color-base-quaternary);">やまだ たろう</span>
                                 <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">山田 太郎</div>
+                                <span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
                                 <span class="badge badge-success">契約中 | 2023.04.01</span>
                             </div>
                             <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
@@ -194,7 +195,7 @@
                             <dl class="data-list">
                                 <div>
                                     <dt>住所</dt>
-                                    <dd>〒810-0001 福岡県福岡市中央区天神1-1-1</dd>
+                                    <dd>〒810-0001<br>福岡県福岡市中央区天神1-1-1</dd>
                                 </div>
                                 <div>
                                     <dt>電話番号</dt>
@@ -219,6 +220,7 @@
                             <div>
                                 <span style="font: var(--font-body-sm); color: var(--color-base-quaternary);">すずき はなこ</span>
                                 <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">鈴木 花子</div>
+                                <span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
                                 <span class="badge badge-success">契約中 | 2022.10.01</span>
                             </div>
                             <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
@@ -234,7 +236,7 @@
                             <dl class="data-list">
                                 <div>
                                     <dt>住所</dt>
-                                    <dd>〒812-0011 福岡県福岡市博多区博多駅前2-2-2</dd>
+                                    <dd>〒812-0011<br>福岡県福岡市博多区博多駅前2-2-2</dd>
                                 </div>
                                 <div>
                                     <dt>電話番号</dt>
@@ -259,6 +261,7 @@
                             <div>
                                 <span style="font: var(--font-body-sm); color: var(--color-base-quaternary);">たかはし いちろう</span>
                                 <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">高橋 一郎</div>
+                                <span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
                                 <span class="badge badge-neutral">未契約</span>
                             </div>
                             <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
@@ -274,7 +277,7 @@
                             <dl class="data-list">
                                 <div>
                                     <dt>住所</dt>
-                                    <dd>〒811-1361 福岡県福岡市南区西長住3-3-3</dd>
+                                    <dd>〒811-1361<br>福岡県福岡市南区西長住3-3-3</dd>
                                 </div>
                                 <div>
                                     <dt>電話番号</dt>
@@ -299,6 +302,7 @@
                             <div>
                                 <span style="font: var(--font-body-sm); color: var(--color-base-quaternary);">さとう じろう</span>
                                 <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">佐藤 次郎</div>
+                                <span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
                                 <span class="badge badge-cancelled">契約終了 | 2021.05.01 - 2023.04.30</span>
                             </div>
                             <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
@@ -314,7 +318,7 @@
                              <dl class="data-list">
                                 <div>
                                     <dt>住所</dt>
-                                    <dd>〒814-0001 福岡県福岡市早良区百道浜4-4-4</dd>
+                                    <dd>〒814-0001<br>福岡県福岡市早良区百道浜4-4-4</dd>
                                 </div>
                                 <div>
                                     <dt>電話番号</dt>
@@ -354,6 +358,13 @@
                             <div class="tab-content is-active" id="tab-edit-1">
                                 
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-4);">
+                                    <div class="form-group" style="margin-bottom: 0; grid-column: 1 / -1;">
+                                        <label class="form-label" for="edit-office">利用事業所</label>
+                                        <select id="edit-office" class="input-field">
+                                            <option value="tenjin" selected>こんぱす天神</option>
+                                            <option value="hakata">こんぱす博多</option>
+                                        </select>
+                                    </div>
                                     <div class="form-group" style="margin-bottom: 0;">
                                         <label class="form-label" for="edit-name">氏名</label>
                                         <input type="text" id="edit-name" class="input-field" value="山田 太郎" disabled>
@@ -671,7 +682,8 @@
                                 <tbody>
                                     <tr>
                                         <td>日</td>
-                                        <td><span class="badge badge-neutral">お休み</span></td>
+                                        <td><span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">お休み</span></td>
                                         <td></td>
                                         <td></td>
                                     </tr>
@@ -679,35 +691,46 @@
                                         <td>月</td>
                                         <td><span class="badge badge-primary">通所</span></td>
                                         <td>10:00 - 15:00</td>
-                                        <td><span class="badge badge-neutral">昼食</span> <span class="badge badge-neutral">送迎(往復)</span></td>
+                                        <td><span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">昼食</span> <span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">送迎(往復)</span></td>
                                     </tr>
                                     <tr>
                                         <td>火</td>
                                         <td><span class="badge badge-primary">通所</span></td>
                                         <td>10:00 - 15:00</td>
-                                        <td><span class="badge badge-neutral">昼食</span> <span class="badge badge-neutral">送迎(往復)</span></td>
+                                        <td><span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">昼食</span> <span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">送迎(往復)</span></td>
                                     </tr>
                                     <tr>
                                         <td>水</td>
                                         <td><span class="badge badge-primary">通所</span></td>
                                         <td>10:00 - 15:00</td>
-                                        <td><span class="badge badge-neutral">昼食</span> <span class="badge badge-neutral">送迎(往復)</span></td>
+                                        <td><span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">昼食</span> <span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">送迎(往復)</span></td>
                                     </tr>
                                     <tr>
                                         <td>木</td>
                                         <td><span class="badge badge-primary">通所</span></td>
                                         <td>10:00 - 15:00</td>
-                                        <td><span class="badge badge-neutral">昼食</span> <span class="badge badge-neutral">送迎(往復)</span></td>
+                                        <td><span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">昼食</span> <span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">送迎(往復)</span></td>
                                     </tr>
                                     <tr>
                                         <td>金</td>
                                         <td><span class="badge badge-primary">通所</span></td>
                                         <td>10:00 - 15:00</td>
-                                        <td><span class="badge badge-neutral">昼食</span> <span class="badge badge-neutral">送迎(往復)</span></td>
+                                        <td><span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">昼食</span> <span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">送迎(往復)</span></td>
                                     </tr>
                                     <tr>
                                         <td>土</td>
-                                        <td><span class="badge badge-neutral">お休み</span></td>
+                                        <td><span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">お休み</span></td>
                                         <td></td>
                                         <td></td>
                                     </tr>
@@ -762,7 +785,8 @@
                                 <tbody>
                                     <tr>
                                         <td>日</td>
-                                        <td><span class="badge badge-neutral">お休み</span></td>
+                                        <td><span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">お休み</span></td>
                                         <td></td>
                                         <td></td>
                                     </tr>
@@ -770,17 +794,20 @@
                                         <td>月</td>
                                         <td><span class="badge badge-primary">通所</span></td>
                                         <td>10:00 - 15:00</td>
-                                        <td><span class="badge badge-neutral">昼食</span></td>
+                                        <td><span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">昼食</span></td>
                                     </tr>
                                     <tr>
                                         <td>火</td>
                                         <td><span class="badge badge-primary">通所</span></td>
                                         <td>10:00 - 15:00</td>
-                                        <td><span class="badge badge-neutral">昼食</span></td>
+                                        <td><span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">昼食</span></td>
                                     </tr>
                                     <tr>
                                         <td>水</td>
-                                        <td><span class="badge badge-neutral">お休み</span></td>
+                                        <td><span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">お休み</span></td>
                                         <td></td>
                                         <td></td>
                                     </tr>
@@ -788,17 +815,20 @@
                                         <td>木</td>
                                         <td><span class="badge badge-primary">通所</span></td>
                                         <td>10:00 - 15:00</td>
-                                        <td><span class="badge badge-neutral">昼食</span></td>
+                                        <td><span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">昼食</span></td>
                                     </tr>
                                     <tr>
                                         <td>金</td>
                                         <td><span class="badge badge-primary">通所</span></td>
                                         <td>10:00 - 15:00</td>
-                                        <td><span class="badge badge-neutral">昼食</span></td>
+                                        <td><span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">昼食</span></td>
                                     </tr>
                                     <tr>
                                         <td>土</td>
-                                        <td><span class="badge badge-neutral">お休み</span></td>
+                                        <td><span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">お休み</span></td>
                                         <td></td>
                                         <td></td>
                                     </tr>
@@ -853,44 +883,51 @@
                                 <tbody>
                                     <tr>
                                         <td>日</td>
-                                        <td><span class="badge badge-neutral">お休み</span></td>
+                                        <td><span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">お休み</span></td>
                                         <td></td>
                                         <td></td>
                                     </tr>
                                     <tr>
                                         <td>月</td>
-                                        <td><span class="badge badge-neutral">お休み</span></td>
+                                        <td><span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">お休み</span></td>
                                         <td></td>
                                         <td></td>
                                     </tr>
                                     <tr>
                                         <td>火</td>
-                                        <td><span class="badge badge-neutral">お休み</span></td>
+                                        <td><span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">お休み</span></td>
                                         <td></td>
                                         <td></td>
                                     </tr>
                                     <tr>
                                         <td>水</td>
-                                        <td><span class="badge badge-neutral">お休み</span></td>
+                                        <td><span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">お休み</span></td>
                                         <td></td>
                                         <td></td>
                                     </tr>
 
                                     <tr>
                                         <td>木</td>
-                                        <td><span class="badge badge-neutral">お休み</span></td>
+                                        <td><span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">お休み</span></td>
                                         <td></td>
                                         <td></td>
                                     </tr>
                                     <tr>
                                         <td>金</td>
-                                        <td><span class="badge badge-neutral">お休み</span></td>
+                                        <td><span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">お休み</span></td>
                                         <td></td>
                                         <td></td>
                                     </tr>
                                     <tr>
                                         <td>土</td>
-                                        <td><span class="badge badge-neutral">お休み</span></td>
+                                        <td><span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">お休み</span></td>
                                         <td></td>
                                         <td></td>
                                     </tr>
@@ -945,7 +982,8 @@
                                 <tbody>
                                     <tr>
                                         <td>日</td>
-                                        <td><span class="badge badge-neutral">お休み</span></td>
+                                        <td><span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">お休み</span></td>
                                         <td></td>
                                         <td></td>
                                     </tr>
@@ -953,35 +991,46 @@
                                         <td>月</td>
                                         <td><span class="badge badge-primary">通所</span></td>
                                         <td>09:30 - 15:30</td>
-                                        <td><span class="badge badge-neutral">昼食</span> <span class="badge badge-neutral">送迎(往)</span></td>
+                                        <td><span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">昼食</span> <span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">送迎(往)</span></td>
                                     </tr>
                                     <tr>
                                         <td>火</td>
                                         <td><span class="badge badge-primary">通所</span></td>
                                         <td>09:30 - 15:30</td>
-                                        <td><span class="badge badge-neutral">昼食</span> <span class="badge badge-neutral">送迎(往)</span></td>
+                                        <td><span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">昼食</span> <span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">送迎(往)</span></td>
                                     </tr>
                                     <tr>
                                         <td>水</td>
                                         <td><span class="badge badge-primary">通所</span></td>
                                         <td>09:30 - 15:30</td>
-                                        <td><span class="badge badge-neutral">昼食</span> <span class="badge badge-neutral">送迎(往)</span></td>
+                                        <td><span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">昼食</span> <span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">送迎(往)</span></td>
                                     </tr>
                                     <tr>
                                         <td>木</td>
                                         <td><span class="badge badge-primary">通所</span></td>
                                         <td>09:30 - 15:30</td>
-                                        <td><span class="badge badge-neutral">昼食</span> <span class="badge badge-neutral">送迎(往)</span></td>
+                                        <td><span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">昼食</span> <span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">送迎(往)</span></td>
                                     </tr>
                                     <tr>
                                         <td>金</td>
                                         <td><span class="badge badge-primary">通所</span></td>
                                         <td>09:30 - 15:30</td>
-                                        <td><span class="badge badge-neutral">昼食</span> <span class="badge badge-neutral">送迎(往)</span></td>
+                                        <td><span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">昼食</span> <span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">送迎(往)</span></td>
                                     </tr>
                                     <tr>
                                         <td>土</td>
-                                        <td><span class="badge badge-neutral">お休み</span></td>
+                                        <td><span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
+                                <span class="badge badge-neutral">お休み</span></td>
                                         <td></td>
                                         <td></td>
                                     </tr>
