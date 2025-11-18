@@ -238,6 +238,15 @@
                 box-shadow var(--transition-duration-fast) var(--transition-timing-ease);
     font-size: var(--font-size-sm); /* ★ 16px (標準) を明示 */
 }
+/* 編集不可 (Disabled / Readonly) フォーム */
+.input-field:disabled,
+.input-field[readonly] {
+    background-color: var(--color-base-secondary);
+    color: var(--color-base-quaternary);
+    cursor: not-allowed;
+    opacity: 1; /* iOSなどで薄くなるのを防ぐ */
+}
+
 
 .input-field::placeholder {
     color: var(--color-input-placeholder);
