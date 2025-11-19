@@ -90,16 +90,16 @@
                         <div class="card-body" style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
                             
                             <div class="form-group" style="margin: 0; flex: 1; min-width: 160px;">
-                                <label class="form-label" for="search-name">取引先名</label>
-                                <input type="text" id="search-name" class="input-field" placeholder="名称検索...">
+                                <label class="form-label" for="search-name">キーワード検索</label>
+                                <input type="text" id="search-name" class="input-field" placeholder="名称...">
                             </div>
                             
                             <div class="form-group" style="margin: 0; flex: 1; min-width: 160px;">
                                 <label class="form-label" for="search-type">取引区分</label>
                                 <select id="search-type" class="input-field">
                                     <option value="">すべて</option>
-                                    <option value="client">受注先 (売上)</option>
-                                    <option value="supplier">発注先 (仕入/外注)</option>
+                                    <option value="client">顧客 (売上)</option>
+                                    <option value="supplier">外注先 (仕入/外注)</option>
                                     <option value="other">その他</option>
                                 </select>
                             </div>
@@ -147,8 +147,7 @@
                             <div>
                                 <span style="font: var(--font-body-sm); color: var(--color-base-quaternary);">かぶしきがいしゃ ふくおかこうげい</span>
                                 <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">株式会社 福岡工芸</div>
-                                <span class="badge badge-primary" style="margin-right: var(--spacing-2);">受注先</span>
-                                <span class="badge badge-success">取引中</span>
+                                <span class="badge badge-warning" style="margin-right: var(--spacing-2);">顧客</span>
                             </div>
                             <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
                                 <button class="btn btn-icon btn-icon-success" title="修正" onclick="showModal('modal-edit-partner', 'edit')">
@@ -169,6 +168,10 @@
                                     <dt>電話番号</dt>
                                     <dd>092-111-2222</dd>
                                 </div>
+                                <div>
+                                    <dt>FAX番号</dt>
+                                    <dd>092-111-2223</dd>
+                                </div>
                             </dl>
                             
                             <div style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
@@ -184,8 +187,7 @@
                             <div>
                                 <span style="font: var(--font-body-sm); color: var(--color-base-quaternary);">てんじんおふぃすさぷらい</span>
                                 <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">天神オフィスサプライ</div>
-                                <span class="badge badge-neutral" style="margin-right: var(--spacing-2);">発注先</span>
-                                <span class="badge badge-success">取引中</span>
+                                <span class="badge badge-primary" style="margin-right: var(--spacing-2);">外注先</span>
                             </div>
                             <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
                                 <button class="btn btn-icon btn-icon-success" title="修正" onclick="showModal('modal-edit-partner', 'edit')">
@@ -206,6 +208,10 @@
                                     <dt>電話番号</dt>
                                     <dd>092-333-4444</dd>
                                 </div>
+                                <div>
+                                    <dt>FAX番号</dt>
+                                    <dd>092-333-4445</dd>
+                                </div>
                             </dl>
                             
                             <div style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
@@ -221,8 +227,7 @@
                             <div>
                                 <span style="font: var(--font-body-sm); color: var(--color-base-quaternary);">はかたしょくひん</span>
                                 <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">博多食品 株式会社</div>
-                                <span class="badge badge-neutral" style="margin-right: var(--spacing-2);">発注先</span>
-                                <span class="badge badge-neutral">取引停止中</span>
+                                <span class="badge badge-primary" style="margin-right: var(--spacing-2);">外注先</span>
                             </div>
                             <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
                                 <button class="btn btn-icon btn-icon-success" title="修正" onclick="showModal('modal-edit-partner', 'edit')">
@@ -242,6 +247,10 @@
                                 <div>
                                     <dt>電話番号</dt>
                                     <dd>092-555-6666</dd>
+                                </div>
+                                <div>
+                                    <dt>FAX番号</dt>
+                                    <dd>092-555-6667</dd>
                                 </div>
                             </dl>
                             
@@ -286,8 +295,8 @@
                                     <div class="form-group" style="margin-bottom: 0;">
                                         <label class="form-label" for="edit-type">取引区分</label>
                                         <select id="edit-type" class="input-field">
-                                            <option value="client" selected>受注先 (売上)</option>
-                                            <option value="supplier">発注先 (仕入/外注)</option>
+                                            <option value="client" selected>顧客 (売上)</option>
+                                            <option value="supplier">外注先 (仕入/外注)</option>
                                             <option value="other">その他</option>
                                         </select>
                                     </div>
@@ -364,7 +373,9 @@
                                     <tr>
                                         <th>氏名</th>
                                         <th>部署・役職</th>
-                                        <th>連絡先</th>
+                                        <th>電話番号</th>
+                                        <th>メールアドレス</th>
+                                        <th>特記事項</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -372,11 +383,15 @@
                                         <td>工芸 太郎</td>
                                         <td>営業部 部長</td>
                                         <td>090-xxxx-xxxx</td>
+                                        <td>-</td>
+                                        <td>-</td>
                                     </tr>
                                     <tr>
                                         <td>工芸 花子</td>
                                         <td>経理担当</td>
+                                        <td>-</td>
                                         <td>hanako@example.com</td>
+                                        <td>-</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -398,7 +413,9 @@
                                     <tr>
                                         <th>氏名</th>
                                         <th>部署・役職</th>
-                                        <th>連絡先</th>
+                                        <th>電話番号</th>
+                                        <th>メールアドレス</th>
+                                        <th>特記事項</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -406,6 +423,8 @@
                                         <td>天神 次郎</td>
                                         <td>代表</td>
                                         <td>092-333-4444</td>
+                                        <td>-</td>
+                                        <td>-</td>
                                     </tr>
                                 </tbody>
                             </table>
