@@ -417,7 +417,7 @@ input[type="number"].input-field {
     box-shadow: var(--shadow-modal);
     padding: var(--spacing-modal-padding);
     width: 90%;
-    max-width: 600px;
+    max-width: 800px; /* ★変更: 600px -> 800px */
     z-index: var(--z-index-modal);
     
     /* ★以下3行を追加 */
