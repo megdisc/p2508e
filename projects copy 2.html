@@ -16,7 +16,7 @@
     <style>
         /* 案件管理専用スタイル */
         
-        /* スケジューラーコンテナ（共通外枠） */
+        /* スケジューラーコンテナ */
         .scheduler-container {
             overflow-x: auto;
             position: relative;
@@ -55,7 +55,7 @@
             min-width: 2.5rem;
         }
 
-        /* 左端の固定列 (案件名/担当者名) */
+        /* 左端の固定列 */
         .col-fixed {
             position: sticky;
             left: 0;
@@ -143,11 +143,30 @@
             z-index: 5;
         }
 
+        /* 職員サポートありのバー表現（ストライプ） */
+        .gantt-bar.is-supported {
+            background-image: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 5px,
+                rgba(255, 255, 255, 0.2) 5px,
+                rgba(255, 255, 255, 0.2) 10px
+            );
+        }
+        /* 職員サポートアイコン */
+        .support-icon {
+            margin-left: 4px;
+            font-size: 1rem;
+            vertical-align: middle;
+        }
+
         /* ステータス連動バー色 */
         .bar-status-not-started { background-color: var(--color-semantic-neutral-main); }
         .bar-status-in-progress { background-color: var(--color-semantic-primary-main); }
         .bar-status-completed   { background-color: var(--color-semantic-success-main); }
         .bar-status-cancelled   { background-color: var(--color-semantic-cancelled-main); }
+        /* 職員用バー */
+        .bar-staff { background-color: var(--color-base-quaternary); color: #fff; }
 
         /* 操作ボタンコンテナ */
         .action-buttons {
@@ -178,7 +197,7 @@
         /* 表示切り替えボタングループ（プライマリカラー化） */
         .view-toggle {
             display: flex;
-            background-color: var(--color-base-secondary); /* 未選択エリア背景 */
+            background-color: var(--color-base-secondary);
             border-radius: var(--radius-button);
             padding: 2px;
             border: 1px solid var(--color-base-quinary);
@@ -193,28 +212,26 @@
             color: var(--color-base-quaternary);
         }
         
-        .view-toggle input[type="radio"] {
-            display: none;
-        }
+        .view-toggle input[type="radio"] { display: none; }
         
-        /* 選択時のスタイル：プライマリカラー背景・白文字 */
         .view-toggle input[type="radio"]:checked + label {
-            background-color: var(--color-theme-main); /* プライマリメイン */
-            color: var(--color-base-primary); /* 白 */
+            background-color: var(--color-theme-main);
+            color: var(--color-base-primary);
             box-shadow: var(--box-shadow-sm);
             font-weight: var(--font-weight-medium);
         }
 
-        /* 予算・費用テーブル用スタイル */
+        /* 予算・費用テーブル用スタイル (計算ロジックを反映) */
         .budget-table th {
             background-color: var(--color-base-secondary);
             color: var(--color-base-quaternary);
             font-weight: var(--font-weight-medium);
-            text-align: center; /* ヘッダーは中央揃え */
+            text-align: center;
             border-bottom: var(--border-width-sm) solid var(--color-table-border);
             border-right: var(--border-width-sm) solid var(--color-base-secondary);
             height: 2.5rem;
             font-size: var(--font-size-xs);
+            white-space: nowrap;
         }
         .budget-table td {
             border-bottom: var(--border-width-sm) solid var(--color-table-border);
@@ -223,14 +240,39 @@
             vertical-align: middle;
             padding: var(--spacing-2) var(--spacing-4);
             font-size: var(--font-size-sm);
-            text-align: right; /* 数値は右揃え */
+            text-align: right;
         }
-        .budget-table td:first-child,
-        .budget-table td:nth-child(2) {
-            text-align: left; /* 案件名、ステータスは左揃え */
+        
+        /* 強調表示 */
+        .cell-highlight {
+            background-color: var(--palette-FFC); /* 薄い黄色 */
+            font-weight: bold;
+            color: var(--color-theme-main);
         }
-        .budget-table tr:last-child td {
-            border-bottom: none;
+        .cell-deduction {
+            color: var(--color-semantic-error-main);
+        }
+        
+        /* 詳細行のスタイル */
+        .row-detail {
+            background-color: #fafafa;
+        }
+        .row-detail td {
+            border-top: 1px dashed var(--color-base-secondary);
+            font-size: var(--font-size-xs);
+            color: var(--color-base-quaternary);
+        }
+        
+        /* 予算テーブルのツリー構造表現 */
+        .tree-line {
+            display: inline-block;
+            width: 1rem;
+            height: 100%;
+            border-left: 1px solid var(--color-base-quinary);
+            border-bottom: 1px solid var(--color-base-quinary);
+            margin-right: 0.5rem;
+            vertical-align: middle;
+            transform: translateY(-0.5em);
         }
 
     </style>
@@ -239,7 +281,6 @@
         function showModal(id) { document.getElementById(id).style.display = 'flex'; }
         function hideModal(id) { document.getElementById(id).style.display = 'none'; }
         
-        // 表示切り替え関数
         function switchView(viewName) {
             document.getElementById('view-project').style.display = 'none';
             document.getElementById('view-member').style.display = 'none';
@@ -252,6 +293,14 @@
             } else if (viewName === 'budget') {
                 document.getElementById('view-budget').style.display = 'block';
             }
+        }
+        
+        // 予算テーブルの詳細開閉（モック）
+        function toggleBudgetDetail(rowId) {
+            const detailRows = document.querySelectorAll(`.budget-detail-${rowId}`);
+            detailRows.forEach(row => {
+                row.style.display = row.style.display === 'none' ? 'table-row' : 'none';
+            });
         }
     </script>
 </head>
@@ -399,8 +448,8 @@
                                 </td>
                                 <td colspan="3"></td>
                                 <td colspan="5">
-                                    <div class="gantt-bar bar-status-in-progress" onclick="showModal('modal-edit-task')" title="封入: 山田 太郎, 鈴木 花子">
-                                        封入: 山田 太郎, 鈴木 花子
+                                    <div class="gantt-bar bar-status-in-progress" onclick="showModal('modal-edit-task')" title="封入: 山田, 鈴木">
+                                        封入: 山田, 鈴木
                                     </div>
                                 </td>
                                 <td colspan="23"></td>
@@ -414,12 +463,13 @@
                             <tr class="multi-row-bottom">
                                 <td colspan="5"></td>
                                 <td colspan="5">
-                                    <div class="gantt-bar bar-status-in-progress" onclick="showModal('modal-edit-task')" title="検品: 伊藤 良子">
-                                        検品: 伊藤 良子
+                                    <div class="gantt-bar bar-status-in-progress is-supported" onclick="showModal('modal-edit-task')" title="検品: 伊藤 (職員)">
+                                        検品: 伊藤(職員) <span class="material-symbols-outlined support-icon">supervised_user_circle</span>
                                     </div>
                                 </td>
                                 <td colspan="21"></td>
                             </tr>
+
                             <tr>
                                 <td class="col-fixed">
                                     <div class="info-cell" onclick="showModal('modal-project-detail')">
@@ -429,8 +479,8 @@
                                 </td>
                                 <td colspan="1"></td>
                                 <td colspan="10">
-                                    <div class="gantt-bar bar-status-completed" onclick="showModal('modal-edit-task')" title="入力: 高橋 一郎">
-                                        入力: 高橋 一郎
+                                    <div class="gantt-bar bar-status-completed" onclick="showModal('modal-edit-task')" title="入力: 高橋">
+                                        入力: 高橋
                                     </div>
                                 </td>
                                 <td colspan="20"></td>
@@ -441,48 +491,7 @@
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
-                                <td class="col-fixed">
-                                    <div class="info-cell" onclick="showModal('modal-project-detail')">
-                                        <div class="cell-text">11月度清掃準備</div>
-                                        <div><span class="badge badge-neutral badge-sm">未着手</span></div>
-                                    </div>
-                                </td>
-                                <td colspan="25"></td>
-                                <td colspan="2">
-                                    <div class="gantt-bar bar-status-not-started" onclick="showModal('modal-edit-task')" title="準備: 全員">
-                                        準備: 全員
-                                    </div>
-                                </td>
-                                <td colspan="4"></td>
-                                <td class="col-fixed-right">
-                                    <div class="action-buttons">
-                                        <button class="btn btn-icon btn-icon-success btn-icon-sm"><span class="material-symbols-outlined">edit</span></button>
-                                        <button class="btn btn-icon btn-icon-error btn-icon-sm"><span class="material-symbols-outlined">delete</span></button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td class="col-fixed">
-                                    <div class="info-cell" onclick="showModal('modal-project-detail')">
-                                        <div class="cell-text">イベント用菓子製造</div>
-                                        <div><span class="badge badge-cancelled badge-sm">中止</span></div>
-                                    </div>
-                                </td>
-                                <td colspan="15"></td>
-                                <td colspan="5">
-                                    <div class="gantt-bar bar-status-cancelled" onclick="showModal('modal-edit-task')" title="製造: (中止)">
-                                        製造: (中止)
-                                    </div>
-                                </td>
-                                <td colspan="11"></td>
-                                <td class="col-fixed-right">
-                                    <div class="action-buttons">
-                                        <button class="btn btn-icon btn-icon-success btn-icon-sm"><span class="material-symbols-outlined">edit</span></button>
-                                        <button class="btn btn-icon btn-icon-error btn-icon-sm"><span class="material-symbols-outlined">delete</span></button>
-                                    </div>
-                                </td>
-                            </tr>
+                            
                             <tr><td class="col-fixed" style="height: 4rem;"></td><td colspan="31"></td><td class="col-fixed-right"></td></tr>
                         </tbody>
                     </table>
@@ -532,29 +541,16 @@
                                 <td class="col-fixed"><div class="info-cell"><div class="cell-text">山田 太郎</div></div></td>
                                 <td colspan="3"></td>
                                 <td colspan="5"><div class="gantt-bar bar-status-in-progress" title="DM封入作業: 封入">DM封入作業: 封入</div></td>
-                                <td colspan="2"></td>
-                                <td colspan="3"><div class="gantt-bar bar-status-in-progress" title="DM封入作業: 封入">DM封入作業: 封入</div></td>
-                                <td colspan="12"></td>
-                                <td colspan="2"><div class="gantt-bar bar-status-not-started" title="11月度清掃準備: 準備">清掃準備: 準備</div></td>
-                                <td colspan="4"></td>
+                                <td colspan="23"></td>
                                 <td class="col-fixed-right"></td>
                             </tr>
                             <tr>
-                                <td class="col-fixed"><div class="info-cell"><div class="cell-text">鈴木 花子</div></div></td>
-                                <td colspan="3"></td>
-                                <td colspan="5"><div class="gantt-bar bar-status-in-progress" title="DM封入作業: 封入">DM封入作業: 封入</div></td>
-                                <td colspan="17"></td>
-                                <td colspan="2"><div class="gantt-bar bar-status-not-started" title="11月度清掃準備: 準備">清掃準備: 準備</div></td>
-                                <td colspan="4"></td>
-                                <td class="col-fixed-right"></td>
-                            </tr>
-                            <tr>
-                                <td class="col-fixed"><div class="info-cell"><div class="cell-text">高橋 一郎</div></div></td>
-                                <td colspan="1"></td>
-                                <td colspan="10"><div class="gantt-bar bar-status-completed" title="名刺データ入力: 入力">名刺データ入力: 入力</div></td>
-                                <td colspan="14"></td>
-                                <td colspan="2"><div class="gantt-bar bar-status-not-started" title="11月度清掃準備: 準備">清掃準備: 準備</div></td>
-                                <td colspan="4"></td>
+                                <td class="col-fixed"><div class="info-cell"><div class="cell-text">伊藤 良子</div><div><span class="badge badge-neutral badge-sm">職員</span></div></div></td>
+                                <td colspan="5"></td>
+                                <td colspan="5">
+                                    <div class="gantt-bar bar-staff" title="DM封入作業: 検品">DM封入作業: 検品</div>
+                                </td>
+                                <td colspan="21"></td>
                                 <td class="col-fixed-right"></td>
                             </tr>
                             <tr><td class="col-fixed" style="height: 4rem;"></td><td colspan="31"></td><td class="col-fixed-right"></td></tr>
@@ -566,60 +562,69 @@
                     <table class="scheduler-table budget-table" style="width: 100%;">
                         <thead>
                             <tr>
-                                <th rowspan="2" style="width: 200px; text-align: left; padding-left: var(--spacing-4);">案件名</th>
-                                <th rowspan="2" style="width: 100px; text-align: left; padding-left: var(--spacing-4);">ステータス</th>
-                                <th colspan="1" style="border-bottom: 1px solid var(--color-base-quinary);">予算</th>
-                                <th colspan="3" style="border-bottom: 1px solid var(--color-base-quinary);">費用</th>
-                                <th rowspan="2">残額</th>
-                                <th rowspan="2">利益率</th>
+                                <th rowspan="2" style="width: 200px; text-align: left; padding-left: var(--spacing-4);">案件 / タスク</th>
+                                <th rowspan="2" style="width: 80px;">進捗</th>
+                                
+                                <th colspan="1" style="border-bottom: 1px solid var(--color-base-quinary);">1. 収益</th>
+                                
+                                <th colspan="2" style="border-bottom: 1px solid var(--color-base-quinary);">2. & 3. 控除</th>
+                                
+                                <th rowspan="2" class="cell-highlight">4. インセンティブ原資<br>(1 - 2 - 3)</th>
+                                
+                                <th colspan="2" style="border-bottom: 1px solid var(--color-base-quinary);">5. 支給額算出</th>
                             </tr>
                             <tr>
-                                <th>予算額</th>
-                                <th>タスク分配額</th>
+                                <th>受注金額</th>
+                                
+                                <th>積立金</th>
                                 <th>その他経費</th>
-                                <th>合計</th>
+                                
+                                <th>サポート減額</th>
+                                <th>支給予定額</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>DM封入作業</td>
-                                <td><span class="badge badge-primary badge-sm">進行中</span></td>
-                                <td>¥300,000</td>
-                                <td>¥120,000</td>
-                                <td>¥15,000</td>
-                                <td>¥135,000</td>
-                                <td>¥165,000</td>
-                                <td>55.0%</td>
+                            <tr onclick="toggleBudgetDetail('a')">
+                                <td style="font-weight: bold;"><span class="material-symbols-outlined" style="font-size:1rem; vertical-align:middle;">expand_more</span> DM封入作業</td>
+                                <td>50%</td>
+                                <td>¥300,000</td> <td class="cell-deduction">¥30,000</td> <td class="cell-deduction">¥15,000</td> <td class="cell-highlight">¥255,000</td> <td class="cell-deduction">-</td>
+                                <td>¥255,000</td>
                             </tr>
-                            <tr>
-                                <td>名刺データ入力</td>
-                                <td><span class="badge badge-success badge-sm">完了</span></td>
-                                <td>¥50,000</td>
-                                <td>¥30,000</td>
-                                <td>¥0</td>
-                                <td>¥30,000</td>
-                                <td>¥20,000</td>
-                                <td>40.0%</td>
-                            </tr>
-                            <tr>
-                                <td>11月度清掃準備</td>
-                                <td><span class="badge badge-neutral badge-sm">未着手</span></td>
-                                <td>¥80,000</td>
-                                <td>¥40,000</td>
-                                <td>¥5,000</td>
-                                <td>¥45,000</td>
-                                <td>¥35,000</td>
-                                <td>43.8%</td>
-                            </tr>
-                            <tr>
-                                <td>イベント用菓子製造</td>
-                                <td><span class="badge badge-cancelled badge-sm">中止</span></td>
-                                <td>¥200,000</td>
-                                <td>¥0</td>
-                                <td>¥10,000</td>
-                                <td>¥10,000</td>
-                                <td>¥190,000</td>
+                            <tr class="row-detail budget-detail-a">
+                                <td><span class="tree-line"></span>封入 (利用者: 山田, 鈴木)</td>
+                                <td>50%</td>
                                 <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>¥200,000</td> <td>¥0</td> <td>¥100,000</td> </tr>
+                            <tr class="row-detail budget-detail-a">
+                                <td><span class="tree-line"></span>検品 (職員: 伊藤)</td>
+                                <td>0%</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>¥55,000</td> <td class="cell-deduction">(職員作業)</td>
+                                <td>¥0</td> </tr>
+
+                            <tr onclick="toggleBudgetDetail('b')">
+                                <td style="font-weight: bold;"><span class="material-symbols-outlined" style="font-size:1rem; vertical-align:middle;">expand_more</span> 名刺データ入力</td>
+                                <td>100%</td>
+                                <td>¥50,000</td>
+                                <td class="cell-deduction">¥5,000</td>
+                                <td class="cell-deduction">¥0</td>
+                                <td class="cell-highlight">¥45,000</td>
+                                <td class="cell-deduction">¥0</td>
+                                <td>¥45,000</td>
+                            </tr>
+                            <tr class="row-detail budget-detail-b">
+                                <td><span class="tree-line"></span>入力 (利用者: 高橋)</td>
+                                <td>100%</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>¥45,000</td>
+                                <td>¥0</td>
+                                <td>¥45,000</td>
                             </tr>
                         </tbody>
                     </table>
@@ -629,50 +634,35 @@
 
         </main>
         
+        <div class="modal-backdrop" id="modal-project-detail" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">案件基本情報</div>
+                <div class="modal-body">
+                    <dl class="data-list">
+                        <div><dt>案件名</dt><dd>DM封入作業</dd></div>
+                        <div><dt>ステータス</dt><dd><span class="badge badge-primary">進行中</span></dd></div>
+                        <div><dt>取引先</dt><dd>株式会社 福岡工芸</dd></div>
+                        <div><dt>期間</dt><dd>2025.08.04 - 2025.08.12</dd></div>
+                        <div style="grid-column: 1 / -1;"><dt>概要・備考</dt><dd>3,000通のDM封入作業。</dd></div>
+                    </dl>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-neutral" onclick="hideModal('modal-project-detail')">閉じる</button>
+                    </div>
+            </div>
+        </div>
+
         <div class="modal-backdrop" id="modal-add-project" style="display: none;">
             <div class="modal-content">
                 <div class="modal-header">案件の新規作成</div>
                 <div class="modal-body">
                     <form>
-                        <div class="form-group">
-                            <label class="form-label">案件名</label>
-                            <input type="text" class="input-field" placeholder="例: 〇〇封入作業">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">進捗ステータス</label>
-                            <select class="input-field">
-                                <option value="not-started" selected>未着手</option>
-                                <option value="in-progress">進行中</option>
-                                <option value="completed">完了</option>
-                                <option value="cancelled">中止</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">取引先</label>
-                            <select class="input-field">
-                                <option>選択してください</option>
-                                <option>株式会社 福岡工芸</option>
-                            </select>
-                        </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4);">
-                            <div class="form-group">
-                                <label class="form-label">開始日</label>
-                                <input type="date" class="input-field">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">終了日 (納期)</label>
-                                <input type="date" class="input-field">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">概要・備考</label>
-                            <textarea class="input-field" rows="3"></textarea>
-                        </div>
-                    </form>
+                        <div class="form-group"><label class="form-label">案件名</label><input type="text" class="input-field"></div>
+                        </form>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-neutral" onclick="hideModal('modal-add-project')">キャンセル</button>
-                    <button class="btn btn-primary" onclick="hideModal('modal-add-project'); alert('登録しました')">登録する</button>
+                    <button class="btn btn-primary">登録する</button>
                 </div>
             </div>
         </div>
@@ -681,74 +671,11 @@
             <div class="modal-content">
                 <div class="modal-header">作業割り当て編集</div>
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label class="form-label">タスク名</label>
-                        <input type="text" class="input-field" value="封入">
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4);">
-                        <div class="form-group">
-                            <label class="form-label">期間 (開始)</label>
-                            <input type="date" class="input-field" value="2025-08-04">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">期間 (終了)</label>
-                            <input type="date" class="input-field" value="2025-08-08">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">担当利用者</label>
-                        <div style="border: var(--border-default); border-radius: var(--radius-input); padding: var(--spacing-2); max-height: 150px; overflow-y: auto;">
-                            <div class="form-check"><input type="checkbox" class="form-check-input" checked> <label class="form-check-label">山田 太郎</label></div>
-                            <div class="form-check"><input type="checkbox" class="form-check-input" checked> <label class="form-check-label">鈴木 花子</label></div>
-                            <div class="form-check"><input type="checkbox" class="form-check-input" checked> <label class="form-check-label">高橋 一郎</label></div>
-                            <div class="form-check"><input type="checkbox" class="form-check-input"> <label class="form-check-label">佐藤 次郎</label></div>
-                        </div>
-                    </div>
+                    <p>タスク割り当て編集フォーム...</p>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-error" style="margin-right: auto;" onclick="alert('削除します')">削除</button>
                     <button class="btn btn-neutral" onclick="hideModal('modal-edit-task')">キャンセル</button>
-                    <button class="btn btn-primary" onclick="hideModal('modal-edit-task'); alert('更新しました')">更新する</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="modal-backdrop" id="modal-project-detail" style="display: none;">
-            <div class="modal-content">
-                <div class="modal-header">案件基本情報</div>
-                <div class="modal-body">
-                    <dl class="data-list">
-                        <div>
-                            <dt>案件名</dt>
-                            <dd>DM封入作業</dd>
-                        </div>
-                        <div>
-                            <dt>ステータス</dt>
-                            <dd><span class="badge badge-primary">進行中</span></dd>
-                        </div>
-                        <div>
-                            <dt>取引先</dt>
-                            <dd>株式会社 福岡工芸</dd>
-                        </div>
-                        <div>
-                            <dt>期間</dt>
-                            <dd>2025.08.04 - 2025.08.12</dd>
-                        </div>
-                        <div style="grid-column: 1 / -1;">
-                            <dt>概要・備考</dt>
-                            <dd>
-                                3,000通のDM封入作業。<br>
-                                封入物: チラシA, チラシB, 返信ハガキ。<br>
-                                封入後、郵便番号ごとに結束して納品。
-                            </dd>
-                        </div>
-                    </dl>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-neutral" onclick="hideModal('modal-project-detail')">閉じる</button>
-                    <button class="btn btn-icon btn-icon-success" title="編集" onclick="hideModal('modal-project-detail'); alert('編集画面へ遷移')">
-                        <span class="material-symbols-outlined">edit</span>
-                    </button>
+                    <button class="btn btn-primary">更新する</button>
                 </div>
             </div>
         </div>

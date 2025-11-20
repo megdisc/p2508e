@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Compath - 案件管理</title>
+
+    <link rel="stylesheet" href="globals.css">
+    <link rel="stylesheet" href="ui.css">
+
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+    <script>
+        // モーダル制御
+        function showModal(id, mode = null) {
+            document.getElementById(id).style.display = 'flex';
+            
+            // 新規・編集のタイトル切り替え
+            if (id === 'modal-edit-project') {
+                const header = document.querySelector('#modal-edit-project .modal-header');
+                if (mode === 'create') {
+                    if (header) header.textContent = '案件 新規登録';
+                } else if (mode === 'edit') {
+                    if (header) header.textContent = '案件情報の編集';
+                }
+            }
+        }
+        function hideModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        // タブ制御
+        function activateTab(tabGroup, tabId) {
+            const links = document.querySelectorAll(`#${tabGroup} .tab-link`);
+            links.forEach(link => link.classList.remove('is-active'));
+            document.querySelector(`#${tabGroup} .tab-link[onclick*="'${tabId}'"]`).classList.add('is-active');
+
+            const contents = document.querySelectorAll(`#${tabGroup}-content .tab-content`);
+            contents.forEach(content => content.classList.remove('is-active'));
+            document.getElementById(tabId).classList.add('is-active');
+        }
+    </script>
+</head>
+
+<body>
+
+    <div class="page-wrapper">
+
+        <aside class="sidebar">
+            <div class="sidebar-header">Compath</div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-link">トップ</a>
+                <details class="nav-accordion"><summary>施設情報</summary><ul><li><a href="corporation.html">法人情報</a></li><li><a href="office.html">事業所情報</a></li><li><a href="staff.html">職員情報</a></li></ul></details>
+                <a href="partners.html" class="nav-link">取引先情報</a>
+                <a href="members.html" class="nav-link">利用者情報</a>
+                <details class="nav-accordion"><summary>スキル情報</summary><ul><li><a href="skills-settings.html">スキル設定</a></li><li><a href="skills-evaluation.html">スキル評価</a></li></ul></details>
+                <details class="nav-accordion"><summary>工賃・控除情報</summary><ul><li><a href="wages-settings.html">工賃設定</a></li><li><a href="deductions-settings.html">控除設定</a></li><li><a href="wages-evaluation.html">工賃レベル評価</a></li></ul></details>
+                <a href="savings.html" class="nav-link">積立金情報</a>
+                <a href="attendance.html" class="nav-link">出欠管理</a>
+                <a href="projects.html" class="nav-link">案件管理</a>
+                <details class="nav-accordion"><summary>福祉事業活動</summary><ul><li><a href="support-plans.html">個別支援計画</a></li></ul></details>
+                <details class="nav-accordion"><summary>会計</summary><ul><li><a href="accounting-monthly.html">月次会計</a></li><li><a href="accounting-annual.html">年次会計</a></li></ul></details>
+                <details class="nav-accordion"><summary>分析</summary><ul><li><a href="analytics.html">分析ダッシュボード</a></li></ul></details>
+                <a href="account.html" class="nav-link">ユーザーアカウント</a>
+                <a href="settings.html" class="nav-link">（その他設定）</a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info"><span class="user-name">田中 健司</span><a href="#">ログアウト</a></div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+
+            <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
+                    <h1 style="margin: 0;">案件管理</h1>
+                    <button class="btn btn-primary" onclick="showModal('modal-edit-project', 'create')">
+                        <span class="material-symbols-outlined">add</span>
+                        新規作成
+                    </button>
+                </div>
+
+                <div style="display: flex; gap: var(--spacing-stack-md); flex-wrap: wrap; margin-bottom: var(--spacing-stack-md);">
+                    
+                    <div class="card" style="flex: 1; min-width: 320px;">
+                        <div class="card-body" style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
+                            
+                            <div class="form-group" style="margin: 0; flex: 1; min-width: 200px;">
+                                <label class="form-label" for="search-keyword">キーワード検索</label>
+                                <input type="text" id="search-keyword" class="input-field" placeholder="案件名、備考...">
+                            </div>
+                            
+                            <div class="form-group" style="margin: 0; flex: 1; min-width: 160px;">
+                                <label class="form-label" for="search-client">取引先（顧客）</label>
+                                <select id="search-client" class="input-field">
+                                    <option value="">すべて</option>
+                                    <option value="client_a">株式会社 福岡工芸</option>
+                                    <option value="client_b">天神オフィスサプライ</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group" style="margin: 0; flex: 0 0 160px;">
+                                <label class="form-label" for="search-status">進捗ステータス</label>
+                                <select id="search-status" class="input-field">
+                                    <option value="">すべて</option>
+                                    <option value="not_started">未着手</option>
+                                    <option value="in_progress">進行中</option>
+                                    <option value="completed">完了</option>
+                                    <option value="cancelled">中止</option>
+                                    <option value="other">その他</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="flex: 0 0 auto;">
+                        <div class="card-body" style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
+                            <div class="form-group" style="margin: 0; width: 160px;">
+                                <label class="form-label" for="sort-order">並び順</label>
+                                <select id="sort-order" class="input-field">
+                                    <option value="deadline_asc">納期が近い順</option>
+                                    <option value="deadline_desc">納期が遠い順</option>
+                                    <option value="created_desc">登録が新しい順</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="card" style="margin-bottom: var(--spacing-stack-md);">
+                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">
+                                10月度 DM封入作業
+                            </div>
+                            <div style="display: flex; align-items: center; gap: var(--spacing-2); flex-wrap: wrap;">
+                                <span class="badge badge-primary">進行中</span>
+                                <span class="badge badge-neutral">外部受託 | 株式会社 福岡工芸</span>
+                                <span class="badge badge-neutral">継続 | 2023.10.01 - 2023.10.31</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
+                            <button class="btn btn-icon btn-icon-success" title="編集" onclick="showModal('modal-edit-project', 'edit')">
+                                <span class="material-symbols-outlined">edit</span>
+                            </button>
+                            <button class="btn btn-icon btn-icon-error" title="削除">
+                                <span class="material-symbols-outlined">delete</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div style="display: flex; gap: var(--spacing-8); flex-wrap: wrap;">
+                            
+                            <div style="flex: 0 0 200px;">
+                                <dl class="data-list" style="grid-template-columns: 1fr; gap: var(--spacing-2);">
+                                    <div>
+                                        <dt>担当職員</dt>
+                                        <dd>田中 健司</dd>
+                                    </div>
+                                </dl>
+                            </div>
+
+                            <div style="flex: 1; min-width: 320px;">
+                                <div class="table-container">
+                                    <table class="table">
+                                        <tbody>
+                                            <tr>
+                                                <td>資材搬入・検品</td>
+                                                <td>10/01 - 10/02</td>
+                                                <td>
+                                                    <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                                        <span>田中 健司</span>
+                                                        <span class="badge badge-primary" style="font-size: 0.6em; padding: 2px 4px;">職員</span>
+                                                    </div>
+                                                </td>
+                                                <td style="width: 80px;"><span style="color: var(--color-semantic-success-main);">100%</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>封入作業 (Team A)</td>
+                                                <td>10/03 - 10/25</td>
+                                                <td>
+                                                    <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                                        <span>利用者 A子</span>
+                                                        <span class="badge badge-success" style="font-size: 0.6em; padding: 2px 4px;">利用者</span>
+                                                    </div>
+                                                </td>
+                                                <td style="width: 80px;">60%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>梱包・発送準備</td>
+                                                <td>10/26 - 10/30</td>
+                                                <td>
+                                                    <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                                        <span>渡辺 三郎</span>
+                                                        <span class="badge badge-primary" style="font-size: 0.6em; padding: 2px 4px;">職員</span>
+                                                    </div>
+                                                </td>
+                                                <td style="width: 80px;">0%</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-bottom: var(--spacing-stack-md);">
+                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">
+                                自主製品作成（ビーズアクセサリー）
+                            </div>
+                            <div style="display: flex; align-items: center; gap: var(--spacing-2); flex-wrap: wrap;">
+                                <span class="badge badge-primary">進行中</span>
+                                <span class="badge badge-neutral">自主事業</span>
+                                <span class="badge badge-neutral">継続 | 2023.04.01 - 2024.03.31</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
+                            <button class="btn btn-icon btn-icon-success" title="編集" onclick="showModal('modal-edit-project', 'edit')">
+                                <span class="material-symbols-outlined">edit</span>
+                            </button>
+                            <button class="btn btn-icon btn-icon-error" title="削除">
+                                <span class="material-symbols-outlined">delete</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                         <div style="display: flex; gap: var(--spacing-8); flex-wrap: wrap;">
+                            
+                            <div style="flex: 0 0 200px;">
+                                <dl class="data-list" style="grid-template-columns: 1fr; gap: var(--spacing-2);">
+                                    <div>
+                                        <dt>担当職員</dt>
+                                        <dd>伊藤 良子</dd>
+                                    </div>
+                                </dl>
+                            </div>
+
+                            <div style="flex: 1; min-width: 320px;">
+                                <div class="table-container">
+                                    <table class="table">
+                                        <tbody>
+                                            <tr>
+                                                <td>ビーズ仕分け</td>
+                                                <td>通年</td>
+                                                <td>
+                                                    <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                                        <span>利用者 B男</span>
+                                                        <span class="badge badge-success" style="font-size: 0.6em; padding: 2px 4px;">利用者</span>
+                                                    </div>
+                                                </td>
+                                                <td style="width: 80px;">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td>アクセサリー組立</td>
+                                                <td>通年</td>
+                                                <td>
+                                                    <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                                        <span>利用者 C子</span>
+                                                        <span class="badge badge-success" style="font-size: 0.6em; padding: 2px 4px;">利用者</span>
+                                                    </div>
+                                                </td>
+                                                <td style="width: 80px;">-</td>
+                                            </tr>
+                                            <tr>
+                                                <td>パッケージング</td>
+                                                <td>通年</td>
+                                                <td>
+                                                    <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                                        <span>伊藤 良子</span>
+                                                        <span class="badge badge-primary" style="font-size: 0.6em; padding: 2px 4px;">職員</span>
+                                                    </div>
+                                                </td>
+                                                <td style="width: 80px;">-</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-bottom: var(--spacing-stack-md);">
+                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">
+                                舞鶴公園 定期清掃
+                            </div>
+                            <div style="display: flex; align-items: center; gap: var(--spacing-2); flex-wrap: wrap;">
+                                <span class="badge badge-success">完了</span>
+                                <span class="badge badge-neutral">外部受託 | 緑のまちづくり協会</span>
+                                <span class="badge badge-neutral">単発 | 2023.10.15 - 2023.10.15</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
+                            <button class="btn btn-icon btn-icon-success" title="編集" onclick="showModal('modal-edit-project', 'edit')">
+                                <span class="material-symbols-outlined">edit</span>
+                            </button>
+                            <button class="btn btn-icon btn-icon-error" title="削除">
+                                <span class="material-symbols-outlined">delete</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                         <div style="display: flex; gap: var(--spacing-8); flex-wrap: wrap;">
+                            
+                            <div style="flex: 0 0 200px;">
+                                <dl class="data-list" style="grid-template-columns: 1fr; gap: var(--spacing-2);">
+                                    <div>
+                                        <dt>担当職員</dt>
+                                        <dd>渡辺 三郎</dd>
+                                    </div>
+                                </dl>
+                            </div>
+
+                            <div style="flex: 1; min-width: 320px;">
+                                <div class="table-container">
+                                    <table class="table">
+                                        <tbody>
+                                            <tr>
+                                                <td>現地移動・準備</td>
+                                                <td>10/15 AM</td>
+                                                <td>
+                                                    <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                                        <span>渡辺 三郎</span>
+                                                        <span class="badge badge-primary" style="font-size: 0.6em; padding: 2px 4px;">職員</span>
+                                                    </div>
+                                                </td>
+                                                <td style="width: 80px;"><span style="color: var(--color-semantic-success-main);">100%</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>除草・落ち葉拾い</td>
+                                                <td>10/15</td>
+                                                <td>
+                                                    <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                                        <span>利用者 D介</span>
+                                                        <span class="badge badge-success" style="font-size: 0.6em; padding: 2px 4px;">利用者</span>
+                                                    </div>
+                                                </td>
+                                                <td style="width: 80px;"><span style="color: var(--color-semantic-success-main);">100%</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>ゴミ回収・報告</td>
+                                                <td>10/15 PM</td>
+                                                <td>
+                                                    <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                                        <span>渡辺 三郎</span>
+                                                        <span class="badge badge-primary" style="font-size: 0.6em; padding: 2px 4px;">職員</span>
+                                                    </div>
+                                                </td>
+                                                <td style="width: 80px;"><span style="color: var(--color-semantic-success-main);">100%</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-bottom: var(--spacing-stack-md);">
+                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">
+                                ボールペン組み立て (Lot.A)
+                            </div>
+                            <div style="display: flex; align-items: center; gap: var(--spacing-2); flex-wrap: wrap;">
+                                <span class="badge badge-neutral">未着手</span>
+                                <span class="badge badge-neutral">外部受託 | 天神オフィスサプライ</span>
+                                <span class="badge badge-neutral">継続 | 2023.11.01 - 2023.11.15</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
+                            <button class="btn btn-icon btn-icon-success" title="編集" onclick="showModal('modal-edit-project', 'edit')">
+                                <span class="material-symbols-outlined">edit</span>
+                            </button>
+                            <button class="btn btn-icon btn-icon-error" title="削除">
+                                <span class="material-symbols-outlined">delete</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                         <div style="display: flex; gap: var(--spacing-8); flex-wrap: wrap;">
+                            
+                            <div style="flex: 0 0 200px;">
+                                <dl class="data-list" style="grid-template-columns: 1fr; gap: var(--spacing-2);">
+                                    <div>
+                                        <dt>担当職員</dt>
+                                        <dd>伊藤 良子</dd>
+                                    </div>
+                                </dl>
+                            </div>
+
+                            <div style="flex: 1; min-width: 320px;">
+                                <div class="table-container">
+                                    <table class="table">
+                                        <tbody>
+                                            <tr>
+                                                <td>部品仕分け・検品</td>
+                                                <td>11/01 - 11/03</td>
+                                                <td>
+                                                    <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                                        <span>利用者 E美</span>
+                                                        <span class="badge badge-success" style="font-size: 0.6em; padding: 2px 4px;">利用者</span>
+                                                    </div>
+                                                </td>
+                                                <td style="width: 80px;">0%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>組み立て作業</td>
+                                                <td>11/04 - 11/14</td>
+                                                <td>
+                                                    <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                                        <span>利用者 F太</span>
+                                                        <span class="badge badge-success" style="font-size: 0.6em; padding: 2px 4px;">利用者</span>
+                                                    </div>
+                                                </td>
+                                                <td style="width: 80px;">0%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>最終検品・納品</td>
+                                                <td>11/15</td>
+                                                <td>
+                                                    <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                                        <span>伊藤 良子</span>
+                                                        <span class="badge badge-primary" style="font-size: 0.6em; padding: 2px 4px;">職員</span>
+                                                    </div>
+                                                </td>
+                                                <td style="width: 80px;">0%</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                
+                 <div class="card" style="margin-bottom: var(--spacing-stack-md);">
+                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div>
+                            <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">
+                                地域バザー出店
+                            </div>
+                            <div style="display: flex; align-items: center; gap: var(--spacing-2); flex-wrap: wrap;">
+                                <span class="badge badge-success">完了</span>
+                                <span class="badge badge-neutral">自主事業</span>
+                                <span class="badge badge-neutral">単発 | 2023.09.23 - 2023.09.23</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
+                            <button class="btn btn-icon btn-icon-success" title="編集" onclick="showModal('modal-edit-project', 'edit')">
+                                <span class="material-symbols-outlined">edit</span>
+                            </button>
+                            <button class="btn btn-icon btn-icon-error" title="削除">
+                                <span class="material-symbols-outlined">delete</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                         <div style="display: flex; gap: var(--spacing-8); flex-wrap: wrap;">
+                            
+                            <div style="flex: 0 0 200px;">
+                                <dl class="data-list" style="grid-template-columns: 1fr; gap: var(--spacing-2);">
+                                    <div>
+                                        <dt>担当職員</dt>
+                                        <dd>田中 健司</dd>
+                                    </div>
+                                </dl>
+                            </div>
+
+                            <div style="flex: 1; min-width: 320px;">
+                                <div class="table-container">
+                                    <table class="table">
+                                        <tbody>
+                                            <tr>
+                                                <td>出店準備・搬入</td>
+                                                <td>09/23 AM</td>
+                                                <td>
+                                                    <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                                        <span>田中 健司</span>
+                                                        <span class="badge badge-primary" style="font-size: 0.6em; padding: 2px 4px;">職員</span>
+                                                    </div>
+                                                </td>
+                                                <td style="width: 80px;"><span style="color: var(--color-semantic-success-main);">100%</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>販売・接客</td>
+                                                <td>09/23</td>
+                                                <td>
+                                                    <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                                        <span>利用者 G之</span>
+                                                        <span class="badge badge-success" style="font-size: 0.6em; padding: 2px 4px;">利用者</span>
+                                                    </div>
+                                                </td>
+                                                <td style="width: 80px;"><span style="color: var(--color-semantic-success-main);">100%</span></td>
+                                            </tr>
+                                            <tr>
+                                                <td>撤収</td>
+                                                <td>09/23 PM</td>
+                                                <td>
+                                                    <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                                        <span>田中 健司</span>
+                                                        <span class="badge badge-primary" style="font-size: 0.6em; padding: 2px 4px;">職員</span>
+                                                    </div>
+                                                </td>
+                                                <td style="width: 80px;"><span style="color: var(--color-semantic-success-main);">100%</span></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="modal-backdrop" id="modal-edit-project" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        案件情報の編集
+                    </div>
+                    <div class="modal-body">
+                        
+                        <nav class="tabs-nav" id="tab-group-project">
+                            <a class="tab-link is-active" onclick="activateTab('tab-group-project', 'tab-project-1')">基本情報</a>
+                            <a class="tab-link" onclick="activateTab('tab-group-project', 'tab-project-2')">作業・単価設定</a>
+                        </nav>
+
+                        <div id="tab-group-project-content">
+                            
+                            <div class="tab-content is-active" id="tab-project-1">
+                                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-4);">
+                                    
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label class="form-label" for="project-name">案件名</label>
+                                        <input type="text" id="project-name" class="input-field" value="10月度 DM封入作業">
+                                    </div>
+                                    
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label class="form-label" for="project-status">進捗ステータス</label>
+                                        <select id="project-status" class="input-field">
+                                            <option value="not_started">未着手</option>
+                                            <option value="in_progress" selected>進行中</option>
+                                            <option value="completed">完了</option>
+                                            <option value="cancelled">中止</option>
+                                            <option value="other">その他</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label class="form-label">案件区分</label>
+                                        <div style="display: flex; gap: var(--spacing-4);">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="project-type" id="type-external" checked>
+                                                <label class="form-check-label" for="type-external">外部受託</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="project-type" id="type-internal">
+                                                <label class="form-check-label" for="type-internal">自主事業</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label class="form-label">期間区分</label>
+                                        <div style="display: flex; gap: var(--spacing-4);">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="project-duration" id="duration-one-off" checked>
+                                                <label class="form-check-label" for="duration-one-off">単発</label>
+                                            </div>
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="radio" name="project-duration" id="duration-ongoing">
+                                                <label class="form-check-label" for="duration-ongoing">継続</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" style="margin-bottom: 0; grid-column: 1 / -1;">
+                                        <label class="form-label" for="project-client">取引先 (顧客) <span style="font-size: 0.8em; font-weight: normal;">※外部受託の場合のみ</span></label>
+                                        <select id="project-client" class="input-field">
+                                            <option value="">選択してください</option>
+                                            <option value="1" selected>株式会社 福岡工芸</option>
+                                            <option value="2">天神オフィスサプライ</option>
+                                            <option value="3">福岡市</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label class="form-label">作業期間</label>
+                                        <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                            <input type="date" id="project-start" class="input-field" value="2023-10-01">
+                                            <span>～</span>
+                                            <input type="date" id="project-end" class="input-field" value="2023-10-31">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label class="form-label" for="project-amount">受注総額 (予定)</label>
+                                        <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                            <input type="number" id="project-amount" class="input-field" value="150000">
+                                            <span>円</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" style="margin-bottom: 0; grid-column: 1 / -1;">
+                                        <label class="form-label" for="project-staff">担当職員</label>
+                                        <select id="project-staff" class="input-field">
+                                            <option value="">選択してください</option>
+                                            <option value="1" selected>田中 健司</option>
+                                            <option value="2">伊藤 良子</option>
+                                            <option value="3">渡辺 三郎</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="form-group" style="margin-bottom: 0; grid-column: 1 / -1;">
+                                        <label class="form-label" for="project-memo">備考</label>
+                                        <textarea id="project-memo" class="input-field" rows="3" placeholder="作業上の注意点など"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-content" id="tab-project-2">
+                                <div style="margin-bottom: var(--spacing-4); display: flex; justify-content: space-between; align-items: center;">
+                                    <p style="font-size: var(--font-size-sm); color: var(--color-base-quaternary); margin: 0;">
+                                        工賃計算に使用する作業項目と単価を設定します。
+                                    </p>
+                                    <button class="btn btn-neutral btn-sm">
+                                        <span class="material-symbols-outlined" style="font-size: 1.2em;">add</span>
+                                        作業追加
+                                    </button>
+                                </div>
+
+                                <div class="table-container">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>作業項目名</th>
+                                                <th style="width: 120px;">単価 (円)</th>
+                                                <th style="width: 100px;">単位</th>
+                                                <th style="width: 60px;"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><input type="text" class="input-field" value="封入作業 (チラシ+封筒)"></td>
+                                                <td><input type="number" class="input-field" value="1.5"></td>
+                                                <td><input type="text" class="input-field" value="部"></td>
+                                                <td style="text-align: center;">
+                                                    <button class="btn btn-icon btn-icon-error" style="width: 2rem; height: 2rem;">
+                                                        <span class="material-symbols-outlined" style="font-size: 1.2rem;">delete</span>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><input type="text" class="input-field" value="宛名シール貼り"></td>
+                                                <td><input type="number" class="input-field" value="0.5"></td>
+                                                <td><input type="text" class="input-field" value="枚"></td>
+                                                <td style="text-align: center;">
+                                                    <button class="btn btn-icon btn-icon-error" style="width: 2rem; height: 2rem;">
+                                                        <span class="material-symbols-outlined" style="font-size: 1.2rem;">delete</span>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td><input type="text" class="input-field" value="検品・梱包"></td>
+                                                <td><input type="number" class="input-field" value="10"></td>
+                                                <td><input type="text" class="input-field" value="箱"></td>
+                                                <td style="text-align: center;">
+                                                    <button class="btn btn-icon btn-icon-error" style="width: 2rem; height: 2rem;">
+                                                        <span class="material-symbols-outlined" style="font-size: 1.2rem;">delete</span>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-neutral" onclick="hideModal('modal-edit-project')">
+                            キャンセル
+                        </button>
+                        <button class="btn btn-primary" onclick="hideModal('modal-edit-project')">
+                            保存する
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+</body>
+
+</html>
