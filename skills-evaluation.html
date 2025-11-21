@@ -13,27 +13,96 @@
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
+    <style>
+        /* 表示切り替えスイッチ (projects.html準拠) */
+        .view-toggle {
+            display: flex;
+            background-color: var(--color-base-secondary);
+            border-radius: var(--radius-button);
+            padding: 2px;
+            border: 1px solid var(--color-base-quinary);
+        }
+        .view-toggle label {
+            padding: var(--spacing-1) var(--spacing-3);
+            font-size: var(--font-size-sm);
+            cursor: pointer;
+            border-radius: var(--radius-button);
+            transition: all 0.2s;
+            color: var(--color-base-quaternary);
+        }
+        .view-toggle input[type="radio"] { display: none; }
+        .view-toggle input[type="radio"]:checked + label {
+            background-color: var(--color-theme-main);
+            color: var(--color-base-primary);
+            box-shadow: var(--box-shadow-sm);
+            font-weight: var(--font-weight-medium);
+        }
+
+        /* スキルレベルバッジ (簡易版) */
+        .level-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: white;
+            margin-right: 4px;
+        }
+        .lv-1 { background-color: #81C784; } /* 緑 */
+        .lv-2 { background-color: #4DB6AC; } /* 青緑 */
+        .lv-3 { background-color: #64B5F6; } /* 青 */
+
+        /* ユーザーアイコンリスト */
+        .user-avatars {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: var(--color-base-secondary);
+            color: var(--color-base-quaternary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: bold;
+            border: 1px solid var(--color-base-quinary);
+            cursor: default;
+        }
+
+        /* カード内の統計情報スタイル */
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: var(--font-size-sm);
+            margin-bottom: var(--spacing-1);
+            color: var(--color-base-tertiary);
+        }
+        .stat-label { color: var(--color-base-quaternary); }
+        .stat-value { font-weight: bold; }
+
+    </style>
+
     <script>
-        // モーダル
-        function showModal(id) {
-            document.getElementById(id).style.display = 'flex';
-        }
-        function hideModal(id) {
-            document.getElementById(id).style.display = 'none';
-        }
+        function showModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function hideModal(id) { document.getElementById(id).style.display = 'none'; }
 
-        // タブ
-        function activateTab(tabGroup, tabId) {
-            // リンクのアクティブ状態を切り替え
-            // (注: シェル変数  と誤認されないよう ${...} とエスケープ)
-            const links = document.querySelectorAll(`#${tabGroup} .tab-link`);
-            links.forEach(link => link.classList.remove('is-active'));
-            document.querySelector(`#${tabGroup} .tab-link[onclick*="'${tabId}'"]`).classList.add('is-active');
-
-            // コンテンツの表示を切り替え
-            const contents = document.querySelectorAll(`#${tabGroup}-content .tab-content`);
-            contents.forEach(content => content.classList.remove('is-active'));
-            document.getElementById(tabId).classList.add('is-active');
+        // 表示切り替え
+        function switchView(viewName) {
+            document.getElementById('view-by-member').style.display = 'none';
+            document.getElementById('view-by-skill').style.display = 'none';
+            
+            // フィルタエリアの内容も切り替える（必要に応じて）
+            // 今回は共通の枠組みとして簡易化しています
+            
+            if (viewName === 'member') {
+                document.getElementById('view-by-member').style.display = 'grid';
+            } else if (viewName === 'skill') {
+                document.getElementById('view-by-skill').style.display = 'grid';
+            }
         }
     </script>
 </head>
@@ -43,103 +112,289 @@
     <div class="page-wrapper">
 
         <aside class="sidebar">
-
-            <div class="sidebar-header">
-                Compath
-            </div>
-
+            <div class="sidebar-header">Compath</div>
             <nav class="sidebar-nav">
-
                 <a href="index.html" class="nav-link">トップ</a>
-
-                <details class="nav-accordion">
-                    <summary>施設情報</summary>
-                    <ul>
-                        <li><a href="corporation.html">法人情報</a></li>
-                        <li><a href="office.html">事業所情報</a></li>
-                        <li><a href="staff.html">職員情報</a></li>
-                    </ul>
-                </details>
-
+                <details class="nav-accordion"><summary>施設情報</summary><ul><li><a href="corporation.html">法人情報</a></li><li><a href="office.html">事業所情報</a></li><li><a href="staff.html">職員情報</a></li></ul></details>
                 <a href="partners.html" class="nav-link">取引先情報</a>
-
                 <a href="members.html" class="nav-link">利用者情報</a>
-
-                <details class="nav-accordion">
-                    <summary>スキル情報</summary>
-                    <ul>
-                        <li><a href="skills-settings.html">スキル設定</a></li>
-                        <li><a href="skills-evaluation.html">スキル評価</a></li>
-                    </ul>
-                </details>
-
-                <details class="nav-accordion">
-                    <summary>工賃・控除情報</summary>
-                    <ul>
-                        <li><a href="wages-settings.html">工賃設定</a></li>
-                        <li><a href="deductions-settings.html">控除設定</a></li>
-                        <li><a href="wages-evaluation.html">工賃レベル評価</a></li>
-                    </ul>
-                </details>
-
+                <details class="nav-accordion" open><summary>スキル情報</summary><ul><li><a href="skills-settings.html">スキル設定</a></li><li><a href="skills-evaluation.html" class="nav-link active">スキル評価</a></li></ul></details>
+                <details class="nav-accordion"><summary>工賃・控除情報</summary><ul><li><a href="wages-settings.html">工賃設定</a></li><li><a href="deductions-settings.html">控除設定</a></li><li><a href="wages-evaluation.html">工賃レベル評価</a></li></ul></details>
                 <a href="savings.html" class="nav-link">積立金情報</a>
-
                 <a href="attendance.html" class="nav-link">出欠管理</a>
-
                 <a href="projects.html" class="nav-link">案件管理</a>
-
-                <details class="nav-accordion">
-                    <summary>福祉事業活動</summary>
-                    <ul>
-                        <li><a href="support-plans.html">個別支援計画</a></li>
-                    </ul>
-                </details>
-
-                <details class="nav-accordion">
-                    <summary>会計</summary>
-                    <ul>
-                        <li><a href="accounting-monthly.html">月次会計</a></li>
-                        <li><a href="accounting-annual.html">年次会計</a></li>
-                    </ul>
-                </details>
-
-                <details class="nav-accordion">
-                    <summary>分析</summary>
-                    <ul>
-                        <li><a href="analytics.html">分析ダッシュボード</a></li>
-                    </ul>
-                </details>
-
+                <details class="nav-accordion"><summary>福祉事業活動</summary><ul><li><a href="support-plans.html">個別支援計画</a></li></ul></details>
+                <details class="nav-accordion"><summary>会計</summary><ul><li><a href="accounting-monthly.html">月次会計</a></li><li><a href="accounting-annual.html">年次会計</a></li></ul></details>
+                <details class="nav-accordion"><summary>分析</summary><ul><li><a href="analytics.html">分析ダッシュボード</a></li></ul></details>
                 <a href="account.html" class="nav-link">ユーザーアカウント</a>
-
                 <a href="settings.html" class="nav-link">（その他設定）</a>
-
             </nav>
-
             <div class="sidebar-footer">
-                <div class="user-info">
-                    <span class="user-name">田中 健司</span>
-                    <a href="#">ログアウト</a>
-                </div>
+                <div class="user-info"><span class="user-name">田中 健司</span><a href="#">ログアウト</a></div>
             </div>
-
         </aside>
+
         <main class="main-content">
 
             <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
 
-                <h1 style="margin: 0 0 var(--spacing-stack-md) 0;">スキル評価</h1>
-
-                <div class="card">
-                    <div class="card-body">
-                        <p>これは「スキル評価」ページです。ここに内容を記述します。</p>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
+                    <h1 style="margin: 0;">スキル評価</h1>
+                    
+                    <div class="view-toggle">
+                        <input type="radio" id="mode-member" name="view-mode" checked onchange="switchView('member')">
+                        <label for="mode-member">利用者ごと</label>
+                        
+                        <input type="radio" id="mode-skill" name="view-mode" onchange="switchView('skill')">
+                        <label for="mode-skill">スキルごと</label>
                     </div>
+                </div>
+
+                <div style="display: flex; gap: var(--spacing-stack-md); flex-wrap: wrap; margin-bottom: var(--spacing-stack-md);">
+                    
+                    <div class="card" style="flex: 1; min-width: 320px;">
+                        <div class="card-body" style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
+                            <div class="form-group" style="margin: 0; flex: 1; min-width: 200px;">
+                                <label class="form-label">キーワード検索</label>
+                                <input type="text" class="input-field" placeholder="氏名、スキル名...">
+                            </div>
+                            <div class="form-group" style="margin: 0; min-width: 160px;">
+                                <label class="form-label">カテゴリ/事業所</label>
+                                <select class="input-field">
+                                    <option value="">すべて</option>
+                                    <option value="office_a">こんぱす天神</option>
+                                    <option value="cat_pc">PC基本操作</option>
+                                    <option value="cat_work">軽作業</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin: 0; min-width: 140px;">
+                                <label class="form-label">評価状態</label>
+                                <select class="input-field">
+                                    <option value="">すべて</option>
+                                    <option value="evaluated">評価済み</option>
+                                    <option value="unevaluated">未評価</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="flex: 0 0 auto;">
+                        <div class="card-body" style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
+                            <div class="form-group" style="margin: 0; width: 160px;">
+                                <label class="form-label">並び替え</label>
+                                <select class="input-field">
+                                    <option value="updated_desc">更新日 (新しい順)</option>
+                                    <option value="updated_asc">更新日 (古い順)</option>
+                                    <option value="name_asc">名称 (昇順)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div id="view-by-member" class="card-grid">
+
+                    <div class="card">
+                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: var(--spacing-3);">
+                                <div class="user-avatar" style="width: 40px; height: 40px; font-size: 1rem; background-color: var(--color-theme-main); color: white;">山</div>
+                                <div>
+                                    <div style="font-size: var(--font-size-md); font-weight: bold;">山田 太郎</div>
+                                    <div style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">こんぱす天神</div>
+                                </div>
+                            </div>
+                            <button class="btn btn-icon btn-icon-primary btn-icon-sm"><span class="material-symbols-outlined">edit</span></button>
+                        </div>
+                        <div class="card-body">
+                            <div style="margin-bottom: var(--spacing-4);">
+                                <div class="stat-row"><span class="stat-label">習得スキル数:</span><span class="stat-value">8</span></div>
+                                <div class="stat-row"><span class="stat-label">最終評価日:</span><span class="stat-value">2025.10.20</span></div>
+                            </div>
+                            
+                            <div style="margin-bottom: var(--spacing-2);">
+                                <label class="form-label" style="margin-bottom: var(--spacing-1);">最近更新されたスキル</label>
+                                <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-2);">
+                                    <span class="badge badge-neutral"><span class="level-badge lv-2">Lv.2</span>タイピング</span>
+                                    <span class="badge badge-neutral"><span class="level-badge lv-1">Lv.1</span>封入作業</span>
+                                </div>
+                            </div>
+                            
+                            <div style="margin-top: var(--spacing-4); padding-top: var(--spacing-3); border-top: var(--border-subtle); text-align: center;">
+                                <a href="#" style="font-size: var(--font-size-sm);">詳細を見る</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: var(--spacing-3);">
+                                <div class="user-avatar" style="width: 40px; height: 40px; font-size: 1rem; background-color: var(--palette-F44); color: white;">鈴</div>
+                                <div>
+                                    <div style="font-size: var(--font-size-md); font-weight: bold;">鈴木 花子</div>
+                                    <div style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">こんぱす天神</div>
+                                </div>
+                            </div>
+                            <button class="btn btn-icon btn-icon-primary btn-icon-sm"><span class="material-symbols-outlined">edit</span></button>
+                        </div>
+                        <div class="card-body">
+                            <div style="margin-bottom: var(--spacing-4);">
+                                <div class="stat-row"><span class="stat-label">習得スキル数:</span><span class="stat-value">12</span></div>
+                                <div class="stat-row"><span class="stat-label">最終評価日:</span><span class="stat-value">2025.10.18</span></div>
+                            </div>
+                            
+                            <div style="margin-bottom: var(--spacing-2);">
+                                <label class="form-label" style="margin-bottom: var(--spacing-1);">最近更新されたスキル</label>
+                                <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-2);">
+                                    <span class="badge badge-neutral"><span class="level-badge lv-3">Lv.3</span>Word基礎</span>
+                                    <span class="badge badge-neutral"><span class="level-badge lv-2">Lv.2</span>Excel入力</span>
+                                </div>
+                            </div>
+
+                             <div style="margin-top: var(--spacing-4); padding-top: var(--spacing-3); border-top: var(--border-subtle); text-align: center;">
+                                <a href="#" style="font-size: var(--font-size-sm);">詳細を見る</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: var(--spacing-3);">
+                                <div class="user-avatar" style="width: 40px; height: 40px; font-size: 1rem; background-color: var(--palette-B80); color: white;">高</div>
+                                <div>
+                                    <div style="font-size: var(--font-size-md); font-weight: bold;">高橋 一郎</div>
+                                    <div style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">こんぱす博多</div>
+                                </div>
+                            </div>
+                            <button class="btn btn-icon btn-icon-primary btn-icon-sm"><span class="material-symbols-outlined">edit</span></button>
+                        </div>
+                        <div class="card-body">
+                            <div style="margin-bottom: var(--spacing-4);">
+                                <div class="stat-row"><span class="stat-label">習得スキル数:</span><span class="stat-value">3</span></div>
+                                <div class="stat-row"><span class="stat-label">最終評価日:</span><span class="stat-value">2025.09.30</span></div>
+                            </div>
+                            
+                            <div style="margin-bottom: var(--spacing-2);">
+                                <label class="form-label" style="margin-bottom: var(--spacing-1);">最近更新されたスキル</label>
+                                <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-2);">
+                                    <span class="badge badge-neutral"><span class="level-badge lv-1">Lv.1</span>清掃</span>
+                                </div>
+                            </div>
+
+                             <div style="margin-top: var(--spacing-4); padding-top: var(--spacing-3); border-top: var(--border-subtle); text-align: center;">
+                                <a href="#" style="font-size: var(--font-size-sm);">詳細を見る</a>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div id="view-by-skill" class="card-grid" style="display: none;">
+
+                    <div class="card">
+                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <span class="badge badge-neutral" style="margin-bottom: var(--spacing-1);">PC基本操作</span>
+                                <div style="font-size: var(--font-size-md); font-weight: bold;">タイピング (かな)</div>
+                            </div>
+                            <button class="btn btn-icon btn-icon-neutral btn-icon-sm"><span class="material-symbols-outlined">more_horiz</span></button>
+                        </div>
+                        <div class="card-body">
+                            <div style="display: flex; gap: var(--spacing-4); margin-bottom: var(--spacing-4);">
+                                <div>
+                                    <div class="stat-label" style="font-size: var(--font-size-xs);">習得者数</div>
+                                    <div class="stat-value" style="font-size: var(--font-size-lg);">12 <span style="font-size: var(--font-size-sm); font-weight: normal;">人</span></div>
+                                </div>
+                                <div>
+                                    <div class="stat-label" style="font-size: var(--font-size-xs);">平均レベル</div>
+                                    <div class="stat-value" style="font-size: var(--font-size-lg);">1.8</div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="form-label" style="margin-bottom: var(--spacing-2);">主な習得者</label>
+                                <div class="user-avatars">
+                                    <div class="user-avatar" title="山田 太郎 (Lv.2)" style="background-color: var(--color-theme-main); color: white;">山</div>
+                                    <div class="user-avatar" title="鈴木 花子 (Lv.3)" style="background-color: var(--palette-F44); color: white;">鈴</div>
+                                    <div class="user-avatar" title="佐藤 次郎 (Lv.2)">佐</div>
+                                    <div class="user-avatar" title="田中 三郎 (Lv.1)">田</div>
+                                    <div class="user-avatar" style="background-color: transparent; border: none; color: var(--color-base-quaternary);">+8</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <span class="badge badge-neutral" style="margin-bottom: var(--spacing-1);">軽作業</span>
+                                <div style="font-size: var(--font-size-md); font-weight: bold;">封入作業</div>
+                            </div>
+                            <button class="btn btn-icon btn-icon-neutral btn-icon-sm"><span class="material-symbols-outlined">more_horiz</span></button>
+                        </div>
+                        <div class="card-body">
+                            <div style="display: flex; gap: var(--spacing-4); margin-bottom: var(--spacing-4);">
+                                <div>
+                                    <div class="stat-label" style="font-size: var(--font-size-xs);">習得者数</div>
+                                    <div class="stat-value" style="font-size: var(--font-size-lg);">24 <span style="font-size: var(--font-size-sm); font-weight: normal;">人</span></div>
+                                </div>
+                                <div>
+                                    <div class="stat-label" style="font-size: var(--font-size-xs);">平均レベル</div>
+                                    <div class="stat-value" style="font-size: var(--font-size-lg);">2.5</div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="form-label" style="margin-bottom: var(--spacing-2);">主な習得者</label>
+                                <div class="user-avatars">
+                                    <div class="user-avatar" title="山田 太郎 (Lv.1)" style="background-color: var(--color-theme-main); color: white;">山</div>
+                                    <div class="user-avatar" title="高橋 一郎 (Lv.3)" style="background-color: var(--palette-B80); color: white;">高</div>
+                                    <div class="user-avatar">伊</div>
+                                    <div class="user-avatar">加</div>
+                                    <div class="user-avatar" style="background-color: transparent; border: none; color: var(--color-base-quaternary);">+20</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <span class="badge badge-neutral" style="margin-bottom: var(--spacing-1);">Officeソフト</span>
+                                <div style="font-size: var(--font-size-md); font-weight: bold;">Word (基本文書作成)</div>
+                            </div>
+                            <button class="btn btn-icon btn-icon-neutral btn-icon-sm"><span class="material-symbols-outlined">more_horiz</span></button>
+                        </div>
+                        <div class="card-body">
+                            <div style="display: flex; gap: var(--spacing-4); margin-bottom: var(--spacing-4);">
+                                <div>
+                                    <div class="stat-label" style="font-size: var(--font-size-xs);">習得者数</div>
+                                    <div class="stat-value" style="font-size: var(--font-size-lg);">5 <span style="font-size: var(--font-size-sm); font-weight: normal;">人</span></div>
+                                </div>
+                                <div>
+                                    <div class="stat-label" style="font-size: var(--font-size-xs);">平均レベル</div>
+                                    <div class="stat-value" style="font-size: var(--font-size-lg);">1.2</div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="form-label" style="margin-bottom: var(--spacing-2);">主な習得者</label>
+                                <div class="user-avatars">
+                                    <div class="user-avatar" title="鈴木 花子 (Lv.3)" style="background-color: var(--palette-F44); color: white;">鈴</div>
+                                    <div class="user-avatar">木</div>
+                                    <div class="user-avatar">佐</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
             </div>
 
         </main>
-        </div>
+
+    </div>
 
 </body>
 
