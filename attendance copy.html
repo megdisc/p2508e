@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Compath - 出欠管理</title>
+
+    <link rel="stylesheet" href="globals.css">
+    <link rel="stylesheet" href="ui.css">
+
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+    <style>
+        /* ガントチャート風タイムラインのスタイル */
+        .timeline-container {
+            position: relative;
+            width: 100%;
+            height: 1.5rem;
+            background-color: var(--color-base-secondary);
+            border-radius: var(--border-radius-full);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+        }
+        
+        /* タイムラインのバー */
+        .timeline-bar {
+            position: absolute;
+            top: 0.05rem;
+            bottom: 0.05rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 var(--spacing-2);
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: var(--color-base-primary);
+            border-radius: var(--border-radius-full);
+            box-shadow: var(--box-shadow-sm);
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        /* ステータス別の色 */
+        .timeline-bar.present { background-color: var(--color-semantic-primary-main); }
+        .timeline-bar.remote { background-color: var(--color-semantic-success-main); }
+        .timeline-bar.late { background-color: var(--color-semantic-warning-main); }
+
+        /* 目盛り線 */
+        .timeline-grid {
+            position: absolute;
+            top: 0; bottom: 0;
+            border-left: 1px dashed var(--color-base-quinary);
+            z-index: 0;
+        }
+
+        /* テーブル調整 */
+        .table td {
+            vertical-align: middle;
+            height: 3rem;
+        }
+        .cell-status {
+            white-space: nowrap;
+        }
+    </style>
+
+    <script>
+        // モーダル
+        function showModal(id) {
+            document.getElementById(id).style.display = 'flex';
+        }
+        function hideModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        // 日付操作（ダミー）
+        function changeDate(offset) {
+            const dateInput = document.getElementById('attendance-date');
+            if(offset === 0) dateInput.value = '2025-11-22'; // Today
+            alert('日付を変更しました（デモ）');
+        }
+    </script>
+</head>
+
+<body>
+
+    <div class="page-wrapper">
+
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div style="width: 100%; text-align: center;">
+                    <div style="margin-bottom: var(--spacing-stack-xs);">Compath</div>
+                    <select class="input-field">
+                        <option value="tenjin">こんぱす天神</option>
+                        <option value="hakata">こんぱす博多</option>
+                    </select>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-link">トップ</a>
+                <details class="nav-accordion"><summary>施設情報</summary><ul><li><a href="corporation.html">法人情報</a></li><li><a href="office.html">事業所情報</a></li><li><a href="staff.html">職員情報</a></li></ul></details>
+                <a href="partners.html" class="nav-link">取引先情報</a>
+                <a href="members.html" class="nav-link">利用者情報</a>
+                <details class="nav-accordion"><summary>スキル情報</summary><ul><li><a href="skills-settings.html">スキル設定</a></li><li><a href="skills-evaluation.html">スキル評価</a></li></ul></details>
+                <details class="nav-accordion"><summary>工賃・控除情報</summary><ul><li><a href="wages-settings.html">工賃設定</a></li><li><a href="deductions-settings.html">控除設定</a></li><li><a href="wages-evaluation.html">工賃レベル評価</a></li></ul></details>
+                <a href="savings.html" class="nav-link">積立金情報</a>
+                <a href="attendance.html" class="nav-link active">出欠管理</a>
+                <a href="projects.html" class="nav-link">案件管理</a>
+                <details class="nav-accordion"><summary>福祉事業活動</summary><ul><li><a href="support-plans.html">個別支援計画</a></li></ul></details>
+                <details class="nav-accordion"><summary>会計</summary><ul><li><a href="accounting-monthly.html">月次会計</a></li><li><a href="accounting-annual.html">年次会計</a></li></ul></details>
+                <details class="nav-accordion"><summary>分析</summary><ul><li><a href="analytics.html">分析ダッシュボード</a></li></ul></details>
+                <a href="account.html" class="nav-link">ユーザーアカウント</a>
+                <a href="settings.html" class="nav-link">（その他設定）</a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info"><span class="user-name">田中 健司</span><a href="#">ログアウト</a></div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+
+            <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
+
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
+                    <h1 style="margin: 0;">出欠管理</h1>
+                    
+                    <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                        <button class="btn btn-icon btn-icon-primary" onclick="changeDate(-1)"><span class="material-symbols-outlined">chevron_left</span></button>
+                        <input type="date" id="attendance-date" class="input-field" value="2025-11-22" style="width: auto;">
+                        <button class="btn btn-icon btn-icon-primary" onclick="changeDate(1)"><span class="material-symbols-outlined">chevron_right</span></button>
+                        <button class="btn btn-neutral" onclick="changeDate(0)">今日</button>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: var(--spacing-stack-md); flex-wrap: wrap; margin-bottom: var(--spacing-stack-md);">
+                    
+                    <div class="card" style="flex: 1; min-width: 320px;">
+                        <div class="card-body" style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
+                            <div class="form-group" style="margin: 0; flex: 1; min-width: 160px;">
+                                <label class="form-label" for="filter-keyword">キーワード検索</label>
+                                <input type="text" id="filter-keyword" class="input-field" placeholder="氏名...">
+                            </div>
+                            <div class="form-group" style="margin: 0; flex: 1; min-width: 140px;">
+                                <label class="form-label" for="filter-status">出欠ステータス</label>
+                                <select id="filter-status" class="input-field">
+                                    <option value="">すべて</option>
+                                    <option value="present">通所</option>
+                                    <option value="remote">在宅</option>
+                                    <option value="off">お休み</option>
+                                    <option value="absent">欠席</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="flex: 0 0 auto;">
+                        <div class="card-body" style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
+                            <div class="form-group" style="margin: 0; width: 180px;">
+                                <label class="form-label" for="sort-order">並び替え</label>
+                                <select id="sort-order" class="input-field">
+                                    <option value="name_asc">氏名 (昇順)</option>
+                                    <option value="name_desc">氏名 (降順)</option>
+                                    <option value="time_asc">開始時間 (早い順)</option>
+                                    <option value="time_desc">開始時間 (遅い順)</option>
+                                    <option value="status">ステータス順</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="card">
+                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            出欠一覧 (2025年11月22日)
+                        </div>
+                        <button class="btn btn-icon btn-icon-primary" onclick="showModal('modal-edit-daily')" title="一括編集">
+                            <span class="material-symbols-outlined">edit</span>
+                        </button>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div style="display: flex; gap: var(--spacing-4); margin-bottom: var(--spacing-4); font-size: var(--font-size-sm); color: var(--color-base-quaternary); align-items: center; flex-wrap: wrap;">
+                            <div><span style="font-weight: bold; color: var(--color-base-tertiary);">全 5 名</span></div>
+                            <div style="border-left: 1px solid var(--color-base-quinary); padding-left: var(--spacing-4);">
+                                通所: <span style="font-weight: bold; color: var(--color-semantic-primary-main);">1</span>
+                            </div>
+                            <div>
+                                在宅: <span style="font-weight: bold; color: var(--color-semantic-success-main);">1</span>
+                            </div>
+                            <div>
+                                欠席: <span style="font-weight: bold; color: var(--color-semantic-error-main);">1</span>
+                            </div>
+                            <div>
+                                お休み: <span style="font-weight: bold; color: var(--color-base-tertiary);">1</span>
+                            </div>
+                             <div>
+                                対象外: <span style="font-weight: bold; color: var(--color-base-quaternary);">1</span>
+                            </div>
+                        </div>
+
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 20%;">氏名</th>
+                                        <th style="width: 10%;">ステータス</th>
+                                        <th style="width: 35%;">利用時間</th>
+                                        <th style="width: 15%;">サービス</th>
+                                        <th style="width: 20%;">備考</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>山田 太郎</td>
+                                        <td class="cell-status"><span class="badge badge-primary">通所</span></td>
+                                        <td>
+                                            <div class="timeline-container">
+                                                <div class="timeline-grid" style="left: 25%;"></div>
+                                                <div class="timeline-grid" style="left: 50%;"></div>
+                                                <div class="timeline-grid" style="left: 75%;"></div>
+                                                
+                                                <div class="timeline-bar present" style="left: 12.5%; width: 62.5%;">
+                                                    <span style="margin-left: 8px;">10:00</span>
+                                                    <span style="margin-right: 8px;">15:00</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                                <span class="badge badge-neutral">昼食</span>
+                                                <span class="badge badge-neutral">送迎(往復)</span>
+                                            </div>
+                                        </td>
+                                        <td>-</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>鈴木 花子</td>
+                                        <td class="cell-status"><span class="badge badge-error">欠席</span></td>
+                                        <td>
+                                            <div class="timeline-container">
+                                                <div class="timeline-grid" style="left: 25%;"></div>
+                                                <div class="timeline-grid" style="left: 50%;"></div>
+                                                <div class="timeline-grid" style="left: 75%;"></div>
+                                            </div>
+                                        </td>
+                                        <td>-</td>
+                                        <td>体調不良のため</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>高橋 一郎</td>
+                                        <td class="cell-status"><span class="badge badge-success">在宅</span></td>
+                                        <td>
+                                            <div class="timeline-container">
+                                                <div class="timeline-grid" style="left: 25%;"></div>
+                                                <div class="timeline-grid" style="left: 50%;"></div>
+                                                <div class="timeline-grid" style="left: 75%;"></div>
+
+                                                <div class="timeline-bar remote" style="left: 12.5%; width: 50%;">
+                                                    <span style="margin-left: 8px;">10:00</span>
+                                                    <span style="margin-right: 8px;">14:00</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>佐藤 次郎</td>
+                                        <td class="cell-status"><span class="badge badge-neutral">お休み</span></td>
+                                        <td>
+                                            <div class="timeline-container">
+                                                <div class="timeline-grid" style="left: 25%;"></div>
+                                                <div class="timeline-grid" style="left: 50%;"></div>
+                                                <div class="timeline-grid" style="left: 75%;"></div>
+                                            </div>
+                                        </td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <td>田中 三郎</td>
+                                        <td class="cell-status"><span class="badge badge-cancelled">対象外</span></td>
+                                        <td>
+                                            <div class="timeline-container">
+                                                <div class="timeline-grid" style="left: 25%;"></div>
+                                                <div class="timeline-grid" style="left: 50%;"></div>
+                                                <div class="timeline-grid" style="left: 75%;"></div>
+                                            </div>
+                                        </td>
+                                        <td>-</td>
+                                        <td>入院中</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+        
+        <div class="modal-backdrop" id="modal-edit-daily" style="display: none;">
+            <div class="modal-content" style="width: 98vw; max-width: none; height: 90vh;">
+                <div class="modal-header">
+                    出欠情報の編集 (2025年11月22日)
+                </div>
+                <div class="modal-body">
+                    <p style="margin-bottom: var(--spacing-stack-md);">
+                        本日の出欠状況を登録・編集します。
+                    </p>
+                    
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 15%;">氏名</th>
+                                    <th style="width: 15%;">ステータス</th>
+                                    <th style="width: 25%;">利用時間</th>
+                                    <th style="width: 25%;">サービス</th>
+                                    <th style="width: 20%;">備考</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>山田 太郎</td>
+                                    <td>
+                                        <select class="input-field">
+                                            <option value="present" selected>通所</option>
+                                            <option value="remote">在宅</option>
+                                            <option value="off">お休み</option>
+                                            <option value="absent">欠席</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 4px;">
+                                            <input type="time" class="input-field" value="10:00">
+                                            <span>~</span>
+                                            <input type="time" class="input-field" value="15:00">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; gap: var(--spacing-4); flex-wrap: wrap;">
+                                            <div class="form-check" style="margin-bottom: 0;">
+                                                <input class="form-check-input" type="checkbox" id="srv-lunch-1" checked>
+                                                <label class="form-check-label" for="srv-lunch-1">昼食</label>
+                                            </div>
+                                            <div class="form-check" style="margin-bottom: 0;">
+                                                <input class="form-check-input" type="checkbox" id="srv-pickup-1" checked>
+                                                <label class="form-check-label" for="srv-pickup-1">送迎(往)</label>
+                                            </div>
+                                            <div class="form-check" style="margin-bottom: 0;">
+                                                <input class="form-check-input" type="checkbox" id="srv-dropoff-1" checked>
+                                                <label class="form-check-label" for="srv-dropoff-1">送迎(復)</label>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><input type="text" class="input-field" value=""></td>
+                                </tr>
+                                <tr>
+                                    <td>鈴木 花子</td>
+                                    <td>
+                                        <select class="input-field">
+                                            <option value="present">通所</option>
+                                            <option value="remote">在宅</option>
+                                            <option value="off">お休み</option>
+                                            <option value="absent" selected>欠席</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 4px;">
+                                            <input type="time" class="input-field" disabled>
+                                            <span>~</span>
+                                            <input type="time" class="input-field" disabled>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; gap: var(--spacing-4); flex-wrap: wrap;">
+                                            <div class="form-check" style="margin-bottom: 0;">
+                                                <input class="form-check-input" type="checkbox" id="srv-lunch-2" disabled>
+                                                <label class="form-check-label" for="srv-lunch-2">昼食</label>
+                                            </div>
+                                            <div class="form-check" style="margin-bottom: 0;">
+                                                <input class="form-check-input" type="checkbox" id="srv-pickup-2" disabled>
+                                                <label class="form-check-label" for="srv-pickup-2">送迎(往)</label>
+                                            </div>
+                                            <div class="form-check" style="margin-bottom: 0;">
+                                                <input class="form-check-input" type="checkbox" id="srv-dropoff-2" disabled>
+                                                <label class="form-check-label" for="srv-dropoff-2">送迎(復)</label>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><input type="text" class="input-field" value="体調不良のため"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-neutral" onclick="hideModal('modal-edit-daily')">キャンセル</button>
+                    <button class="btn btn-primary" onclick="hideModal('modal-edit-daily'); alert('保存しました');">保存する</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

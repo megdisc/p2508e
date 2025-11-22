@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>Compath - 出欠管理</title>
+    <title>Compath - 出欠情報</title>
 
     <link rel="stylesheet" href="globals.css">
     <link rel="stylesheet" href="ui.css">
@@ -65,6 +65,56 @@
         .cell-status {
             white-space: nowrap;
         }
+
+        /* 表示切り替えスイッチ */
+        .view-toggle {
+            display: flex;
+            background-color: var(--color-base-secondary);
+            border-radius: var(--radius-button);
+            padding: 2px;
+            border: 1px solid var(--color-base-quinary);
+        }
+        .view-toggle label {
+            padding: var(--spacing-1) var(--spacing-3);
+            font-size: var(--font-size-sm);
+            cursor: pointer;
+            border-radius: var(--radius-button);
+            transition: all 0.2s;
+            color: var(--color-base-quaternary);
+        }
+        .view-toggle input[type="radio"] { display: none; }
+        .view-toggle input[type="radio"]:checked + label {
+            background-color: var(--color-theme-main);
+            color: var(--color-base-primary);
+            box-shadow: var(--box-shadow-sm);
+            font-weight: var(--font-weight-medium);
+        }
+        
+        /* カレンダー用スタイル (簡易) */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background-color: var(--color-base-quinary);
+            border: 1px solid var(--color-base-quinary);
+        }
+        .calendar-header {
+            background-color: var(--color-base-secondary);
+            padding: var(--spacing-2);
+            text-align: center;
+            font-weight: bold;
+            font-size: var(--font-size-sm);
+        }
+        .calendar-cell {
+            background-color: var(--color-base-primary);
+            min-height: 100px;
+            padding: var(--spacing-2);
+            font-size: var(--font-size-sm);
+        }
+        .calendar-date { font-weight: bold; margin-bottom: var(--spacing-1); }
+        .day-off { background-color: var(--palette-FDD); color: var(--color-semantic-error-main); }
+        .day-sat { background-color: var(--palette-CEF); color: var(--color-semantic-primary-main); }
+
     </style>
 
     <script>
@@ -79,8 +129,32 @@
         // 日付操作（ダミー）
         function changeDate(offset) {
             const dateInput = document.getElementById('attendance-date');
-            if(offset === 0) dateInput.value = '2025-11-22'; // Today
+            if(offset === 0) dateInput.value = '2025-11-22'; 
             alert('日付を変更しました（デモ）');
+        }
+
+        // メイン表示切り替え (日別/月別)
+        function switchViewMain(mode) {
+            document.getElementById('view-daily').style.display = 'none';
+            document.getElementById('view-monthly').style.display = 'none';
+            
+            if (mode === 'daily') {
+                document.getElementById('view-daily').style.display = 'block';
+            } else {
+                document.getElementById('view-monthly').style.display = 'block';
+            }
+        }
+
+        // 月別サブ切り替え (営業日/利用者別)
+        function switchViewMonthly(subMode) {
+            document.getElementById('view-monthly-business').style.display = 'none';
+            document.getElementById('view-monthly-user').style.display = 'none';
+
+            if (subMode === 'business') {
+                document.getElementById('view-monthly-business').style.display = 'block';
+            } else {
+                document.getElementById('view-monthly-user').style.display = 'block';
+            }
         }
     </script>
 </head>
@@ -124,185 +198,264 @@
 
             <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
 
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
-                    <h1 style="margin: 0;">出欠管理</h1>
+                <div style="margin-bottom: var(--spacing-stack-md);">
+                    <h1 style="margin: 0 0 var(--spacing-stack-sm) 0;">出欠情報</h1>
                     
-                    <div style="display: flex; align-items: center; gap: var(--spacing-2);">
-                        <button class="btn btn-icon btn-icon-primary" onclick="changeDate(-1)"><span class="material-symbols-outlined">chevron_left</span></button>
-                        <input type="date" id="attendance-date" class="input-field" value="2025-11-22" style="width: auto;">
-                        <button class="btn btn-icon btn-icon-primary" onclick="changeDate(1)"><span class="material-symbols-outlined">chevron_right</span></button>
-                        <button class="btn btn-neutral" onclick="changeDate(0)">今日</button>
+                    <div class="view-toggle" style="display: inline-flex;">
+                        <input type="radio" id="mode-daily" name="view-mode-main" checked onchange="switchViewMain('daily')">
+                        <label for="mode-daily">日別</label>
+                        
+                        <input type="radio" id="mode-monthly" name="view-mode-main" onchange="switchViewMain('monthly')">
+                        <label for="mode-monthly">月別</label>
                     </div>
                 </div>
 
-                <div style="display: flex; gap: var(--spacing-stack-md); flex-wrap: wrap; margin-bottom: var(--spacing-stack-md);">
+                <div id="view-daily">
                     
-                    <div class="card" style="flex: 1; min-width: 320px;">
-                        <div class="card-body" style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
-                            <div class="form-group" style="margin: 0; flex: 1; min-width: 160px;">
-                                <label class="form-label" for="filter-keyword">キーワード検索</label>
-                                <input type="text" id="filter-keyword" class="input-field" placeholder="氏名...">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
+                        <div style="font-size: var(--font-size-md); font-weight: bold;">2025年11月22日 (金)</div>
+                        <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                            <button class="btn btn-icon btn-icon-primary" onclick="changeDate(-1)"><span class="material-symbols-outlined">chevron_left</span></button>
+                            <input type="date" id="attendance-date" class="input-field" value="2025-11-22" style="width: auto;">
+                            <button class="btn btn-icon btn-icon-primary" onclick="changeDate(1)"><span class="material-symbols-outlined">chevron_right</span></button>
+                            <button class="btn btn-neutral" onclick="changeDate(0)">今日</button>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: var(--spacing-stack-md); flex-wrap: wrap; margin-bottom: var(--spacing-stack-md);">
+                        <div class="card" style="flex: 1; min-width: 320px;">
+                            <div class="card-body" style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
+                                <div class="form-group" style="margin: 0; flex: 1; min-width: 160px;">
+                                    <label class="form-label">キーワード検索</label>
+                                    <input type="text" class="input-field" placeholder="氏名...">
+                                </div>
+                                <div class="form-group" style="margin: 0; flex: 1; min-width: 140px;">
+                                    <label class="form-label">出欠ステータス</label>
+                                    <select class="input-field">
+                                        <option value="">すべて</option>
+                                        <option value="present">通所</option>
+                                        <option value="remote">在宅</option>
+                                        <option value="off">お休み</option>
+                                        <option value="absent">欠席</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div class="form-group" style="margin: 0; flex: 1; min-width: 140px;">
-                                <label class="form-label" for="filter-status">出欠ステータス</label>
-                                <select id="filter-status" class="input-field">
-                                    <option value="">すべて</option>
-                                    <option value="present">通所</option>
-                                    <option value="remote">在宅</option>
-                                    <option value="off">お休み</option>
-                                    <option value="absent">欠席</option>
-                                </select>
+                        </div>
+                        <div class="card" style="flex: 0 0 auto;">
+                            <div class="card-body" style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
+                                <div class="form-group" style="margin: 0; width: 180px;">
+                                    <label class="form-label">並び替え</label>
+                                    <select class="input-field">
+                                        <option value="name_asc">氏名 (昇順)</option>
+                                        <option value="time_asc">開始時間 (早い順)</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="card" style="flex: 0 0 auto;">
-                        <div class="card-body" style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
-                            <div class="form-group" style="margin: 0; width: 180px;">
-                                <label class="form-label" for="sort-order">並び替え</label>
-                                <select id="sort-order" class="input-field">
-                                    <option value="name_asc">氏名 (昇順)</option>
-                                    <option value="name_desc">氏名 (降順)</option>
-                                    <option value="time_asc">開始時間 (早い順)</option>
-                                    <option value="time_desc">開始時間 (遅い順)</option>
-                                    <option value="status">ステータス順</option>
-                                </select>
+                    <div class="card">
+                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>出欠一覧</div>
+                            <button class="btn btn-icon btn-icon-primary" onclick="showModal('modal-edit-daily')" title="一括編集">
+                                <span class="material-symbols-outlined">edit</span>
+                            </button>
+                        </div>
+                        
+                        <div class="card-body">
+                            <div style="display: flex; gap: var(--spacing-4); margin-bottom: var(--spacing-4); font-size: var(--font-size-sm); color: var(--color-base-quaternary); align-items: center; flex-wrap: wrap;">
+                                <div><span style="font-weight: bold; color: var(--color-base-tertiary);">全 5 名</span></div>
+                                <div style="border-left: 1px solid var(--color-base-quinary); padding-left: var(--spacing-4);">
+                                    通所: <span style="font-weight: bold; color: var(--color-semantic-primary-main);">1</span>
+                                </div>
+                                <div>在宅: <span style="font-weight: bold; color: var(--color-semantic-success-main);">1</span></div>
+                                <div>欠席: <span style="font-weight: bold; color: var(--color-semantic-error-main);">1</span></div>
+                                <div>お休み: <span style="font-weight: bold; color: var(--color-base-tertiary);">1</span></div>
+                                <div>対象外: <span style="font-weight: bold; color: var(--color-base-quaternary);">1</span></div>
+                            </div>
+
+                            <div class="table-container">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 20%;">氏名</th>
+                                            <th style="width: 10%;">ステータス</th>
+                                            <th style="width: 35%;">利用時間</th>
+                                            <th style="width: 15%;">サービス</th>
+                                            <th style="width: 20%;">備考</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>山田 太郎</td>
+                                            <td class="cell-status"><span class="badge badge-primary">通所</span></td>
+                                            <td>
+                                                <div class="timeline-container">
+                                                    <div class="timeline-grid" style="left: 25%;"></div>
+                                                    <div class="timeline-grid" style="left: 50%;"></div>
+                                                    <div class="timeline-grid" style="left: 75%;"></div>
+                                                    <div class="timeline-bar present" style="left: 12.5%; width: 62.5%;">
+                                                        <span style="margin-left: 8px;">10:00</span>
+                                                        <span style="margin-right: 8px;">15:00</span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                                    <span class="badge badge-neutral">昼食</span>
+                                                    <span class="badge badge-neutral">送迎(往復)</span>
+                                                </div>
+                                            </td>
+                                            <td>-</td>
+                                        </tr>
+                                        <tr>
+                                            <td>鈴木 花子</td>
+                                            <td class="cell-status"><span class="badge badge-error">欠席</span></td>
+                                            <td>
+                                                <div class="timeline-container">
+                                                    <div class="timeline-grid" style="left: 25%;"></div>
+                                                    <div class="timeline-grid" style="left: 50%;"></div>
+                                                    <div class="timeline-grid" style="left: 75%;"></div>
+                                                </div>
+                                            </td>
+                                            <td>-</td>
+                                            <td>体調不良のため</td>
+                                        </tr>
+                                        <tr>
+                                            <td>高橋 一郎</td>
+                                            <td class="cell-status"><span class="badge badge-success">在宅</span></td>
+                                            <td>
+                                                <div class="timeline-container">
+                                                    <div class="timeline-grid" style="left: 25%;"></div>
+                                                    <div class="timeline-grid" style="left: 50%;"></div>
+                                                    <div class="timeline-grid" style="left: 75%;"></div>
+                                                    <div class="timeline-bar remote" style="left: 12.5%; width: 50%;">
+                                                        <span style="margin-left: 8px;">10:00</span>
+                                                        <span style="margin-right: 8px;">14:00</span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>-</td>
+                                            <td>-</td>
+                                        </tr>
+                                        <tr>
+                                            <td>佐藤 次郎</td>
+                                            <td class="cell-status"><span class="badge badge-neutral">お休み</span></td>
+                                            <td>
+                                                <div class="timeline-container">
+                                                    <div class="timeline-grid" style="left: 25%;"></div>
+                                                    <div class="timeline-grid" style="left: 50%;"></div>
+                                                    <div class="timeline-grid" style="left: 75%;"></div>
+                                                </div>
+                                            </td>
+                                            <td>-</td>
+                                            <td>-</td>
+                                        </tr>
+                                        <tr>
+                                            <td>田中 三郎</td>
+                                            <td class="cell-status"><span class="badge badge-cancelled">対象外</span></td>
+                                            <td>
+                                                <div class="timeline-container">
+                                                    <div class="timeline-grid" style="left: 25%;"></div>
+                                                    <div class="timeline-grid" style="left: 50%;"></div>
+                                                    <div class="timeline-grid" style="left: 75%;"></div>
+                                                </div>
+                                            </td>
+                                            <td>-</td>
+                                            <td>入院中</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
-
                 </div>
 
-                <div class="card">
-                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            出欠一覧 (2025年11月22日)
-                        </div>
-                        <button class="btn btn-icon btn-icon-primary" onclick="showModal('modal-edit-daily')" title="一括編集">
-                            <span class="material-symbols-outlined">edit</span>
-                        </button>
-                    </div>
+                <div id="view-monthly" style="display: none;">
                     
-                    <div class="card-body">
-                        <div style="display: flex; gap: var(--spacing-4); margin-bottom: var(--spacing-4); font-size: var(--font-size-sm); color: var(--color-base-quaternary); align-items: center; flex-wrap: wrap;">
-                            <div><span style="font-weight: bold; color: var(--color-base-tertiary);">全 5 名</span></div>
-                            <div style="border-left: 1px solid var(--color-base-quinary); padding-left: var(--spacing-4);">
-                                通所: <span style="font-weight: bold; color: var(--color-semantic-primary-main);">1</span>
-                            </div>
-                            <div>
-                                在宅: <span style="font-weight: bold; color: var(--color-semantic-success-main);">1</span>
-                            </div>
-                            <div>
-                                欠席: <span style="font-weight: bold; color: var(--color-semantic-error-main);">1</span>
-                            </div>
-                            <div>
-                                お休み: <span style="font-weight: bold; color: var(--color-base-tertiary);">1</span>
-                            </div>
-                             <div>
-                                対象外: <span style="font-weight: bold; color: var(--color-base-quaternary);">1</span>
-                            </div>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
+                        <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                            <button class="btn btn-icon btn-icon-primary"><span class="material-symbols-outlined">chevron_left</span></button>
+                            <input type="month" class="input-field" value="2025-11" style="width: auto;">
+                            <button class="btn btn-icon btn-icon-primary"><span class="material-symbols-outlined">chevron_right</span></button>
                         </div>
-
-                        <div class="table-container">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th style="width: 20%;">氏名</th>
-                                        <th style="width: 10%;">ステータス</th>
-                                        <th style="width: 35%;">利用時間</th>
-                                        <th style="width: 15%;">サービス</th>
-                                        <th style="width: 20%;">備考</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>山田 太郎</td>
-                                        <td class="cell-status"><span class="badge badge-primary">通所</span></td>
-                                        <td>
-                                            <div class="timeline-container">
-                                                <div class="timeline-grid" style="left: 25%;"></div>
-                                                <div class="timeline-grid" style="left: 50%;"></div>
-                                                <div class="timeline-grid" style="left: 75%;"></div>
-                                                
-                                                <div class="timeline-bar present" style="left: 12.5%; width: 62.5%;">
-                                                    <span style="margin-left: 8px;">10:00</span>
-                                                    <span style="margin-right: 8px;">15:00</span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
-                                                <span class="badge badge-neutral">昼食</span>
-                                                <span class="badge badge-neutral">送迎(往復)</span>
-                                            </div>
-                                        </td>
-                                        <td>-</td>
-                                    </tr>
-
-                                    <tr>
-                                        <td>鈴木 花子</td>
-                                        <td class="cell-status"><span class="badge badge-error">欠席</span></td>
-                                        <td>
-                                            <div class="timeline-container">
-                                                <div class="timeline-grid" style="left: 25%;"></div>
-                                                <div class="timeline-grid" style="left: 50%;"></div>
-                                                <div class="timeline-grid" style="left: 75%;"></div>
-                                            </div>
-                                        </td>
-                                        <td>-</td>
-                                        <td>体調不良のため</td>
-                                    </tr>
-
-                                    <tr>
-                                        <td>高橋 一郎</td>
-                                        <td class="cell-status"><span class="badge badge-success">在宅</span></td>
-                                        <td>
-                                            <div class="timeline-container">
-                                                <div class="timeline-grid" style="left: 25%;"></div>
-                                                <div class="timeline-grid" style="left: 50%;"></div>
-                                                <div class="timeline-grid" style="left: 75%;"></div>
-
-                                                <div class="timeline-bar remote" style="left: 12.5%; width: 50%;">
-                                                    <span style="margin-left: 8px;">10:00</span>
-                                                    <span style="margin-right: 8px;">14:00</span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                    </tr>
-
-                                    <tr>
-                                        <td>佐藤 次郎</td>
-                                        <td class="cell-status"><span class="badge badge-neutral">お休み</span></td>
-                                        <td>
-                                            <div class="timeline-container">
-                                                <div class="timeline-grid" style="left: 25%;"></div>
-                                                <div class="timeline-grid" style="left: 50%;"></div>
-                                                <div class="timeline-grid" style="left: 75%;"></div>
-                                            </div>
-                                        </td>
-                                        <td>-</td>
-                                        <td>-</td>
-                                    </tr>
-                                    
-                                    <tr>
-                                        <td>田中 三郎</td>
-                                        <td class="cell-status"><span class="badge badge-cancelled">対象外</span></td>
-                                        <td>
-                                            <div class="timeline-container">
-                                                <div class="timeline-grid" style="left: 25%;"></div>
-                                                <div class="timeline-grid" style="left: 50%;"></div>
-                                                <div class="timeline-grid" style="left: 75%;"></div>
-                                            </div>
-                                        </td>
-                                        <td>-</td>
-                                        <td>入院中</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        
+                        <div class="view-toggle">
+                            <input type="radio" id="submode-business" name="view-mode-monthly" checked onchange="switchViewMonthly('business')">
+                            <label for="submode-business">営業日カレンダー</label>
+                            
+                            <input type="radio" id="submode-user" name="view-mode-monthly" onchange="switchViewMonthly('user')">
+                            <label for="submode-user">利用者別カレンダー</label>
                         </div>
                     </div>
+
+                    <div id="view-monthly-business">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="calendar-grid">
+                                    <div class="calendar-header day-off">日</div>
+                                    <div class="calendar-header">月</div>
+                                    <div class="calendar-header">火</div>
+                                    <div class="calendar-header">水</div>
+                                    <div class="calendar-header">木</div>
+                                    <div class="calendar-header">金</div>
+                                    <div class="calendar-header day-sat">土</div>
+
+                                    <div class="calendar-cell"></div>
+                                    <div class="calendar-cell"></div>
+                                    <div class="calendar-cell"></div>
+                                    <div class="calendar-cell"></div>
+                                    <div class="calendar-cell"></div>
+                                    <div class="calendar-cell"></div>
+                                    <div class="calendar-cell day-sat">
+                                        <div class="calendar-date">1</div>
+                                        <span class="badge badge-neutral">休業日</span>
+                                    </div>
+
+                                    <div class="calendar-cell day-off">
+                                        <div class="calendar-date">2</div>
+                                        <span class="badge badge-neutral">休業日</span>
+                                    </div>
+                                    <div class="calendar-cell">
+                                        <div class="calendar-date">3</div>
+                                        <div style="color: var(--color-semantic-error-main); font-size: 0.7rem; margin-bottom: 4px;">文化の日</div>
+                                        <span class="badge badge-neutral">休業日</span>
+                                    </div>
+                                    <div class="calendar-cell">
+                                        <div class="calendar-date">4</div>
+                                        <div>通所: 18</div>
+                                    </div>
+                                    <div class="calendar-cell">
+                                        <div class="calendar-date">5</div>
+                                        <div>通所: 20</div>
+                                    </div>
+                                    <div class="calendar-cell">
+                                        <div class="calendar-date">6</div>
+                                        <div>通所: 19</div>
+                                    </div>
+                                    <div class="calendar-cell">
+                                        <div class="calendar-date">7</div>
+                                        <div>通所: 21</div>
+                                    </div>
+                                    <div class="calendar-cell day-sat">
+                                        <div class="calendar-date">8</div>
+                                        <span class="badge badge-neutral">休業日</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="view-monthly-user" style="display: none;">
+                        <div class="card">
+                            <div class="card-body">
+                                <p style="color: var(--color-base-quaternary); text-align: center; padding: 2rem;">
+                                    ここに利用者ごとの月間出欠状況（ガントチャートまたはテーブル）を表示します。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
 
             </div>
