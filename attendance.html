@@ -22,18 +22,11 @@
             document.getElementById(id).style.display = 'none';
         }
 
-        // タブ
-        function activateTab(tabGroup, tabId) {
-            // リンクのアクティブ状態を切り替え
-            // (注: シェル変数  と誤認されないよう ${...} とエスケープ)
-            const links = document.querySelectorAll(`#${tabGroup} .tab-link`);
-            links.forEach(link => link.classList.remove('is-active'));
-            document.querySelector(`#${tabGroup} .tab-link[onclick*="'${tabId}'"]`).classList.add('is-active');
-
-            // コンテンツの表示を切り替え
-            const contents = document.querySelectorAll(`#${tabGroup}-content .tab-content`);
-            contents.forEach(content => content.classList.remove('is-active'));
-            document.getElementById(tabId).classList.add('is-active');
+        // 日付操作（ダミー）
+        function changeDate(offset) {
+            const dateInput = document.getElementById('attendance-date');
+            if(offset === 0) dateInput.value = '2025-11-22'; // Today
+            alert('日付を変更しました（デモ）');
         }
     </script>
 </head>
@@ -43,7 +36,6 @@
     <div class="page-wrapper">
 
         <aside class="sidebar">
-
             <div class="sidebar-header">
                 <div style="width: 100%; text-align: center;">
                     <div style="margin-bottom: var(--spacing-stack-xs);">Compath</div>
@@ -53,99 +45,248 @@
                     </select>
                 </div>
             </div>
-
             <nav class="sidebar-nav">
-
                 <a href="index.html" class="nav-link">トップ</a>
-
-                <details class="nav-accordion">
-                    <summary>施設情報</summary>
-                    <ul>
-                        <li><a href="corporation.html">法人情報</a></li>
-                        <li><a href="office.html">事業所情報</a></li>
-                        <li><a href="staff.html">職員情報</a></li>
-                    </ul>
-                </details>
-
+                <details class="nav-accordion"><summary>施設情報</summary><ul><li><a href="corporation.html">法人情報</a></li><li><a href="office.html">事業所情報</a></li><li><a href="staff.html">職員情報</a></li></ul></details>
                 <a href="partners.html" class="nav-link">取引先情報</a>
-
                 <a href="members.html" class="nav-link">利用者情報</a>
-
-                <details class="nav-accordion">
-                    <summary>スキル情報</summary>
-                    <ul>
-                        <li><a href="skills-settings.html">スキル設定</a></li>
-                        <li><a href="skills-evaluation.html">スキル評価</a></li>
-                    </ul>
-                </details>
-
-                <details class="nav-accordion">
-                    <summary>工賃・控除情報</summary>
-                    <ul>
-                        <li><a href="wages-settings.html">工賃設定</a></li>
-                        <li><a href="deductions-settings.html">控除設定</a></li>
-                        <li><a href="wages-evaluation.html">工賃レベル評価</a></li>
-                    </ul>
-                </details>
-
+                <details class="nav-accordion"><summary>スキル情報</summary><ul><li><a href="skills-settings.html">スキル設定</a></li><li><a href="skills-evaluation.html">スキル評価</a></li></ul></details>
+                <details class="nav-accordion"><summary>工賃・控除情報</summary><ul><li><a href="wages-settings.html">工賃設定</a></li><li><a href="deductions-settings.html">控除設定</a></li><li><a href="wages-evaluation.html">工賃レベル評価</a></li></ul></details>
                 <a href="savings.html" class="nav-link">積立金情報</a>
-
-                <a href="attendance.html" class="nav-link">出欠管理</a>
-
+                <a href="attendance.html" class="nav-link active">出欠管理</a>
                 <a href="projects.html" class="nav-link">案件管理</a>
-
-                <details class="nav-accordion">
-                    <summary>福祉事業活動</summary>
-                    <ul>
-                        <li><a href="support-plans.html">個別支援計画</a></li>
-                    </ul>
-                </details>
-
-                <details class="nav-accordion">
-                    <summary>会計</summary>
-                    <ul>
-                        <li><a href="accounting-monthly.html">月次会計</a></li>
-                        <li><a href="accounting-annual.html">年次会計</a></li>
-                    </ul>
-                </details>
-
-                <details class="nav-accordion">
-                    <summary>分析</summary>
-                    <ul>
-                        <li><a href="analytics.html">分析ダッシュボード</a></li>
-                    </ul>
-                </details>
-
+                <details class="nav-accordion"><summary>福祉事業活動</summary><ul><li><a href="support-plans.html">個別支援計画</a></li></ul></details>
+                <details class="nav-accordion"><summary>会計</summary><ul><li><a href="accounting-monthly.html">月次会計</a></li><li><a href="accounting-annual.html">年次会計</a></li></ul></details>
+                <details class="nav-accordion"><summary>分析</summary><ul><li><a href="analytics.html">分析ダッシュボード</a></li></ul></details>
                 <a href="account.html" class="nav-link">ユーザーアカウント</a>
-
                 <a href="settings.html" class="nav-link">（その他設定）</a>
-
             </nav>
-
             <div class="sidebar-footer">
-                <div class="user-info">
-                    <span class="user-name">田中 健司</span>
-                    <a href="#">ログアウト</a>
-                </div>
+                <div class="user-info"><span class="user-name">田中 健司</span><a href="#">ログアウト</a></div>
             </div>
-
         </aside>
+
         <main class="main-content">
 
             <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
 
-                <h1 style="margin: 0 0 var(--spacing-stack-md) 0;">出欠管理</h1>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
+                    <h1 style="margin: 0;">出欠管理</h1>
+                    
+                    <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                        <button class="btn btn-icon btn-icon-primary" onclick="changeDate(-1)"><span class="material-symbols-outlined">chevron_left</span></button>
+                        <input type="date" id="attendance-date" class="input-field" value="2025-11-22" style="width: auto;">
+                        <button class="btn btn-icon btn-icon-primary" onclick="changeDate(1)"><span class="material-symbols-outlined">chevron_right</span></button>
+                        <button class="btn btn-neutral" onclick="changeDate(0)">今日</button>
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: var(--spacing-stack-md); flex-wrap: wrap; margin-bottom: var(--spacing-stack-md);">
+                    
+                    <div class="card" style="flex: 1; min-width: 320px;">
+                        <div class="card-body" style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
+                            <div class="form-group" style="margin: 0; flex: 1; min-width: 160px;">
+                                <label class="form-label" for="filter-keyword">キーワード検索</label>
+                                <input type="text" id="filter-keyword" class="input-field" placeholder="氏名...">
+                            </div>
+                            <div class="form-group" style="margin: 0; flex: 1; min-width: 140px;">
+                                <label class="form-label" for="filter-status">出欠ステータス</label>
+                                <select id="filter-status" class="input-field">
+                                    <option value="">すべて</option>
+                                    <option value="present">通所</option>
+                                    <option value="remote">在宅</option>
+                                    <option value="off">お休み</option>
+                                    <option value="absent">欠席</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="flex: 0 0 auto;">
+                        <div class="card-body" style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
+                            <div class="form-group" style="margin: 0; width: 180px;">
+                                <label class="form-label" for="sort-order">並び替え</label>
+                                <select id="sort-order" class="input-field">
+                                    <option value="name_asc">氏名 (昇順)</option>
+                                    <option value="name_desc">氏名 (降順)</option>
+                                    <option value="time_asc">開始時間 (早い順)</option>
+                                    <option value="time_desc">開始時間 (遅い順)</option>
+                                    <option value="status">ステータス順</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
 
                 <div class="card">
+                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            出欠一覧 (2025年11月22日)
+                        </div>
+                        <button class="btn btn-icon btn-icon-primary" onclick="showModal('modal-edit-daily')" title="一括編集">
+                            <span class="material-symbols-outlined">edit</span>
+                        </button>
+                    </div>
                     <div class="card-body">
-                        <p>これは「出欠管理」ページです。ここに内容を記述します。</p>
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 20%;">氏名</th>
+                                        <th style="width: 15%;">ステータス</th>
+                                        <th style="width: 15%;">開始時間</th>
+                                        <th style="width: 15%;">終了時間</th>
+                                        <th style="width: 15%;">サービス</th>
+                                        <th style="width: 20%;">備考</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>山田 太郎</td>
+                                        <td><span class="badge badge-success">通所</span></td>
+                                        <td>10:00</td>
+                                        <td>15:00</td>
+                                        <td>
+                                            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                                <span class="badge badge-neutral">昼食</span>
+                                                <span class="badge badge-neutral">送迎(往復)</span>
+                                            </div>
+                                        </td>
+                                        <td>-</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>鈴木 花子</td>
+                                        <td><span class="badge badge-error">欠席</span></td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>体調不良のため</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>高橋 一郎</td>
+                                        <td><span class="badge badge-primary">在宅</span></td>
+                                        <td>10:00</td>
+                                        <td>14:00</td>
+                                        <td>-</td>
+                                        <td>PC作業</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>佐藤 次郎</td>
+                                        <td><span class="badge badge-neutral">お休み</span></td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <td>田中 三郎</td>
+                                        <td><span class="badge badge-cancelled">対象外</span></td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>-</td>
+                                        <td>入院中</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
             </div>
 
         </main>
+        
+        <div class="modal-backdrop" id="modal-edit-daily" style="display: none;">
+            <div class="modal-content" style="width: 98vw; max-width: none; height: 90vh;">
+                <div class="modal-header">
+                    出欠情報の編集 (2025年11月22日)
+                </div>
+                <div class="modal-body">
+                    <p style="margin-bottom: var(--spacing-stack-md);">
+                        本日の出欠状況を登録・編集します。
+                    </p>
+                    
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>氏名</th>
+                                    <th>ステータス</th>
+                                    <th>時間</th>
+                                    <th>サービス</th>
+                                    <th>備考</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>山田 太郎</td>
+                                    <td>
+                                        <select class="input-field">
+                                            <option value="present" selected>通所</option>
+                                            <option value="remote">在宅</option>
+                                            <option value="off">お休み</option>
+                                            <option value="absent">欠席</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 4px;">
+                                            <input type="time" class="input-field" value="10:00">
+                                            <span>~</span>
+                                            <input type="time" class="input-field" value="15:00">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; gap: 8px;">
+                                            <label><input type="checkbox" checked> 昼</label>
+                                            <label><input type="checkbox" checked> 送</label>
+                                            <label><input type="checkbox" checked> 迎</label>
+                                        </div>
+                                    </td>
+                                    <td><input type="text" class="input-field" value=""></td>
+                                </tr>
+                                <tr>
+                                    <td>鈴木 花子</td>
+                                    <td>
+                                        <select class="input-field">
+                                            <option value="present">通所</option>
+                                            <option value="remote">在宅</option>
+                                            <option value="off">お休み</option>
+                                            <option value="absent" selected>欠席</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 4px;">
+                                            <input type="time" class="input-field" disabled>
+                                            <span>~</span>
+                                            <input type="time" class="input-field" disabled>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; gap: 8px;">
+                                            <label><input type="checkbox" disabled> 昼</label>
+                                            <label><input type="checkbox" disabled> 送</label>
+                                            <label><input type="checkbox" disabled> 迎</label>
+                                        </div>
+                                    </td>
+                                    <td><input type="text" class="input-field" value="体調不良のため"></td>
+                                </tr>
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-neutral" onclick="hideModal('modal-edit-daily')">キャンセル</button>
+                    <button class="btn btn-primary" onclick="hideModal('modal-edit-daily'); alert('保存しました');">保存する</button>
+                </div>
+            </div>
         </div>
+
+    </div>
 
 </body>
 
