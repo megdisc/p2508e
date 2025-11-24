@@ -226,46 +226,16 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><strong>Lv.0</strong></td>
+                                    <td><strong>-</strong></td>
                                     <td>未習得、または見学段階。</td>
                                     <td class="col-actions">
                                         <div style="display: flex; justify-content: flex-end; gap: var(--spacing-2);">
-                                            <button class="btn btn-icon btn-icon-success btn-icon-sm"><span class="material-symbols-outlined">edit</span></button>
-                                            <button class="btn btn-icon btn-icon-error btn-icon-sm"><span class="material-symbols-outlined">delete</span></button>
+                                            <button class="btn btn-icon btn-icon-success btn-icon-sm" onclick="openLevelModal('l0')"><span class="material-symbols-outlined">edit</span></button>
+                                            <button class="btn btn-icon btn-icon-error btn-icon-sm" onclick="deleteLevel('l0')"><span class="material-symbols-outlined">delete</span></button>
                                         </div>
                                     </td>
                                 </tr>
-                                <tr>
-                                    <td><strong>Lv.1</strong></td>
-                                    <td>要支援。手順書を見ながら、または職員の指示を受けながら作業ができる。</td>
-                                    <td class="col-actions">
-                                        <div style="display: flex; justify-content: flex-end; gap: var(--spacing-2);">
-                                            <button class="btn btn-icon btn-icon-success btn-icon-sm"><span class="material-symbols-outlined">edit</span></button>
-                                            <button class="btn btn-icon btn-icon-error btn-icon-sm"><span class="material-symbols-outlined">delete</span></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Lv.2</strong></td>
-                                    <td>自立。通常の作業を独力で完遂できる。</td>
-                                    <td class="col-actions">
-                                        <div style="display: flex; justify-content: flex-end; gap: var(--spacing-2);">
-                                            <button class="btn btn-icon btn-icon-success btn-icon-sm"><span class="material-symbols-outlined">edit</span></button>
-                                            <button class="btn btn-icon btn-icon-error btn-icon-sm"><span class="material-symbols-outlined">delete</span></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Lv.3</strong></td>
-                                    <td>指導可。他の利用者への指導や、検品作業ができる。</td>
-                                    <td class="col-actions">
-                                        <div style="display: flex; justify-content: flex-end; gap: var(--spacing-2);">
-                                            <button class="btn btn-icon btn-icon-success btn-icon-sm"><span class="material-symbols-outlined">edit</span></button>
-                                            <button class="btn btn-icon btn-icon-error btn-icon-sm"><span class="material-symbols-outlined">delete</span></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            </tbody>
+                                </tbody>
                         </table>
                     </div>
                 </div>
@@ -306,12 +276,8 @@
                                 ※「スキル」を選択すると、その下に子階層は作れません。
                             </p>
                         </div>
-
-                        <div class="form-group">
-                            <label class="form-label" for="skill-description">説明 (任意)</label>
-                            <textarea id="skill-description" class="input-field" rows="3" placeholder="スキルの概要や評価基準のメモ"></textarea>
-                        </div>
-                    </form>
+                        
+                        </form>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-neutral" onclick="hideModal('modal-edit-skill')">キャンセル</button>
@@ -331,8 +297,8 @@
                         <input type="hidden" id="level-edit-mode">
 
                         <div class="form-group">
-                            <label class="form-label" for="level-name">レベル名</label>
-                            <input type="text" id="level-name" class="input-field" placeholder="例: Lv.1" required>
+                            <label class="form-label">レベル名</label>
+                            <div id="level-name-display" style="padding: var(--spacing-2) 0; font-weight: bold; font-size: var(--font-size-sm); color: var(--color-base-tertiary);"></div>
                         </div>
 
                         <div class="form-group">
@@ -352,7 +318,6 @@
 
     <script>
         // --- データ構造 ---
-        // isOpen: false (デフォルトで閉じる)
         let skillData = [
             { id: '1', parentId: null, name: 'マーケティング', type: 'category', isOpen: false },
             { id: '1-1', parentId: '1', name: 'SEO/広告', type: 'category', isOpen: false },
@@ -377,7 +342,7 @@
         ];
 
         let levelData = [
-            { id: 'l0', name: 'Lv.0', description: '未習得、または見学段階。' },
+            { id: 'l0', name: '-', description: '未習得、または見学段階。' },
             { id: 'l1', name: 'Lv.1', description: '要支援。手順書を見ながら、または職員の指示を受けながら作業ができる。' },
             { id: 'l2', name: 'Lv.2', description: '自立。通常の作業を独力で完遂できる。' },
             { id: 'l3', name: 'Lv.3', description: '指導可。他の利用者への指導や、検品作業ができる。' },
@@ -386,15 +351,13 @@
         // --- スキルツリー描画 ---
         const treeTableBody = document.querySelector('#skill-tree-table tbody');
 
-        // 親ノードの開閉状態をチェックして表示・非表示を判定するヘルパー関数
         function isNodeVisible(node) {
-            if (node.parentId === null) return true; // ルートは常に表示
-            
+            if (node.parentId === null) return true; 
             let current = node;
             while (current.parentId !== null) {
                 const parent = skillData.find(d => d.id === current.parentId);
-                if (!parent) return false; // 親が見つからない(異常系)
-                if (!parent.isOpen) return false; // 親が閉じていれば非表示
+                if (!parent) return false; 
+                if (!parent.isOpen) return false; 
                 current = parent;
             }
             return true;
@@ -403,19 +366,15 @@
         function renderTree() {
             treeTableBody.innerHTML = '';
             
-            // フラットなデータを階層順にトラバースするための再帰関数
             const renderNodes = (parentId, level) => {
                 const children = skillData.filter(item => item.parentId === parentId);
                 
                 children.forEach(node => {
                     const hasChildren = skillData.some(item => item.parentId === node.id);
                     const isExpanded = node.isOpen;
-                    
-                    // 親の状態をチェックして、初期表示クラス（hidden）を決定
                     const visible = isNodeVisible(node);
 
                     const tr = document.createElement('tr');
-                    // 初期状態が非表示の場合は hidden クラスを付与
                     tr.className = `tree-table-row ${visible ? '' : 'hidden'}`;
                     tr.dataset.id = node.id;
                     
@@ -457,8 +416,6 @@
                         </td>
                     `;
                     treeTableBody.appendChild(tr);
-
-                    // 子要素を再帰的に描画（DOM構造としてはフラットに並べる）
                     renderNodes(node.id, level + 1);
                 });
             };
@@ -466,12 +423,11 @@
             renderNodes(null, 0);
         }
 
-        // --- 開閉制御 (アニメーションなし) ---
         window.toggleNode = function(id) {
             const node = skillData.find(d => d.id === id);
             if (node) {
                 node.isOpen = !node.isOpen;
-                renderTree(); // データ更新して全再描画
+                renderTree(); 
             }
         };
 
@@ -481,7 +437,6 @@
             const modal = document.getElementById('modal-edit-skill');
             const modalTitle = document.getElementById('modal-title');
             const nameInput = document.getElementById('skill-name');
-            const descInput = document.getElementById('skill-description');
             
             document.getElementById('edit-id').value = id || '';
             document.getElementById('parent-id').value = parentId || '';
@@ -491,13 +446,11 @@
                 const node = skillData.find(d => d.id === id);
                 modalTitle.textContent = '編集';
                 nameInput.value = node.name;
-                descInput.value = ''; 
                 if (node.type === 'category') document.getElementById('type-category').checked = true;
                 else document.getElementById('type-item').checked = true;
             } else {
                 modalTitle.textContent = parentId === 'root' ? 'ルートカテゴリ追加' : '子要素追加';
                 nameInput.value = '';
-                descInput.value = '';
                 document.getElementById('type-category').checked = true;
             }
             showModal('modal-edit-skill');
@@ -522,9 +475,8 @@
                     parentId: parentId,
                     name: name,
                     type: type,
-                    isOpen: false // 新規作成時は閉じた状態
+                    isOpen: false 
                 });
-                // 親がいる場合、親を開いた状態にする (データ上)
                 if (parentId) {
                     const parent = skillData.find(d => d.id === parentId);
                     if (parent) parent.isOpen = true;
@@ -537,7 +489,7 @@
                 }
             }
             hideModal('modal-edit-skill');
-            renderTree(); // 追加・更新時は全再描画
+            renderTree(); 
         };
 
         window.deleteNode = function(id) {
@@ -593,7 +545,7 @@
         window.openLevelModal = function(id = null) {
             const modal = document.getElementById('modal-edit-level');
             const title = document.getElementById('modal-level-title');
-            const nameInput = document.getElementById('level-name');
+            const nameDisplay = document.getElementById('level-name-display'); // 表示用要素
             const descInput = document.getElementById('level-description');
 
             document.getElementById('level-edit-id').value = id || '';
@@ -602,11 +554,11 @@
             if (id) {
                 const level = levelData.find(l => l.id === id);
                 title.textContent = 'レベル編集';
-                nameInput.value = level.name;
+                nameDisplay.textContent = level.name; // テキスト表示
                 descInput.value = level.description;
             } else {
                 title.textContent = 'レベル追加';
-                nameInput.value = '';
+                nameDisplay.textContent = '新規レベル (自動採番)'; // 新規の場合の仮表示
                 descInput.value = '';
             }
             showModal('modal-edit-level');
@@ -615,24 +567,21 @@
         window.saveLevel = function() {
             const id = document.getElementById('level-edit-id').value;
             const mode = document.getElementById('level-edit-mode').value;
-            const name = document.getElementById('level-name').value;
             const desc = document.getElementById('level-description').value;
 
-            if (!name) {
-                alert('レベル名を入力してください');
-                return;
-            }
-
             if (mode === 'create') {
+                // 新規追加の場合、名前は自動生成または固定値を割り当てる等のロジックが必要
+                // 今回は簡易的に "Lv.X" を生成する例とします
+                const newName = 'Lv.' + levelData.length;
                 levelData.push({
                     id: 'l' + Date.now(),
-                    name: name,
+                    name: newName,
                     description: desc
                 });
             } else {
                 const level = levelData.find(l => l.id === id);
                 if (level) {
-                    level.name = name;
+                    // 名前は更新せず、説明のみ更新
                     level.description = desc;
                 }
             }

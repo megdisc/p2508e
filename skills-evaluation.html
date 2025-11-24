@@ -14,79 +14,523 @@
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
     <style>
-        /* 表示切り替えスイッチ (共通スタイル) */
-        .view-toggle {
+        /* ---------------------------------------------------------
+           スキルマップ (マトリクス表) スタイル
+           --------------------------------------------------------- */
+        
+        .matrix-container {
+            width: 100%;
+            overflow: auto;
+            max-height: 85vh;
+            border: var(--border-width-sm) solid var(--color-table-container-border);
+            border-radius: var(--radius-card);
+            background-color: var(--color-base-primary);
+            position: relative;
+        }
+
+        .table-matrix {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: max-content;
+        }
+
+        .table-matrix th, 
+        .table-matrix td {
+            border-right: var(--border-width-sm) solid var(--color-table-border);
+            border-bottom: var(--border-width-sm) solid var(--color-table-border);
+            padding: var(--spacing-2);
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .table-matrix th {
+            background-color: var(--color-base-secondary);
+            color: var(--color-base-tertiary);
+            font-weight: var(--font-weight-bold);
+            font-size: var(--font-size-xs);
+        }
+
+        /* --- Sticky Headers --- */
+        
+        /* 1. 利用者列ヘッダー (上部固定) */
+        .table-matrix thead th {
+            position: sticky;
+            top: 0;
+            z-index: 25;
+            background-color: var(--color-base-primary);
+            
+            /* スキル名 (tbody th) とスタイルを統一 */
+            color: var(--color-base-tertiary);
+            font-weight: var(--font-weight-medium);
+            font-size: var(--font-size-sm);
+            
+            height: auto;
+            min-width: 48px;
+            vertical-align: bottom;
+            padding-bottom: var(--spacing-3);
+            border-bottom: var(--border-width-md) solid var(--color-base-quinary);
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .table-matrix thead th:hover {
+            background-color: var(--color-base-secondary);
+            color: var(--color-theme-main);
+        }
+
+        /* 2. スキル行ヘッダー (左側固定) */
+        .table-matrix tbody th {
+            position: sticky;
+            left: 0;
+            z-index: 20;
+            text-align: left;
+            background-color: var(--color-base-primary);
+            
+            color: var(--color-base-tertiary);
+            font-weight: var(--font-weight-medium);
+            font-size: var(--font-size-sm);
+            
+            width: auto;
+            max-width: 320px;
+            white-space: nowrap;
+            
+            border-right: var(--border-width-md) solid var(--color-base-quinary);
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .table-matrix tbody th:hover {
+            background-color: var(--color-base-secondary);
+            color: var(--color-theme-main);
+        }
+
+        /* 3. 左上隅セル (固定 x 固定) */
+        .table-matrix thead th.cell-corner {
+            position: sticky;
+            left: 0;
+            top: 0;
+            z-index: 30;
+            background-color: var(--color-base-primary);
+            border-right: var(--border-width-md) solid var(--color-base-quinary);
+            border-bottom: var(--border-width-md) solid var(--color-base-quinary);
+            min-width: 240px;
+            cursor: default;
+        }
+
+        /* 利用者名の縦書き */
+        .vertical-text {
+            writing-mode: vertical-rl;
+            letter-spacing: 0.1em;
+            margin: 0 auto;
+            max-height: 140px;
+            text-align: left;
+            pointer-events: none;
+        }
+
+        /* カテゴリ行 */
+        .row-category th {
+            background-color: var(--color-base-secondary);
+            color: var(--color-base-tertiary);
+            font-size: var(--font-size-sm);
+            font-weight: var(--font-weight-bold);
+            padding-top: var(--spacing-3);
+            padding-bottom: var(--spacing-3);
+            border-top: var(--border-width-sm) solid var(--color-table-border);
+            border-right: var(--border-width-md) solid var(--color-base-quinary);
+            cursor: default !important;
+        }
+        .row-category th:hover {
+            background-color: var(--color-base-secondary);
+            color: var(--color-base-tertiary);
+        }
+        .row-category td {
+            background-color: var(--color-base-secondary);
+            border-top: var(--border-width-sm) solid var(--color-table-border);
+        }
+
+        /* 評価セル (表示のみ) */
+        .cell-eval {
+            width: 32px;
+            height: 32px;
+            margin: 0 auto;
             display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-button);
+            font-weight: var(--font-weight-bold);
+            font-size: var(--font-size-xs);
+            cursor: help; /* ツールチップが出ることを示唆 */
+            border: var(--border-width-sm) solid transparent;
+        }
+
+        /* レベル別カラー */
+        .status-lv5 { background-color: var(--color-theme-main); color: var(--color-base-primary); }
+        .status-lv4 { background-color: color-mix(in srgb, var(--color-theme-main) 80%, white); color: var(--color-base-primary); }
+        .status-lv3 { background-color: color-mix(in srgb, var(--color-theme-main) 60%, white); color: var(--color-base-primary); }
+        .status-lv2 { background-color: color-mix(in srgb, var(--color-theme-main) 40%, white); color: var(--color-base-tertiary); }
+        .status-lv1 { background-color: color-mix(in srgb, var(--color-theme-main) 20%, white); color: var(--color-theme-main); }
+        .status-lv0 { background-color: var(--color-base-secondary); color: var(--color-base-quaternary); }
+
+        /* ---------------------------------------------------------
+           カスタムツールチップ
+           --------------------------------------------------------- */
+        .custom-tooltip {
+            position: fixed;
+            background-color: var(--palette-translucent-0008);
+            color: var(--color-base-primary);
+            padding: var(--spacing-2) var(--spacing-3);
+            border-radius: var(--radius-sm);
+            font-size: var(--font-size-xs);
+            pointer-events: none;
+            z-index: 9999; /* 最前面 */
+            white-space: nowrap;
+            box-shadow: var(--box-shadow-md);
+            opacity: 0;
+            transition: opacity 0.2s;
+            transform: translate(-50%, -100%); /* マウスの上に表示 */
+            margin-top: -10px;
+        }
+        .custom-tooltip.show {
+            opacity: 1;
+        }
+
+        /* ---------------------------------------------------------
+           個別評価モーダル (ゲージUI)
+           --------------------------------------------------------- */
+        
+        .eval-gauge-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .eval-gauge-table th,
+        .eval-gauge-table td {
+            padding: var(--spacing-2);
+            vertical-align: middle;
+            border-bottom: 1px solid var(--color-base-secondary);
+        }
+        .eval-gauge-table tr:last-child td { border-bottom: none; }
+        
+        /* カテゴリ行 (モーダル内) */
+        .gauge-row-category {
+            background-color: var(--color-base-secondary);
+            font-weight: bold;
+            font-size: var(--font-size-sm);
+            color: var(--color-base-tertiary);
+        }
+        
+        /* 名称列 (スキル名/利用者名) */
+        .gauge-col-name {
+            width: 40%;
+            font-weight: var(--font-weight-medium);
+            font-size: var(--font-size-sm);
+        }
+
+        /* ゲージ本体 */
+        .gauge-container {
+            display: flex;
+            align-items: center;
+            gap: 2px;
             background-color: var(--color-base-secondary);
             border-radius: var(--radius-button);
             padding: 2px;
-            border: 1px solid var(--color-base-quinary);
-        }
-        .view-toggle label {
-            padding: var(--spacing-1) var(--spacing-3);
-            font-size: var(--font-size-sm);
-            cursor: pointer;
-            border-radius: var(--radius-button);
-            transition: all 0.2s;
-            color: var(--color-base-quaternary);
-        }
-        .view-toggle input[type="radio"] { display: none; }
-        .view-toggle input[type="radio"]:checked + label {
-            background-color: var(--color-theme-main);
-            color: var(--color-base-primary);
-            box-shadow: var(--box-shadow-sm);
-            font-weight: var(--font-weight-medium);
+            width: 100%;
+            height: 32px;
         }
 
-        /* スキルレベルバッジ (簡易版) */
-        .level-badge {
-            display: inline-block;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.7rem;
+        /* ゲージセグメント */
+        .gauge-segment {
+            flex: 1;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.75rem;
             font-weight: bold;
-            color: white;
+            color: var(--color-base-quaternary);
+            background-color: var(--color-base-primary);
+            transition: all 0.15s ease;
+        }
+        .gauge-segment:first-child { border-top-left-radius: calc(var(--radius-button) - 2px); border-bottom-left-radius: calc(var(--radius-button) - 2px); }
+        .gauge-segment:last-child { border-top-right-radius: calc(var(--radius-button) - 2px); border-bottom-right-radius: calc(var(--radius-button) - 2px); }
+        .gauge-segment:hover { background-color: var(--palette-CEF); }
+
+        /* 未評価 (-) */
+        .gauge-segment[data-level="0"] {
+            flex: 0 0 32px;
+            border-right: 1px solid var(--color-base-secondary);
             margin-right: 4px;
         }
-        .lv-1 { background-color: #81C784; } /* 緑 */
-        .lv-2 { background-color: #4DB6AC; } /* 青緑 */
-        .lv-3 { background-color: #64B5F6; } /* 青 */
+        .gauge-segment[data-level="0"].active { background-color: var(--color-base-quaternary); color: white; }
 
-        /* カード内の統計情報スタイル */
-        .stat-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: var(--font-size-sm);
-            margin-bottom: var(--spacing-1);
-            color: var(--color-base-tertiary);
-        }
-        .stat-label { color: var(--color-base-quaternary); }
-        .stat-value { font-weight: bold; }
+        /* 選択状態 */
+        .gauge-segment.active[data-level="1"] { background-color: color-mix(in srgb, var(--color-theme-main) 20%, white); color: var(--color-theme-main); }
+        .gauge-segment.active[data-level="2"] { background-color: color-mix(in srgb, var(--color-theme-main) 40%, white); color: var(--color-base-tertiary); }
+        .gauge-segment.active[data-level="3"] { background-color: color-mix(in srgb, var(--color-theme-main) 60%, white); color: var(--color-base-primary); }
+        .gauge-segment.active[data-level="4"] { background-color: color-mix(in srgb, var(--color-theme-main) 80%, white); color: var(--color-base-primary); }
+        .gauge-segment.active[data-level="5"] { background-color: var(--color-theme-main); color: var(--color-base-primary); }
+
+        /* 塗りつぶし表現 (下位レベル) */
+        .gauge-segment.filled[data-level="1"] { background-color: color-mix(in srgb, var(--color-theme-main) 20%, white); opacity: 0.5; }
+        .gauge-segment.filled[data-level="2"] { background-color: color-mix(in srgb, var(--color-theme-main) 40%, white); opacity: 0.6; }
+        .gauge-segment.filled[data-level="3"] { background-color: color-mix(in srgb, var(--color-theme-main) 60%, white); opacity: 0.7; }
+        .gauge-segment.filled[data-level="4"] { background-color: color-mix(in srgb, var(--color-theme-main) 80%, white); opacity: 0.8; }
+        .gauge-segment.filled[data-level="5"] { background-color: var(--color-theme-main); opacity: 0.9; }
 
     </style>
 
     <script>
+        // -----------------------------------------------------
+        // ダミーデータ定義 (歴代総理大臣20名, スキル30個)
+        // -----------------------------------------------------
+        const dummyUsers = [
+            "伊藤 博文", "黒田 清隆", "山縣 有朋", "松方 正義", "大隈 重信",
+            "桂 太郎", "西園寺 公望", "山本 権兵衛", "寺内 正毅", "原 敬",
+            "高橋 是清", "加藤 友三郎", "清浦 奎吾", "加藤 高明", "若槻 禮次郎",
+            "田中 義一", "浜口 雄幸", "犬養 毅", "斎藤 実", "岡田 啓介"
+        ];
+
+        const dummySkillCategories = [
+            {
+                name: "PC基本操作",
+                skills: [
+                    "電源オンオフ", "マウス操作", "タイピング(かな)", "タイピング(英数)", "ファイル保存", 
+                    "フォルダ整理", "検索エンジン活用", "ショートカットキー", "セキュリティ基礎", "チャットツール"
+                ]
+            },
+            {
+                name: "Officeソフト",
+                skills: [
+                    "Word文字入力", "Word書式設定", "Word印刷設定", "Excelデータ入力", "Excel表作成", 
+                    "Excel四則演算", "Excel関数基礎", "PowerPointスライド", "PDF保存", "バックアップ"
+                ]
+            },
+            {
+                name: "軽作業",
+                skills: [
+                    "封入作業", "封緘", "宛名シール貼り", "切手貼り", "チラシ折り", 
+                    "検品(目視)", "計量・袋詰め", "箱組み立て", "梱包", "運搬・積み下ろし"
+                ]
+            }
+        ];
+
+        // 習熟レベルの説明・評価基準 (ダミー)
+        const dummyLevelDescriptions = {
+            0: "未評価: 未習得、または見学段階。",
+            1: "Lv.1: 要支援。手順書を見ながら、または職員の指示を受けながら作業ができる。",
+            2: "Lv.2: 自立。通常の作業を独力で完遂できる。",
+            3: "Lv.3: 指導可。他の利用者への指導や、検品作業ができる。",
+            4: "Lv.4: 高度なスキル。イレギュラー対応も可能。",
+            5: "Lv.5: 専門家レベル。マニュアル作成や改善提案ができる。"
+        };
+
+        // ページ読み込み時に初期化
+        document.addEventListener('DOMContentLoaded', () => {
+            initTooltip(); // ツールチップ初期化
+            renderMatrixHeader();
+            renderMatrixBody();
+        });
+
         function showModal(id) { document.getElementById(id).style.display = 'flex'; }
         function hideModal(id) { document.getElementById(id).style.display = 'none'; }
 
-        // 表示切り替え
-        function switchView(viewName) {
-            document.getElementById('view-by-member').style.display = 'none';
-            document.getElementById('view-by-skill').style.display = 'none';
-            
-            if (viewName === 'member') {
-                document.getElementById('view-by-member').style.display = 'grid';
-            } else if (viewName === 'skill') {
-                document.getElementById('view-by-skill').style.display = 'grid';
-            }
+        // -----------------------------------------------------
+        // ツールチップ制御
+        // -----------------------------------------------------
+        let tooltipEl;
+
+        function initTooltip() {
+            tooltipEl = document.createElement('div');
+            tooltipEl.className = 'custom-tooltip';
+            document.body.appendChild(tooltipEl);
+
+            // マウス移動・オーバー・アウトの監視
+            document.addEventListener('mouseover', e => {
+                const target = e.target.closest('[data-tooltip]');
+                if (target) {
+                    const text = target.getAttribute('data-tooltip');
+                    if (text) {
+                        tooltipEl.textContent = text;
+                        tooltipEl.classList.add('show');
+                        updateTooltipPosition(e);
+                    }
+                }
+            });
+
+            document.addEventListener('mousemove', e => {
+                if (tooltipEl.classList.contains('show')) {
+                    updateTooltipPosition(e);
+                }
+            });
+
+            document.addEventListener('mouseout', e => {
+                const target = e.target.closest('[data-tooltip]');
+                if (target) {
+                    tooltipEl.classList.remove('show');
+                }
+            });
         }
 
-        // 編集モーダルを開く (ダミーデータセット)
-        function openEditModal(userName) {
-            document.getElementById('modal-user-name').textContent = userName;
-            // フォームのリセット等の処理をここに記述
-            showModal('modal-edit-evaluation');
+        function updateTooltipPosition(e) {
+            // カーソルの少し上に表示
+            tooltipEl.style.left = e.clientX + 'px';
+            tooltipEl.style.top = e.clientY + 'px';
         }
+
+        // -----------------------------------------------------
+        // マトリクス描画ロジック
+        // -----------------------------------------------------
+        function renderMatrixHeader() {
+            const tr = document.getElementById('matrix-header-row');
+            // 左上セル
+            const thCorner = document.createElement('th');
+            thCorner.className = 'cell-corner';
+            tr.appendChild(thCorner);
+
+            // 利用者列ヘッダー
+            dummyUsers.forEach(user => {
+                const th = document.createElement('th');
+                th.onclick = () => openUserSkillModal(user);
+                th.innerHTML = `<div class="vertical-text">${user}</div>`;
+                tr.appendChild(th);
+            });
+        }
+
+        function renderMatrixBody() {
+            const tbody = document.getElementById('matrix-body');
+            
+            dummySkillCategories.forEach(cat => {
+                // カテゴリ行
+                const catTr = document.createElement('tr');
+                catTr.className = 'row-category';
+                
+                const catTh = document.createElement('th');
+                catTh.textContent = cat.name;
+                catTr.appendChild(catTh);
+
+                const catTd = document.createElement('td');
+                catTd.colSpan = dummyUsers.length; // 全利用者分
+                catTr.appendChild(catTd);
+                
+                tbody.appendChild(catTr);
+
+                // スキル行
+                cat.skills.forEach(skill => {
+                    const tr = document.createElement('tr');
+                    
+                    // スキル名ヘッダー
+                    const th = document.createElement('th');
+                    th.innerHTML = `&emsp;${skill}`;
+                    th.onclick = () => openSkillUserModal(skill);
+                    tr.appendChild(th);
+
+                    // 各利用者の評価セル (ランダム)
+                    dummyUsers.forEach(user => {
+                        const td = document.createElement('td');
+                        const lv = Math.floor(Math.random() * 6); // 0-5
+                        const content = lv === 0 ? '-' : lv;
+                        const desc = dummyLevelDescriptions[lv] || "";
+
+                        // data-tooltip 属性を設定
+                        td.innerHTML = `<div class="cell-eval status-lv${lv}" data-tooltip="${desc}">${content}</div>`;
+                        tr.appendChild(td);
+                    });
+
+                    tbody.appendChild(tr);
+                });
+            });
+        }
+
+        // -----------------------------------------------------
+        // 共通ロジック: ゲージ生成と操作
+        // -----------------------------------------------------
+        function generateGaugeHTML(currentLevel) {
+            let html = '';
+            
+            // レベル0 (未評価)
+            const desc0 = dummyLevelDescriptions[0] || "";
+            html += `<div class="gauge-segment ${currentLevel === 0 ? 'active' : ''}" data-level="0" data-tooltip="${desc0}" onclick="selectGauge(this, 0)">-</div>`;
+            
+            // レベル1-5
+            for (let i = 1; i <= 5; i++) {
+                let classes = 'gauge-segment';
+                if (i === currentLevel) classes += ' active';
+                else if (i < currentLevel) classes += ' filled';
+                
+                const desc = dummyLevelDescriptions[i] || "";
+                html += `<div class="${classes}" data-level="${i}" data-tooltip="${desc}" onclick="selectGauge(this, ${i})">${i}</div>`;
+            }
+            return html;
+        }
+
+        window.selectGauge = function(el, level) {
+            const container = el.parentElement;
+            const segments = container.querySelectorAll('.gauge-segment');
+            segments.forEach(seg => {
+                const segLevel = parseInt(seg.dataset.level);
+                seg.className = 'gauge-segment';
+                
+                if (segLevel === 0) {
+                    if (level === 0) seg.classList.add('active');
+                } else {
+                    if (segLevel === level) seg.classList.add('active');
+                    else if (segLevel < level && level > 0) seg.classList.add('filled');
+                }
+            });
+        };
+
+        // -----------------------------------------------------
+        // 利用者個別モーダル
+        // -----------------------------------------------------
+        function openUserSkillModal(userName) {
+            document.getElementById('modal-user-name-title').textContent = userName;
+            renderUserGaugeList();
+            showModal('modal-user-skills');
+        }
+
+        function renderUserGaugeList() {
+            const container = document.getElementById('user-skill-list');
+            container.innerHTML = '';
+            
+            dummySkillCategories.forEach(group => {
+                const catRow = document.createElement('tr');
+                catRow.innerHTML = `<td colspan="2" class="gauge-row-category">${group.name}</td>`;
+                container.appendChild(catRow);
+                
+                group.skills.forEach((skill) => {
+                    const row = document.createElement('tr');
+                    const initialLevel = Math.floor(Math.random() * 6); 
+                    row.innerHTML = `
+                        <td class="gauge-col-name">${skill}</td>
+                        <td><div class="gauge-container">${generateGaugeHTML(initialLevel)}</div></td>
+                    `;
+                    container.appendChild(row);
+                });
+            });
+        }
+
+        // -----------------------------------------------------
+        // スキル個別モーダル
+        // -----------------------------------------------------
+        function openSkillUserModal(skillName) {
+            document.getElementById('modal-skill-name-title').textContent = skillName;
+            renderSkillUserList();
+            showModal('modal-skill-users');
+        }
+
+        function renderSkillUserList() {
+            const container = document.getElementById('skill-user-list');
+            container.innerHTML = '';
+            
+            dummyUsers.forEach((user) => {
+                const row = document.createElement('tr');
+                const initialLevel = Math.floor(Math.random() * 6);
+                row.innerHTML = `
+                    <td class="gauge-col-name">${user}</td>
+                    <td><div class="gauge-container">${generateGaugeHTML(initialLevel)}</div></td>
+                `;
+                container.appendChild(row);
+            });
+        }
+
     </script>
 </head>
 
@@ -133,254 +577,94 @@
                     <h1 style="margin: 0;">スキル評価</h1>
                 </div>
 
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
-                    <div class="view-toggle">
-                        <input type="radio" id="mode-member" name="view-mode" checked onchange="switchView('member')">
-                        <label for="mode-member">利用者ごと</label>
-                        
-                        <input type="radio" id="mode-skill" name="view-mode" onchange="switchView('skill')">
-                        <label for="mode-skill">スキルごと</label>
-                    </div>
+                <div class="matrix-container">
+                    <table class="table-matrix">
+                        <thead>
+                            <tr id="matrix-header-row">
+                                </tr>
+                        </thead>
+                        <tbody id="matrix-body">
+                            </tbody>
+                    </table>
                 </div>
-
-                <div style="display: flex; gap: var(--spacing-stack-md); flex-wrap: wrap; margin-bottom: var(--spacing-stack-md);">
-                    
-                    <div class="card" style="flex: 1; min-width: 320px;">
-                        <div class="card-body" style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
-                            <div class="form-group" style="margin: 0; flex: 1; min-width: 200px;">
-                                <label class="form-label">キーワード検索</label>
-                                <input type="text" class="input-field" placeholder="氏名、スキル名...">
-                            </div>
-                            <div class="form-group" style="margin: 0; min-width: 160px;">
-                                <label class="form-label">カテゴリ/事業所</label>
-                                <select class="input-field">
-                                    <option value="">すべて</option>
-                                    <option value="office_a">こんぱす天神</option>
-                                    <option value="cat_pc">PC基本操作</option>
-                                    <option value="cat_work">軽作業</option>
-                                </select>
-                            </div>
-                            <div class="form-group" style="margin: 0; min-width: 140px;">
-                                <label class="form-label">評価状態</label>
-                                <select class="input-field">
-                                    <option value="">すべて</option>
-                                    <option value="evaluated">評価済み</option>
-                                    <option value="unevaluated">未評価</option>
-                                </select>
-                            </div>
-                        </div>
+                
+                <div style="margin-top: var(--spacing-2); display: flex; gap: var(--spacing-4); font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
+                    <div style="display: flex; align-items: center; gap: 4px;">
+                        <div class="cell-eval status-lv0" style="width: 20px; height: 20px; cursor: default;">-</div> 未評価
                     </div>
-
-                    <div class="card" style="flex: 0 0 auto;">
-                        <div class="card-body" style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
-                            <div class="form-group" style="margin: 0; width: 160px;">
-                                <label class="form-label">並び替え</label>
-                                <select class="input-field">
-                                    <option value="updated_desc">更新日 (新しい順)</option>
-                                    <option value="updated_asc">更新日 (古い順)</option>
-                                    <option value="name_asc">名称 (昇順)</option>
-                                </select>
-                            </div>
-                        </div>
+                    <div style="display: flex; align-items: center; gap: 4px;">
+                        <div class="cell-eval status-lv1" style="width: 20px; height: 20px; cursor: default;">1</div> Lv.1
                     </div>
-
-                </div>
-
-                <div id="view-by-member" class="card-grid">
-
-                    <div class="card">
-                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <div style="font-size: var(--font-size-md); font-weight: bold;">山田 太郎</div>
-                            </div>
-                            <button class="btn btn-icon btn-icon-success btn-icon-sm" onclick="openEditModal('山田 太郎')"><span class="material-symbols-outlined">edit</span></button>
-                        </div>
-                        <div class="card-body">
-                            <dl class="data-list" style="grid-template-columns: 1fr 1fr; gap: var(--spacing-2); margin-bottom: var(--spacing-4);">
-                                <div><dt>習得スキル</dt><dd>8</dd></div>
-                                <div><dt>最終評価日</dt><dd>2025.10.20</dd></div>
-                            </dl>
-                            
-                            <div style="margin-bottom: var(--spacing-2);">
-                                <div style="font-size: var(--font-size-xs); color: var(--color-base-quaternary); margin-bottom: var(--spacing-1);">最近更新</div>
-                                <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-2);">
-                                    <span class="badge badge-neutral">タイピング <span style="color: var(--color-semantic-primary-main);">Lv.2</span></span>
-                                    <span class="badge badge-neutral">封入作業 <span style="color: var(--color-base-tertiary);">Lv.1</span></span>
-                                </div>
-                            </div>
-                            
-                            <div style="margin-top: var(--spacing-4); padding-top: var(--spacing-3); border-top: var(--border-subtle); text-align: center;">
-                                <a href="#" style="font-size: var(--font-size-sm);">詳細を見る</a>
-                            </div>
-                        </div>
+                    <div style="display: flex; align-items: center; gap: 4px;">
+                        <div class="cell-eval status-lv2" style="width: 20px; height: 20px; cursor: default;">2</div> Lv.2
                     </div>
-
-                    <div class="card">
-                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <div style="font-size: var(--font-size-md); font-weight: bold;">鈴木 花子</div>
-                            </div>
-                            <button class="btn btn-icon btn-icon-success btn-icon-sm" onclick="openEditModal('鈴木 花子')"><span class="material-symbols-outlined">edit</span></button>
-                        </div>
-                        <div class="card-body">
-                            <dl class="data-list" style="grid-template-columns: 1fr 1fr; gap: var(--spacing-2); margin-bottom: var(--spacing-4);">
-                                <div><dt>習得スキル</dt><dd>12</dd></div>
-                                <div><dt>最終評価日</dt><dd>2025.10.18</dd></div>
-                            </dl>
-                            
-                            <div style="margin-bottom: var(--spacing-2);">
-                                <div style="font-size: var(--font-size-xs); color: var(--color-base-quaternary); margin-bottom: var(--spacing-1);">最近更新</div>
-                                <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-2);">
-                                    <span class="badge badge-neutral">Word基礎 <span style="color: var(--color-semantic-success-main);">Lv.3</span></span>
-                                    <span class="badge badge-neutral">Excel入力 <span style="color: var(--color-semantic-primary-main);">Lv.2</span></span>
-                                </div>
-                            </div>
-
-                             <div style="margin-top: var(--spacing-4); padding-top: var(--spacing-3); border-top: var(--border-subtle); text-align: center;">
-                                <a href="#" style="font-size: var(--font-size-sm);">詳細を見る</a>
-                            </div>
-                        </div>
+                    <div style="display: flex; align-items: center; gap: 4px;">
+                        <div class="cell-eval status-lv3" style="width: 20px; height: 20px; cursor: default;">3</div> Lv.3
                     </div>
-
-                    <div class="card">
-                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <div style="font-size: var(--font-size-md); font-weight: bold;">高橋 一郎</div>
-                            </div>
-                            <button class="btn btn-icon btn-icon-success btn-icon-sm" onclick="openEditModal('高橋 一郎')"><span class="material-symbols-outlined">edit</span></button>
-                        </div>
-                        <div class="card-body">
-                            <dl class="data-list" style="grid-template-columns: 1fr 1fr; gap: var(--spacing-2); margin-bottom: var(--spacing-4);">
-                                <div><dt>習得スキル</dt><dd>3</dd></div>
-                                <div><dt>最終評価日</dt><dd>2025.09.30</dd></div>
-                            </dl>
-                            
-                            <div style="margin-bottom: var(--spacing-2);">
-                                <div style="font-size: var(--font-size-xs); color: var(--color-base-quaternary); margin-bottom: var(--spacing-1);">最近更新</div>
-                                <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-2);">
-                                    <span class="badge badge-neutral">清掃 <span style="color: var(--color-base-tertiary);">Lv.1</span></span>
-                                </div>
-                            </div>
-
-                             <div style="margin-top: var(--spacing-4); padding-top: var(--spacing-3); border-top: var(--border-subtle); text-align: center;">
-                                <a href="#" style="font-size: var(--font-size-sm);">詳細を見る</a>
-                            </div>
-                        </div>
+                    <div style="display: flex; align-items: center; gap: 4px;">
+                        <div class="cell-eval status-lv4" style="width: 20px; height: 20px; cursor: default;">4</div> Lv.4
                     </div>
-
-                </div>
-
-                <div id="view-by-skill" class="card-grid" style="display: none;">
-
-                    <div class="card">
-                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
-                            <div>
-                                <span class="badge badge-neutral" style="margin-bottom: var(--spacing-1);">PC基本操作</span>
-                                <div style="font-size: var(--font-size-md); font-weight: bold;">タイピング (かな)</div>
-                            </div>
-                            <button class="btn btn-icon btn-icon-neutral btn-icon-sm"><span class="material-symbols-outlined">more_horiz</span></button>
-                        </div>
-                        <div class="card-body">
-                            <dl class="data-list" style="grid-template-columns: 1fr 1fr; gap: var(--spacing-2); margin-bottom: var(--spacing-4);">
-                                <div><dt>習得者数</dt><dd>12 人</dd></div>
-                                <div><dt>平均レベル</dt><dd>1.8</dd></div>
-                            </dl>
-                        </div>
+                    <div style="display: flex; align-items: center; gap: 4px;">
+                        <div class="cell-eval status-lv5" style="width: 20px; height: 20px; cursor: default;">5</div> Lv.5
                     </div>
-
-                    <div class="card">
-                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
-                            <div>
-                                <span class="badge badge-neutral" style="margin-bottom: var(--spacing-1);">軽作業</span>
-                                <div style="font-size: var(--font-size-md); font-weight: bold;">封入作業</div>
-                            </div>
-                            <button class="btn btn-icon btn-icon-neutral btn-icon-sm"><span class="material-symbols-outlined">more_horiz</span></button>
-                        </div>
-                        <div class="card-body">
-                            <dl class="data-list" style="grid-template-columns: 1fr 1fr; gap: var(--spacing-2); margin-bottom: var(--spacing-4);">
-                                <div><dt>習得者数</dt><dd>24 人</dd></div>
-                                <div><dt>平均レベル</dt><dd>2.5</dd></div>
-                            </dl>
-                        </div>
-                    </div>
-
-                    <div class="card">
-                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
-                            <div>
-                                <span class="badge badge-neutral" style="margin-bottom: var(--spacing-1);">Officeソフト</span>
-                                <div style="font-size: var(--font-size-md); font-weight: bold;">Word (基本文書作成)</div>
-                            </div>
-                            <button class="btn btn-icon btn-icon-neutral btn-icon-sm"><span class="material-symbols-outlined">more_horiz</span></button>
-                        </div>
-                        <div class="card-body">
-                            <dl class="data-list" style="grid-template-columns: 1fr 1fr; gap: var(--spacing-2); margin-bottom: var(--spacing-4);">
-                                <div><dt>習得者数</dt><dd>5 人</dd></div>
-                                <div><dt>平均レベル</dt><dd>1.2</dd></div>
-                            </dl>
-                        </div>
-                    </div>
-
                 </div>
 
             </div>
 
         </main>
         
-        <div class="modal-backdrop" id="modal-edit-evaluation" style="display: none;">
-            <div class="modal-content" style="max-width: 600px;">
+        <div class="modal-backdrop" id="modal-user-skills" style="display: none;">
+            <div class="modal-content" style="max-width: 800px;">
                 <div class="modal-header">
-                    スキル評価編集
+                    スキル評価編集 (利用者): <span id="modal-user-name-title">利用者名</span>
                 </div>
                 <div class="modal-body">
-                    <div style="margin-bottom: var(--spacing-4); font-weight: bold; font-size: var(--font-size-lg);">
-                        <span id="modal-user-name">利用者名</span>
+                    <div style="margin-bottom: var(--spacing-4); font-size: var(--font-size-sm); color: var(--color-base-quaternary);">
+                        評価レベルを選択してください。
                     </div>
                     
-                    <div class="form-group">
-                        <label class="form-label">対象スキル</label>
-                        <select class="input-field">
-                            <option value="">スキルを選択してください</option>
-                            <option value="typing">タイピング (かな)</option>
-                            <option value="word">Word (基本文書作成)</option>
-                            <option value="packing">封入作業</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label">評価レベル</label>
-                        <div style="display: flex; gap: var(--spacing-4);">
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="eval-level" id="eval-lv0">
-                                <label class="form-check-label" for="eval-lv0">Lv.0 (未習得)</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="eval-level" id="eval-lv1">
-                                <label class="form-check-label" for="eval-lv1">Lv.1 (要支援)</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="eval-level" id="eval-lv2">
-                                <label class="form-check-label" for="eval-lv2">Lv.2 (自立)</label>
-                            </div>
-                            <div class="form-check">
-                                <input class="form-check-input" type="radio" name="eval-level" id="eval-lv3">
-                                <label class="form-check-label" for="eval-lv3">Lv.3 (指導可)</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">評価日</label>
-                        <input type="date" class="input-field" value="2025-10-20">
-                    </div>
-
-                    <div class="form-group">
-                        <label class="form-label">コメント・特記事項</label>
-                        <textarea class="input-field" rows="4" placeholder="評価の根拠や、できたこと・課題などを記入"></textarea>
-                    </div>
+                    <table class="eval-gauge-table">
+                        <thead>
+                            <tr>
+                                <th style="text-align: left;">スキル名</th>
+                                <th style="text-align: left;">評価レベル (0:未 ～ 5:高)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="user-skill-list">
+                            </tbody>
+                    </table>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-neutral" onclick="hideModal('modal-edit-evaluation')">キャンセル</button>
-                    <button class="btn btn-primary" onclick="hideModal('modal-edit-evaluation'); alert('保存しました');">保存する</button>
+                    <button class="btn btn-neutral" onclick="hideModal('modal-user-skills')">キャンセル</button>
+                    <button class="btn btn-primary" onclick="hideModal('modal-user-skills'); alert('一括保存しました');">保存する</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-backdrop" id="modal-skill-users" style="display: none;">
+            <div class="modal-content" style="max-width: 800px;">
+                <div class="modal-header">
+                    スキル評価編集 (スキル): <span id="modal-skill-name-title">スキル名</span>
+                </div>
+                <div class="modal-body">
+                    <div style="margin-bottom: var(--spacing-4); font-size: var(--font-size-sm); color: var(--color-base-quaternary);">
+                        利用者ごとの評価レベルを選択してください。
+                    </div>
+                    
+                    <table class="eval-gauge-table">
+                        <thead>
+                            <tr>
+                                <th style="text-align: left;">利用者名</th>
+                                <th style="text-align: left;">評価レベル (0:未 ～ 5:高)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="skill-user-list">
+                            </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-neutral" onclick="hideModal('modal-skill-users')">キャンセル</button>
+                    <button class="btn btn-primary" onclick="hideModal('modal-skill-users'); alert('一括保存しました');">保存する</button>
                 </div>
             </div>
         </div>
