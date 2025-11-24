@@ -49,6 +49,18 @@
             contents.forEach(content => content.classList.remove('is-active'));
             document.getElementById(tabId).classList.add('is-active');
         }
+    
+        // サイドバーの現在地連動（アコーディオン自動展開）
+        document.addEventListener("DOMContentLoaded", () => {
+            const currentFile = window.location.pathname.split("/").pop();
+            document.querySelectorAll(".sidebar-nav a").forEach(link => {
+                if (link.getAttribute("href") === currentFile) {
+                    link.classList.add("active");
+                    const details = link.closest("details");
+                    if (details) details.open = true;
+                }
+            });
+        });
     </script>
 </head>
 
@@ -94,9 +106,9 @@
 
                 <a href="savings.html" class="nav-link">積立金情報</a>
 
-                <a href="attendance.html" class="nav-link">出欠管理</a>
+                <a href="attendance.html" class="nav-link">出欠情報</a>
 
-                <a href="projects.html" class="nav-link">案件管理</a>
+                <a href="projects.html" class="nav-link">案件情報</a>
 
                 <details class="nav-accordion">
                     <summary>福祉事業活動</summary>

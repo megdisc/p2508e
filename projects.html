@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>Compath - 案件管理</title>
+    <title>Compath - 案件情報</title>
 
     <link rel="stylesheet" href="globals.css">
     <link rel="stylesheet" href="ui.css">
@@ -311,6 +311,18 @@
             contents.forEach(content => content.classList.remove('is-active'));
             document.getElementById(tabId).classList.add('is-active');
         }
+    
+        // サイドバーの現在地連動（アコーディオン自動展開）
+        document.addEventListener("DOMContentLoaded", () => {
+            const currentFile = window.location.pathname.split("/").pop();
+            document.querySelectorAll(".sidebar-nav a").forEach(link => {
+                if (link.getAttribute("href") === currentFile) {
+                    link.classList.add("active");
+                    const details = link.closest("details");
+                    if (details) details.open = true;
+                }
+            });
+        });
     </script>
 </head>
 
@@ -335,8 +347,8 @@
                 <details class="nav-accordion"><summary>スキル情報</summary><ul><li><a href="skills-settings.html">スキル設定</a></li><li><a href="skills-evaluation.html">スキル評価</a></li></ul></details>
                 <details class="nav-accordion"><summary>工賃・控除情報</summary><ul><li><a href="wages-settings.html">工賃設定</a></li><li><a href="deductions-settings.html">控除設定</a></li><li><a href="wages-evaluation.html">工賃レベル評価</a></li></ul></details>
                 <a href="savings.html" class="nav-link">積立金情報</a>
-                <a href="attendance.html" class="nav-link">出欠管理</a>
-                <a href="projects.html" class="nav-link">案件管理</a>
+                <a href="attendance.html" class="nav-link">出欠情報</a>
+                <a href="projects.html" class="nav-link">案件情報</a>
                 <details class="nav-accordion"><summary>福祉事業活動</summary><ul><li><a href="support-plans.html">個別支援計画</a></li></ul></details>
                 <details class="nav-accordion"><summary>会計</summary><ul><li><a href="accounting-monthly.html">月次会計</a></li><li><a href="accounting-annual.html">年次会計</a></li></ul></details>
                 <details class="nav-accordion"><summary>分析</summary><ul><li><a href="analytics.html">分析ダッシュボード</a></li></ul></details>
@@ -353,7 +365,7 @@
             <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
 
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
-                    <h1 style="margin: 0;">案件管理</h1>
+                    <h1 style="margin: 0;">案件情報</h1>
                     <button class="btn btn-primary" onclick="showModal('modal-project-settings', 'create')">
                         <span class="material-symbols-outlined">add</span>
                         案件追加
