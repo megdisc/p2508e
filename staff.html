@@ -32,7 +32,7 @@
             contents.forEach(content => content.classList.remove('is-active'));
             document.getElementById(tabId).classList.add('is-active');
         }
-    
+
         // サイドバーの現在地連動（アコーディオン自動展開）
         document.addEventListener("DOMContentLoaded", () => {
             const currentFile = window.location.pathname.split("/").pop();
@@ -63,16 +63,64 @@
             </div>
             <nav class="sidebar-nav">
                 <a href="index.html" class="nav-link">トップ</a>
-                <details class="nav-accordion"><summary>施設情報</summary><ul><li><a href="corporation.html">法人情報</a></li><li><a href="office.html">事業所情報</a></li></ul></details>
-                <details class="nav-accordion"><summary>関係者情報</summary><ul><li><a href="staff.html">職員情報</a></li><li><a href="members.html">利用者情報</a></li><li><a href="partners.html">取引先情報</a></li></ul></details>
-                <details class="nav-accordion"><summary>スキル情報</summary><ul><li><a href="skills-settings.html">スキル設定</a></li><li><a href="skills-evaluation.html">スキル評価</a></li></ul></details>
-                <details class="nav-accordion"><summary>工賃・控除情報</summary><ul><li><a href="wages-settings.html">工賃設定</a></li><li><a href="deductions-settings.html">控除設定</a></li><li><a href="wages-evaluation.html">工賃レベル評価</a></li></ul></details>
-                <details class="nav-accordion"><summary>積立金情報</summary><ul><li><a href="savings-settings.html">積立金設定</a></li><li><a href="savings-history.html">積立金履歴</a></li></ul></details>
+                <details class="nav-accordion">
+                    <summary>施設情報</summary>
+                    <ul>
+                        <li><a href="corporation.html">法人情報</a></li>
+                        <li><a href="office.html">事業所情報</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>関係者情報</summary>
+                    <ul>
+                        <li><a href="staff.html">職員情報</a></li>
+                        <li><a href="members.html">利用者情報</a></li>
+                        <li><a href="partners.html">取引先情報</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>スキル情報</summary>
+                    <ul>
+                        <li><a href="skills-settings.html">スキル設定</a></li>
+                        <li><a href="skills-evaluation.html">スキル評価</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>工賃・控除情報</summary>
+                    <ul>
+                        <li><a href="wages-settings.html">工賃設定</a></li>
+                        <li><a href="deductions-settings.html">控除設定</a></li>
+                        <li><a href="wages-evaluation.html">工賃レベル評価</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>積立金情報</summary>
+                    <ul>
+                        <li><a href="savings-settings.html">積立金設定</a></li>
+                        <li><a href="savings-history.html">積立金履歴</a></li>
+                    </ul>
+                </details>
                 <a href="attendance.html" class="nav-link">出欠情報</a>
                 <a href="projects.html" class="nav-link">案件情報</a>
-                <details class="nav-accordion"><summary>福祉事業活動</summary><ul><li><a href="support-plans.html">個別支援計画</a></li></ul></details>
-                <details class="nav-accordion"><summary>会計</summary><ul><li><a href="accounting-monthly.html">月次会計</a></li><li><a href="accounting-annual.html">年次会計</a></li></ul></details>
-                <details class="nav-accordion"><summary>分析</summary><ul><li><a href="analytics.html">分析ダッシュボード</a></li></ul></details>
+                <details class="nav-accordion">
+                    <summary>福祉事業活動</summary>
+                    <ul>
+                        <li><a href="support-plans.html">個別支援計画</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>会計</summary>
+                    <ul>
+                        <li><a href="accounting-monthly.html">月次会計</a></li>
+                        <li><a href="accounting-annual.html">年次会計</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>分析</summary>
+                    <ul>
+                        <li><a href="analytics.html">分析ダッシュボード</a></li>
+                    </ul>
+                </details>
                 <a href="account.html" class="nav-link">ユーザーアカウント</a>
                 <a href="settings.html" class="nav-link">（その他設定）</a>
             </nav>
@@ -85,20 +133,23 @@
 
             <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
 
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
                     <h1 style="margin: 0;">職員情報</h1>
                 </div>
 
-                <div style="display: flex; gap: var(--spacing-stack-md); flex-wrap: wrap; margin-bottom: var(--spacing-stack-md);">
-                    
+                <div
+                    style="display: flex; gap: var(--spacing-stack-md); flex-wrap: wrap; margin-bottom: var(--spacing-stack-md);">
+
                     <div class="card" style="flex: 1; min-width: 320px;">
-                        <div class="card-body" style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
-                            
+                        <div class="card-body"
+                            style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
+
                             <div class="form-group" style="margin: 0; flex: 1; min-width: 160px;">
                                 <label class="form-label" for="search-name">キーワード検索</label>
                                 <input type="text" id="search-name" class="input-field" placeholder="氏名...">
                             </div>
-                            
+
                             <div class="form-group" style="margin: 0; flex: 1; min-width: 160px;">
                                 <label class="form-label" for="search-office">所属事業所</label>
                                 <select id="search-office" class="input-field">
@@ -107,7 +158,7 @@
                                     <option value="hakata">こんぱす博多</option>
                                 </select>
                             </div>
-                            
+
                             <div class="form-group" style="margin: 0; flex: 1; min-width: 160px;">
                                 <label class="form-label" for="search-role">役職・職種</label>
                                 <select id="search-role" class="input-field">
@@ -123,24 +174,17 @@
                     </div>
 
                     <div class="card" style="flex: 0 0 auto;">
-                        <div class="card-body" style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
-                            
-                            <div class="form-group" style="margin: 0; width: 160px;">
-                                <label class="form-label" for="sort-name">氏名</label>
-                                <select id="sort-name" class="input-field">
-                                    <option value="asc">昇順 (あ→ん)</option>
-                                    <option value="desc">降順 (ん→あ)</option>
+                        <div class="card-body"
+                            style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
+                            <div class="form-group" style="margin: 0; width: 180px;">
+                                <label class="form-label" for="sort-order">並び替え</label>
+                                <select id="sort-order" class="input-field">
+                                    <option value="name_asc">氏名 (昇順)</option>
+                                    <option value="name_desc">氏名 (降順)</option>
+                                    <option value="date_desc">登録日 (新しい順)</option>
+                                    <option value="date_asc">登録日 (古い順)</option>
                                 </select>
                             </div>
-                            
-                            <div class="form-group" style="margin: 0; width: 160px;">
-                                <label class="form-label" for="sort-date">登録日</label>
-                                <select id="sort-date" class="input-field">
-                                    <option value="desc">新しい順</option>
-                                    <option value="asc">古い順</option>
-                                </select>
-                            </div>
-
                         </div>
                     </div>
 
@@ -149,15 +193,21 @@
                 <div class="card-grid">
 
                     <div class="card">
-                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div class="card-header"
+                            style="display: flex; justify-content: space-between; align-items: flex-start;">
                             <div>
-                                <span style="font: var(--font-body-sm); color: var(--color-base-quaternary);">たなか けんじ</span>
-                                <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">田中 健司</div>
+                                <span style="font: var(--font-body-sm); color: var(--color-base-quaternary);">たなか
+                                    けんじ</span>
+                                <div
+                                    style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">
+                                    田中 健司</div>
                                 <span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
                                 <span class="badge badge-primary">管理者</span>
                             </div>
-                            <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
-                                <button class="btn btn-icon btn-icon-success" title="修正" onclick="showModal('modal-edit-staff')">
+                            <div
+                                style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
+                                <button class="btn btn-icon btn-icon-success" title="修正"
+                                    onclick="showModal('modal-edit-staff')">
                                     <span class="material-symbols-outlined">edit</span>
                                 </button>
                                 <button class="btn btn-icon btn-icon-error" title="削除">
@@ -180,15 +230,21 @@
                     </div>
 
                     <div class="card">
-                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div class="card-header"
+                            style="display: flex; justify-content: space-between; align-items: flex-start;">
                             <div>
-                                <span style="font: var(--font-body-sm); color: var(--color-base-quaternary);">いとう よしこ</span>
-                                <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">伊藤 良子</div>
+                                <span style="font: var(--font-body-sm); color: var(--color-base-quaternary);">いとう
+                                    よしこ</span>
+                                <div
+                                    style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">
+                                    伊藤 良子</div>
                                 <span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
                                 <span class="badge badge-primary">サービス管理責任者</span>
                             </div>
-                            <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
-                                <button class="btn btn-icon btn-icon-success" title="修正" onclick="showModal('modal-edit-staff')">
+                            <div
+                                style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
+                                <button class="btn btn-icon btn-icon-success" title="修正"
+                                    onclick="showModal('modal-edit-staff')">
                                     <span class="material-symbols-outlined">edit</span>
                                 </button>
                                 <button class="btn btn-icon btn-icon-error" title="削除">
@@ -211,15 +267,21 @@
                     </div>
 
                     <div class="card">
-                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div class="card-header"
+                            style="display: flex; justify-content: space-between; align-items: flex-start;">
                             <div>
-                                <span style="font: var(--font-body-sm); color: var(--color-base-quaternary);">わたなべ さぶろう</span>
-                                <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">渡辺 三郎</div>
+                                <span style="font: var(--font-body-sm); color: var(--color-base-quaternary);">わたなべ
+                                    さぶろう</span>
+                                <div
+                                    style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">
+                                    渡辺 三郎</div>
                                 <span class="badge badge-neutral" style="margin-right: var(--spacing-2);">こんぱす天神</span>
                                 <span class="badge badge-primary">職業指導員</span>
                             </div>
-                            <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
-                                <button class="btn btn-icon btn-icon-success" title="修正" onclick="showModal('modal-edit-staff')">
+                            <div
+                                style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
+                                <button class="btn btn-icon btn-icon-success" title="修正"
+                                    onclick="showModal('modal-edit-staff')">
                                     <span class="material-symbols-outlined">edit</span>
                                 </button>
                                 <button class="btn btn-icon btn-icon-error" title="削除">
@@ -241,7 +303,7 @@
                         </div>
                     </div>
 
-                </div> 
+                </div>
 
             </div>
 
@@ -251,14 +313,16 @@
                         職員情報の編集
                     </div>
                     <div class="modal-body">
-                        
+
                         <div id="tab-group-edit-content">
                             <div class="tab-content is-active" id="tab-edit-1">
-                                
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-4);">
+
+                                <div
+                                    style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-4);">
                                     <div class="form-group" style="margin-bottom: 0;">
                                         <label class="form-label" for="edit-staff-name">氏名</label>
-                                        <input type="text" id="edit-staff-name" class="input-field" value="田中 健司" disabled>
+                                        <input type="text" id="edit-staff-name" class="input-field" value="田中 健司"
+                                            disabled>
                                     </div>
                                     <div class="form-group" style="margin-bottom: 0;">
                                         <label class="form-label" for="edit-staff-kana">ふりがな</label>
@@ -266,7 +330,8 @@
                                     </div>
                                 </div>
 
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); margin-top: var(--spacing-4);">
+                                <div
+                                    style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); margin-top: var(--spacing-4);">
                                     <div class="form-group" style="margin-bottom: 0;">
                                         <label class="form-label" for="edit-staff-office">所属事業所</label>
                                         <select id="edit-staff-office" class="input-field">
@@ -286,27 +351,35 @@
                                     </div>
                                 </div>
 
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-6);">
+                                <div
+                                    style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-6);">
                                     <div class="form-group" style="margin-bottom: 0; grid-column: 1 / 2;">
                                         <label class="form-label" for="edit-staff-zip1">郵便番号</label>
                                         <div style="display: flex; align-items: center; gap: var(--spacing-2);">
-                                            <input type="text" id="edit-staff-zip1" class="input-field" value="810" placeholder="810">
+                                            <input type="text" id="edit-staff-zip1" class="input-field" value="810"
+                                                placeholder="810">
                                             <span>-</span>
-                                            <input type="text" id="edit-staff-zip2" class="input-field" value="0001" placeholder="0001">
+                                            <input type="text" id="edit-staff-zip2" class="input-field" value="0001"
+                                                placeholder="0001">
                                         </div>
                                     </div>
-                                    
+
                                     <div class="form-group" style="margin-bottom: 0; grid-column: 1 / -1;">
                                         <label class="form-label" for="edit-staff-address1">住所</label>
-                                        <div style="display: grid; grid-template-columns: 1fr 1.5fr 1.5fr; gap: var(--spacing-3);">
-                                            <input type="text" id="edit-staff-address1" class="input-field" value="福岡県" placeholder="都道府県">
-                                            <input type="text" id="edit-staff-address2" class="input-field" value="福岡市中央区天神1-1-1" placeholder="市区町村丁目番地">
-                                            <input type="text" id="edit-staff-address3" class="input-field" value="" placeholder="建物名・部屋番号">
+                                        <div
+                                            style="display: grid; grid-template-columns: 1fr 1.5fr 1.5fr; gap: var(--spacing-3);">
+                                            <input type="text" id="edit-staff-address1" class="input-field" value="福岡県"
+                                                placeholder="都道府県">
+                                            <input type="text" id="edit-staff-address2" class="input-field"
+                                                value="福岡市中央区天神1-1-1" placeholder="市区町村丁目番地">
+                                            <input type="text" id="edit-staff-address3" class="input-field" value=""
+                                                placeholder="建物名・部屋番号">
                                         </div>
                                     </div>
                                 </div>
 
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-6);">
+                                <div
+                                    style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-6);">
                                     <div class="form-group" style="margin-bottom: 0;">
                                         <label class="form-label" for="edit-staff-phone1">電話番号</label>
                                         <div style="display: flex; align-items: center; gap: var(--spacing-2);">

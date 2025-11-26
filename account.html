@@ -22,7 +22,7 @@
             if (id === 'modal-edit-account') {
                 const header = document.querySelector('#modal-edit-account .modal-header');
                 const passwordBlock = document.getElementById('account-password-block-new');
-                
+
                 if (mode === 'create') {
                     // 新規作成モード
                     if (header) header.textContent = 'アカウント新規作成';
@@ -49,7 +49,7 @@
             contents.forEach(content => content.classList.remove('is-active'));
             document.getElementById(tabId).classList.add('is-active');
         }
-    
+
         // サイドバーの現在地連動（アコーディオン自動展開）
         document.addEventListener("DOMContentLoaded", () => {
             const currentFile = window.location.pathname.split("/").pop();
@@ -84,8 +84,21 @@
 
                 <a href="index.html" class="nav-link">トップ</a>
 
-                <details class="nav-accordion"><summary>施設情報</summary><ul><li><a href="corporation.html">法人情報</a></li><li><a href="office.html">事業所情報</a></li></ul></details>
-                <details class="nav-accordion"><summary>関係者情報</summary><ul><li><a href="staff.html">職員情報</a></li><li><a href="members.html">利用者情報</a></li><li><a href="partners.html">取引先情報</a></li></ul></details>
+                <details class="nav-accordion">
+                    <summary>施設情報</summary>
+                    <ul>
+                        <li><a href="corporation.html">法人情報</a></li>
+                        <li><a href="office.html">事業所情報</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>関係者情報</summary>
+                    <ul>
+                        <li><a href="staff.html">職員情報</a></li>
+                        <li><a href="members.html">利用者情報</a></li>
+                        <li><a href="partners.html">取引先情報</a></li>
+                    </ul>
+                </details>
 
                 <details class="nav-accordion">
                     <summary>スキル情報</summary>
@@ -104,7 +117,13 @@
                     </ul>
                 </details>
 
-                <details class="nav-accordion"><summary>積立金情報</summary><ul><li><a href="savings-settings.html">積立金設定</a></li><li><a href="savings-history.html">積立金履歴</a></li></ul></details>
+                <details class="nav-accordion">
+                    <summary>積立金情報</summary>
+                    <ul>
+                        <li><a href="savings-settings.html">積立金設定</a></li>
+                        <li><a href="savings-history.html">積立金履歴</a></li>
+                    </ul>
+                </details>
 
                 <a href="attendance.html" class="nav-link">出欠情報</a>
 
@@ -150,7 +169,8 @@
 
             <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
 
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
                     <h1 style="margin: 0;">ユーザーアカウント</h1>
                     <button class="btn btn-primary" onclick="showModal('modal-edit-account', 'create')">
                         <span class="material-symbols-outlined">add</span>
@@ -158,23 +178,39 @@
                     </button>
                 </div>
 
-                <div class="card" style="margin-bottom: var(--spacing-stack-md);">
-                    <div class="card-body" style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); align-items: flex-end;">
-                        
-                        <div class="form-group" style="margin: 0;">
-                            <label class="form-label" for="search-keyword">キーワード検索</label>
-                            <input type="text" id="search-keyword" class="input-field" placeholder="氏名、メールアドレス...">
+                <div
+                    style="display: flex; gap: var(--spacing-stack-md); flex-wrap: wrap; margin-bottom: var(--spacing-stack-md);">
+                    <div class="card" style="flex: 1; min-width: 320px;">
+                        <div class="card-body"
+                            style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
+                            <div class="form-group" style="margin: 0; flex: 1; min-width: 200px;">
+                                <label class="form-label" for="search-keyword">キーワード検索</label>
+                                <input type="text" id="search-keyword" class="input-field" placeholder="氏名、メールアドレス...">
+                            </div>
+                            <div class="form-group" style="margin: 0; min-width: 160px;">
+                                <label class="form-label" for="search-role">ロール</label>
+                                <select id="search-role" class="input-field">
+                                    <option value="">すべて</option>
+                                    <option value="admin">システム管理者</option>
+                                    <option value="manager">施設管理者</option>
+                                    <option value="staff">職員</option>
+                                    <option value="user">利用者</option>
+                                </select>
+                            </div>
                         </div>
-                        
-                        <div class="form-group" style="margin: 0;">
-                            <label class="form-label" for="search-role">ロール</label>
-                            <select id="search-role" class="input-field">
-                                <option value="">すべて</option>
-                                <option value="admin">システム管理者</option>
-                                <option value="manager">施設管理者</option>
-                                <option value="staff">職員</option>
-                                <option value="user">利用者</option>
-                            </select>
+                    </div>
+                    <div class="card" style="flex: 0 0 auto;">
+                        <div class="card-body"
+                            style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
+                            <div class="form-group" style="margin: 0; width: 180px;">
+                                <label class="form-label" for="sort-order">並び替え</label>
+                                <select id="sort-order" class="input-field">
+                                    <option value="name_asc">表示名 (昇順)</option>
+                                    <option value="name_desc">表示名 (降順)</option>
+                                    <option value="role_asc">ロール (昇順)</option>
+                                    <option value="role_desc">ロール (降順)</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -193,14 +229,15 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <div >田中 健司</div>
+                                    <div>田中 健司</div>
                                 </td>
                                 <td><span class="badge badge-primary">システム管理者</span></td>
                                 <td>kenji.tanaka@compath.example.com</td>
                                 <td><button class="btn btn-sm btn-error">リセット</button></td>
                                 <td>
                                     <div style="display: flex; gap: var(--spacing-2);">
-                                        <button class="btn btn-icon btn-icon-success" onclick="showModal('modal-edit-account', 'edit')">
+                                        <button class="btn btn-icon btn-icon-success"
+                                            onclick="showModal('modal-edit-account', 'edit')">
                                             <span class="material-symbols-outlined">edit</span>
                                         </button>
                                         <button class="btn btn-icon btn-icon-error" onclick="alert('削除します')">
@@ -211,14 +248,15 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <div >伊藤 良子</div>
+                                    <div>伊藤 良子</div>
                                 </td>
                                 <td><span class="badge badge-primary">施設管理者</span></td>
                                 <td>yoshiko.ito@compath.example.com</td>
                                 <td><button class="btn btn-sm btn-error">リセット</button></td>
                                 <td>
                                     <div style="display: flex; gap: var(--spacing-2);">
-                                        <button class="btn btn-icon btn-icon-success" onclick="showModal('modal-edit-account', 'edit')">
+                                        <button class="btn btn-icon btn-icon-success"
+                                            onclick="showModal('modal-edit-account', 'edit')">
                                             <span class="material-symbols-outlined">edit</span>
                                         </button>
                                         <button class="btn btn-icon btn-icon-error" onclick="alert('削除します')">
@@ -229,14 +267,15 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <div >渡辺 三郎</div>
+                                    <div>渡辺 三郎</div>
                                 </td>
                                 <td><span class="badge badge-primary">職員</span></td>
                                 <td>saburo.watanabe@compath.example.com</td>
                                 <td><button class="btn btn-sm btn-error">リセット</button></td>
                                 <td>
                                     <div style="display: flex; gap: var(--spacing-2);">
-                                        <button class="btn btn-icon btn-icon-success" onclick="showModal('modal-edit-account', 'edit')">
+                                        <button class="btn btn-icon btn-icon-success"
+                                            onclick="showModal('modal-edit-account', 'edit')">
                                             <span class="material-symbols-outlined">edit</span>
                                         </button>
                                         <button class="btn btn-icon btn-icon-error" onclick="alert('削除します')">
@@ -247,14 +286,15 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <div >山田 太郎</div>
+                                    <div>山田 太郎</div>
                                 </td>
                                 <td><span class="badge badge-warning">利用者</span></td>
                                 <td>taro.yamada@example.com</td>
                                 <td><button class="btn btn-sm btn-error">リセット</button></td>
                                 <td>
                                     <div style="display: flex; gap: var(--spacing-2);">
-                                        <button class="btn btn-icon btn-icon-success" onclick="showModal('modal-edit-account', 'edit')">
+                                        <button class="btn btn-icon btn-icon-success"
+                                            onclick="showModal('modal-edit-account', 'edit')">
                                             <span class="material-symbols-outlined">edit</span>
                                         </button>
                                         <button class="btn btn-icon btn-icon-error" onclick="alert('削除します')">
@@ -265,14 +305,15 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <div >鈴木 花子</div>
+                                    <div>鈴木 花子</div>
                                 </td>
                                 <td><span class="badge badge-warning">利用者</span></td>
                                 <td>hanako.suzuki@example.com</td>
                                 <td><button class="btn btn-sm btn-error">リセット</button></td>
                                 <td>
                                     <div style="display: flex; gap: var(--spacing-2);">
-                                        <button class="btn btn-icon btn-icon-success" onclick="showModal('modal-edit-account', 'edit')">
+                                        <button class="btn btn-icon btn-icon-success"
+                                            onclick="showModal('modal-edit-account', 'edit')">
                                             <span class="material-symbols-outlined">edit</span>
                                         </button>
                                         <button class="btn btn-icon btn-icon-error" onclick="alert('削除します')">
@@ -285,7 +326,8 @@
                     </table>
                 </div>
 
-                <div style="padding: var(--spacing-4); margin-top: var(--spacing-8); display: flex; justify-content: flex-end; gap: var(--spacing-2);">
+                <div
+                    style="padding: var(--spacing-4); margin-top: var(--spacing-8); display: flex; justify-content: flex-end; gap: var(--spacing-2);">
                     <button class="btn btn-primary" disabled>&lt; 前へ</button>
                     <button class="btn btn-primary">次へ &gt;</button>
                 </div>
@@ -293,16 +335,16 @@
             </div>
 
         </main>
-        
+
         <div class="modal-backdrop" id="modal-edit-account" style="display: none;">
             <div class="modal-content">
                 <div class="modal-header">
                     アカウント情報の編集
                 </div>
                 <div class="modal-body">
-                    
+
                     <form id="account-edit-form">
-                        
+
                         <div class="form-group">
                             <label class="form-label" for="account-display-name">表示名</label>
                             <input type="text" id="account-display-name" class="input-field" placeholder="氏名を入力">
@@ -325,7 +367,8 @@
 
                         <div id="account-password-block-new" class="form-group">
                             <label class="form-label" for="account-password-input">パスワード</label>
-                            <input type="password" id="account-password-input" class="input-field" placeholder="パスワードを入力">
+                            <input type="password" id="account-password-input" class="input-field"
+                                placeholder="パスワードを入力">
                         </div>
 
                     </form>

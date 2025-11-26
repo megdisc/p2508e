@@ -65,7 +65,8 @@
                 levelName: level.name,
                 price: level.price,
                 lastDate: "2023-10-01",
-                evaluator: "田中 健司"
+                evaluator: "田中 健司",
+                comment: "特になし"
             };
         });
 
@@ -76,7 +77,34 @@
             const tbody = document.getElementById('user-table-body');
             tbody.innerHTML = '';
 
-            dummyUsers.forEach(user => {
+            // ソート処理
+            let users = [...dummyUsers];
+            const sortOrderEl = document.getElementById('sort-order');
+            const sortKey = sortOrderEl ? sortOrderEl.value : 'name_asc';
+
+            users.sort((a, b) => {
+                const dataA = userEvaluations[a];
+                const dataB = userEvaluations[b];
+
+                switch (sortKey) {
+                    case 'name_asc':
+                        return a.localeCompare(b, 'ja');
+                    case 'name_desc':
+                        return b.localeCompare(a, 'ja');
+                    case 'level_desc':
+                        return dataB.levelId - dataA.levelId;
+                    case 'level_asc':
+                        return dataA.levelId - dataB.levelId;
+                    case 'date_desc':
+                        return new Date(dataB.lastDate) - new Date(dataA.lastDate);
+                    case 'date_asc':
+                        return new Date(dataA.lastDate) - new Date(dataB.lastDate);
+                    default:
+                        return 0;
+                }
+            });
+
+            users.forEach(user => {
                 const data = userEvaluations[user];
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
@@ -87,12 +115,23 @@
                             ${data.price} 円/時
                         </div>
                     </td>
-                    <td>${data.lastDate}</td>
-                    <td>${data.evaluator}</td>
+                    <td>
+                        <div>${data.lastDate}</div>
+                        <div style="font-size: var(--font-size-xs); color: var(--color-base-tertiary);">
+                            ${data.evaluator}
+                        </div>
+                    </td>
+                    <td>
+                        <div style="font-size: var(--font-size-sm); color: var(--color-base-secondary-text); max-width: 300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            ${data.comment}
+                        </div>
+                    </td>
                     <td class="col-actions">
-                        <button class="btn btn-neutral btn-sm" onclick="openEvaluationModal('${user}')">
-                            評価する
-                        </button>
+                        <div style="display: flex; justify-content: flex-end; gap: var(--spacing-2);">
+                            <button class="btn btn-icon btn-icon-success btn-icon-sm" onclick="openEvaluationModal('${user}')">
+                                <span class="material-symbols-outlined">edit</span>
+                            </button>
+                        </div>
                     </td>
                 `;
                 tbody.appendChild(tr);
@@ -116,7 +155,7 @@
             document.getElementById('eval-date').value = today;
 
             document.getElementById('eval-evaluator').value = "田中 健司"; // ログインユーザー名(仮)
-            document.getElementById('eval-comment').value = "";
+            document.getElementById('eval-comment').value = data.comment || "";
 
             showModal('modal-evaluate-wage');
         }
@@ -127,6 +166,7 @@
             const newLevelId = parseInt(document.getElementById('eval-level').value);
             const newDate = document.getElementById('eval-date').value;
             const newEvaluator = document.getElementById('eval-evaluator').value;
+            const newComment = document.getElementById('eval-comment').value;
 
             const level = dummyLevels.find(l => l.id === newLevelId);
 
@@ -136,7 +176,8 @@
                 levelName: level.name,
                 price: level.price,
                 lastDate: newDate,
-                evaluator: newEvaluator
+                evaluator: newEvaluator,
+                comment: newComment
             };
 
             renderUserTable();
@@ -257,14 +298,52 @@
                     <h1 style="margin: 0;">工賃レベル評価</h1>
                 </div>
 
+                <div
+                    style="display: flex; gap: var(--spacing-stack-md); flex-wrap: wrap; margin-bottom: var(--spacing-stack-md);">
+                    <div class="card" style="flex: 1; min-width: 320px;">
+                        <div class="card-body"
+                            style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
+                            <div class="form-group" style="margin: 0; flex: 1; min-width: 200px;">
+                                <label class="form-label">キーワード検索</label>
+                                <input type="text" class="input-field" placeholder="氏名...">
+                            </div>
+                            <div class="form-group" style="margin: 0; min-width: 160px;">
+                                <label class="form-label">レベル</label>
+                                <select class="input-field">
+                                    <option value="">すべて</option>
+                                    <option value="1">Lv.1</option>
+                                    <option value="2">Lv.2</option>
+                                    <option value="3">Lv.3</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card" style="flex: 0 0 auto;">
+                        <div class="card-body"
+                            style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
+                            <div class="form-group" style="margin: 0; width: 180px;">
+                                <label class="form-label">並び替え</label>
+                                <select id="sort-order" class="input-field" onchange="renderUserTable()">
+                                    <option value="name_asc">氏名 (昇順)</option>
+                                    <option value="name_desc">氏名 (降順)</option>
+                                    <option value="level_desc">レベル (高い順)</option>
+                                    <option value="level_asc">レベル (低い順)</option>
+                                    <option value="date_desc">評価日 (新しい順)</option>
+                                    <option value="date_asc">評価日 (古い順)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="table-container is-standalone">
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>利用者名</th>
+                                <th>氏名</th>
                                 <th>現在のレベル</th>
                                 <th>最終評価日</th>
-                                <th>評価者</th>
+                                <th>コメント</th>
                                 <th class="col-actions">操作</th>
                             </tr>
                         </thead>
