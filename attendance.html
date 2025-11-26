@@ -115,7 +115,7 @@
         }
 
         .calendar-header {
-            background-color: var(--color-base-secondary);
+            background-color: var(--color-table-header-background);
             padding: var(--spacing-2);
             text-align: center;
             font-weight: bold;
@@ -532,9 +532,6 @@
                                     </div>
                                     <div class="calendar-cell">
                                         <div class="calendar-date">3</div>
-                                        <div
-                                            style="color: var(--color-semantic-error-main); font-size: 0.7rem; margin-bottom: 4px;">
-                                            文化の日</div>
                                         <span class="badge badge-neutral">休業日</span>
                                     </div>
                                     <div class="calendar-cell">
@@ -635,16 +632,10 @@
                                     <!-- 5週目 -->
                                     <div class="calendar-cell day-off">
                                         <div class="calendar-date">23</div>
-                                        <div
-                                            style="color: var(--color-semantic-error-main); font-size: 0.7rem; margin-bottom: 4px;">
-                                            勤労感謝の日</div>
                                         <span class="badge badge-neutral">休業日</span>
                                     </div>
                                     <div class="calendar-cell">
                                         <div class="calendar-date">24</div>
-                                        <div
-                                            style="color: var(--color-semantic-error-main); font-size: 0.7rem; margin-bottom: 4px;">
-                                            振替休日</div>
                                         <span class="badge badge-neutral">休業日</span>
                                     </div>
                                     <div class="calendar-cell">
@@ -705,6 +696,21 @@
                     <p style="margin-bottom: var(--spacing-stack-md);">
                         本日の出欠状況を登録・編集します。
                     </p>
+
+                    <div style="margin-bottom: var(--spacing-stack-md);">
+                        <label class="form-label">事業所ステータス</label>
+                        <div style="display: flex; gap: var(--spacing-4);">
+                            <div class="form-check" style="margin-bottom: 0;">
+                                <input class="form-check-input" type="radio" name="office-status" id="status-business"
+                                    checked>
+                                <label class="form-check-label" for="status-business">営業日</label>
+                            </div>
+                            <div class="form-check" style="margin-bottom: 0;">
+                                <input class="form-check-input" type="radio" name="office-status" id="status-holiday">
+                                <label class="form-check-label" for="status-holiday">休業日</label>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="table-container">
                         <table class="table">
