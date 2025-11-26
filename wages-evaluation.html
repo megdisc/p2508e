@@ -22,21 +22,7 @@
             document.getElementById(id).style.display = 'none';
         }
 
-        // タブ
-        function activateTab(tabGroup, tabId) {
-            // リンクのアクティブ状態を切り替え
-            // (注: シェル変数  と誤認されないよう ${...} とエスケープ)
-            const links = document.querySelectorAll(`#${tabGroup} .tab-link`);
-            links.forEach(link => link.classList.remove('is-active'));
-            document.querySelector(`#${tabGroup} .tab-link[onclick*="'${tabId}'"]`).classList.add('is-active');
-
-            // コンテンツの表示を切り替え
-            const contents = document.querySelectorAll(`#${tabGroup}-content .tab-content`);
-            contents.forEach(content => content.classList.remove('is-active'));
-            document.getElementById(tabId).classList.add('is-active');
-        }
-    
-        // サイドバーの現在地連動（アコーディオン自動展開）
+        // サイドバーの現在地連動
         document.addEventListener("DOMContentLoaded", () => {
             const currentFile = window.location.pathname.split("/").pop();
             document.querySelectorAll(".sidebar-nav a").forEach(link => {
@@ -46,7 +32,118 @@
                     if (details) details.open = true;
                 }
             });
+
+            // 初期データ描画
+            renderUserTable();
         });
+
+        // -----------------------------------------------------
+        // ダミーデータ
+        // -----------------------------------------------------
+        const dummyUsers = [
+            "伊藤 博文", "黒田 清隆", "山縣 有朋", "松方 正義", "大隈 重信",
+            "桂 太郎", "西園寺 公望", "山本 権兵衛", "寺内 正毅", "原 敬",
+            "高橋 是清", "加藤 友三郎", "清浦 奎吾", "加藤 高明", "若槻 禮次郎",
+            "田中 義一", "浜口 雄幸", "犬養 毅", "斎藤 実", "岡田 啓介"
+        ];
+
+        const dummyLevels = [
+            { id: 1, name: "Lv.1", price: 200, desc: "要支援レベル" },
+            { id: 2, name: "Lv.2", price: 250, desc: "自立レベル" },
+            { id: 3, name: "Lv.3", price: 300, desc: "指導レベル" }
+        ];
+
+        // ユーザーごとの評価状態 (メモリ内保持)
+        let userEvaluations = {};
+
+        // 初期化: ランダムにレベルを割り当て
+        dummyUsers.forEach(user => {
+            const lvId = Math.floor(Math.random() * 3) + 1; // 1-3
+            const level = dummyLevels.find(l => l.id === lvId);
+            userEvaluations[user] = {
+                levelId: lvId,
+                levelName: level.name,
+                price: level.price,
+                lastDate: "2023-10-01",
+                evaluator: "田中 健司"
+            };
+        });
+
+        // -----------------------------------------------------
+        // テーブル描画
+        // -----------------------------------------------------
+        function renderUserTable() {
+            const tbody = document.getElementById('user-table-body');
+            tbody.innerHTML = '';
+
+            dummyUsers.forEach(user => {
+                const data = userEvaluations[user];
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${user}</td>
+                    <td>
+                        <div style="font-weight: bold;">${data.levelName}</div>
+                        <div style="font-size: var(--font-size-xs); color: var(--color-base-tertiary);">
+                            ${data.price} 円/時
+                        </div>
+                    </td>
+                    <td>${data.lastDate}</td>
+                    <td>${data.evaluator}</td>
+                    <td class="col-actions">
+                        <button class="btn btn-neutral btn-sm" onclick="openEvaluationModal('${user}')">
+                            評価する
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // -----------------------------------------------------
+        // 評価モーダル
+        // -----------------------------------------------------
+        let currentTargetUser = null;
+
+        function openEvaluationModal(userName) {
+            currentTargetUser = userName;
+            const data = userEvaluations[userName];
+
+            document.getElementById('modal-user-name').textContent = userName;
+            document.getElementById('eval-level').value = data.levelId;
+
+            // 日付は今日をセット
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('eval-date').value = today;
+
+            document.getElementById('eval-evaluator').value = "田中 健司"; // ログインユーザー名(仮)
+            document.getElementById('eval-comment').value = "";
+
+            showModal('modal-evaluate-wage');
+        }
+
+        function saveEvaluation() {
+            if (!currentTargetUser) return;
+
+            const newLevelId = parseInt(document.getElementById('eval-level').value);
+            const newDate = document.getElementById('eval-date').value;
+            const newEvaluator = document.getElementById('eval-evaluator').value;
+
+            const level = dummyLevels.find(l => l.id === newLevelId);
+
+            // データ更新
+            userEvaluations[currentTargetUser] = {
+                levelId: newLevelId,
+                levelName: level.name,
+                price: level.price,
+                lastDate: newDate,
+                evaluator: newEvaluator
+            };
+
+            renderUserTable();
+            hideModal('modal-evaluate-wage');
+            alert(`${currentTargetUser} さんの評価を保存しました。`);
+        }
+
     </script>
 </head>
 
@@ -70,8 +167,21 @@
 
                 <a href="index.html" class="nav-link">トップ</a>
 
-                <details class="nav-accordion"><summary>施設情報</summary><ul><li><a href="corporation.html">法人情報</a></li><li><a href="office.html">事業所情報</a></li></ul></details>
-                <details class="nav-accordion"><summary>関係者情報</summary><ul><li><a href="staff.html">職員情報</a></li><li><a href="members.html">利用者情報</a></li><li><a href="partners.html">取引先情報</a></li></ul></details>
+                <details class="nav-accordion">
+                    <summary>施設情報</summary>
+                    <ul>
+                        <li><a href="corporation.html">法人情報</a></li>
+                        <li><a href="office.html">事業所情報</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>関係者情報</summary>
+                    <ul>
+                        <li><a href="staff.html">職員情報</a></li>
+                        <li><a href="members.html">利用者情報</a></li>
+                        <li><a href="partners.html">取引先情報</a></li>
+                    </ul>
+                </details>
 
                 <details class="nav-accordion">
                     <summary>スキル情報</summary>
@@ -81,16 +191,22 @@
                     </ul>
                 </details>
 
-                <details class="nav-accordion">
+                <details class="nav-accordion" open>
                     <summary>工賃・控除情報</summary>
                     <ul>
                         <li><a href="wages-settings.html">工賃設定</a></li>
                         <li><a href="deductions-settings.html">控除設定</a></li>
-                        <li><a href="wages-evaluation.html">工賃レベル評価</a></li>
+                        <li><a href="wages-evaluation.html" class="nav-link active">工賃レベル評価</a></li>
                     </ul>
                 </details>
 
-                <details class="nav-accordion"><summary>積立金情報</summary><ul><li><a href="savings-settings.html">積立金設定</a></li><li><a href="savings-history.html">積立金履歴</a></li></ul></details>
+                <details class="nav-accordion">
+                    <summary>積立金情報</summary>
+                    <ul>
+                        <li><a href="savings-settings.html">積立金設定</a></li>
+                        <li><a href="savings-history.html">積立金履歴</a></li>
+                    </ul>
+                </details>
 
                 <a href="attendance.html" class="nav-link">出欠情報</a>
 
@@ -136,18 +252,72 @@
 
             <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
 
-                <h1 style="margin: 0 0 var(--spacing-stack-md) 0;">工賃レベル評価</h1>
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
+                    <h1 style="margin: 0;">工賃レベル評価</h1>
+                </div>
 
-                <div class="card">
-                    <div class="card-body">
-                        <p>これは「工賃レベル評価」ページです。ここに内容を記述します。</p>
-                    </div>
+                <div class="table-container is-standalone">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>利用者名</th>
+                                <th>現在のレベル</th>
+                                <th>最終評価日</th>
+                                <th>評価者</th>
+                                <th class="col-actions">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="user-table-body">
+                            <!-- JSで描画 -->
+                        </tbody>
+                    </table>
                 </div>
 
             </div>
 
         </main>
+
+        <div class="modal-backdrop" id="modal-evaluate-wage" style="display: none;">
+            <div class="modal-content" style="max-width: 500px;">
+                <div class="modal-header">
+                    工賃レベル評価: <span id="modal-user-name"></span>
+                </div>
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label class="form-label">適用レベル</label>
+                        <select id="eval-level" class="input-field">
+                            <option value="1">Lv.1 (200円/時) - 要支援</option>
+                            <option value="2">Lv.2 (250円/時) - 自立</option>
+                            <option value="3">Lv.3 (300円/時) - 指導</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">評価日</label>
+                        <input type="date" id="eval-date" class="input-field">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">評価者</label>
+                        <input type="text" id="eval-evaluator" class="input-field">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">コメント</label>
+                        <textarea id="eval-comment" class="input-field" rows="3" placeholder="評価理由や特記事項など"></textarea>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-neutral" onclick="hideModal('modal-evaluate-wage')">キャンセル</button>
+                    <button class="btn btn-primary" onclick="saveEvaluation()">保存する</button>
+                </div>
+            </div>
         </div>
+
+    </div>
 
 </body>
 
