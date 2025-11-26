@@ -22,6 +22,7 @@
             padding: 2px;
             border: 1px solid var(--color-base-quinary);
         }
+
         .view-toggle label {
             padding: var(--spacing-1) var(--spacing-3);
             font-size: var(--font-size-sm);
@@ -30,8 +31,12 @@
             transition: all 0.2s;
             color: var(--color-base-quaternary);
         }
-        .view-toggle input[type="radio"] { display: none; }
-        .view-toggle input[type="radio"]:checked + label {
+
+        .view-toggle input[type="radio"] {
+            display: none;
+        }
+
+        .view-toggle input[type="radio"]:checked+label {
             background-color: var(--color-theme-main);
             color: var(--color-base-primary);
             box-shadow: var(--box-shadow-sm);
@@ -54,7 +59,7 @@
         function switchView(viewName) {
             document.getElementById('view-basic').style.display = 'none';
             document.getElementById('view-allowance').style.display = 'none';
-            
+
             // 追加ボタンの表示切り替え
             document.getElementById('btn-add-basic').style.display = 'none';
             document.getElementById('btn-add-allowance').style.display = 'none';
@@ -71,7 +76,7 @@
         // 加算手当モーダル: 種別切り替え時の表示制御
         function toggleAllowanceType() {
             const type = document.getElementById('allowance-type').value;
-            
+
             // 全エリア非表示
             document.getElementById('fields-daily').style.display = 'none';
             document.getElementById('fields-monthly').style.display = 'none';
@@ -91,7 +96,7 @@
         function updateAttendanceUnit() {
             const metric = document.getElementById('attendance-metric').value;
             const unitSpan = document.getElementById('attendance-unit');
-            
+
             if (metric.includes('days')) {
                 unitSpan.textContent = '日';
             } else if (metric.includes('rate')) {
@@ -102,16 +107,16 @@
         // 基本工賃モーダルを開く (ダミー)
         function openBasicWageModal(id = null) {
             const title = document.getElementById('modal-basic-title');
-            const nameInput = document.getElementById('basic-name');
+            const nameDisplay = document.getElementById('basic-name-display');
             const priceInput = document.getElementById('basic-price');
-            
+
             if (id) {
                 title.textContent = '基本工賃レベルの編集';
-                nameInput.value = 'Lv.1';
-                priceInput.value = '200';
+                nameDisplay.textContent = 'Lv.' + id; // 仮の表示
+                priceInput.value = '200'; // ダミー値
             } else {
                 title.textContent = '基本工賃レベルの追加';
-                nameInput.value = '';
+                nameDisplay.textContent = '新規レベル (自動採番)';
                 priceInput.value = '';
             }
             showModal('modal-edit-basic');
@@ -148,10 +153,29 @@
             </div>
             <nav class="sidebar-nav">
                 <a href="index.html" class="nav-link">トップ</a>
-                <details class="nav-accordion"><summary>施設情報</summary><ul><li><a href="corporation.html">法人情報</a></li><li><a href="office.html">事業所情報</a></li></ul></details>
-                <details class="nav-accordion"><summary>関係者情報</summary><ul><li><a href="staff.html">職員情報</a></li><li><a href="members.html">利用者情報</a></li><li><a href="partners.html">取引先情報</a></li></ul></details>
-                <details class="nav-accordion"><summary>スキル情報</summary><ul><li><a href="skills-settings.html">スキル設定</a></li><li><a href="skills-evaluation.html">スキル評価</a></li></ul></details>
-                
+                <details class="nav-accordion">
+                    <summary>施設情報</summary>
+                    <ul>
+                        <li><a href="corporation.html">法人情報</a></li>
+                        <li><a href="office.html">事業所情報</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>関係者情報</summary>
+                    <ul>
+                        <li><a href="staff.html">職員情報</a></li>
+                        <li><a href="members.html">利用者情報</a></li>
+                        <li><a href="partners.html">取引先情報</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>スキル情報</summary>
+                    <ul>
+                        <li><a href="skills-settings.html">スキル設定</a></li>
+                        <li><a href="skills-evaluation.html">スキル評価</a></li>
+                    </ul>
+                </details>
+
                 <details class="nav-accordion" open>
                     <summary>工賃・控除情報</summary>
                     <ul>
@@ -161,12 +185,34 @@
                     </ul>
                 </details>
 
-                <details class="nav-accordion"><summary>積立金情報</summary><ul><li><a href="savings-settings.html">積立金設定</a></li><li><a href="savings-history.html">積立金履歴</a></li></ul></details>
+                <details class="nav-accordion">
+                    <summary>積立金情報</summary>
+                    <ul>
+                        <li><a href="savings-settings.html">積立金設定</a></li>
+                        <li><a href="savings-history.html">積立金履歴</a></li>
+                    </ul>
+                </details>
                 <a href="attendance.html" class="nav-link">出欠情報</a>
                 <a href="projects.html" class="nav-link">案件情報</a>
-                <details class="nav-accordion"><summary>福祉事業活動</summary><ul><li><a href="support-plans.html">個別支援計画</a></li></ul></details>
-                <details class="nav-accordion"><summary>会計</summary><ul><li><a href="accounting-monthly.html">月次会計</a></li><li><a href="accounting-annual.html">年次会計</a></li></ul></details>
-                <details class="nav-accordion"><summary>分析</summary><ul><li><a href="analytics.html">分析ダッシュボード</a></li></ul></details>
+                <details class="nav-accordion">
+                    <summary>福祉事業活動</summary>
+                    <ul>
+                        <li><a href="support-plans.html">個別支援計画</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>会計</summary>
+                    <ul>
+                        <li><a href="accounting-monthly.html">月次会計</a></li>
+                        <li><a href="accounting-annual.html">年次会計</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>分析</summary>
+                    <ul>
+                        <li><a href="analytics.html">分析ダッシュボード</a></li>
+                    </ul>
+                </details>
                 <a href="account.html" class="nav-link">ユーザーアカウント</a>
                 <a href="settings.html" class="nav-link">（その他設定）</a>
             </nav>
@@ -179,25 +225,30 @@
 
             <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
 
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
                     <h1 style="margin: 0;">工賃設定</h1>
-                    
+
                     <button id="btn-add-basic" class="btn btn-primary" onclick="openBasicWageModal()">
                         <span class="material-symbols-outlined">add</span>
                         基本工賃レベル追加
                     </button>
-                    <button id="btn-add-allowance" class="btn btn-primary" onclick="openAllowanceModal()" style="display: none;">
+                    <button id="btn-add-allowance" class="btn btn-primary" onclick="openAllowanceModal()"
+                        style="display: none;">
                         <span class="material-symbols-outlined">add</span>
                         加算手当追加
                     </button>
                 </div>
 
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
                     <div class="view-toggle">
-                        <input type="radio" id="view-mode-basic" name="view-mode" checked onchange="switchView('basic')">
+                        <input type="radio" id="view-mode-basic" name="view-mode" checked
+                            onchange="switchView('basic')">
                         <label for="view-mode-basic">基本工賃</label>
-                        
-                        <input type="radio" id="view-mode-allowance" name="view-mode" onchange="switchView('allowance')">
+
+                        <input type="radio" id="view-mode-allowance" name="view-mode"
+                            onchange="switchView('allowance')">
                         <label for="view-mode-allowance">加算手当</label>
                     </div>
                 </div>
@@ -220,8 +271,11 @@
                                     <td>要支援レベル。職員の補助が必要な作業に従事。</td>
                                     <td class="col-actions">
                                         <div style="display: flex; justify-content: flex-end; gap: var(--spacing-2);">
-                                            <button class="btn btn-icon btn-icon-success btn-icon-sm" onclick="openBasicWageModal('1')"><span class="material-symbols-outlined">edit</span></button>
-                                            <button class="btn btn-icon btn-icon-error btn-icon-sm"><span class="material-symbols-outlined">delete</span></button>
+                                            <button class="btn btn-icon btn-icon-success btn-icon-sm"
+                                                onclick="openBasicWageModal('1')"><span
+                                                    class="material-symbols-outlined">edit</span></button>
+                                            <button class="btn btn-icon btn-icon-error btn-icon-sm"><span
+                                                    class="material-symbols-outlined">delete</span></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -231,8 +285,11 @@
                                     <td>自立レベル。定型作業を一人で完遂できる。</td>
                                     <td class="col-actions">
                                         <div style="display: flex; justify-content: flex-end; gap: var(--spacing-2);">
-                                            <button class="btn btn-icon btn-icon-success btn-icon-sm" onclick="openBasicWageModal('2')"><span class="material-symbols-outlined">edit</span></button>
-                                            <button class="btn btn-icon btn-icon-error btn-icon-sm"><span class="material-symbols-outlined">delete</span></button>
+                                            <button class="btn btn-icon btn-icon-success btn-icon-sm"
+                                                onclick="openBasicWageModal('2')"><span
+                                                    class="material-symbols-outlined">edit</span></button>
+                                            <button class="btn btn-icon btn-icon-error btn-icon-sm"><span
+                                                    class="material-symbols-outlined">delete</span></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -242,15 +299,19 @@
                                     <td>指導レベル。他利用者への作業指導や検品が可能。</td>
                                     <td class="col-actions">
                                         <div style="display: flex; justify-content: flex-end; gap: var(--spacing-2);">
-                                            <button class="btn btn-icon btn-icon-success btn-icon-sm" onclick="openBasicWageModal('3')"><span class="material-symbols-outlined">edit</span></button>
-                                            <button class="btn btn-icon btn-icon-error btn-icon-sm"><span class="material-symbols-outlined">delete</span></button>
+                                            <button class="btn btn-icon btn-icon-success btn-icon-sm"
+                                                onclick="openBasicWageModal('3')"><span
+                                                    class="material-symbols-outlined">edit</span></button>
+                                            <button class="btn btn-icon btn-icon-error btn-icon-sm"><span
+                                                    class="material-symbols-outlined">delete</span></button>
                                         </div>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
-                    <div style="margin-top: var(--spacing-2); text-align: right; color: var(--color-base-quaternary); font-size: var(--font-size-xs);">
+                    <div
+                        style="margin-top: var(--spacing-2); text-align: right; color: var(--color-base-quaternary); font-size: var(--font-size-xs);">
                         ※ ここでの設定値は「工賃レベル評価」画面で各利用者に割り当てられます。
                     </div>
                 </div>
@@ -275,8 +336,11 @@
                                     <td>日次実績で「リーダー手当」フラグがある日</td>
                                     <td class="col-actions">
                                         <div style="display: flex; justify-content: flex-end; gap: var(--spacing-2);">
-                                            <button class="btn btn-icon btn-icon-success btn-icon-sm" onclick="openAllowanceModal('1')"><span class="material-symbols-outlined">edit</span></button>
-                                            <button class="btn btn-icon btn-icon-error btn-icon-sm"><span class="material-symbols-outlined">delete</span></button>
+                                            <button class="btn btn-icon btn-icon-success btn-icon-sm"
+                                                onclick="openAllowanceModal('1')"><span
+                                                    class="material-symbols-outlined">edit</span></button>
+                                            <button class="btn btn-icon btn-icon-error btn-icon-sm"><span
+                                                    class="material-symbols-outlined">delete</span></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -287,8 +351,11 @@
                                     <td>日次実績で「施設外就労」フラグがある日</td>
                                     <td class="col-actions">
                                         <div style="display: flex; justify-content: flex-end; gap: var(--spacing-2);">
-                                            <button class="btn btn-icon btn-icon-success btn-icon-sm" onclick="openAllowanceModal('2')"><span class="material-symbols-outlined">edit</span></button>
-                                            <button class="btn btn-icon btn-icon-error btn-icon-sm"><span class="material-symbols-outlined">delete</span></button>
+                                            <button class="btn btn-icon btn-icon-success btn-icon-sm"
+                                                onclick="openAllowanceModal('2')"><span
+                                                    class="material-symbols-outlined">edit</span></button>
+                                            <button class="btn btn-icon btn-icon-error btn-icon-sm"><span
+                                                    class="material-symbols-outlined">delete</span></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -299,8 +366,11 @@
                                     <td><strong>欠席日数</strong> が <strong>0日 以下</strong></td>
                                     <td class="col-actions">
                                         <div style="display: flex; justify-content: flex-end; gap: var(--spacing-2);">
-                                            <button class="btn btn-icon btn-icon-success btn-icon-sm" onclick="openAllowanceModal('3')"><span class="material-symbols-outlined">edit</span></button>
-                                            <button class="btn btn-icon btn-icon-error btn-icon-sm"><span class="material-symbols-outlined">delete</span></button>
+                                            <button class="btn btn-icon btn-icon-success btn-icon-sm"
+                                                onclick="openAllowanceModal('3')"><span
+                                                    class="material-symbols-outlined">edit</span></button>
+                                            <button class="btn btn-icon btn-icon-error btn-icon-sm"><span
+                                                    class="material-symbols-outlined">delete</span></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -311,8 +381,11 @@
                                     <td><strong>欠席日数</strong> が <strong>3日 以下</strong></td>
                                     <td class="col-actions">
                                         <div style="display: flex; justify-content: flex-end; gap: var(--spacing-2);">
-                                            <button class="btn btn-icon btn-icon-success btn-icon-sm" onclick="openAllowanceModal('4')"><span class="material-symbols-outlined">edit</span></button>
-                                            <button class="btn btn-icon btn-icon-error btn-icon-sm"><span class="material-symbols-outlined">delete</span></button>
+                                            <button class="btn btn-icon btn-icon-success btn-icon-sm"
+                                                onclick="openAllowanceModal('4')"><span
+                                                    class="material-symbols-outlined">edit</span></button>
+                                            <button class="btn btn-icon btn-icon-error btn-icon-sm"><span
+                                                    class="material-symbols-outlined">delete</span></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -323,8 +396,11 @@
                                     <td>利用者設定で対象者に指定</td>
                                     <td class="col-actions">
                                         <div style="display: flex; justify-content: flex-end; gap: var(--spacing-2);">
-                                            <button class="btn btn-icon btn-icon-success btn-icon-sm" onclick="openAllowanceModal('5')"><span class="material-symbols-outlined">edit</span></button>
-                                            <button class="btn btn-icon btn-icon-error btn-icon-sm"><span class="material-symbols-outlined">delete</span></button>
+                                            <button class="btn btn-icon btn-icon-success btn-icon-sm"
+                                                onclick="openAllowanceModal('5')"><span
+                                                    class="material-symbols-outlined">edit</span></button>
+                                            <button class="btn btn-icon btn-icon-error btn-icon-sm"><span
+                                                    class="material-symbols-outlined">delete</span></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -345,12 +421,15 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label class="form-label">レベル名</label>
-                        <input type="text" id="basic-name" class="input-field" placeholder="例: Lv.1">
+                        <div id="basic-name-display"
+                            style="padding: var(--spacing-2) 0; font-weight: bold; font-size: var(--font-size-sm); color: var(--color-base-tertiary);">
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">単価 (時給)</label>
                         <div style="display: flex; align-items: center; gap: var(--spacing-2);">
-                            <input type="number" id="basic-price" class="input-field" style="text-align: right;" placeholder="0">
+                            <input type="number" id="basic-price" class="input-field" style="text-align: right;"
+                                placeholder="0">
                             <span>円</span>
                         </div>
                     </div>
@@ -361,7 +440,8 @@
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-neutral" onclick="hideModal('modal-edit-basic')">キャンセル</button>
-                    <button class="btn btn-primary" onclick="hideModal('modal-edit-basic'); alert('保存しました');">保存する</button>
+                    <button class="btn btn-primary"
+                        onclick="hideModal('modal-edit-basic'); alert('保存しました');">保存する</button>
                 </div>
             </div>
         </div>
@@ -376,7 +456,7 @@
                         <label class="form-label">手当名</label>
                         <input type="text" class="input-field" placeholder="例: リーダー手当">
                     </div>
-                    
+
                     <div class="form-group">
                         <label class="form-label">加算種別</label>
                         <select id="allowance-type" class="input-field" onchange="toggleAllowanceType()">
@@ -426,19 +506,23 @@
                                 <span>円 / 月</span>
                             </div>
                         </div>
-                        
+
                         <div class="form-group">
                             <label class="form-label">達成条件 (自動計算ルール)</label>
-                            <div style="background-color: var(--color-base-secondary); padding: var(--spacing-4); border-radius: var(--radius-alert);">
-                                <div style="display: flex; align-items: center; gap: var(--spacing-2); flex-wrap: wrap;">
-                                    <select id="attendance-metric" class="input-field" style="width: auto;" onchange="updateAttendanceUnit()">
+                            <div
+                                style="background-color: var(--color-base-secondary); padding: var(--spacing-4); border-radius: var(--radius-alert);">
+                                <div
+                                    style="display: flex; align-items: center; gap: var(--spacing-2); flex-wrap: wrap;">
+                                    <select id="attendance-metric" class="input-field" style="width: auto;"
+                                        onchange="updateAttendanceUnit()">
                                         <option value="absent_days">欠席日数</option>
                                         <option value="attend_days">出勤日数</option>
                                         <option value="attend_rate">出勤率</option>
                                         <option value="absent_rate">欠席率</option>
                                     </select>
                                     <span>が</span>
-                                    <input type="number" class="input-field" style="width: 80px; text-align: right;" value="0">
+                                    <input type="number" class="input-field" style="width: 80px; text-align: right;"
+                                        value="0">
                                     <span id="attendance-unit">日</span>
                                     <select class="input-field" style="width: auto;">
                                         <option value="lte">以下</option>
@@ -449,7 +533,8 @@
                                     <span>の場合</span>
                                 </div>
                             </div>
-                            <p style="font-size: var(--font-size-xs); color: var(--color-base-quaternary); margin-top: var(--spacing-2);">
+                            <p
+                                style="font-size: var(--font-size-xs); color: var(--color-base-quaternary); margin-top: var(--spacing-2);">
                                 ※遅刻・早退のカウント方法は「事業所設定」の規定に従います。
                             </p>
                         </div>
@@ -463,7 +548,8 @@
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-neutral" onclick="hideModal('modal-edit-allowance')">キャンセル</button>
-                    <button class="btn btn-primary" onclick="hideModal('modal-edit-allowance'); alert('保存しました');">保存する</button>
+                    <button class="btn btn-primary"
+                        onclick="hideModal('modal-edit-allowance'); alert('保存しました');">保存する</button>
                 </div>
             </div>
         </div>
