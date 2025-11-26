@@ -138,6 +138,12 @@
             });
         }
 
+        const dummyStaffs = [
+            "田中 健司",
+            "伊藤 良子",
+            "渡辺 三郎"
+        ];
+
         // -----------------------------------------------------
         // 評価モーダル
         // -----------------------------------------------------
@@ -154,7 +160,18 @@
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('eval-date').value = today;
 
-            document.getElementById('eval-evaluator').value = "田中 健司"; // ログインユーザー名(仮)
+            // 評価者プルダウン生成
+            const evaluatorSelect = document.getElementById('eval-evaluator');
+            evaluatorSelect.innerHTML = '';
+            dummyStaffs.forEach(staff => {
+                const option = document.createElement('option');
+                option.value = staff;
+                option.textContent = staff;
+                evaluatorSelect.appendChild(option);
+            });
+            // デフォルトは田中 健司、または既存データの評価者
+            evaluatorSelect.value = "田中 健司";
+
             document.getElementById('eval-comment').value = data.comment || "";
 
             showModal('modal-evaluate-wage');
@@ -380,7 +397,9 @@
 
                     <div class="form-group">
                         <label class="form-label">評価者</label>
-                        <input type="text" id="eval-evaluator" class="input-field">
+                        <select id="eval-evaluator" class="input-field">
+                            <!-- JSで生成 -->
+                        </select>
                     </div>
 
                     <div class="form-group">
