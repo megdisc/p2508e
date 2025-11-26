@@ -111,7 +111,7 @@
             grid-template-columns: repeat(7, 1fr);
             gap: 1px;
             background-color: var(--color-base-quinary);
-            border: 1px solid var(--color-base-quinary);
+            /* border: 1px solid var(--color-base-quinary); 削除 */
         }
 
         .calendar-header {
@@ -128,6 +128,11 @@
             padding: var(--spacing-2);
             font-size: var(--font-size-sm);
             cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .calendar-cell:hover {
+            background-color: var(--color-base-secondary);
         }
 
         .calendar-date {
@@ -496,7 +501,7 @@
 
 
                     <div id="view-monthly-business">
-                        <div class="card">
+                        <div class="card" style="padding: 0;">
                             <div class="card-body">
                                 <div class="calendar-grid">
                                     <div class="calendar-header day-off">日</div>
@@ -731,21 +736,23 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <div style="display: flex; gap: var(--spacing-4); flex-wrap: wrap;">
+                                        <div style="display: flex; flex-direction: column; gap: var(--spacing-1);">
                                             <div class="form-check" style="margin-bottom: 0;">
                                                 <input class="form-check-input" type="checkbox" id="srv-lunch-1"
                                                     checked>
                                                 <label class="form-check-label" for="srv-lunch-1">昼食</label>
                                             </div>
-                                            <div class="form-check" style="margin-bottom: 0;">
-                                                <input class="form-check-input" type="checkbox" id="srv-pickup-1"
-                                                    checked>
-                                                <label class="form-check-label" for="srv-pickup-1">送迎(往)</label>
-                                            </div>
-                                            <div class="form-check" style="margin-bottom: 0;">
-                                                <input class="form-check-input" type="checkbox" id="srv-dropoff-1"
-                                                    checked>
-                                                <label class="form-check-label" for="srv-dropoff-1">送迎(復)</label>
+                                            <div style="display: flex; gap: var(--spacing-4);">
+                                                <div class="form-check" style="margin-bottom: 0;">
+                                                    <input class="form-check-input" type="checkbox" id="srv-pickup-1"
+                                                        checked>
+                                                    <label class="form-check-label" for="srv-pickup-1">送迎(往)</label>
+                                                </div>
+                                                <div class="form-check" style="margin-bottom: 0;">
+                                                    <input class="form-check-input" type="checkbox" id="srv-dropoff-1"
+                                                        checked>
+                                                    <label class="form-check-label" for="srv-dropoff-1">送迎(復)</label>
+                                                </div>
                                             </div>
                                         </div>
                                     </td>
@@ -769,21 +776,23 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <div style="display: flex; gap: var(--spacing-4); flex-wrap: wrap;">
+                                        <div style="display: flex; flex-direction: column; gap: var(--spacing-1);">
                                             <div class="form-check" style="margin-bottom: 0;">
                                                 <input class="form-check-input" type="checkbox" id="srv-lunch-2"
                                                     disabled>
                                                 <label class="form-check-label" for="srv-lunch-2">昼食</label>
                                             </div>
-                                            <div class="form-check" style="margin-bottom: 0;">
-                                                <input class="form-check-input" type="checkbox" id="srv-pickup-2"
-                                                    disabled>
-                                                <label class="form-check-label" for="srv-pickup-2">送迎(往)</label>
-                                            </div>
-                                            <div class="form-check" style="margin-bottom: 0;">
-                                                <input class="form-check-input" type="checkbox" id="srv-dropoff-2"
-                                                    disabled>
-                                                <label class="form-check-label" for="srv-dropoff-2">送迎(復)</label>
+                                            <div style="display: flex; gap: var(--spacing-4);">
+                                                <div class="form-check" style="margin-bottom: 0;">
+                                                    <input class="form-check-input" type="checkbox" id="srv-pickup-2"
+                                                        disabled>
+                                                    <label class="form-check-label" for="srv-pickup-2">送迎(往)</label>
+                                                </div>
+                                                <div class="form-check" style="margin-bottom: 0;">
+                                                    <input class="form-check-input" type="checkbox" id="srv-dropoff-2"
+                                                        disabled>
+                                                    <label class="form-check-label" for="srv-dropoff-2">送迎(復)</label>
+                                                </div>
                                             </div>
                                         </div>
                                     </td>
@@ -807,21 +816,23 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <div style="display: flex; gap: var(--spacing-4); flex-wrap: wrap;">
+                                        <div style="display: flex; flex-direction: column; gap: var(--spacing-1);">
                                             <div class="form-check" style="margin-bottom: 0;">
                                                 <input class="form-check-input" type="checkbox" id="srv-lunch-3"
                                                     disabled>
                                                 <label class="form-check-label" for="srv-lunch-3">昼食</label>
                                             </div>
-                                            <div class="form-check" style="margin-bottom: 0;">
-                                                <input class="form-check-input" type="checkbox" id="srv-pickup-3"
-                                                    disabled>
-                                                <label class="form-check-label" for="srv-pickup-3">送迎(往)</label>
-                                            </div>
-                                            <div class="form-check" style="margin-bottom: 0;">
-                                                <input class="form-check-input" type="checkbox" id="srv-dropoff-3"
-                                                    disabled>
-                                                <label class="form-check-label" for="srv-dropoff-3">送迎(復)</label>
+                                            <div style="display: flex; gap: var(--spacing-4);">
+                                                <div class="form-check" style="margin-bottom: 0;">
+                                                    <input class="form-check-input" type="checkbox" id="srv-pickup-3"
+                                                        disabled>
+                                                    <label class="form-check-label" for="srv-pickup-3">送迎(往)</label>
+                                                </div>
+                                                <div class="form-check" style="margin-bottom: 0;">
+                                                    <input class="form-check-input" type="checkbox" id="srv-dropoff-3"
+                                                        disabled>
+                                                    <label class="form-check-label" for="srv-dropoff-3">送迎(復)</label>
+                                                </div>
                                             </div>
                                         </div>
                                     </td>
@@ -845,21 +856,23 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <div style="display: flex; gap: var(--spacing-4); flex-wrap: wrap;">
+                                        <div style="display: flex; flex-direction: column; gap: var(--spacing-1);">
                                             <div class="form-check" style="margin-bottom: 0;">
                                                 <input class="form-check-input" type="checkbox" id="srv-lunch-4"
                                                     disabled>
                                                 <label class="form-check-label" for="srv-lunch-4">昼食</label>
                                             </div>
-                                            <div class="form-check" style="margin-bottom: 0;">
-                                                <input class="form-check-input" type="checkbox" id="srv-pickup-4"
-                                                    disabled>
-                                                <label class="form-check-label" for="srv-pickup-4">送迎(往)</label>
-                                            </div>
-                                            <div class="form-check" style="margin-bottom: 0;">
-                                                <input class="form-check-input" type="checkbox" id="srv-dropoff-4"
-                                                    disabled>
-                                                <label class="form-check-label" for="srv-dropoff-4">送迎(復)</label>
+                                            <div style="display: flex; gap: var(--spacing-4);">
+                                                <div class="form-check" style="margin-bottom: 0;">
+                                                    <input class="form-check-input" type="checkbox" id="srv-pickup-4"
+                                                        disabled>
+                                                    <label class="form-check-label" for="srv-pickup-4">送迎(往)</label>
+                                                </div>
+                                                <div class="form-check" style="margin-bottom: 0;">
+                                                    <input class="form-check-input" type="checkbox" id="srv-dropoff-4"
+                                                        disabled>
+                                                    <label class="form-check-label" for="srv-dropoff-4">送迎(復)</label>
+                                                </div>
                                             </div>
                                         </div>
                                     </td>
@@ -884,21 +897,23 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <div style="display: flex; gap: var(--spacing-4); flex-wrap: wrap;">
+                                        <div style="display: flex; flex-direction: column; gap: var(--spacing-1);">
                                             <div class="form-check" style="margin-bottom: 0;">
                                                 <input class="form-check-input" type="checkbox" id="srv-lunch-5"
                                                     disabled>
                                                 <label class="form-check-label" for="srv-lunch-5">昼食</label>
                                             </div>
-                                            <div class="form-check" style="margin-bottom: 0;">
-                                                <input class="form-check-input" type="checkbox" id="srv-pickup-5"
-                                                    disabled>
-                                                <label class="form-check-label" for="srv-pickup-5">送迎(往)</label>
-                                            </div>
-                                            <div class="form-check" style="margin-bottom: 0;">
-                                                <input class="form-check-input" type="checkbox" id="srv-dropoff-5"
-                                                    disabled>
-                                                <label class="form-check-label" for="srv-dropoff-5">送迎(復)</label>
+                                            <div style="display: flex; gap: var(--spacing-4);">
+                                                <div class="form-check" style="margin-bottom: 0;">
+                                                    <input class="form-check-input" type="checkbox" id="srv-pickup-5"
+                                                        disabled>
+                                                    <label class="form-check-label" for="srv-pickup-5">送迎(往)</label>
+                                                </div>
+                                                <div class="form-check" style="margin-bottom: 0;">
+                                                    <input class="form-check-input" type="checkbox" id="srv-dropoff-5"
+                                                        disabled>
+                                                    <label class="form-check-label" for="srv-dropoff-5">送迎(復)</label>
+                                                </div>
                                             </div>
                                         </div>
                                     </td>
