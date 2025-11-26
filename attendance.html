@@ -25,7 +25,7 @@
             display: flex;
             align-items: center;
         }
-        
+
         /* タイムラインのバー */
         .timeline-bar {
             position: absolute;
@@ -45,14 +45,23 @@
         }
 
         /* ステータス別の色 */
-        .timeline-bar.present { background-color: var(--color-semantic-primary-main); }
-        .timeline-bar.remote { background-color: var(--color-semantic-success-main); }
-        .timeline-bar.late { background-color: var(--color-semantic-warning-main); }
+        .timeline-bar.present {
+            background-color: var(--color-semantic-primary-main);
+        }
+
+        .timeline-bar.remote {
+            background-color: var(--color-semantic-success-main);
+        }
+
+        .timeline-bar.late {
+            background-color: var(--color-semantic-warning-main);
+        }
 
         /* 目盛り線 */
         .timeline-grid {
             position: absolute;
-            top: 0; bottom: 0;
+            top: 0;
+            bottom: 0;
             border-left: 1px dashed var(--color-base-quinary);
             z-index: 0;
         }
@@ -62,6 +71,7 @@
             vertical-align: middle;
             height: 3rem;
         }
+
         .cell-status {
             white-space: nowrap;
         }
@@ -74,6 +84,7 @@
             padding: 2px;
             border: 1px solid var(--color-base-quinary);
         }
+
         .view-toggle label {
             padding: var(--spacing-1) var(--spacing-3);
             font-size: var(--font-size-sm);
@@ -82,14 +93,18 @@
             transition: all 0.2s;
             color: var(--color-base-quaternary);
         }
-        .view-toggle input[type="radio"] { display: none; }
-        .view-toggle input[type="radio"]:checked + label {
+
+        .view-toggle input[type="radio"] {
+            display: none;
+        }
+
+        .view-toggle input[type="radio"]:checked+label {
             background-color: var(--color-theme-main);
             color: var(--color-base-primary);
             box-shadow: var(--box-shadow-sm);
             font-weight: var(--font-weight-medium);
         }
-        
+
         /* カレンダー用スタイル (簡易) */
         .calendar-grid {
             display: grid;
@@ -98,6 +113,7 @@
             background-color: var(--color-base-quinary);
             border: 1px solid var(--color-base-quinary);
         }
+
         .calendar-header {
             background-color: var(--color-base-secondary);
             padding: var(--spacing-2);
@@ -105,16 +121,28 @@
             font-weight: bold;
             font-size: var(--font-size-sm);
         }
+
         .calendar-cell {
             background-color: var(--color-base-primary);
             min-height: 100px;
             padding: var(--spacing-2);
             font-size: var(--font-size-sm);
         }
-        .calendar-date { font-weight: bold; margin-bottom: var(--spacing-1); }
-        .day-off { background-color: var(--palette-FDD); color: var(--color-semantic-error-main); }
-        .day-sat { background-color: var(--palette-CEF); color: var(--color-semantic-primary-main); }
 
+        .calendar-date {
+            font-weight: bold;
+            margin-bottom: var(--spacing-1);
+        }
+
+        .day-off {
+            background-color: var(--palette-FDD);
+            color: var(--color-semantic-error-main);
+        }
+
+        .day-sat {
+            background-color: var(--palette-CEF);
+            color: var(--color-semantic-primary-main);
+        }
     </style>
 
     <script>
@@ -129,7 +157,7 @@
         // 日付操作（ダミー）
         function changeDate(offset) {
             const dateInput = document.getElementById('attendance-date');
-            if(offset === 0) dateInput.value = '2025-11-22'; 
+            if (offset === 0) dateInput.value = '2025-11-22';
             alert('日付を変更しました（デモ）');
         }
 
@@ -137,26 +165,20 @@
         function switchViewMain(mode) {
             document.getElementById('view-daily').style.display = 'none';
             document.getElementById('view-monthly').style.display = 'none';
-            
+            document.getElementById('controls-daily').style.display = 'none';
+            document.getElementById('controls-monthly').style.display = 'none';
+
             if (mode === 'daily') {
                 document.getElementById('view-daily').style.display = 'block';
+                document.getElementById('controls-daily').style.display = 'flex';
             } else {
                 document.getElementById('view-monthly').style.display = 'block';
+                document.getElementById('controls-monthly').style.display = 'flex';
             }
         }
 
-        // 月別サブ切り替え (営業日/利用者別)
-        function switchViewMonthly(subMode) {
-            document.getElementById('view-monthly-business').style.display = 'none';
-            document.getElementById('view-monthly-user').style.display = 'none';
 
-            if (subMode === 'business') {
-                document.getElementById('view-monthly-business').style.display = 'block';
-            } else {
-                document.getElementById('view-monthly-user').style.display = 'block';
-            }
-        }
-    
+
         // サイドバーの現在地連動（アコーディオン自動展開）
         document.addEventListener("DOMContentLoaded", () => {
             const currentFile = window.location.pathname.split("/").pop();
@@ -187,16 +209,64 @@
             </div>
             <nav class="sidebar-nav">
                 <a href="index.html" class="nav-link">トップ</a>
-                <details class="nav-accordion"><summary>施設情報</summary><ul><li><a href="corporation.html">法人情報</a></li><li><a href="office.html">事業所情報</a></li></ul></details>
-                <details class="nav-accordion"><summary>関係者情報</summary><ul><li><a href="staff.html">職員情報</a></li><li><a href="members.html">利用者情報</a></li><li><a href="partners.html">取引先情報</a></li></ul></details>
-                <details class="nav-accordion"><summary>スキル情報</summary><ul><li><a href="skills-settings.html">スキル設定</a></li><li><a href="skills-evaluation.html">スキル評価</a></li></ul></details>
-                <details class="nav-accordion"><summary>工賃・控除情報</summary><ul><li><a href="wages-settings.html">工賃設定</a></li><li><a href="deductions-settings.html">控除設定</a></li><li><a href="wages-evaluation.html">工賃レベル評価</a></li></ul></details>
-                <details class="nav-accordion"><summary>積立金情報</summary><ul><li><a href="savings-settings.html">積立金設定</a></li><li><a href="savings-history.html">積立金履歴</a></li></ul></details>
+                <details class="nav-accordion">
+                    <summary>施設情報</summary>
+                    <ul>
+                        <li><a href="corporation.html">法人情報</a></li>
+                        <li><a href="office.html">事業所情報</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>関係者情報</summary>
+                    <ul>
+                        <li><a href="staff.html">職員情報</a></li>
+                        <li><a href="members.html">利用者情報</a></li>
+                        <li><a href="partners.html">取引先情報</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>スキル情報</summary>
+                    <ul>
+                        <li><a href="skills-settings.html">スキル設定</a></li>
+                        <li><a href="skills-evaluation.html">スキル評価</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>工賃・控除情報</summary>
+                    <ul>
+                        <li><a href="wages-settings.html">工賃設定</a></li>
+                        <li><a href="deductions-settings.html">控除設定</a></li>
+                        <li><a href="wages-evaluation.html">工賃レベル評価</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>積立金情報</summary>
+                    <ul>
+                        <li><a href="savings-settings.html">積立金設定</a></li>
+                        <li><a href="savings-history.html">積立金履歴</a></li>
+                    </ul>
+                </details>
                 <a href="attendance.html" class="nav-link active">出欠情報</a>
                 <a href="projects.html" class="nav-link">案件情報</a>
-                <details class="nav-accordion"><summary>福祉事業活動</summary><ul><li><a href="support-plans.html">個別支援計画</a></li></ul></details>
-                <details class="nav-accordion"><summary>会計</summary><ul><li><a href="accounting-monthly.html">月次会計</a></li><li><a href="accounting-annual.html">年次会計</a></li></ul></details>
-                <details class="nav-accordion"><summary>分析</summary><ul><li><a href="analytics.html">分析ダッシュボード</a></li></ul></details>
+                <details class="nav-accordion">
+                    <summary>福祉事業活動</summary>
+                    <ul>
+                        <li><a href="support-plans.html">個別支援計画</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>会計</summary>
+                    <ul>
+                        <li><a href="accounting-monthly.html">月次会計</a></li>
+                        <li><a href="accounting-annual.html">年次会計</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>分析</summary>
+                    <ul>
+                        <li><a href="analytics.html">分析ダッシュボード</a></li>
+                    </ul>
+                </details>
                 <a href="account.html" class="nav-link">ユーザーアカウント</a>
                 <a href="settings.html" class="nav-link">（その他設定）</a>
             </nav>
@@ -211,31 +281,48 @@
 
                 <div style="margin-bottom: var(--spacing-stack-md);">
                     <h1 style="margin: 0 0 var(--spacing-stack-sm) 0;">出欠情報</h1>
-                    
-                    <div class="view-toggle" style="display: inline-flex;">
-                        <input type="radio" id="mode-daily" name="view-mode-main" checked onchange="switchViewMain('daily')">
-                        <label for="mode-daily">日別</label>
-                        
-                        <input type="radio" id="mode-monthly" name="view-mode-main" onchange="switchViewMain('monthly')">
-                        <label for="mode-monthly">月別</label>
+
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--spacing-4);">
+                        <div class="view-toggle" style="display: inline-flex;">
+                            <input type="radio" id="mode-daily" name="view-mode-main" checked
+                                onchange="switchViewMain('daily')">
+                            <label for="mode-daily">日別状況</label>
+
+                            <input type="radio" id="mode-monthly" name="view-mode-main"
+                                onchange="switchViewMain('monthly')">
+                            <label for="mode-monthly">カレンダー</label>
+                        </div>
+
+                        <!-- 日別用コントロール -->
+                        <div id="controls-daily" style="display: flex; align-items: center; gap: var(--spacing-2);">
+                            <button class="btn btn-icon btn-icon-primary" onclick="changeDate(-1)"><span
+                                    class="material-symbols-outlined">chevron_left</span></button>
+                            <input type="date" id="attendance-date" class="input-field" value="2025-11-22"
+                                style="width: auto;">
+                            <button class="btn btn-icon btn-icon-primary" onclick="changeDate(1)"><span
+                                    class="material-symbols-outlined">chevron_right</span></button>
+                            <button class="btn btn-neutral" onclick="changeDate(0)">今日</button>
+                        </div>
+
+                        <!-- 月別用コントロール -->
+                        <div id="controls-monthly" style="display: none; align-items: center; gap: var(--spacing-2);">
+                            <button class="btn btn-icon btn-icon-primary"><span
+                                    class="material-symbols-outlined">chevron_left</span></button>
+                            <input type="month" class="input-field" value="2025-11" style="width: auto;">
+                            <button class="btn btn-icon btn-icon-primary"><span
+                                    class="material-symbols-outlined">chevron_right</span></button>
+                        </div>
                     </div>
                 </div>
 
                 <div id="view-daily">
-                    
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
-                        <div style="font-size: var(--font-size-md); font-weight: bold;">2025年11月22日 (金)</div>
-                        <div style="display: flex; align-items: center; gap: var(--spacing-2);">
-                            <button class="btn btn-icon btn-icon-primary" onclick="changeDate(-1)"><span class="material-symbols-outlined">chevron_left</span></button>
-                            <input type="date" id="attendance-date" class="input-field" value="2025-11-22" style="width: auto;">
-                            <button class="btn btn-icon btn-icon-primary" onclick="changeDate(1)"><span class="material-symbols-outlined">chevron_right</span></button>
-                            <button class="btn btn-neutral" onclick="changeDate(0)">今日</button>
-                        </div>
-                    </div>
 
-                    <div style="display: flex; gap: var(--spacing-stack-md); flex-wrap: wrap; margin-bottom: var(--spacing-stack-md);">
+                    <div
+                        style="display: flex; gap: var(--spacing-stack-md); flex-wrap: wrap; margin-bottom: var(--spacing-stack-md);">
                         <div class="card" style="flex: 1; min-width: 320px;">
-                            <div class="card-body" style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
+                            <div class="card-body"
+                                style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
                                 <div class="form-group" style="margin: 0; flex: 1; min-width: 160px;">
                                     <label class="form-label">キーワード検索</label>
                                     <input type="text" class="input-field" placeholder="氏名...">
@@ -253,7 +340,8 @@
                             </div>
                         </div>
                         <div class="card" style="flex: 0 0 auto;">
-                            <div class="card-body" style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
+                            <div class="card-body"
+                                style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
                                 <div class="form-group" style="margin: 0; width: 180px;">
                                     <label class="form-label">並び替え</label>
                                     <select class="input-field">
@@ -266,23 +354,35 @@
                     </div>
 
                     <div class="card">
-                        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                        <div class="card-header"
+                            style="display: flex; justify-content: space-between; align-items: center;">
                             <div>出欠一覧</div>
-                            <button class="btn btn-icon btn-icon-primary" onclick="showModal('modal-edit-daily')" title="一括編集">
+                            <button class="btn btn-icon btn-icon-primary" onclick="showModal('modal-edit-daily')"
+                                title="一括編集">
                                 <span class="material-symbols-outlined">edit</span>
                             </button>
                         </div>
-                        
+
                         <div class="card-body">
-                            <div style="display: flex; gap: var(--spacing-4); margin-bottom: var(--spacing-4); font-size: var(--font-size-sm); color: var(--color-base-quaternary); align-items: center; flex-wrap: wrap;">
-                                <div><span style="font-weight: bold; color: var(--color-base-tertiary);">全 5 名</span></div>
-                                <div style="border-left: 1px solid var(--color-base-quinary); padding-left: var(--spacing-4);">
-                                    通所: <span style="font-weight: bold; color: var(--color-semantic-primary-main);">1</span>
+                            <div
+                                style="display: flex; gap: var(--spacing-4); margin-bottom: var(--spacing-4); font-size: var(--font-size-sm); color: var(--color-base-quaternary); align-items: center; flex-wrap: wrap;">
+                                <div><span style="font-weight: bold; color: var(--color-base-tertiary);">全 5 名</span>
                                 </div>
-                                <div>在宅: <span style="font-weight: bold; color: var(--color-semantic-success-main);">1</span></div>
-                                <div>欠席: <span style="font-weight: bold; color: var(--color-semantic-error-main);">1</span></div>
-                                <div>お休み: <span style="font-weight: bold; color: var(--color-base-tertiary);">1</span></div>
-                                <div>対象外: <span style="font-weight: bold; color: var(--color-base-quaternary);">1</span></div>
+                                <div
+                                    style="border-left: 1px solid var(--color-base-quinary); padding-left: var(--spacing-4);">
+                                    通所: <span
+                                        style="font-weight: bold; color: var(--color-semantic-primary-main);">1</span>
+                                </div>
+                                <div>在宅: <span
+                                        style="font-weight: bold; color: var(--color-semantic-success-main);">1</span>
+                                </div>
+                                <div>欠席: <span
+                                        style="font-weight: bold; color: var(--color-semantic-error-main);">1</span>
+                                </div>
+                                <div>お休み: <span style="font-weight: bold; color: var(--color-base-tertiary);">1</span>
+                                </div>
+                                <div>対象外: <span style="font-weight: bold; color: var(--color-base-quaternary);">1</span>
+                                </div>
                             </div>
 
                             <div class="table-container">
@@ -305,7 +405,8 @@
                                                     <div class="timeline-grid" style="left: 25%;"></div>
                                                     <div class="timeline-grid" style="left: 50%;"></div>
                                                     <div class="timeline-grid" style="left: 75%;"></div>
-                                                    <div class="timeline-bar present" style="left: 12.5%; width: 62.5%;">
+                                                    <div class="timeline-bar present"
+                                                        style="left: 12.5%; width: 62.5%;">
                                                         <span style="margin-left: 8px;">10:00</span>
                                                         <span style="margin-right: 8px;">15:00</span>
                                                     </div>
@@ -383,21 +484,16 @@
                 </div>
 
                 <div id="view-monthly" style="display: none;">
-                    
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
-                        <div style="display: flex; align-items: center; gap: var(--spacing-2);">
-                            <button class="btn btn-icon btn-icon-primary"><span class="material-symbols-outlined">chevron_left</span></button>
-                            <input type="month" class="input-field" value="2025-11" style="width: auto;">
-                            <button class="btn btn-icon btn-icon-primary"><span class="material-symbols-outlined">chevron_right</span></button>
-                        </div>
-                        
-                        <div class="view-toggle">
-                            <input type="radio" id="submode-business" name="view-mode-monthly" checked onchange="switchViewMonthly('business')">
-                            <label for="submode-business">営業日カレンダー</label>
-                            
-                            <input type="radio" id="submode-user" name="view-mode-monthly" onchange="switchViewMonthly('user')">
-                            <label for="submode-user">利用者別カレンダー</label>
-                        </div>
+
+                    <div class="view-toggle"
+                        style="display: flex; justify-content: flex-end; margin-bottom: var(--spacing-stack-md);">
+                        <input type="radio" id="submode-business" name="view-mode-monthly" checked
+                            onchange="switchViewMonthly('business')">
+                        <label for="submode-business">営業日カレンダー</label>
+
+                        <input type="radio" id="submode-user" name="view-mode-monthly"
+                            onchange="switchViewMonthly('user')">
+                        <label for="submode-user">利用者別カレンダー</label>
                     </div>
 
                     <div id="view-monthly-business">
@@ -412,7 +508,9 @@
                                     <div class="calendar-header">金</div>
                                     <div class="calendar-header day-sat">土</div>
 
-                                    <div class="calendar-cell"></div>
+                                    <!-- 2025年11月 -->
+                                    <!-- 1週目 -->
+                                    <div class="calendar-cell"></div> <!-- 10/26 -->
                                     <div class="calendar-cell"></div>
                                     <div class="calendar-cell"></div>
                                     <div class="calendar-cell"></div>
@@ -423,56 +521,177 @@
                                         <span class="badge badge-neutral">休業日</span>
                                     </div>
 
+                                    <!-- 2週目 -->
                                     <div class="calendar-cell day-off">
                                         <div class="calendar-date">2</div>
                                         <span class="badge badge-neutral">休業日</span>
                                     </div>
                                     <div class="calendar-cell">
                                         <div class="calendar-date">3</div>
-                                        <div style="color: var(--color-semantic-error-main); font-size: 0.7rem; margin-bottom: 4px;">文化の日</div>
+                                        <div
+                                            style="color: var(--color-semantic-error-main); font-size: 0.7rem; margin-bottom: 4px;">
+                                            文化の日</div>
                                         <span class="badge badge-neutral">休業日</span>
                                     </div>
                                     <div class="calendar-cell">
                                         <div class="calendar-date">4</div>
                                         <div>通所: 18</div>
+                                        <div>在宅: 2</div>
                                     </div>
                                     <div class="calendar-cell">
                                         <div class="calendar-date">5</div>
                                         <div>通所: 20</div>
+                                        <div>在宅: 1</div>
                                     </div>
                                     <div class="calendar-cell">
                                         <div class="calendar-date">6</div>
                                         <div>通所: 19</div>
+                                        <div>在宅: 2</div>
                                     </div>
                                     <div class="calendar-cell">
                                         <div class="calendar-date">7</div>
                                         <div>通所: 21</div>
+                                        <div>在宅: 0</div>
                                     </div>
                                     <div class="calendar-cell day-sat">
                                         <div class="calendar-date">8</div>
                                         <span class="badge badge-neutral">休業日</span>
                                     </div>
+
+                                    <!-- 3週目 -->
+                                    <div class="calendar-cell day-off">
+                                        <div class="calendar-date">9</div>
+                                        <span class="badge badge-neutral">休業日</span>
+                                    </div>
+                                    <div class="calendar-cell">
+                                        <div class="calendar-date">10</div>
+                                        <div>通所: 19</div>
+                                        <div>在宅: 2</div>
+                                    </div>
+                                    <div class="calendar-cell">
+                                        <div class="calendar-date">11</div>
+                                        <div>通所: 20</div>
+                                        <div>在宅: 1</div>
+                                    </div>
+                                    <div class="calendar-cell">
+                                        <div class="calendar-date">12</div>
+                                        <div>通所: 18</div>
+                                        <div>在宅: 3</div>
+                                    </div>
+                                    <div class="calendar-cell">
+                                        <div class="calendar-date">13</div>
+                                        <div>通所: 21</div>
+                                        <div>在宅: 0</div>
+                                    </div>
+                                    <div class="calendar-cell">
+                                        <div class="calendar-date">14</div>
+                                        <div>通所: 20</div>
+                                        <div>在宅: 1</div>
+                                    </div>
+                                    <div class="calendar-cell day-sat">
+                                        <div class="calendar-date">15</div>
+                                        <span class="badge badge-neutral">休業日</span>
+                                    </div>
+
+                                    <!-- 4週目 -->
+                                    <div class="calendar-cell day-off">
+                                        <div class="calendar-date">16</div>
+                                        <span class="badge badge-neutral">休業日</span>
+                                    </div>
+                                    <div class="calendar-cell">
+                                        <div class="calendar-date">17</div>
+                                        <div>通所: 19</div>
+                                        <div>在宅: 2</div>
+                                    </div>
+                                    <div class="calendar-cell">
+                                        <div class="calendar-date">18</div>
+                                        <div>通所: 20</div>
+                                        <div>在宅: 1</div>
+                                    </div>
+                                    <div class="calendar-cell">
+                                        <div class="calendar-date">19</div>
+                                        <div>通所: 18</div>
+                                        <div>在宅: 3</div>
+                                    </div>
+                                    <div class="calendar-cell">
+                                        <div class="calendar-date">20</div>
+                                        <div>通所: 21</div>
+                                        <div>在宅: 0</div>
+                                    </div>
+                                    <div class="calendar-cell">
+                                        <div class="calendar-date">21</div>
+                                        <div>通所: 20</div>
+                                        <div>在宅: 1</div>
+                                    </div>
+                                    <div class="calendar-cell day-sat">
+                                        <div class="calendar-date">22</div>
+                                        <span class="badge badge-neutral">休業日</span>
+                                    </div>
+
+                                    <!-- 5週目 -->
+                                    <div class="calendar-cell day-off">
+                                        <div class="calendar-date">23</div>
+                                        <div
+                                            style="color: var(--color-semantic-error-main); font-size: 0.7rem; margin-bottom: 4px;">
+                                            勤労感謝の日</div>
+                                        <span class="badge badge-neutral">休業日</span>
+                                    </div>
+                                    <div class="calendar-cell">
+                                        <div class="calendar-date">24</div>
+                                        <div
+                                            style="color: var(--color-semantic-error-main); font-size: 0.7rem; margin-bottom: 4px;">
+                                            振替休日</div>
+                                        <span class="badge badge-neutral">休業日</span>
+                                    </div>
+                                    <div class="calendar-cell">
+                                        <div class="calendar-date">25</div>
+                                        <div>通所: 20</div>
+                                        <div>在宅: 1</div>
+                                    </div>
+                                    <div class="calendar-cell">
+                                        <div class="calendar-date">26</div>
+                                        <div>通所: 18</div>
+                                        <div>在宅: 3</div>
+                                    </div>
+                                    <div class="calendar-cell">
+                                        <div class="calendar-date">27</div>
+                                        <div>通所: 21</div>
+                                        <div>在宅: 0</div>
+                                    </div>
+                                    <div class="calendar-cell">
+                                        <div class="calendar-date">28</div>
+                                        <div>通所: 20</div>
+                                        <div>在宅: 1</div>
+                                    </div>
+                                    <div class="calendar-cell day-sat">
+                                        <div class="calendar-date">29</div>
+                                        <span class="badge badge-neutral">休業日</span>
+                                    </div>
+
+                                    <!-- 6週目 -->
+                                    <div class="calendar-cell day-off">
+                                        <div class="calendar-date">30</div>
+                                        <span class="badge badge-neutral">休業日</span>
+                                    </div>
+                                    <div class="calendar-cell"></div>
+                                    <div class="calendar-cell"></div>
+                                    <div class="calendar-cell"></div>
+                                    <div class="calendar-cell"></div>
+                                    <div class="calendar-cell"></div>
+                                    <div class="calendar-cell"></div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div id="view-monthly-user" style="display: none;">
-                        <div class="card">
-                            <div class="card-body">
-                                <p style="color: var(--color-base-quaternary); text-align: center; padding: 2rem;">
-                                    ここに利用者ごとの月間出欠状況（ガントチャートまたはテーブル）を表示します。
-                                </p>
-                            </div>
-                        </div>
-                    </div>
+
 
                 </div>
 
             </div>
 
         </main>
-        
+
         <div class="modal-backdrop" id="modal-edit-daily" style="display: none;">
             <div class="modal-content" style="width: 98vw; max-width: none; height: 90vh;">
                 <div class="modal-header">
@@ -482,7 +701,7 @@
                     <p style="margin-bottom: var(--spacing-stack-md);">
                         本日の出欠状況を登録・編集します。
                     </p>
-                    
+
                     <div class="table-container">
                         <table class="table">
                             <thead>
@@ -515,15 +734,18 @@
                                     <td>
                                         <div style="display: flex; gap: var(--spacing-4); flex-wrap: wrap;">
                                             <div class="form-check" style="margin-bottom: 0;">
-                                                <input class="form-check-input" type="checkbox" id="srv-lunch-1" checked>
+                                                <input class="form-check-input" type="checkbox" id="srv-lunch-1"
+                                                    checked>
                                                 <label class="form-check-label" for="srv-lunch-1">昼食</label>
                                             </div>
                                             <div class="form-check" style="margin-bottom: 0;">
-                                                <input class="form-check-input" type="checkbox" id="srv-pickup-1" checked>
+                                                <input class="form-check-input" type="checkbox" id="srv-pickup-1"
+                                                    checked>
                                                 <label class="form-check-label" for="srv-pickup-1">送迎(往)</label>
                                             </div>
                                             <div class="form-check" style="margin-bottom: 0;">
-                                                <input class="form-check-input" type="checkbox" id="srv-dropoff-1" checked>
+                                                <input class="form-check-input" type="checkbox" id="srv-dropoff-1"
+                                                    checked>
                                                 <label class="form-check-label" for="srv-dropoff-1">送迎(復)</label>
                                             </div>
                                         </div>
@@ -550,15 +772,18 @@
                                     <td>
                                         <div style="display: flex; gap: var(--spacing-4); flex-wrap: wrap;">
                                             <div class="form-check" style="margin-bottom: 0;">
-                                                <input class="form-check-input" type="checkbox" id="srv-lunch-2" disabled>
+                                                <input class="form-check-input" type="checkbox" id="srv-lunch-2"
+                                                    disabled>
                                                 <label class="form-check-label" for="srv-lunch-2">昼食</label>
                                             </div>
                                             <div class="form-check" style="margin-bottom: 0;">
-                                                <input class="form-check-input" type="checkbox" id="srv-pickup-2" disabled>
+                                                <input class="form-check-input" type="checkbox" id="srv-pickup-2"
+                                                    disabled>
                                                 <label class="form-check-label" for="srv-pickup-2">送迎(往)</label>
                                             </div>
                                             <div class="form-check" style="margin-bottom: 0;">
-                                                <input class="form-check-input" type="checkbox" id="srv-dropoff-2" disabled>
+                                                <input class="form-check-input" type="checkbox" id="srv-dropoff-2"
+                                                    disabled>
                                                 <label class="form-check-label" for="srv-dropoff-2">送迎(復)</label>
                                             </div>
                                         </div>
@@ -571,7 +796,8 @@
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-neutral" onclick="hideModal('modal-edit-daily')">キャンセル</button>
-                    <button class="btn btn-primary" onclick="hideModal('modal-edit-daily'); alert('保存しました');">保存する</button>
+                    <button class="btn btn-primary"
+                        onclick="hideModal('modal-edit-daily'); alert('保存しました');">保存する</button>
                 </div>
             </div>
         </div>
