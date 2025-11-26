@@ -35,7 +35,7 @@
             contents.forEach(content => content.classList.remove('is-active'));
             document.getElementById(tabId).classList.add('is-active');
         }
-    
+
         // サイドバーの現在地連動（アコーディオン自動展開）
         document.addEventListener("DOMContentLoaded", () => {
             const currentFile = window.location.pathname.split("/").pop();
@@ -47,6 +47,21 @@
                 }
             });
         });
+
+        // サービス列の一括制御
+        function toggleServiceColumn(type, isChecked) {
+            const selector = `.service-${type}`;
+            const elements = document.querySelectorAll(selector);
+
+            elements.forEach(el => {
+                if (!isChecked) {
+                    el.value = 'none';
+                    el.disabled = true;
+                } else {
+                    el.disabled = false;
+                }
+            });
+        }
     </script>
 </head>
 
@@ -70,8 +85,21 @@
 
                 <a href="index.html" class="nav-link">トップ</a>
 
-                <details class="nav-accordion"><summary>施設情報</summary><ul><li><a href="corporation.html">法人情報</a></li><li><a href="office.html">事業所情報</a></li></ul></details>
-                <details class="nav-accordion"><summary>関係者情報</summary><ul><li><a href="staff.html">職員情報</a></li><li><a href="members.html">利用者情報</a></li><li><a href="partners.html">取引先情報</a></li></ul></details>
+                <details class="nav-accordion">
+                    <summary>施設情報</summary>
+                    <ul>
+                        <li><a href="corporation.html">法人情報</a></li>
+                        <li><a href="office.html">事業所情報</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>関係者情報</summary>
+                    <ul>
+                        <li><a href="staff.html">職員情報</a></li>
+                        <li><a href="members.html">利用者情報</a></li>
+                        <li><a href="partners.html">取引先情報</a></li>
+                    </ul>
+                </details>
 
                 <details class="nav-accordion">
                     <summary>スキル情報</summary>
@@ -90,7 +118,13 @@
                     </ul>
                 </details>
 
-                <details class="nav-accordion"><summary>積立金情報</summary><ul><li><a href="savings-settings.html">積立金設定</a></li><li><a href="savings-history.html">積立金履歴</a></li></ul></details>
+                <details class="nav-accordion">
+                    <summary>積立金情報</summary>
+                    <ul>
+                        <li><a href="savings-settings.html">積立金設定</a></li>
+                        <li><a href="savings-history.html">積立金履歴</a></li>
+                    </ul>
+                </details>
 
                 <a href="attendance.html" class="nav-link">出欠情報</a>
 
@@ -136,7 +170,8 @@
 
             <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
 
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
                     <h1 style="margin: 0;">事業所情報</h1>
                     <a href="#" class="btn btn-primary" onclick="showModal('modal-edit-office')">
                         <span class="material-symbols-outlined">add</span>
@@ -145,14 +180,18 @@
                 </div>
 
                 <div class="card" style="margin-bottom: var(--spacing-stack-md);">
-                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div class="card-header"
+                        style="display: flex; justify-content: space-between; align-items: flex-start;">
                         <div>
-                            <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">
+                            <div
+                                style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">
                                 こんぱす天神
                             </div>
                         </div>
-                        <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
-                            <button class="btn btn-icon btn-icon-success" title="修正" onclick="showModal('modal-edit-office')">
+                        <div
+                            style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
+                            <button class="btn btn-icon btn-icon-success" title="修正"
+                                onclick="showModal('modal-edit-office')">
                                 <span class="material-symbols-outlined">edit</span>
                             </button>
                             <button class="btn btn-icon btn-icon-error" title="削除">
@@ -184,7 +223,8 @@
                             </div>
                         </dl>
 
-                        <div style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
+                        <div
+                            style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
                             <button class="btn btn-neutral" onclick="showModal('modal-service-office-1')">
                                 提供サービス
                             </button>
@@ -193,14 +233,18 @@
                 </div>
 
                 <div class="card">
-                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div class="card-header"
+                        style="display: flex; justify-content: space-between; align-items: flex-start;">
                         <div>
-                            <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">
+                            <div
+                                style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">
                                 こんぱす博多
                             </div>
                         </div>
-                        <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
-                            <button class="btn btn-icon btn-icon-success" title="修正" onclick="showModal('modal-edit-office')">
+                        <div
+                            style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
+                            <button class="btn btn-icon btn-icon-success" title="修正"
+                                onclick="showModal('modal-edit-office')">
                                 <span class="material-symbols-outlined">edit</span>
                             </button>
                             <button class="btn btn-icon btn-icon-error" title="削除">
@@ -232,7 +276,8 @@
                             </div>
                         </dl>
 
-                        <div style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
+                        <div
+                            style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
                             <button class="btn btn-neutral" onclick="showModal('modal-service-office-2')">
                                 提供サービス
                             </button>
@@ -244,69 +289,83 @@
             </div>
 
         </main>
-        
+
         <div class="modal-backdrop" id="modal-edit-office" style="display: none;">
             <div class="modal-content" style="max-width: 800px;">
                 <div class="modal-header">
                     事業所情報の編集
                 </div>
                 <div class="modal-body">
-                    
+
                     <nav class="tabs-nav" id="tab-group-office-edit">
-                        <a class="tab-link is-active" onclick="activateTab('tab-group-office-edit', 'tab-office-edit-1')">基本情報</a>
-                        <a class="tab-link" onclick="activateTab('tab-group-office-edit', 'tab-office-edit-2')">提供サービス</a>
+                        <a class="tab-link is-active"
+                            onclick="activateTab('tab-group-office-edit', 'tab-office-edit-1')">基本情報</a>
+                        <a class="tab-link"
+                            onclick="activateTab('tab-group-office-edit', 'tab-office-edit-2')">提供サービス</a>
                     </nav>
 
                     <div id="tab-group-office-edit-content">
-                        
+
                         <div class="tab-content is-active" id="tab-office-edit-1">
                             <form id="office-edit-form" style="margin-top: var(--spacing-4);">
-                        
-                                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4);">
-                                    
+
+                                <div
+                                    style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4);">
+
                                     <div class="form-group" style="margin-bottom: 0;">
                                         <label class="form-label" for="office-name">事業所名</label>
                                         <input type="text" id="office-name" class="input-field" value="こんぱす天神">
                                     </div>
-                                    
+
                                     <div class="form-group" style="margin-bottom: 0;">
                                         <label class="form-label" for="office-number">事業所番号</label>
-                                        <input type="number" id="office-number" class="input-field" value="4010000123" placeholder="10桁の半角数字">
+                                        <input type="number" id="office-number" class="input-field" value="4010000123"
+                                            placeholder="10桁の半角数字">
                                     </div>
-        
+
                                     <div class="form-group" style="margin-bottom: 0;">
                                         <label class="form-label" for="office-manager">管理者名</label>
-                                        <input type="text" id="office-manager" class="input-field" value="管理者 一郎" disabled>
-                                        <p style="font-size: var(--font-size-xs); color: var(--color-base-quaternary); margin-top: var(--spacing-1);">※管理者は職員情報より設定してください</p>
+                                        <input type="text" id="office-manager" class="input-field" value="管理者 一郎"
+                                            disabled>
+                                        <p
+                                            style="font-size: var(--font-size-xs); color: var(--color-base-quaternary); margin-top: var(--spacing-1);">
+                                            ※管理者は職員情報より設定してください</p>
                                     </div>
                                 </div>
-        
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-6);">
-        
+
+                                <div
+                                    style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-6);">
+
                                     <div class="form-group" style="margin-bottom: 0; grid-column: 1 / 2;">
                                         <label class="form-label" for="office-zip1">郵便番号</label>
                                         <div style="display: flex; align-items: center; gap: var(--spacing-2);">
-                                            <input type="text" id="office-zip1" class="input-field" value="810" placeholder="810">
+                                            <input type="text" id="office-zip1" class="input-field" value="810"
+                                                placeholder="810">
                                             <span>-</span>
-                                            <input type="text" id="office-zip2" class="input-field" value="0001" placeholder="0001">
+                                            <input type="text" id="office-zip2" class="input-field" value="0001"
+                                                placeholder="0001">
                                         </div>
                                     </div>
-                                    
+
                                     <div class="form-group" style="margin-bottom: 0; grid-column: 1 / -1;">
                                         <label class="form-label" for="office-address1">住所</label>
-                                        <div style="display: grid; grid-template-columns: 1fr 1.5fr 1.5fr; gap: var(--spacing-3);">
+                                        <div
+                                            style="display: grid; grid-template-columns: 1fr 1.5fr 1.5fr; gap: var(--spacing-3);">
                                             <select id="office-address1" class="input-field">
                                                 <option value="">都道府県</option>
                                                 <option value="福岡県" selected>福岡県</option>
-                                                </select>
-                                            <input type="text" id="office-address2" class="input-field" value="福岡市中央区天神1-2-3" placeholder="市区町村丁目番地">
-                                            <input type="text" id="office-address3" class="input-field" value="天神ビル 5F" placeholder="建物名・部屋番号">
+                                            </select>
+                                            <input type="text" id="office-address2" class="input-field"
+                                                value="福岡市中央区天神1-2-3" placeholder="市区町村丁目番地">
+                                            <input type="text" id="office-address3" class="input-field" value="天神ビル 5F"
+                                                placeholder="建物名・部屋番号">
                                         </div>
                                     </div>
                                 </div>
-        
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-6);">
-                                    
+
+                                <div
+                                    style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-6);">
+
                                     <div class="form-group" style="margin-bottom: 0;">
                                         <label class="form-label" for="office-phone1">電話番号</label>
                                         <div style="display: flex; align-items: center; gap: var(--spacing-2);">
@@ -317,7 +376,7 @@
                                             <input type="text" id="office-phone3" class="input-field" value="4567">
                                         </div>
                                     </div>
-                                    
+
                                     <div class="form-group" style="margin-bottom: 0;">
                                         <label class="form-label" for="office-fax1">FAX番号</label>
                                         <div style="display: flex; align-items: center; gap: var(--spacing-2);">
@@ -329,12 +388,12 @@
                                         </div>
                                     </div>
                                 </div>
-        
+
                             </form>
                         </div>
-                        
+
                         <div class="tab-content" id="tab-office-edit-2">
-                            
+
                             <div class="form-group" style="margin-top: var(--spacing-4);">
                                 <label class="form-label" for="office-service-type">サービス種別</label>
                                 <select id="office-service-type" class="input-field" style="max-width: 300px;">
@@ -352,8 +411,21 @@
                                             <th>ステータス</th>
                                             <th>営業時間 (開始)</th>
                                             <th>営業時間 (終了)</th>
-                                            <th>昼食</th>
-                                            <th>送迎</th>
+                                            <th>
+                                                <div class="form-check" style="margin-bottom: 0;">
+                                                    <input type="checkbox" id="check-all-lunch" class="form-check-input"
+                                                        checked onchange="toggleServiceColumn('lunch', this.checked)">
+                                                    <label for="check-all-lunch" class="form-check-label">昼食</label>
+                                                </div>
+                                            </th>
+                                            <th>
+                                                <div class="form-check" style="margin-bottom: 0;">
+                                                    <input type="checkbox" id="check-all-transport"
+                                                        class="form-check-input" checked
+                                                        onchange="toggleServiceColumn('transport', this.checked)">
+                                                    <label for="check-all-transport" class="form-check-label">送迎</label>
+                                                </div>
+                                            </th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -368,13 +440,13 @@
                                             <td><input type="time" class="input-field"></td>
                                             <td><input type="time" class="input-field"></td>
                                             <td>
-                                                <select class="input-field" style="min-width: 80px;">
+                                                <select class="input-field service-lunch" style="min-width: 80px;">
                                                     <option value="none" selected>なし</option>
                                                     <option value="yes">あり</option>
                                                 </select>
                                             </td>
                                             <td>
-                                                <select class="input-field" style="min-width: 100px;">
+                                                <select class="input-field service-transport" style="min-width: 100px;">
                                                     <option value="none" selected>なし</option>
                                                     <option value="to">往</option>
                                                     <option value="from">復</option>
@@ -393,13 +465,13 @@
                                             <td><input type="time" class="input-field" value="09:00"></td>
                                             <td><input type="time" class="input-field" value="16:00"></td>
                                             <td>
-                                                <select class="input-field" style="min-width: 80px;">
+                                                <select class="input-field service-lunch" style="min-width: 80px;">
                                                     <option value="none">なし</option>
                                                     <option value="yes" selected>あり</option>
                                                 </select>
                                             </td>
                                             <td>
-                                                <select class="input-field" style="min-width: 100px;">
+                                                <select class="input-field service-transport" style="min-width: 100px;">
                                                     <option value="none">なし</option>
                                                     <option value="to">往</option>
                                                     <option value="from">復</option>
@@ -418,13 +490,13 @@
                                             <td><input type="time" class="input-field" value="09:00"></td>
                                             <td><input type="time" class="input-field" value="16:00"></td>
                                             <td>
-                                                <select class="input-field" style="min-width: 80px;">
+                                                <select class="input-field service-lunch" style="min-width: 80px;">
                                                     <option value="none">なし</option>
                                                     <option value="yes" selected>あり</option>
                                                 </select>
                                             </td>
                                             <td>
-                                                <select class="input-field" style="min-width: 100px;">
+                                                <select class="input-field service-transport" style="min-width: 100px;">
                                                     <option value="none">なし</option>
                                                     <option value="to">往</option>
                                                     <option value="from">復</option>
@@ -443,13 +515,13 @@
                                             <td><input type="time" class="input-field" value="09:00"></td>
                                             <td><input type="time" class="input-field" value="16:00"></td>
                                             <td>
-                                                <select class="input-field" style="min-width: 80px;">
+                                                <select class="input-field service-lunch" style="min-width: 80px;">
                                                     <option value="none">なし</option>
                                                     <option value="yes" selected>あり</option>
                                                 </select>
                                             </td>
                                             <td>
-                                                <select class="input-field" style="min-width: 100px;">
+                                                <select class="input-field service-transport" style="min-width: 100px;">
                                                     <option value="none">なし</option>
                                                     <option value="to">往</option>
                                                     <option value="from">復</option>
@@ -468,13 +540,13 @@
                                             <td><input type="time" class="input-field" value="09:00"></td>
                                             <td><input type="time" class="input-field" value="16:00"></td>
                                             <td>
-                                                <select class="input-field" style="min-width: 80px;">
+                                                <select class="input-field service-lunch" style="min-width: 80px;">
                                                     <option value="none">なし</option>
                                                     <option value="yes" selected>あり</option>
                                                 </select>
                                             </td>
                                             <td>
-                                                <select class="input-field" style="min-width: 100px;">
+                                                <select class="input-field service-transport" style="min-width: 100px;">
                                                     <option value="none">なし</option>
                                                     <option value="to">往</option>
                                                     <option value="from">復</option>
@@ -493,13 +565,13 @@
                                             <td><input type="time" class="input-field" value="09:00"></td>
                                             <td><input type="time" class="input-field" value="16:00"></td>
                                             <td>
-                                                <select class="input-field" style="min-width: 80px;">
+                                                <select class="input-field service-lunch" style="min-width: 80px;">
                                                     <option value="none">なし</option>
                                                     <option value="yes" selected>あり</option>
                                                 </select>
                                             </td>
                                             <td>
-                                                <select class="input-field" style="min-width: 100px;">
+                                                <select class="input-field service-transport" style="min-width: 100px;">
                                                     <option value="none">なし</option>
                                                     <option value="to">往</option>
                                                     <option value="from">復</option>
@@ -518,13 +590,13 @@
                                             <td><input type="time" class="input-field" value="10:00"></td>
                                             <td><input type="time" class="input-field" value="15:00"></td>
                                             <td>
-                                                <select class="input-field" style="min-width: 80px;">
+                                                <select class="input-field service-lunch" style="min-width: 80px;">
                                                     <option value="none">なし</option>
                                                     <option value="yes" selected>あり</option>
                                                 </select>
                                             </td>
                                             <td>
-                                                <select class="input-field" style="min-width: 100px;">
+                                                <select class="input-field service-transport" style="min-width: 100px;">
                                                     <option value="none" selected>なし</option>
                                                     <option value="to">往</option>
                                                     <option value="from">復</option>
