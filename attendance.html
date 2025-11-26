@@ -127,6 +127,7 @@
             min-height: 100px;
             padding: var(--spacing-2);
             font-size: var(--font-size-sm);
+            cursor: pointer;
         }
 
         .calendar-date {
@@ -187,6 +188,13 @@
                     link.classList.add("active");
                     const details = link.closest("details");
                     if (details) details.open = true;
+                }
+            });
+
+            // カレンダーセルにクリックイベント追加
+            document.querySelectorAll('.calendar-cell').forEach(cell => {
+                if (cell.querySelector('.calendar-date')) {
+                    cell.onclick = () => showModal('modal-edit-daily');
                 }
             });
         });
@@ -485,16 +493,7 @@
 
                 <div id="view-monthly" style="display: none;">
 
-                    <div class="view-toggle"
-                        style="display: flex; justify-content: flex-end; margin-bottom: var(--spacing-stack-md);">
-                        <input type="radio" id="submode-business" name="view-mode-monthly" checked
-                            onchange="switchViewMonthly('business')">
-                        <label for="submode-business">営業日カレンダー</label>
 
-                        <input type="radio" id="submode-user" name="view-mode-monthly"
-                            onchange="switchViewMonthly('user')">
-                        <label for="submode-user">利用者別カレンダー</label>
-                    </div>
 
                     <div id="view-monthly-business">
                         <div class="card">
@@ -789,6 +788,121 @@
                                         </div>
                                     </td>
                                     <td><input type="text" class="input-field" value="体調不良のため"></td>
+                                </tr>
+                                <tr>
+                                    <td>高橋 一郎</td>
+                                    <td>
+                                        <select class="input-field">
+                                            <option value="present">通所</option>
+                                            <option value="remote" selected>在宅</option>
+                                            <option value="off">お休み</option>
+                                            <option value="absent">欠席</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 4px;">
+                                            <input type="time" class="input-field" value="10:00">
+                                            <span>~</span>
+                                            <input type="time" class="input-field" value="14:00">
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; gap: var(--spacing-4); flex-wrap: wrap;">
+                                            <div class="form-check" style="margin-bottom: 0;">
+                                                <input class="form-check-input" type="checkbox" id="srv-lunch-3"
+                                                    disabled>
+                                                <label class="form-check-label" for="srv-lunch-3">昼食</label>
+                                            </div>
+                                            <div class="form-check" style="margin-bottom: 0;">
+                                                <input class="form-check-input" type="checkbox" id="srv-pickup-3"
+                                                    disabled>
+                                                <label class="form-check-label" for="srv-pickup-3">送迎(往)</label>
+                                            </div>
+                                            <div class="form-check" style="margin-bottom: 0;">
+                                                <input class="form-check-input" type="checkbox" id="srv-dropoff-3"
+                                                    disabled>
+                                                <label class="form-check-label" for="srv-dropoff-3">送迎(復)</label>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><input type="text" class="input-field" value=""></td>
+                                </tr>
+                                <tr>
+                                    <td>佐藤 次郎</td>
+                                    <td>
+                                        <select class="input-field">
+                                            <option value="present">通所</option>
+                                            <option value="remote">在宅</option>
+                                            <option value="off" selected>お休み</option>
+                                            <option value="absent">欠席</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 4px;">
+                                            <input type="time" class="input-field" disabled>
+                                            <span>~</span>
+                                            <input type="time" class="input-field" disabled>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; gap: var(--spacing-4); flex-wrap: wrap;">
+                                            <div class="form-check" style="margin-bottom: 0;">
+                                                <input class="form-check-input" type="checkbox" id="srv-lunch-4"
+                                                    disabled>
+                                                <label class="form-check-label" for="srv-lunch-4">昼食</label>
+                                            </div>
+                                            <div class="form-check" style="margin-bottom: 0;">
+                                                <input class="form-check-input" type="checkbox" id="srv-pickup-4"
+                                                    disabled>
+                                                <label class="form-check-label" for="srv-pickup-4">送迎(往)</label>
+                                            </div>
+                                            <div class="form-check" style="margin-bottom: 0;">
+                                                <input class="form-check-input" type="checkbox" id="srv-dropoff-4"
+                                                    disabled>
+                                                <label class="form-check-label" for="srv-dropoff-4">送迎(復)</label>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><input type="text" class="input-field" value=""></td>
+                                </tr>
+                                <tr>
+                                    <td>田中 三郎</td>
+                                    <td>
+                                        <select class="input-field">
+                                            <option value="present">通所</option>
+                                            <option value="remote">在宅</option>
+                                            <option value="off">お休み</option>
+                                            <option value="absent">欠席</option>
+                                            <option value="other" selected>対象外</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 4px;">
+                                            <input type="time" class="input-field" disabled>
+                                            <span>~</span>
+                                            <input type="time" class="input-field" disabled>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; gap: var(--spacing-4); flex-wrap: wrap;">
+                                            <div class="form-check" style="margin-bottom: 0;">
+                                                <input class="form-check-input" type="checkbox" id="srv-lunch-5"
+                                                    disabled>
+                                                <label class="form-check-label" for="srv-lunch-5">昼食</label>
+                                            </div>
+                                            <div class="form-check" style="margin-bottom: 0;">
+                                                <input class="form-check-input" type="checkbox" id="srv-pickup-5"
+                                                    disabled>
+                                                <label class="form-check-label" for="srv-pickup-5">送迎(往)</label>
+                                            </div>
+                                            <div class="form-check" style="margin-bottom: 0;">
+                                                <input class="form-check-input" type="checkbox" id="srv-dropoff-5"
+                                                    disabled>
+                                                <label class="form-check-label" for="srv-dropoff-5">送迎(復)</label>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><input type="text" class="input-field" value="入院中"></td>
                                 </tr>
                             </tbody>
                         </table>
