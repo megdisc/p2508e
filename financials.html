@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Compath - 予算・経費分析</title>
+
+    <link rel="stylesheet" href="globals.css">
+    <link rel="stylesheet" href="ui.css">
+
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+    <style>
+        /* 予算・費用テーブル用スタイル */
+        .budget-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: var(--spacing-stack-md);
+        }
+
+        .budget-table th {
+            background-color: var(--color-base-secondary);
+            color: var(--color-base-quaternary);
+            font-weight: var(--font-weight-medium);
+            text-align: center;
+            border-bottom: var(--border-width-sm) solid var(--color-table-border);
+            padding: var(--spacing-2);
+            font-size: var(--font-size-xs);
+            white-space: nowrap;
+        }
+
+        .budget-table td {
+            border-bottom: var(--border-width-sm) solid var(--color-table-border);
+            padding: var(--spacing-2) var(--spacing-4);
+            font-size: var(--font-size-sm);
+            vertical-align: middle;
+        }
+
+        .budget-table td.numeric {
+            text-align: right;
+            font-family: monospace;
+        }
+
+        /* サマリーカード */
+        .summary-card {
+            background-color: var(--color-base-primary);
+            border: 1px solid var(--color-base-quinary);
+            border-radius: var(--radius-card);
+            padding: var(--spacing-4);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+        }
+
+        .summary-label {
+            font-size: var(--font-size-xs);
+            color: var(--color-base-quaternary);
+            margin-bottom: var(--spacing-1);
+        }
+
+        .summary-value {
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-bold);
+        }
+
+        .summary-value.positive {
+            color: var(--color-semantic-success-main);
+        }
+
+        .summary-value.negative {
+            color: var(--color-semantic-error-main);
+        }
+
+        /* プログレスバー（収支シミュレーション用） */
+        .profit-bar-container {
+            height: 24px;
+            background-color: var(--color-base-secondary);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+            display: flex;
+            margin-top: var(--spacing-2);
+        }
+
+        .profit-bar-segment {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .bg-revenue {
+            background-color: var(--color-semantic-primary-main);
+        }
+
+        .bg-cost {
+            background-color: var(--color-semantic-error-main);
+        }
+
+        .bg-profit {
+            background-color: var(--color-semantic-success-main);
+        }
+    </style>
+
+    <script>
+        function showModal(id) {
+            document.getElementById(id).style.display = 'flex';
+        }
+        function hideModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        // サイドバー連動
+        document.addEventListener("DOMContentLoaded", () => {
+            const currentFile = window.location.pathname.split("/").pop();
+            document.querySelectorAll(".sidebar-nav a").forEach(link => {
+                if (link.getAttribute("href") === currentFile) {
+                    link.classList.add("active");
+                    const details = link.closest("details");
+                    if (details) details.open = true;
+                }
+            });
+        });
+    </script>
+</head>
+
+<body>
+
+    <div class="page-wrapper">
+
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div style="width: 100%; text-align: center;">
+                    <div style="margin-bottom: var(--spacing-stack-xs);">Compath</div>
+                    <select class="input-field">
+                        <option value="tenjin">こんぱす天神</option>
+                        <option value="hakata">こんぱす博多</option>
+                    </select>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-link">トップ</a>
+                <details class="nav-accordion">
+                    <summary>施設情報</summary>
+                    <ul>
+                        <li><a href="corporation.html">法人情報</a></li>
+                        <li><a href="office.html">事業所情報</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>関係者情報</summary>
+                    <ul>
+                        <li><a href="staff.html">職員情報</a></li>
+                        <li><a href="members.html">利用者情報</a></li>
+                        <li><a href="partners.html">取引先情報</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>スキル情報</summary>
+                    <ul>
+                        <li><a href="skills-settings.html">スキル設定</a></li>
+                        <li><a href="skills-evaluation.html">スキル評価</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>工賃・控除情報</summary>
+                    <ul>
+                        <li><a href="wages-settings.html">工賃設定</a></li>
+                        <li><a href="deductions-settings.html">控除設定</a></li>
+                        <li><a href="wages-evaluation.html">工賃レベル評価</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>積立金情報</summary>
+                    <ul>
+                        <li><a href="savings-settings.html">積立金設定</a></li>
+                        <li><a href="savings-history.html">積立金履歴</a></li>
+                    </ul>
+                </details>
+                <a href="attendance.html" class="nav-link">出欠情報</a>
+                <details class="nav-accordion" open>
+                    <summary>生産活動</summary>
+                    <ul>
+                        <li><a href="projects.html">案件情報</a></li>
+                        <li><a href="schedule.html">進捗状況</a></li>
+                        <li><a href="financials.html" class="active">予算・経費分析</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>福祉事業活動</summary>
+                    <ul>
+                        <li><a href="support-plans.html">個別支援計画</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>会計</summary>
+                    <ul>
+                        <li><a href="accounting-monthly.html">月次会計</a></li>
+                        <li><a href="accounting-annual.html">年次会計</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>分析</summary>
+                    <ul>
+                        <li><a href="analytics.html">分析ダッシュボード</a></li>
+                    </ul>
+                </details>
+                <a href="account.html" class="nav-link">ユーザーアカウント</a>
+                <a href="settings.html" class="nav-link">（その他設定）</a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info"><span class="user-name">田中 健司</span><a href="#">ログアウト</a></div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+
+            <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
+
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
+                    <div>
+                        <h1 style="margin: 0;">予算・経費分析</h1>
+                        <div style="font-size: var(--font-size-sm); color: var(--color-base-quaternary);">対象案件: 10月度
+                            DM封入作業</div>
+                    </div>
+                    <div style="display: flex; gap: var(--spacing-2);">
+                        <select class="input-field" style="width: auto;">
+                            <option>10月度 DM封入作業</option>
+                            <option>名刺データ入力</option>
+                        </select>
+                        <button class="btn btn-neutral">
+                            <span class="material-symbols-outlined">print</span> 印刷
+                        </button>
+                    </div>
+                </div>
+
+                <!-- サマリーセクション -->
+                <div style="display: flex; gap: var(--spacing-4); margin-bottom: var(--spacing-stack-lg);">
+                    <div class="summary-card">
+                        <div class="summary-label">受注総額 (予算)</div>
+                        <div class="summary-value">300,000 <span style="font-size: 1rem; font-weight: normal;">円</span>
+                        </div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-label">経費・配分計</div>
+                        <div class="summary-value negative">245,000 <span
+                                style="font-size: 1rem; font-weight: normal;">円</span></div>
+                    </div>
+                    <div class="summary-card" style="background-color: var(--palette-FFC);">
+                        <div class="summary-label">見込利益</div>
+                        <div class="summary-value positive">55,000 <span
+                                style="font-size: 1rem; font-weight: normal;">円</span></div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-bottom: var(--spacing-stack-lg);">
+                    <div class="card-header">
+                        収支シミュレーション
+                    </div>
+                    <div class="card-body">
+                        <div
+                            style="margin-bottom: var(--spacing-2); display: flex; justify-content: space-between; font-size: var(--font-size-xs);">
+                            <span>コスト (経費 + 工賃配分)</span>
+                            <span>利益マージン: 18.3%</span>
+                        </div>
+                        <div class="profit-bar-container">
+                            <div class="profit-bar-segment bg-cost" style="width: 81.7%;" title="コスト: 245,000円">81.7%
+                            </div>
+                            <div class="profit-bar-segment bg-profit" style="width: 18.3%;" title="利益: 55,000円">18.3%
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-stack-md);">
+
+                    <!-- 予算配分（タスク構成） -->
+                    <div class="card">
+                        <div class="card-header"
+                            style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>予算配分 (タスク構成)</div>
+                            <button class="btn btn-icon btn-icon-primary btn-icon-sm" title="タスク追加"><span
+                                    class="material-symbols-outlined">add</span></button>
+                        </div>
+                        <div class="card-body" style="padding: 0;">
+                            <table class="budget-table">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align: left;">項目 (タスク)</th>
+                                        <th>単価</th>
+                                        <th>数量</th>
+                                        <th>配分額 (工賃原資)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>封入作業</td>
+                                        <td class="numeric">10</td>
+                                        <td class="numeric">3,000</td>
+                                        <td class="numeric">30,000</td>
+                                    </tr>
+                                    <tr>
+                                        <td>検品作業</td>
+                                        <td class="numeric">5</td>
+                                        <td class="numeric">3,000</td>
+                                        <td class="numeric">15,000</td>
+                                    </tr>
+                                    <tr>
+                                        <td>梱包・発送</td>
+                                        <td class="numeric">5,000</td>
+                                        <td class="numeric">1</td>
+                                        <td class="numeric">5,000</td>
+                                    </tr>
+                                    <tr style="background-color: var(--color-base-secondary); font-weight: bold;">
+                                        <td colspan="3" style="text-align: right;">小計</td>
+                                        <td class="numeric">50,000</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 経費管理 -->
+                    <div class="card">
+                        <div class="card-header"
+                            style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>経費・その他支出</div>
+                            <button class="btn btn-icon btn-icon-primary btn-icon-sm" title="経費追加"
+                                onclick="showModal('modal-add-expense')"><span
+                                    class="material-symbols-outlined">add</span></button>
+                        </div>
+                        <div class="card-body" style="padding: 0;">
+                            <table class="budget-table">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align: left;">項目</th>
+                                        <th>区分</th>
+                                        <th>金額</th>
+                                        <th>備考</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>封筒・資材代</td>
+                                        <td>材料費</td>
+                                        <td class="numeric">20,000</td>
+                                        <td>立替払済</td>
+                                    </tr>
+                                    <tr>
+                                        <td>配送業者委託費</td>
+                                        <td>外注費</td>
+                                        <td class="numeric">15,000</td>
+                                        <td>ヤマト運輸</td>
+                                    </tr>
+                                    <tr>
+                                        <td>事業所積立金</td>
+                                        <td>積立金</td>
+                                        <td class="numeric">10,000</td>
+                                        <td>規定により5%</td>
+                                    </tr>
+                                    <tr style="background-color: var(--color-base-secondary); font-weight: bold;">
+                                        <td colspan="2" style="text-align: right;">小計</td>
+                                        <td class="numeric">45,000</td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </main>
+
+        <div class="modal-backdrop" id="modal-add-expense" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">経費登録</div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">項目名</label>
+                        <input type="text" class="input-field" placeholder="例: ガソリン代">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">区分</label>
+                        <select class="input-field">
+                            <option>材料費</option>
+                            <option>外注費</option>
+                            <option>消耗品費</option>
+                            <option>旅費交通費</option>
+                            <option>積立金</option>
+                            <option>その他</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">金額</label>
+                        <input type="number" class="input-field" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">備考</label>
+                        <input type="text" class="input-field">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-neutral" onclick="hideModal('modal-add-expense')">キャンセル</button>
+                    <button class="btn btn-primary"
+                        onclick="hideModal('modal-add-expense'); alert('経費を追加しました');">追加する</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
