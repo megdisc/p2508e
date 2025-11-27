@@ -277,8 +277,11 @@
     </style>
 
     <script>
-        function showModal(id, mode = null) {
+        function showModal(id, mode = null, taskName = null) {
             document.getElementById(id).style.display = 'flex';
+            if (id === 'modal-edit-task' && taskName) {
+                document.querySelector('#modal-edit-task .modal-header').textContent = taskName;
+            }
         }
         function hideModal(id) {
             document.getElementById(id).style.display = 'none';
@@ -546,7 +549,8 @@
                                 </td>
                                 <td colspan="3"></td>
                                 <td colspan="5">
-                                    <div class="gantt-bar bar-status-in-progress" onclick="showModal('modal-edit-task')"
+                                    <div class="gantt-bar bar-status-in-progress"
+                                        onclick="showModal('modal-edit-task', null, 'DM封入作業: 封入')"
                                         title="封入: 山田 太郎, 鈴木 花子">
                                         封入: 山田 太郎, 鈴木 花子
                                     </div>
@@ -556,8 +560,8 @@
                             <tr class="multi-row-bottom">
                                 <td colspan="5"></td>
                                 <td colspan="5">
-                                    <div class="gantt-bar bar-status-in-progress" onclick="showModal('modal-edit-task')"
-                                        title="検品: 伊藤 良子">
+                                    <div class="gantt-bar bar-status-in-progress"
+                                        onclick="showModal('modal-edit-task', null, 'DM封入作業: 検品')" title="検品: 伊藤 良子">
                                         検品: 伊藤 良子
                                     </div>
                                 </td>
@@ -572,8 +576,8 @@
                                 </td>
                                 <td colspan="1"></td>
                                 <td colspan="10">
-                                    <div class="gantt-bar bar-status-completed" onclick="showModal('modal-edit-task')"
-                                        title="入力: 高橋 一郎">
+                                    <div class="gantt-bar bar-status-completed"
+                                        onclick="showModal('modal-edit-task', null, '名刺データ入力: 入力')" title="入力: 高橋 一郎">
                                         入力: 高橋 一郎
                                     </div>
                                 </td>
@@ -588,8 +592,8 @@
                                 </td>
                                 <td colspan="25"></td>
                                 <td colspan="2">
-                                    <div class="gantt-bar bar-status-not-started" onclick="showModal('modal-edit-task')"
-                                        title="準備: 全員">
+                                    <div class="gantt-bar bar-status-not-started"
+                                        onclick="showModal('modal-edit-task', null, '11月度清掃準備: 準備')" title="準備: 全員">
                                         準備: 全員
                                     </div>
                                 </td>
@@ -604,8 +608,8 @@
                                 </td>
                                 <td colspan="15"></td>
                                 <td colspan="5">
-                                    <div class="gantt-bar bar-status-cancelled" onclick="showModal('modal-edit-task')"
-                                        title="製造: (中止)">
+                                    <div class="gantt-bar bar-status-cancelled"
+                                        onclick="showModal('modal-edit-task', null, 'イベント用菓子製造: 製造')" title="製造: (中止)">
                                         製造: (中止)
                                     </div>
                                 </td>
@@ -676,18 +680,22 @@
                                 </td>
                                 <td colspan="3"></td>
                                 <td colspan="5">
-                                    <div class="gantt-bar bar-status-in-progress" onclick="showModal('modal-edit-task')"
-                                        title="DM封入作業: 封入">DM封入作業: 封入</div>
+                                    <div class="gantt-bar bar-status-in-progress"
+                                        onclick="showModal('modal-edit-task', null, 'DM封入作業: 封入')" title="DM封入作業: 封入">
+                                        DM封入作業: 封入</div>
                                 </td>
                                 <td colspan="2"></td>
                                 <td colspan="3">
-                                    <div class="gantt-bar bar-status-in-progress" onclick="showModal('modal-edit-task')"
-                                        title="DM封入作業: 封入">DM封入作業: 封入</div>
+                                    <div class="gantt-bar bar-status-in-progress"
+                                        onclick="showModal('modal-edit-task', null, 'DM封入作業: 封入')" title="DM封入作業: 封入">
+                                        DM封入作業: 封入</div>
                                 </td>
                                 <td colspan="12"></td>
                                 <td colspan="2">
-                                    <div class="gantt-bar bar-status-not-started" onclick="showModal('modal-edit-task')"
-                                        title="11月度清掃準備: 準備">清掃準備: 準備</div>
+                                    <div class="gantt-bar bar-status-not-started"
+                                        onclick="showModal('modal-edit-task', null, '11月度清掃準備: 準備')"
+                                        title="11月度清掃準備: 準備">
+                                        清掃準備: 準備</div>
                                 </td>
                                 <td colspan="4"></td>
                             </tr>
@@ -699,13 +707,16 @@
                                 </td>
                                 <td colspan="3"></td>
                                 <td colspan="5">
-                                    <div class="gantt-bar bar-status-in-progress" onclick="showModal('modal-edit-task')"
-                                        title="DM封入作業: 封入">DM封入作業: 封入</div>
+                                    <div class="gantt-bar bar-status-in-progress"
+                                        onclick="showModal('modal-edit-task', null, 'DM封入作業: 封入')" title="DM封入作業: 封入">
+                                        DM封入作業: 封入</div>
                                 </td>
                                 <td colspan="17"></td>
                                 <td colspan="2">
-                                    <div class="gantt-bar bar-status-not-started" onclick="showModal('modal-edit-task')"
-                                        title="11月度清掃準備: 準備">清掃準備: 準備</div>
+                                    <div class="gantt-bar bar-status-not-started"
+                                        onclick="showModal('modal-edit-task', null, '11月度清掃準備: 準備')"
+                                        title="11月度清掃準備: 準備">
+                                        清掃準備: 準備</div>
                                 </td>
                                 <td colspan="4"></td>
                             </tr>
@@ -717,13 +728,16 @@
                                 </td>
                                 <td colspan="1"></td>
                                 <td colspan="10">
-                                    <div class="gantt-bar bar-status-completed" onclick="showModal('modal-edit-task')"
-                                        title="名刺データ入力: 入力">名刺データ入力: 入力</div>
+                                    <div class="gantt-bar bar-status-completed"
+                                        onclick="showModal('modal-edit-task', null, '名刺データ入力: 入力')" title="名刺データ入力: 入力">
+                                        名刺データ入力: 入力</div>
                                 </td>
                                 <td colspan="14"></td>
                                 <td colspan="2">
-                                    <div class="gantt-bar bar-status-not-started" onclick="showModal('modal-edit-task')"
-                                        title="11月度清掃準備: 準備">清掃準備: 準備</div>
+                                    <div class="gantt-bar bar-status-not-started"
+                                        onclick="showModal('modal-edit-task', null, '11月度清掃準備: 準備')"
+                                        title="11月度清掃準備: 準備">
+                                        清掃準備: 準備</div>
                                 </td>
                                 <td colspan="4"></td>
                             </tr>
@@ -736,8 +750,9 @@
                                 </td>
                                 <td colspan="5"></td>
                                 <td colspan="5">
-                                    <div class="gantt-bar bar-staff" onclick="showModal('modal-edit-task')"
-                                        title="DM封入作業: 検品">DM封入作業: 検品</div>
+                                    <div class="gantt-bar bar-staff"
+                                        onclick="showModal('modal-edit-task', null, 'DM封入作業: 検品')" title="DM封入作業: 検品">
+                                        DM封入作業: 検品</div>
                                 </td>
                                 <td colspan="21"></td>
                             </tr>
@@ -757,10 +772,8 @@
             <div class="modal-content">
                 <div class="modal-header">作業割り当て編集</div>
                 <div class="modal-body">
-                    <div class="form-group"><label class="form-label">タスク名</label><input type="text" class="input-field"
-                            value="封入"></div>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4);">
-                        <div class="form-group"><label class="form-label">期間 (開始)</label><input type="date"
+                        <div class="form-group"><label class="form-label">開始日</label><input type="date"
                                 class="input-field" value="2025-08-04"></div>
                         <div class="form-group"><label class="form-label">終了日</label><input type="date"
                                 class="input-field" value="2025-08-08"></div>

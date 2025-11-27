@@ -14,14 +14,182 @@
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
     <script>
+        // Mock Data Store
+        let projectTasks = {
+            'project-1': [
+                {
+                    id: 1,
+                    name: '封入作業',
+                    skills: [
+                        { name: '手先作業', level: 2 },
+                        { name: '集中力', level: 3 }
+                    ]
+                },
+                {
+                    id: 2,
+                    name: '検品作業',
+                    skills: [
+                        { name: '目視確認', level: 3 }
+                    ]
+                }
+            ]
+        };
+
+        let currentEditingProjectId = null;
+        let tempTasks = []; // Temporary storage for editing
+
         function showModal(id, mode = null) {
             document.getElementById(id).style.display = 'flex';
-            if (id === 'modal-project-settings' && mode === 'create') {
-                document.querySelector('#modal-project-settings .modal-header').textContent = '案件 新規登録';
+            if (id === 'modal-project-settings') {
+                currentEditingProjectId = 'project-1'; // Defaulting to project-1 for demo
+                if (mode === 'create') {
+                    document.querySelector('#modal-project-settings .modal-header').textContent = '案件 新規登録';
+                    tempTasks = [];
+                } else {
+                    // Load existing tasks into temp storage
+                    tempTasks = JSON.parse(JSON.stringify(projectTasks[currentEditingProjectId] || []));
+                }
+                switchTab('basic'); // Reset to basic tab
+                renderTaskEditor();
             }
         }
+
         function hideModal(id) {
             document.getElementById(id).style.display = 'none';
+        }
+
+        // --- Tab Logic ---
+        function switchTab(tabName) {
+            // Remove active class from all tabs and contents
+            document.querySelectorAll('.tab-link').forEach(el => el.classList.remove('is-active'));
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('is-active'));
+
+            // Add active class to selected
+            document.getElementById(`tab-btn-${tabName}`).classList.add('is-active');
+            document.getElementById(`tab-${tabName}`).classList.add('is-active');
+        }
+
+        // --- View Modal Logic ---
+        function showTaskViewModal(projectId) {
+            const tasks = projectTasks[projectId] || [];
+            const container = document.getElementById('task-list-view-body');
+            container.innerHTML = '';
+
+            if (tasks.length === 0) {
+                container.innerHTML = '<tr><td colspan="2" style="text-align: center; color: var(--color-text-tertiary);">タスクが定義されていません。</td></tr>';
+            } else {
+                tasks.forEach(task => {
+                    const tr = document.createElement('tr');
+
+                    let skillsHtml = '';
+                    if (task.skills && task.skills.length > 0) {
+                        skillsHtml = `<div style="display: flex; gap: var(--spacing-2); flex-wrap: wrap;">
+                            ${task.skills.map(skill =>
+                            `<span class="badge badge-neutral">${skill.name} (Lv.${skill.level})</span>`
+                        ).join('')}
+                        </div>`;
+                    } else {
+                        skillsHtml = '<span style="color: var(--color-text-tertiary); font-size: var(--font-size-xs);">なし</span>';
+                    }
+
+                    tr.innerHTML = `
+                        <td style="font-weight: bold;">${task.name}</td>
+                        <td>${skillsHtml}</td>
+                    `;
+                    container.appendChild(tr);
+                });
+            }
+            document.getElementById('modal-task-view').style.display = 'flex';
+        }
+
+        // --- Edit Modal Logic (Task Definition) ---
+        function renderTaskEditor() {
+            const container = document.getElementById('task-list-editor');
+            container.innerHTML = '';
+
+            tempTasks.forEach((task, taskIndex) => {
+                const taskEl = document.createElement('div');
+                taskEl.className = 'card';
+                taskEl.style.border = '1px solid var(--border-subtle)';
+
+                let skillsHtml = '';
+                if (task.skills && task.skills.length > 0) {
+                    skillsHtml = task.skills.map((skill, skillIndex) => `
+                        <div style="display: flex; align-items: center; gap: var(--spacing-2); margin-top: var(--spacing-2);">
+                            <input type="text" class="input-field" style="padding: 4px 8px; font-size: 12px;" value="${skill.name}" onchange="updateSkill(${taskIndex}, ${skillIndex}, 'name', this.value)" placeholder="スキル名">
+                            <select class="input-field" style="padding: 4px 8px; font-size: 12px; width: 80px;" onchange="updateSkill(${taskIndex}, ${skillIndex}, 'level', this.value)">
+                                <option value="1" ${skill.level == 1 ? 'selected' : ''}>Lv.1</option>
+                                <option value="2" ${skill.level == 2 ? 'selected' : ''}>Lv.2</option>
+                                <option value="3" ${skill.level == 3 ? 'selected' : ''}>Lv.3</option>
+                                <option value="4" ${skill.level == 4 ? 'selected' : ''}>Lv.4</option>
+                                <option value="5" ${skill.level == 5 ? 'selected' : ''}>Lv.5</option>
+                            </select>
+                            <button class="btn btn-icon btn-icon-error" onclick="removeSkill(${taskIndex}, ${skillIndex})" title="スキル削除">
+                                <span class="material-symbols-outlined" style="font-size: 16px;">close</span>
+                            </button>
+                        </div>
+                    `).join('');
+                }
+
+                taskEl.innerHTML = `
+                    <div class="card-body" style="padding: var(--spacing-3);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-2);">
+                            <input type="text" class="input-field" value="${task.name}" onchange="updateTaskName(${taskIndex}, this.value)" placeholder="タスク名" style="font-weight: bold;">
+                            <button class="btn btn-icon btn-icon-error" onclick="removeTask(${taskIndex})" title="タスク削除">
+                                <span class="material-symbols-outlined">delete</span>
+                            </button>
+                        </div>
+                        <div style="padding-left: var(--spacing-3); border-left: 2px solid var(--border-subtle);">
+                            <div style="font-size: var(--font-body-xs); color: var(--color-text-secondary); margin-bottom: var(--spacing-1);">必要スキル</div>
+                            ${skillsHtml}
+                            <button class="btn btn-sm btn-ghost" onclick="addSkill(${taskIndex})" style="margin-top: var(--spacing-2); padding-left: 0;">
+                                <span class="material-symbols-outlined" style="font-size: 14px;">add</span> スキル追加
+                            </button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(taskEl);
+            });
+        }
+
+        function addTask() {
+            tempTasks.push({
+                id: Date.now(),
+                name: '新規タスク',
+                skills: []
+            });
+            renderTaskEditor();
+        }
+
+        function removeTask(index) {
+            if (confirm('このタスクを削除しますか？')) {
+                tempTasks.splice(index, 1);
+                renderTaskEditor();
+            }
+        }
+
+        function updateTaskName(index, value) {
+            tempTasks[index].name = value;
+        }
+
+        function addSkill(taskIndex) {
+            tempTasks[taskIndex].skills.push({ name: '', level: 1 });
+            renderTaskEditor();
+        }
+
+        function removeSkill(taskIndex, skillIndex) {
+            tempTasks[taskIndex].skills.splice(skillIndex, 1);
+            renderTaskEditor();
+        }
+
+        function updateSkill(taskIndex, skillIndex, field, value) {
+            tempTasks[taskIndex].skills[skillIndex][field] = value;
+        }
+
+        function saveProjectTasks() {
+            if (currentEditingProjectId) {
+                projectTasks[currentEditingProjectId] = JSON.parse(JSON.stringify(tempTasks));
+            }
         }
 
         // サイドバー連動
@@ -221,8 +389,7 @@
                             </dl>
                             <div
                                 style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
-                                <a href="schedule.html" class="btn btn-neutral">進捗状況へ</a>
-                                <a href="financials.html" class="btn btn-neutral">予算・経費へ</a>
+                                <button class="btn btn-neutral" onclick="showTaskViewModal('project-1')">タスク</button>
                             </div>
                         </div>
                     </div>
@@ -268,8 +435,7 @@
                             </dl>
                             <div
                                 style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
-                                <a href="schedule.html" class="btn btn-neutral">進捗状況へ</a>
-                                <a href="financials.html" class="btn btn-neutral">予算・経費へ</a>
+                                <button class="btn btn-neutral" onclick="showTaskViewModal('project-1')">タスク</button>
                             </div>
                         </div>
                     </div>
@@ -315,8 +481,7 @@
                             </dl>
                             <div
                                 style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
-                                <a href="schedule.html" class="btn btn-neutral">進捗状況へ</a>
-                                <a href="financials.html" class="btn btn-neutral">予算・経費へ</a>
+                                <button class="btn btn-neutral" onclick="showTaskViewModal('project-1')">タスク</button>
                             </div>
                         </div>
                     </div>
@@ -328,51 +493,102 @@
         </main>
 
         <div class="modal-backdrop" id="modal-project-settings" style="display: none;">
-            <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-content" style="max-width: 800px;">
                 <div class="modal-header">
                     案件詳細設定: 10月度 DM封入作業
                 </div>
+
+                <!-- Tabs -->
+                <nav class="tabs-nav">
+                    <a class="tab-link is-active" id="tab-btn-basic" onclick="switchTab('basic')">基本情報</a>
+                    <a class="tab-link" id="tab-btn-tasks" onclick="switchTab('tasks')">タスク定義</a>
+                </nav>
+
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label class="form-label">案件名</label>
-                        <input type="text" class="input-field" value="10月度 DM封入作業">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">取引先 (顧客)</label>
-                        <select class="input-field">
-                            <option selected>株式会社 福岡工芸</option>
-                            <option>天神オフィスサプライ</option>
-                            <option>自社案件</option>
-                        </select>
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4);">
+                    <!-- Basic Info Tab -->
+                    <div id="tab-basic" class="tab-content is-active">
                         <div class="form-group">
-                            <label class="form-label">開始日</label>
-                            <input type="date" class="input-field" value="2025-10-01">
+                            <label class="form-label">案件名</label>
+                            <input type="text" class="input-field" value="10月度 DM封入作業">
                         </div>
                         <div class="form-group">
-                            <label class="form-label">納期</label>
-                            <input type="date" class="input-field" value="2025-10-31">
+                            <label class="form-label">取引先 (顧客)</label>
+                            <select class="input-field">
+                                <option selected>株式会社 福岡工芸</option>
+                                <option>天神オフィスサプライ</option>
+                                <option>自社案件</option>
+                            </select>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4);">
+                            <div class="form-group">
+                                <label class="form-label">開始日</label>
+                                <input type="date" class="input-field" value="2025-10-01">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">納期</label>
+                                <input type="date" class="input-field" value="2025-10-31">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">概要</label>
+                            <textarea class="input-field" rows="4">3,000通のDM封入作業。封入物: チラシA, チラシB, 返信ハガキ。</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">進捗状況</label>
+                            <select class="input-field">
+                                <option value="in_progress" selected>進行中</option>
+                                <option value="completed">完了</option>
+                                <option value="not-started">未着手</option>
+                                <option value="cancelled">中止</option>
+                            </select>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label class="form-label">概要</label>
-                        <textarea class="input-field" rows="4">3,000通のDM封入作業。封入物: チラシA, チラシB, 返信ハガキ。</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">進捗状況</label>
-                        <select class="input-field">
-                            <option value="in_progress" selected>進行中</option>
-                            <option value="completed">完了</option>
-                            <option value="not-started">未着手</option>
-                            <option value="cancelled">中止</option>
-                        </select>
+
+                    <!-- Task Definition Tab -->
+                    <div id="tab-tasks" class="tab-content">
+                        <div style="margin-bottom: var(--spacing-stack-md); display: flex; justify-content: flex-end;">
+                            <button class="btn btn-sm btn-primary" onclick="addTask()">
+                                <span class="material-symbols-outlined" style="font-size: 16px;">add</span>
+                                タスク追加
+                            </button>
+                        </div>
+                        <div id="task-list-editor"
+                            style="display: flex; flex-direction: column; gap: var(--spacing-stack-md);">
+                            <!-- Tasks will be rendered here via JS -->
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-neutral" onclick="hideModal('modal-project-settings')">キャンセル</button>
                     <button class="btn btn-primary"
-                        onclick="hideModal('modal-project-settings'); alert('保存しました');">保存する</button>
+                        onclick="saveProjectTasks(); hideModal('modal-project-settings'); alert('保存しました');">保存する</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- View Task Modal -->
+        <div class="modal-backdrop" id="modal-task-view" style="display: none;">
+            <div class="modal-content" style="max-width: 600px;">
+                <div class="modal-header">
+                    タスク一覧
+                </div>
+                <div class="modal-body">
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40%;">タスク名</th>
+                                    <th>必要スキル</th>
+                                </tr>
+                            </thead>
+                            <tbody id="task-list-view-body">
+                                <!-- Tasks will be rendered here via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-neutral" onclick="hideModal('modal-task-view')">閉じる</button>
                 </div>
             </div>
         </div>
