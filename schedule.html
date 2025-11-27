@@ -85,12 +85,7 @@
             gap: var(--spacing-2);
             height: 100%;
             width: 100%;
-            cursor: pointer;
             transition: background-color 0.2s ease;
-        }
-
-        .info-cell:hover {
-            background-color: var(--color-base-secondary);
         }
 
         .cell-text {
@@ -432,11 +427,6 @@
                 <div
                     style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
                     <h1 style="margin: 0;">進捗状況</h1>
-                    <button class="btn btn-neutral" onclick="openDailyReportModal()"
-                        style="margin-left: var(--spacing-2);">
-                        <span class="material-symbols-outlined">edit_note</span>
-                        日報登録
-                    </button>
                 </div>
 
                 <div
@@ -775,17 +765,21 @@
                         <div class="form-group"><label class="form-label">終了日</label><input type="date"
                                 class="input-field" value="2025-08-08"></div>
                     </div>
-                    <div class="form-group"><label class="form-label">担当利用者</label>
-                        <div class="form-check"><input type="checkbox" checked> 山田 太郎</div>
+                    <div class="form-group"><label class="form-label">担当者</label>
+                        <div style="display: flex; flex-direction: column; gap: var(--spacing-2);">
+                            <label style="display: flex; align-items: center; gap: var(--spacing-2); cursor: pointer;">
+                                <input type="radio" name="staff" value="yamada" checked> 山田 太郎
+                            </label>
+                            <label style="display: flex; align-items: center; gap: var(--spacing-2); cursor: pointer;">
+                                <input type="radio" name="staff" value="suzuki"> 鈴木 花子
+                            </label>
+                            <label style="display: flex; align-items: center; gap: var(--spacing-2); cursor: pointer;">
+                                <input type="radio" name="staff" value="tanaka"> 田中 健司
+                            </label>
+                        </div>
                     </div>
                 </div>
-                <div class="modal-footer" style="justify-content: space-between;">
-                    <button class="btn btn-neutral"
-                        onclick="hideModal('modal-edit-task'); openDailyReportModal('封入', '山田 太郎')">
-                        <span class="material-symbols-outlined"
-                            style="font-size: 1.2rem; vertical-align: bottom; margin-right: 4px;">edit_note</span>
-                        このタスクの日報を書く
-                    </button>
+                <div class="modal-footer" style="justify-content: flex-end;">
                     <div>
                         <button class="btn btn-neutral" onclick="hideModal('modal-edit-task')">キャンセル</button>
                         <button class="btn btn-primary" onclick="hideModal('modal-edit-task');">更新する</button>
