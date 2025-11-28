@@ -111,6 +111,158 @@
     </style>
 
     <script>
+        // Mock Data
+        const projects = {
+            'p1': {
+                id: 'p1',
+                name: '10月度 DM封入作業',
+                type: 'single', // single | continuous
+                source: 'external', // external | in_house
+                partner: '株式会社 福岡工芸',
+                revenue: 300000, // Contract amount
+                tasks: [
+                    { name: '封入作業', unitPrice: 10, quantity: 3000, total: 30000 },
+                    { name: '検品作業', unitPrice: 5, quantity: 3000, total: 15000 },
+                    { name: '梱包・発送', unitPrice: 5000, quantity: 1, total: 5000 }
+                ],
+                expenses: [
+                    { name: '封筒・資材代', type: '材料費', amount: 20000, note: '立替払済' },
+                    { name: '配送業者委託費', type: '外注費', amount: 15000, note: 'ヤマト運輸' },
+                    { name: '事業所積立金', type: '積立金', amount: 10000, note: '規定により5%' }
+                ]
+            },
+            'p2': {
+                id: 'p2',
+                name: 'パン製造・販売 (11月度)',
+                type: 'continuous',
+                source: 'in_house',
+                partner: '自主事業',
+                revenue: 450000, // Sales target/actual
+                tasks: [
+                    { name: '生地作り', unitPrice: 1200, quantity: 20, total: 24000 }, // quantity is hours/units
+                    { name: '成形・焼成', unitPrice: 1200, quantity: 40, total: 48000 },
+                    { name: '販売接客', unitPrice: 1000, quantity: 60, total: 60000 }
+                ],
+                expenses: [
+                    { name: '小麦粉・材料費', type: '材料費', amount: 80000, note: '月次平均' },
+                    { name: '光熱費按分', type: '光熱費', amount: 15000, note: '' },
+                    { name: '包装資材', type: '消耗品費', amount: 5000, note: '' }
+                ]
+            }
+        };
+
+        let currentProjectId = 'p1';
+
+        function formatCurrency(num) {
+            return new Intl.NumberFormat('ja-JP').format(num);
+        }
+
+        function renderProject() {
+            const project = projects[currentProjectId];
+
+            // Header
+            document.getElementById('project-name').textContent = project.name;
+            document.getElementById('project-partner').textContent = project.partner;
+
+            // Badges
+            const badgesContainer = document.getElementById('project-badges');
+            badgesContainer.innerHTML = '';
+
+            const typeBadge = document.createElement('span');
+            typeBadge.className = 'badge badge-neutral';
+            typeBadge.textContent = project.type === 'single' ? '単発' : '継続';
+            badgesContainer.appendChild(typeBadge);
+
+            const sourceBadge = document.createElement('span');
+            sourceBadge.className = 'badge badge-neutral';
+            sourceBadge.textContent = project.source === 'external' ? '受託' : '自主';
+            badgesContainer.appendChild(sourceBadge);
+
+            // Summary Cards
+            const revenueLabel = project.source === 'external' ? '受注総額 (予算)' : '売上目標 (月次)';
+            document.getElementById('label-revenue').textContent = revenueLabel;
+            document.getElementById('val-revenue').textContent = formatCurrency(project.revenue);
+
+            const totalExpenses = project.expenses.reduce((sum, item) => sum + item.amount, 0);
+            const totalLabor = project.tasks.reduce((sum, item) => sum + item.total, 0);
+            const totalCost = totalExpenses + totalLabor;
+            const profit = project.revenue - totalCost;
+
+            document.getElementById('val-cost').textContent = formatCurrency(totalCost);
+            document.getElementById('val-profit').textContent = formatCurrency(profit);
+
+            const profitEl = document.getElementById('val-profit');
+            if (profit >= 0) {
+                profitEl.className = 'summary-value positive';
+            } else {
+                profitEl.className = 'summary-value negative';
+            }
+
+            // Progress Bar
+            const costPercent = Math.min(100, (totalCost / project.revenue) * 100);
+            const profitPercent = Math.max(0, 100 - costPercent);
+
+            document.getElementById('bar-cost').style.width = `${costPercent}%`;
+            document.getElementById('bar-cost').textContent = `${costPercent.toFixed(1)}%`;
+            document.getElementById('bar-profit').style.width = `${profitPercent}%`;
+            document.getElementById('bar-profit').textContent = `${profitPercent.toFixed(1)}%`;
+
+            document.getElementById('text-cost-val').textContent = `コスト: ${formatCurrency(totalCost)}円`;
+            document.getElementById('text-margin-val').textContent = `利益マージン: ${profitPercent.toFixed(1)}%`;
+
+            // Task Table
+            const taskTbody = document.getElementById('tbody-tasks');
+            taskTbody.innerHTML = '';
+            project.tasks.forEach(task => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${task.name}</td>
+                    <td class="numeric">${formatCurrency(task.unitPrice)}</td>
+                    <td class="numeric">${formatCurrency(task.quantity)}</td>
+                    <td class="numeric">${formatCurrency(task.total)}</td>
+                `;
+                taskTbody.appendChild(tr);
+            });
+            // Task Subtotal
+            const trTaskSub = document.createElement('tr');
+            trTaskSub.style.backgroundColor = 'var(--color-base-secondary)';
+            trTaskSub.style.fontWeight = 'bold';
+            trTaskSub.innerHTML = `
+                <td colspan="3" style="text-align: right;">小計 (工賃原資)</td>
+                <td class="numeric">${formatCurrency(totalLabor)}</td>
+            `;
+            taskTbody.appendChild(trTaskSub);
+
+            // Expense Table
+            const expTbody = document.getElementById('tbody-expenses');
+            expTbody.innerHTML = '';
+            project.expenses.forEach(exp => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${exp.name}</td>
+                    <td>${exp.type}</td>
+                    <td class="numeric">${formatCurrency(exp.amount)}</td>
+                    <td>${exp.note}</td>
+                `;
+                expTbody.appendChild(tr);
+            });
+            // Expense Subtotal
+            const trExpSub = document.createElement('tr');
+            trExpSub.style.backgroundColor = 'var(--color-base-secondary)';
+            trExpSub.style.fontWeight = 'bold';
+            trExpSub.innerHTML = `
+                <td colspan="2" style="text-align: right;">小計 (経費)</td>
+                <td class="numeric">${formatCurrency(totalExpenses)}</td>
+                <td></td>
+            `;
+            expTbody.appendChild(trExpSub);
+        }
+
+        function switchProject(id) {
+            currentProjectId = id;
+            renderProject();
+        }
+
         function showModal(id) {
             document.getElementById(id).style.display = 'flex';
         }
@@ -128,6 +280,9 @@
                     if (details) details.open = true;
                 }
             });
+
+            // Initial Render
+            renderProject();
         });
     </script>
 </head>
@@ -228,14 +383,21 @@
                 <div
                     style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
                     <div>
-                        <h1 style="margin: 0;">予算・経費</h1>
-                        <div style="font-size: var(--font-size-sm); color: var(--color-base-quaternary);">対象案件: 10月度
-                            DM封入作業</div>
+                        <div
+                            style="display: flex; align-items: center; gap: var(--spacing-2); margin-bottom: var(--spacing-1);">
+                            <h1 style="margin: 0;">予算・経費</h1>
+                            <div id="project-badges" style="display: flex; gap: var(--spacing-1);">
+                                <!-- Badges injected here -->
+                            </div>
+                        </div>
+                        <div style="font-size: var(--font-size-sm); color: var(--color-base-quaternary);">
+                            取引先: <span id="project-partner"></span>
+                        </div>
                     </div>
                     <div style="display: flex; gap: var(--spacing-2);">
-                        <select class="input-field" style="width: auto;">
-                            <option>10月度 DM封入作業</option>
-                            <option>名刺データ入力</option>
+                        <select class="input-field" style="width: auto;" onchange="switchProject(this.value)">
+                            <option value="p1">10月度 DM封入作業</option>
+                            <option value="p2">パン製造・販売 (11月度)</option>
                         </select>
                         <button class="btn btn-neutral">
                             <span class="material-symbols-outlined">print</span> 印刷
@@ -246,37 +408,36 @@
                 <!-- サマリーセクション -->
                 <div style="display: flex; gap: var(--spacing-4); margin-bottom: var(--spacing-stack-lg);">
                     <div class="summary-card">
-                        <div class="summary-label">受注総額 (予算)</div>
-                        <div class="summary-value">300,000 <span style="font-size: 1rem; font-weight: normal;">円</span>
+                        <div class="summary-label" id="label-revenue">受注総額 (予算)</div>
+                        <div class="summary-value"><span id="val-revenue">0</span> <span
+                                style="font-size: 1rem; font-weight: normal;">円</span>
                         </div>
                     </div>
                     <div class="summary-card">
-                        <div class="summary-label">経費・配分計</div>
-                        <div class="summary-value negative">245,000 <span
+                        <div class="summary-label">コスト計 (経費+工賃)</div>
+                        <div class="summary-value negative"><span id="val-cost">0</span> <span
                                 style="font-size: 1rem; font-weight: normal;">円</span></div>
                     </div>
                     <div class="summary-card" style="background-color: var(--palette-FFC);">
                         <div class="summary-label">見込利益</div>
-                        <div class="summary-value positive">55,000 <span
+                        <div class="summary-value positive"><span id="val-profit">0</span> <span
                                 style="font-size: 1rem; font-weight: normal;">円</span></div>
                     </div>
                 </div>
 
                 <div class="card" style="margin-bottom: var(--spacing-stack-lg);">
                     <div class="card-header">
-                        収支シミュレーション
+                        <span id="project-name"></span> 収支シミュレーション
                     </div>
                     <div class="card-body">
                         <div
                             style="margin-bottom: var(--spacing-2); display: flex; justify-content: space-between; font-size: var(--font-size-xs);">
-                            <span>コスト (経費 + 工賃配分)</span>
-                            <span>利益マージン: 18.3%</span>
+                            <span id="text-cost-val">コスト: 0円</span>
+                            <span id="text-margin-val">利益マージン: 0%</span>
                         </div>
                         <div class="profit-bar-container">
-                            <div class="profit-bar-segment bg-cost" style="width: 81.7%;" title="コスト: 245,000円">81.7%
-                            </div>
-                            <div class="profit-bar-segment bg-profit" style="width: 18.3%;" title="利益: 55,000円">18.3%
-                            </div>
+                            <div id="bar-cost" class="profit-bar-segment bg-cost" style="width: 0%;">0%</div>
+                            <div id="bar-profit" class="profit-bar-segment bg-profit" style="width: 0%;">0%</div>
                         </div>
                     </div>
                 </div>
@@ -287,7 +448,7 @@
                     <div class="card">
                         <div class="card-header"
                             style="display: flex; justify-content: space-between; align-items: center;">
-                            <div>予算配分 (タスク構成)</div>
+                            <div>タスク別予算配分</div>
                             <button class="btn btn-icon btn-icon-primary btn-icon-sm" title="タスク追加"><span
                                     class="material-symbols-outlined">add</span></button>
                         </div>
@@ -295,35 +456,14 @@
                             <table class="budget-table">
                                 <thead>
                                     <tr>
-                                        <th style="text-align: left;">項目 (タスク)</th>
+                                        <th style="text-align: left;">タスク名</th>
                                         <th>単価</th>
                                         <th>数量</th>
-                                        <th>配分額 (工賃原資)</th>
+                                        <th>配分額</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>封入作業</td>
-                                        <td class="numeric">10</td>
-                                        <td class="numeric">3,000</td>
-                                        <td class="numeric">30,000</td>
-                                    </tr>
-                                    <tr>
-                                        <td>検品作業</td>
-                                        <td class="numeric">5</td>
-                                        <td class="numeric">3,000</td>
-                                        <td class="numeric">15,000</td>
-                                    </tr>
-                                    <tr>
-                                        <td>梱包・発送</td>
-                                        <td class="numeric">5,000</td>
-                                        <td class="numeric">1</td>
-                                        <td class="numeric">5,000</td>
-                                    </tr>
-                                    <tr style="background-color: var(--color-base-secondary); font-weight: bold;">
-                                        <td colspan="3" style="text-align: right;">小計</td>
-                                        <td class="numeric">50,000</td>
-                                    </tr>
+                                <tbody id="tbody-tasks">
+                                    <!-- Injected via JS -->
                                 </tbody>
                             </table>
                         </div>
@@ -348,30 +488,8 @@
                                         <th>備考</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>封筒・資材代</td>
-                                        <td>材料費</td>
-                                        <td class="numeric">20,000</td>
-                                        <td>立替払済</td>
-                                    </tr>
-                                    <tr>
-                                        <td>配送業者委託費</td>
-                                        <td>外注費</td>
-                                        <td class="numeric">15,000</td>
-                                        <td>ヤマト運輸</td>
-                                    </tr>
-                                    <tr>
-                                        <td>事業所積立金</td>
-                                        <td>積立金</td>
-                                        <td class="numeric">10,000</td>
-                                        <td>規定により5%</td>
-                                    </tr>
-                                    <tr style="background-color: var(--color-base-secondary); font-weight: bold;">
-                                        <td colspan="2" style="text-align: right;">小計</td>
-                                        <td class="numeric">45,000</td>
-                                        <td></td>
-                                    </tr>
+                                <tbody id="tbody-expenses">
+                                    <!-- Injected via JS -->
                                 </tbody>
                             </table>
                         </div>
