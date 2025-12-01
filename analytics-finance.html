@@ -336,6 +336,130 @@
                         updateChart();
                     }
 
+                    // Custom Tooltip Handler
+                    const getOrCreateTooltip = (chart) => {
+                        let tooltipEl = chart.canvas.parentNode.querySelector('div.chartjs-tooltip');
+                        if (!tooltipEl) {
+                            tooltipEl = document.createElement('div');
+                            tooltipEl.classList.add('chartjs-tooltip');
+                            tooltipEl.style.opacity = 0;
+                            tooltipEl.style.pointerEvents = 'none';
+                            tooltipEl.style.position = 'absolute';
+                            tooltipEl.style.transform = 'translate(-50%, 0)';
+                            tooltipEl.style.transition = 'all .1s ease';
+                            tooltipEl.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                            tooltipEl.style.borderRadius = '4px';
+                            tooltipEl.style.color = '#fff';
+                            tooltipEl.style.padding = '10px';
+                            tooltipEl.style.zIndex = '100';
+                            tooltipEl.style.fontFamily = getCssVar('--font-family-base');
+                            tooltipEl.style.fontSize = '12px';
+                            tooltipEl.style.lineHeight = '1.4';
+                            tooltipEl.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+                            tooltipEl.style.minWidth = '200px';
+
+                            chart.canvas.parentNode.appendChild(tooltipEl);
+                        }
+                        return tooltipEl;
+                    };
+
+                    const externalTooltipHandler = (context) => {
+                        // Tooltip Element
+                        const { chart, tooltip } = context;
+                        const tooltipEl = getOrCreateTooltip(chart);
+
+                        // Hide if no tooltip
+                        if (tooltip.opacity === 0) {
+                            tooltipEl.style.opacity = 0;
+                            return;
+                        }
+
+                        // Set Text
+                        if (tooltip.body) {
+                            const titleLines = tooltip.title || [];
+                            const bodyLines = tooltip.body.map(b => b.lines);
+
+                            const formatter = new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' });
+
+                            // Data Grouping
+                            const dataPoints = tooltip.dataPoints;
+                            const groups = {
+                                income: { label: '生産活動収入', total: 0, items: [] },
+                                expense: { label: '生産活動経費', total: 0, items: [] },
+                                reserve: { label: '積立金', total: 0, items: [] }
+                            };
+
+                            dataPoints.forEach(dp => {
+                                const dataset = chart.data.datasets[dp.datasetIndex];
+                                const val = dp.parsed.y;
+                                const category = dataset.category;
+
+                                if (groups[category]) {
+                                    groups[category].total += val;
+                                    groups[category].items.push({
+                                        label: dataset.label,
+                                        value: val,
+                                        color: dataset.backgroundColor
+                                    });
+                                }
+                            });
+
+                            let innerHtml = '';
+
+                            // Title (Period)
+                            titleLines.forEach(title => {
+                                innerHtml += `<div style="font-size: 1.1rem; font-weight: bold; margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 4px;">${title}</div>`;
+                            });
+
+                            // Render Groups
+                            ['income', 'expense', 'reserve'].forEach(key => {
+                                const group = groups[key];
+                                if (group.items.length > 0) {
+                                    // Total Header
+                                    innerHtml += `<div style="margin-top: 8px; font-weight: bold; font-size: 1rem; display: flex; justify-content: space-between;">
+                                        <span>${group.label} 計</span>
+                                        <span>${formatter.format(group.total * 1000)}</span>
+                                    </div>`;
+
+                                    // Details
+                                    group.items.forEach(item => {
+                                        innerHtml += `<div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.85rem; margin-top: 2px; padding-left: 8px;">
+                                            <div style="display: flex; align-items: center;">
+                                                <span style="display:inline-block; width:10px; height:10px; background-color:${item.color}; margin-right:6px;"></span>
+                                                <span>${item.label}</span>
+                                            </div>
+                                            <span style="color: #ddd;">${formatter.format(item.value * 1000)}</span>
+                                        </div>`;
+                                    });
+                                }
+                            });
+
+                            tooltipEl.innerHTML = innerHtml;
+                        }
+
+                        const { offsetLeft: positionX, offsetTop: positionY } = chart.canvas;
+
+                        // Display, position, and set styles for font
+                        tooltipEl.style.opacity = 1;
+
+                        // Smart positioning
+                        const tooltipWidth = tooltipEl.offsetWidth;
+                        const chartWidth = chart.width;
+                        let left = positionX + tooltip.caretX;
+
+                        // If caret is on the left half, show tooltip on the right
+                        if (tooltip.caretX < chartWidth / 2) {
+                            left += 20; // Offset to the right
+                        } else {
+                            left -= tooltipWidth + 20; // Offset to the left
+                        }
+
+                        tooltipEl.style.left = left + 'px';
+                        tooltipEl.style.top = positionY + tooltip.caretY + 'px';
+                        tooltipEl.style.transform = 'translate(0, -50%)'; // Center vertically relative to caret
+                        tooltipEl.style.pointerEvents = 'none';
+                    };
+
                     function updateChart() {
                         const ctx = document.getElementById('financeChart').getContext('2d');
 
@@ -356,24 +480,6 @@
                         const chartData = {
                             labels: sourceData.labels,
                             datasets: [
-                                // --- 積立金 (Stack 2) ---
-                                {
-                                    type: 'bar',
-                                    label: '工賃積立金',
-                                    data: sourceData.reserve_wages,
-                                    backgroundColor: hexToRgba(colorWarning, 1.0),
-                                    stack: 'stack2',
-                                    order: 1
-                                },
-                                {
-                                    type: 'bar',
-                                    label: 'その他の積立金',
-                                    data: sourceData.reserve_other,
-                                    backgroundColor: hexToRgba(colorWarning, 0.6),
-                                    stack: 'stack2',
-                                    order: 1
-                                },
-
                                 // --- 収入 (Stack 0) ---
                                 {
                                     type: 'bar',
@@ -381,7 +487,8 @@
                                     data: sourceData.income_sales,
                                     backgroundColor: hexToRgba(colorSuccess, 1.0),
                                     stack: 'stack0',
-                                    order: 2
+                                    order: 1,
+                                    category: 'income'
                                 },
                                 {
                                     type: 'bar',
@@ -389,7 +496,8 @@
                                     data: sourceData.income_grants,
                                     backgroundColor: hexToRgba(colorSuccess, 0.7),
                                     stack: 'stack0',
-                                    order: 2
+                                    order: 1,
+                                    category: 'income'
                                 },
                                 {
                                     type: 'bar',
@@ -397,7 +505,8 @@
                                     data: sourceData.income_other,
                                     backgroundColor: hexToRgba(colorSuccess, 0.4),
                                     stack: 'stack0',
-                                    order: 2
+                                    order: 1,
+                                    category: 'income'
                                 },
 
                                 // --- 支出 (Stack 1) ---
@@ -407,7 +516,8 @@
                                     data: sourceData.expense_wages,
                                     backgroundColor: hexToRgba(colorError, 1.0),
                                     stack: 'stack1',
-                                    order: 3
+                                    order: 2,
+                                    category: 'expense'
                                 },
                                 {
                                     type: 'bar',
@@ -415,7 +525,8 @@
                                     data: sourceData.expense_outsourcing,
                                     backgroundColor: hexToRgba(colorError, 0.7),
                                     stack: 'stack1',
-                                    order: 3
+                                    order: 2,
+                                    category: 'expense'
                                 },
                                 {
                                     type: 'bar',
@@ -423,7 +534,28 @@
                                     data: sourceData.expense_other,
                                     backgroundColor: hexToRgba(colorError, 0.4),
                                     stack: 'stack1',
-                                    order: 3
+                                    order: 2,
+                                    category: 'expense'
+                                },
+
+                                // --- 積立金 (Stack 2) ---
+                                {
+                                    type: 'bar',
+                                    label: '工賃積立金',
+                                    data: sourceData.reserve_wages,
+                                    backgroundColor: hexToRgba(colorWarning, 1.0),
+                                    stack: 'stack2',
+                                    order: 3,
+                                    category: 'reserve'
+                                },
+                                {
+                                    type: 'bar',
+                                    label: 'その他の積立金',
+                                    data: sourceData.reserve_other,
+                                    backgroundColor: hexToRgba(colorWarning, 0.6),
+                                    stack: 'stack2',
+                                    order: 3,
+                                    category: 'reserve'
                                 }
                             ]
                         };
@@ -447,18 +579,8 @@
                                         display: false,
                                     },
                                     tooltip: {
-                                        callbacks: {
-                                            label: function (context) {
-                                                let label = context.dataset.label || '';
-                                                if (label) {
-                                                    label += ': ';
-                                                }
-                                                if (context.parsed.y !== null) {
-                                                    label += new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' }).format(context.parsed.y * 1000);
-                                                }
-                                                return label;
-                                            }
-                                        }
+                                        enabled: false, // Disable default tooltip
+                                        external: externalTooltipHandler
                                     },
                                     legend: {
                                         labels: {
