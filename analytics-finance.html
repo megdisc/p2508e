@@ -425,7 +425,7 @@
                                     group.items.forEach(item => {
                                         innerHtml += `<div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.85rem; margin-top: 2px; padding-left: 8px;">
                                             <div style="display: flex; align-items: center;">
-                                                <span style="display:inline-block; width:10px; height:10px; background-color:${item.color}; margin-right:6px;"></span>
+                                                <span style="display:inline-block; width:10px; height:10px; background: linear-gradient(0deg, ${item.color}, ${item.color}), #fff; margin-right:6px;"></span>
                                                 <span>${item.label}</span>
                                             </div>
                                             <span style="color: #ddd;">${formatter.format(item.value * 1000)}</span>
