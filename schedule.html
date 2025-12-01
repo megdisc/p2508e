@@ -446,11 +446,13 @@
                     </div>
 
                     <div style="display: flex; align-items: center; gap: var(--spacing-2);">
-                        <button class="btn btn-icon btn-icon-primary" style="width: 2rem; height: 2rem;"><span
-                                class="material-symbols-outlined" style="font-size: 1rem;">chevron_left</span></button>
-                        <input type="month" class="input-field" value="2025-08" style="width: auto;">
-                        <button class="btn btn-icon btn-icon-primary" style="width: 2rem; height: 2rem;"><span
-                                class="material-symbols-outlined" style="font-size: 1rem;">chevron_right</span></button>
+                        <button class="btn btn-icon btn-neutral" onclick="changeDate(-1)"><span
+                                class="material-symbols-outlined">chevron_left</span></button>
+                        <input type="date" id="schedule-date" class="input-field" value="2025-11-22"
+                            style="width: auto;">
+                        <button class="btn btn-icon btn-neutral" onclick="changeDate(1)"><span
+                                class="material-symbols-outlined">chevron_right</span></button>
+                        <button class="btn btn-neutral" onclick="changeDate(0)">今日</button>
                     </div>
                 </div>
 

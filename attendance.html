@@ -262,12 +262,12 @@
                 </details>
                 <a href="attendance.html" class="nav-link active">出欠情報</a>
                 <details class="nav-accordion">
-                <summary>生産活動</summary>
-                <ul>
-                <li><a href="projects.html">案件情報</a></li>
-                <li><a href="budget.html">予算・経費</a></li>
-                <li><a href="schedule.html">進捗状況</a></li>
-                </ul>
+                    <summary>生産活動</summary>
+                    <ul>
+                        <li><a href="projects.html">案件情報</a></li>
+                        <li><a href="budget.html">予算・経費</a></li>
+                        <li><a href="schedule.html">進捗状況</a></li>
+                    </ul>
                 </details>
                 <details class="nav-accordion">
                     <summary>福祉事業活動</summary>
@@ -318,21 +318,21 @@
 
                         <!-- 日別用コントロール -->
                         <div id="controls-daily" style="display: flex; align-items: center; gap: var(--spacing-2);">
-                            <button class="btn btn-icon btn-icon-primary" onclick="changeDate(-1)"><span
+                            <button class="btn btn-icon btn-neutral" onclick="changeDate(-1)"><span
                                     class="material-symbols-outlined">chevron_left</span></button>
                             <input type="date" id="attendance-date" class="input-field" value="2025-11-22"
                                 style="width: auto;">
-                            <button class="btn btn-icon btn-icon-primary" onclick="changeDate(1)"><span
+                            <button class="btn btn-icon btn-neutral" onclick="changeDate(1)"><span
                                     class="material-symbols-outlined">chevron_right</span></button>
                             <button class="btn btn-neutral" onclick="changeDate(0)">今日</button>
                         </div>
 
                         <!-- 月別用コントロール -->
                         <div id="controls-monthly" style="display: none; align-items: center; gap: var(--spacing-2);">
-                            <button class="btn btn-icon btn-icon-primary"><span
+                            <button class="btn btn-icon btn-neutral"><span
                                     class="material-symbols-outlined">chevron_left</span></button>
                             <input type="month" class="input-field" value="2025-11" style="width: auto;">
-                            <button class="btn btn-icon btn-icon-primary"><span
+                            <button class="btn btn-icon btn-neutral"><span
                                     class="material-symbols-outlined">chevron_right</span></button>
                         </div>
                     </div>

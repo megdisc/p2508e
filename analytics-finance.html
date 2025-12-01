@@ -223,14 +223,14 @@
                     </div>
 
                     <div style="display: flex; align-items: center; gap: var(--spacing-2);">
-                        <button class="btn btn-icon btn-icon-primary" onclick="changePeriod(-1)">
+                        <button class="btn btn-icon btn-neutral" onclick="changePeriod(-1)">
                             <span class="material-symbols-outlined">chevron_left</span>
                         </button>
                         <select id="period-selector" class="input-field" style="width: auto; min-width: 200px;"
                             onchange="updateChart(); updateTable();">
                             <!-- JSで動的に生成 -->
                         </select>
-                        <button class="btn btn-icon btn-icon-primary" onclick="changePeriod(1)">
+                        <button class="btn btn-icon btn-neutral" onclick="changePeriod(1)">
                             <span class="material-symbols-outlined">chevron_right</span>
                         </button>
                     </div>
