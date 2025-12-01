@@ -223,10 +223,16 @@
                     </div>
 
                     <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                        <button class="btn btn-icon btn-icon-primary" onclick="changePeriod(-1)">
+                            <span class="material-symbols-outlined">chevron_left</span>
+                        </button>
                         <select id="period-selector" class="input-field" style="width: auto; min-width: 200px;"
-                            onchange="updateChart()">
+                            onchange="updateChart(); updateTable();">
                             <!-- JSで動的に生成 -->
                         </select>
+                        <button class="btn btn-icon btn-icon-primary" onclick="changePeriod(1)">
+                            <span class="material-symbols-outlined">chevron_right</span>
+                        </button>
                     </div>
                 </div>
 
@@ -336,6 +342,56 @@
                                 el.textContent = opt.text;
                                 selector.appendChild(el);
                             });
+                        }
+                    }
+
+                    function changePeriod(offset) {
+                        const selector = document.getElementById('period-selector');
+                        const currentIndex = selector.selectedIndex;
+                        const newIndex = currentIndex - offset; // Newer items are usually at the top (lower index) or logic depends on order
+
+                        // In this mock data, 2025 is top (index 0), 2023 is bottom (index 2).
+                        // So "Next" (future) should probably go to lower index? 
+                        // Or "Next" means next in the list?
+                        // Usually:
+                        // < (Prev) = Older (Higher Index)
+                        // > (Next) = Newer (Lower Index)
+
+                        // If list is sorted Descending (Newest first):
+                        // Index 0: 2025
+                        // Index 1: 2024
+                        // Index 2: 2023
+
+                        // If I want "Previous Year" (2024 -> 2023), that is increasing index.
+                        // If I want "Next Year" (2024 -> 2025), that is decreasing index.
+
+                        // So:
+                        // < (Prev Button) -> Go to Older -> Increase Index
+                        // > (Next Button) -> Go to Newer -> Decrease Index
+
+                        // But the argument passed is -1 for Left, 1 for Right.
+                        // So let's map:
+                        // Left (-1) -> Older -> Index + 1
+                        // Right (1) -> Newer -> Index - 1
+
+                        // Let's adjust the logic to match standard expectation for time navigation.
+                        // Left button = Go back in time.
+                        // Right button = Go forward in time.
+
+                        let targetIndex = currentIndex;
+
+                        if (offset < 0) {
+                            // Left button pressed (Prev) -> Go to older (Higher index)
+                            targetIndex = currentIndex + 1;
+                        } else {
+                            // Right button pressed (Next) -> Go to newer (Lower index)
+                            targetIndex = currentIndex - 1;
+                        }
+
+                        if (targetIndex >= 0 && targetIndex < selector.options.length) {
+                            selector.selectedIndex = targetIndex;
+                            updateChart();
+                            updateTable();
                         }
                     }
 
