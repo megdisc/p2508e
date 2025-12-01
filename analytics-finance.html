@@ -245,22 +245,56 @@
                     let chartInstance = null;
                     let currentMode = 'monthly'; // 'monthly' or 'annual'
 
-                    // ダミーデータ
+                    // ダミーデータ (細分化)
                     const dataMonthly = {
                         labels: ['4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月', '1月', '2月', '3月'],
-                        income: [3200, 3100, 3300, 3400, 3000, 3500, 3600, 3700, 4000, 3800, 3200, 3900], // 単位: 千円
-                        expense: [2800, 2900, 2700, 2800, 2600, 2900, 3000, 3100, 3500, 3200, 2800, 3300],
+                        // 収入: 売上, 助成金, その他
+                        income_sales: [2000, 1900, 2100, 2200, 1800, 2300, 2400, 2500, 2800, 2600, 2000, 2700],
+                        income_grants: [1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000, 1000],
+                        income_other: [200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200, 200],
+
+                        // 経費: 工賃, 外注費, その他
+                        expense_wages: [1500, 1500, 1500, 1500, 1500, 1500, 1600, 1600, 1800, 1600, 1500, 1600],
+                        expense_outsourcing: [500, 600, 400, 500, 400, 600, 600, 700, 800, 700, 500, 800],
+                        expense_other: [800, 800, 800, 800, 700, 800, 800, 800, 900, 900, 800, 900],
+
+                        // 積立金: 工賃積立, その他積立 (収支差額をベースに配分)
+                        // 計算ロジックは簡易的に設定
+                        reserve_wages: [200, 100, 300, 400, 100, 400, 400, 400, 300, 300, 200, 300],
+                        reserve_other: [200, 100, 300, 300, 100, 200, 200, 200, 200, 200, 200, 300]
                     };
 
                     const dataAnnual = {
                         labels: ['2021年度', '2022年度', '2023年度', '2024年度', '2025年度'],
-                        income: [35000, 38000, 42000, 41000, 45000],
-                        expense: [34000, 36000, 39000, 38000, 40000],
+                        income_sales: [25000, 27000, 30000, 29000, 32000],
+                        income_grants: [8000, 9000, 10000, 10000, 11000],
+                        income_other: [2000, 2000, 2000, 2000, 2000],
+
+                        expense_wages: [18000, 19000, 21000, 20000, 22000],
+                        expense_outsourcing: [8000, 9000, 10000, 10000, 10000],
+                        expense_other: [8000, 8000, 8000, 8000, 8000],
+
+                        reserve_wages: [500, 1000, 1500, 1500, 2500],
+                        reserve_other: [500, 1000, 1500, 1500, 2500]
                     };
 
                     // CSS変数から色を取得するヘルパー
                     function getCssVar(name) {
                         return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+                    }
+
+                    // HEX to RGBA helper
+                    function hexToRgba(hex, alpha) {
+                        let c;
+                        if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
+                            c = hex.substring(1).split('');
+                            if (c.length == 3) {
+                                c = [c[0], c[0], c[1], c[1], c[2], c[2]];
+                            }
+                            c = '0x' + c.join('');
+                            return 'rgba(' + [(c >> 16) & 255, (c >> 8) & 255, c & 255].join(',') + ',' + alpha + ')';
+                        }
+                        return hex; // fallback
                     }
 
                     function initPeriodSelector() {
@@ -308,16 +342,13 @@
                         // データ選択
                         const sourceData = currentMode === 'monthly' ? dataMonthly : dataAnnual;
 
-                        // 利益計算
-                        const profit = sourceData.income.map((inc, i) => inc - sourceData.expense[i]);
-
-                        // カラー設定 (ユーザー指定)
-                        // 収入: 薄い青 (枠線なし)
-                        const colorIncomeBg = getCssVar('--color-semantic-primary-sub') || '#CCEEFF';
-                        // 支出: 薄い赤 (枠線なし)
-                        const colorExpenseBg = getCssVar('--color-semantic-error-sub') || '#FFDDDD';
-                        // 収支差: 濃い黄色
-                        const colorProfit = getCssVar('--color-semantic-warning-main') || '#BB8800';
+                        // カラー設定
+                        // 収入 (Success): 売上(1.0), 助成金(0.7), その他(0.4)
+                        const colorSuccess = getCssVar('--color-semantic-success-main') || '#28A745';
+                        // 支出 (Error): 工賃(1.0), 外注費(0.7), その他(0.4)
+                        const colorError = getCssVar('--color-semantic-error-main') || '#DC3545';
+                        // 積立金 (Warning): 工賃積立(1.0), その他(0.6)
+                        const colorWarning = getCssVar('--color-semantic-warning-main') || '#FFC107';
 
                         const colorText = getCssVar('--color-base-quaternary') || '#666666';
                         const colorGrid = getCssVar('--color-base-quinary') || '#CCCCCC';
@@ -325,34 +356,74 @@
                         const chartData = {
                             labels: sourceData.labels,
                             datasets: [
-                                {
-                                    type: 'line',
-                                    label: '収支差額 (利益)',
-                                    data: profit,
-                                    borderColor: colorProfit,
-                                    backgroundColor: colorProfit,
-                                    borderWidth: 2,
-                                    tension: 0.1,
-                                    yAxisID: 'y',
-                                    order: 0 // 最前面
-                                },
+                                // --- 積立金 (Stack 2) ---
                                 {
                                     type: 'bar',
-                                    label: '収入',
-                                    data: sourceData.income,
-                                    backgroundColor: colorIncomeBg,
-                                    borderWidth: 0, // 枠線なし
-                                    yAxisID: 'y',
+                                    label: '工賃積立金',
+                                    data: sourceData.reserve_wages,
+                                    backgroundColor: hexToRgba(colorWarning, 1.0),
+                                    stack: 'stack2',
                                     order: 1
                                 },
                                 {
                                     type: 'bar',
-                                    label: '支出',
-                                    data: sourceData.expense,
-                                    backgroundColor: colorExpenseBg,
-                                    borderWidth: 0, // 枠線なし
-                                    yAxisID: 'y',
+                                    label: 'その他の積立金',
+                                    data: sourceData.reserve_other,
+                                    backgroundColor: hexToRgba(colorWarning, 0.6),
+                                    stack: 'stack2',
                                     order: 1
+                                },
+
+                                // --- 収入 (Stack 0) ---
+                                {
+                                    type: 'bar',
+                                    label: '売上',
+                                    data: sourceData.income_sales,
+                                    backgroundColor: hexToRgba(colorSuccess, 1.0),
+                                    stack: 'stack0',
+                                    order: 2
+                                },
+                                {
+                                    type: 'bar',
+                                    label: '助成金',
+                                    data: sourceData.income_grants,
+                                    backgroundColor: hexToRgba(colorSuccess, 0.7),
+                                    stack: 'stack0',
+                                    order: 2
+                                },
+                                {
+                                    type: 'bar',
+                                    label: 'その他収入',
+                                    data: sourceData.income_other,
+                                    backgroundColor: hexToRgba(colorSuccess, 0.4),
+                                    stack: 'stack0',
+                                    order: 2
+                                },
+
+                                // --- 支出 (Stack 1) ---
+                                {
+                                    type: 'bar',
+                                    label: '工賃',
+                                    data: sourceData.expense_wages,
+                                    backgroundColor: hexToRgba(colorError, 1.0),
+                                    stack: 'stack1',
+                                    order: 3
+                                },
+                                {
+                                    type: 'bar',
+                                    label: '外注費',
+                                    data: sourceData.expense_outsourcing,
+                                    backgroundColor: hexToRgba(colorError, 0.7),
+                                    stack: 'stack1',
+                                    order: 3
+                                },
+                                {
+                                    type: 'bar',
+                                    label: 'その他経費',
+                                    data: sourceData.expense_other,
+                                    backgroundColor: hexToRgba(colorError, 0.4),
+                                    stack: 'stack1',
+                                    order: 3
                                 }
                             ]
                         };
@@ -400,6 +471,7 @@
                                 },
                                 scales: {
                                     x: {
+                                        stacked: true,
                                         ticks: {
                                             color: colorText,
                                             font: {
@@ -412,6 +484,7 @@
                                         }
                                     },
                                     y: {
+                                        stacked: true,
                                         beginAtZero: true,
                                         ticks: {
                                             color: colorText,
