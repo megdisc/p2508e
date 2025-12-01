@@ -514,6 +514,13 @@
                         // Smart positioning
                         const tooltipWidth = tooltipEl.offsetWidth;
                         const chartWidth = chart.width;
+                        const chartHeight = chart.height; // Canvas height
+                        // Use chartArea if available for more precise centering within the grid, 
+                        // but chart.height / 2 is usually good enough for "center of graph".
+                        // Let's use chartArea for better precision if axes take space.
+                        const chartArea = chart.chartArea;
+                        const centerY = chartArea ? (chartArea.top + chartArea.height / 2) : (chartHeight / 2);
+
                         let left = positionX + tooltip.caretX;
 
                         // If caret is on the left half, show tooltip on the right
@@ -524,8 +531,9 @@
                         }
 
                         tooltipEl.style.left = left + 'px';
-                        tooltipEl.style.top = positionY + tooltip.caretY + 'px';
-                        tooltipEl.style.transform = 'translate(0, -50%)'; // Center vertically relative to caret
+                        // Always center vertically
+                        tooltipEl.style.top = (positionY + centerY) + 'px';
+                        tooltipEl.style.transform = 'translate(0, -50%)'; // Center vertically relative to the calculated center point
                         tooltipEl.style.pointerEvents = 'none';
                     };
 
