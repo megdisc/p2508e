@@ -48,6 +48,53 @@
             });
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* ダッシュボード用スタイル */
+        .dashboard-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-stack-md);
+            flex-wrap: wrap;
+            gap: var(--spacing-4);
+        }
+
+        /* 表示切り替えボタングループ（プライマリカラー化） */
+        .view-toggle {
+            display: flex;
+            background-color: var(--color-base-secondary);
+            border-radius: var(--radius-button);
+            padding: 2px;
+            border: 1px solid var(--color-base-quinary);
+        }
+
+        .view-toggle label {
+            padding: var(--spacing-1) var(--spacing-3);
+            font-size: var(--font-size-sm);
+            cursor: pointer;
+            border-radius: var(--radius-button);
+            transition: all 0.2s;
+            color: var(--color-base-quaternary);
+        }
+
+        .view-toggle input[type="radio"] {
+            display: none;
+        }
+
+        .view-toggle input[type="radio"]:checked+label {
+            background-color: var(--color-theme-main);
+            color: var(--color-base-primary);
+            box-shadow: var(--box-shadow-sm);
+            font-weight: var(--font-weight-medium);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            width: 100%;
+        }
+    </style>
 </head>
 
 <body>
@@ -165,11 +212,238 @@
 
                 <h1 style="margin: 0 0 var(--spacing-stack-md) 0;">収支分析</h1>
 
-                <div class="card">
-                    <div class="card-body">
-                        <p>これは「収支分析」ページです。ここに内容を記述します。</p>
+                <div class="dashboard-controls">
+                    <div class="view-toggle">
+                        <input type="radio" id="view-mode-monthly" name="view-mode" checked
+                            onchange="setMode('monthly')">
+                        <label for="view-mode-monthly">月次推移</label>
+
+                        <input type="radio" id="view-mode-annual" name="view-mode" onchange="setMode('annual')">
+                        <label for="view-mode-annual">年次推移</label>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                        <select id="period-selector" class="input-field" style="width: auto; min-width: 200px;"
+                            onchange="updateChart()">
+                            <!-- JSで動的に生成 -->
+                        </select>
                     </div>
                 </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span id="chart-title">収支推移</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="financeChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <script>
+                    let chartInstance = null;
+                    let currentMode = 'monthly'; // 'monthly' or 'annual'
+
+                    // ダミーデータ
+                    const dataMonthly = {
+                        labels: ['4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月', '1月', '2月', '3月'],
+                        income: [3200, 3100, 3300, 3400, 3000, 3500, 3600, 3700, 4000, 3800, 3200, 3900], // 単位: 千円
+                        expense: [2800, 2900, 2700, 2800, 2600, 2900, 3000, 3100, 3500, 3200, 2800, 3300],
+                    };
+
+                    const dataAnnual = {
+                        labels: ['2021年度', '2022年度', '2023年度', '2024年度', '2025年度'],
+                        income: [35000, 38000, 42000, 41000, 45000],
+                        expense: [34000, 36000, 39000, 38000, 40000],
+                    };
+
+                    // CSS変数から色を取得するヘルパー
+                    function getCssVar(name) {
+                        return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+                    }
+
+                    function initPeriodSelector() {
+                        const selector = document.getElementById('period-selector');
+                        selector.innerHTML = '';
+
+                        if (currentMode === 'monthly') {
+                            const options = [
+                                { value: '2025', text: '2025年度 (2025.4 - 2026.3)' },
+                                { value: '2024', text: '2024年度 (2024.4 - 2025.3)' },
+                                { value: '2023', text: '2023年度 (2023.4 - 2024.3)' },
+                            ];
+                            options.forEach(opt => {
+                                const el = document.createElement('option');
+                                el.value = opt.value;
+                                el.textContent = opt.text;
+                                selector.appendChild(el);
+                            });
+                        } else {
+                            const options = [
+                                { value: 'recent5', text: '直近5年間' },
+                                { value: 'all', text: '全期間' },
+                            ];
+                            options.forEach(opt => {
+                                const el = document.createElement('option');
+                                el.value = opt.value;
+                                el.textContent = opt.text;
+                                selector.appendChild(el);
+                            });
+                        }
+                    }
+
+                    function setMode(mode) {
+                        currentMode = mode;
+
+                        // ラジオボタンのチェック状態はHTML側で制御されるため、ここではロジックのみ更新
+
+                        initPeriodSelector();
+                        updateChart();
+                    }
+
+                    function updateChart() {
+                        const ctx = document.getElementById('financeChart').getContext('2d');
+
+                        // データ選択
+                        const sourceData = currentMode === 'monthly' ? dataMonthly : dataAnnual;
+
+                        // 利益計算
+                        const profit = sourceData.income.map((inc, i) => inc - sourceData.expense[i]);
+
+                        // カラー設定 (ユーザー指定)
+                        // 収入: 薄い青 (枠線なし)
+                        const colorIncomeBg = getCssVar('--color-semantic-primary-sub') || '#CCEEFF';
+                        // 支出: 薄い赤 (枠線なし)
+                        const colorExpenseBg = getCssVar('--color-semantic-error-sub') || '#FFDDDD';
+                        // 収支差: 濃い黄色
+                        const colorProfit = getCssVar('--color-semantic-warning-main') || '#BB8800';
+
+                        const colorText = getCssVar('--color-base-quaternary') || '#666666';
+                        const colorGrid = getCssVar('--color-base-quinary') || '#CCCCCC';
+
+                        const chartData = {
+                            labels: sourceData.labels,
+                            datasets: [
+                                {
+                                    type: 'line',
+                                    label: '収支差額 (利益)',
+                                    data: profit,
+                                    borderColor: colorProfit,
+                                    backgroundColor: colorProfit,
+                                    borderWidth: 2,
+                                    tension: 0.1,
+                                    yAxisID: 'y',
+                                    order: 0 // 最前面
+                                },
+                                {
+                                    type: 'bar',
+                                    label: '収入',
+                                    data: sourceData.income,
+                                    backgroundColor: colorIncomeBg,
+                                    borderWidth: 0, // 枠線なし
+                                    yAxisID: 'y',
+                                    order: 1
+                                },
+                                {
+                                    type: 'bar',
+                                    label: '支出',
+                                    data: sourceData.expense,
+                                    backgroundColor: colorExpenseBg,
+                                    borderWidth: 0, // 枠線なし
+                                    yAxisID: 'y',
+                                    order: 1
+                                }
+                            ]
+                        };
+
+                        if (chartInstance) {
+                            chartInstance.destroy();
+                        }
+
+                        chartInstance = new Chart(ctx, {
+                            type: 'bar',
+                            data: chartData,
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                interaction: {
+                                    mode: 'index',
+                                    intersect: false,
+                                },
+                                plugins: {
+                                    title: {
+                                        display: false,
+                                    },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function (context) {
+                                                let label = context.dataset.label || '';
+                                                if (label) {
+                                                    label += ': ';
+                                                }
+                                                if (context.parsed.y !== null) {
+                                                    label += new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' }).format(context.parsed.y * 1000);
+                                                }
+                                                return label;
+                                            }
+                                        }
+                                    },
+                                    legend: {
+                                        labels: {
+                                            color: colorText,
+                                            font: {
+                                                family: getCssVar('--font-family-base')
+                                            }
+                                        }
+                                    }
+                                },
+                                scales: {
+                                    x: {
+                                        ticks: {
+                                            color: colorText,
+                                            font: {
+                                                family: getCssVar('--font-family-base')
+                                            }
+                                        },
+                                        grid: {
+                                            color: colorGrid,
+                                            drawBorder: false
+                                        }
+                                    },
+                                    y: {
+                                        beginAtZero: true,
+                                        ticks: {
+                                            color: colorText,
+                                            font: {
+                                                family: getCssVar('--font-family-base')
+                                            },
+                                            callback: function (value) {
+                                                return value.toLocaleString() + '千円';
+                                            }
+                                        },
+                                        grid: {
+                                            color: colorGrid,
+                                            drawBorder: false,
+                                            borderDash: [2, 2]
+                                        }
+                                    }
+                                }
+                            }
+                        });
+
+                        // タイトル更新
+                        const selector = document.getElementById('period-selector');
+                        const selectedText = selector.options[selector.selectedIndex].text;
+                        document.getElementById('chart-title').textContent = `収支推移 (${selectedText})`;
+                    }
+
+                    // 初期化
+                    document.addEventListener('DOMContentLoaded', () => {
+                        initPeriodSelector();
+                        updateChart();
+                    });
+                </script>
 
             </div>
 
