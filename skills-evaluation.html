@@ -17,7 +17,7 @@
         /* ---------------------------------------------------------
            スキルマップ (マトリクス表) スタイル
            --------------------------------------------------------- */
-        
+
         .matrix-container {
             width: 100%;
             overflow: auto;
@@ -34,7 +34,7 @@
             width: max-content;
         }
 
-        .table-matrix th, 
+        .table-matrix th,
         .table-matrix td {
             border-right: var(--border-width-sm) solid var(--color-table-border);
             border-bottom: var(--border-width-sm) solid var(--color-table-border);
@@ -51,19 +51,19 @@
         }
 
         /* --- Sticky Headers --- */
-        
+
         /* 1. 利用者列ヘッダー (上部固定) */
         .table-matrix thead th {
             position: sticky;
             top: 0;
             z-index: 25;
             background-color: var(--color-base-primary);
-            
+
             /* スキル名 (tbody th) とスタイルを統一 */
             color: var(--color-base-tertiary);
             font-weight: var(--font-weight-medium);
             font-size: var(--font-size-sm);
-            
+
             height: auto;
             min-width: 48px;
             vertical-align: bottom;
@@ -72,6 +72,7 @@
             cursor: pointer;
             transition: background-color 0.2s;
         }
+
         .table-matrix thead th:hover {
             background-color: var(--color-base-secondary);
             color: var(--color-theme-main);
@@ -84,19 +85,20 @@
             z-index: 20;
             text-align: left;
             background-color: var(--color-base-primary);
-            
+
             color: var(--color-base-tertiary);
             font-weight: var(--font-weight-medium);
             font-size: var(--font-size-sm);
-            
+
             width: auto;
             max-width: 320px;
             white-space: nowrap;
-            
+
             border-right: var(--border-width-md) solid var(--color-base-quinary);
             cursor: pointer;
             transition: background-color 0.2s;
         }
+
         .table-matrix tbody th:hover {
             background-color: var(--color-base-secondary);
             color: var(--color-theme-main);
@@ -137,10 +139,12 @@
             border-right: var(--border-width-md) solid var(--color-base-quinary);
             cursor: default !important;
         }
+
         .row-category th:hover {
             background-color: var(--color-base-secondary);
             color: var(--color-base-tertiary);
         }
+
         .row-category td {
             background-color: var(--color-base-secondary);
             border-top: var(--border-width-sm) solid var(--color-table-border);
@@ -157,17 +161,41 @@
             border-radius: var(--radius-button);
             font-weight: var(--font-weight-bold);
             font-size: var(--font-size-xs);
-            cursor: help; /* ツールチップが出ることを示唆 */
+            cursor: help;
+            /* ツールチップが出ることを示唆 */
             border: var(--border-width-sm) solid transparent;
         }
 
         /* レベル別カラー */
-        .status-lv5 { background-color: var(--color-theme-main); color: var(--color-base-primary); }
-        .status-lv4 { background-color: color-mix(in srgb, var(--color-theme-main) 80%, white); color: var(--color-base-primary); }
-        .status-lv3 { background-color: color-mix(in srgb, var(--color-theme-main) 60%, white); color: var(--color-base-primary); }
-        .status-lv2 { background-color: color-mix(in srgb, var(--color-theme-main) 40%, white); color: var(--color-base-tertiary); }
-        .status-lv1 { background-color: color-mix(in srgb, var(--color-theme-main) 20%, white); color: var(--color-theme-main); }
-        .status-lv0 { background-color: var(--color-base-secondary); color: var(--color-base-quaternary); }
+        .status-lv5 {
+            background-color: var(--color-theme-main);
+            color: var(--color-base-primary);
+        }
+
+        .status-lv4 {
+            background-color: color-mix(in srgb, var(--color-theme-main) 80%, white);
+            color: var(--color-base-primary);
+        }
+
+        .status-lv3 {
+            background-color: color-mix(in srgb, var(--color-theme-main) 60%, white);
+            color: var(--color-base-primary);
+        }
+
+        .status-lv2 {
+            background-color: color-mix(in srgb, var(--color-theme-main) 40%, white);
+            color: var(--color-base-tertiary);
+        }
+
+        .status-lv1 {
+            background-color: color-mix(in srgb, var(--color-theme-main) 20%, white);
+            color: var(--color-theme-main);
+        }
+
+        .status-lv0 {
+            background-color: var(--color-base-secondary);
+            color: var(--color-base-quaternary);
+        }
 
         /* ---------------------------------------------------------
            カスタムツールチップ
@@ -180,14 +208,17 @@
             border-radius: var(--radius-sm);
             font-size: var(--font-size-xs);
             pointer-events: none;
-            z-index: 9999; /* 最前面 */
+            z-index: 9999;
+            /* 最前面 */
             white-space: nowrap;
             box-shadow: var(--box-shadow-md);
             opacity: 0;
             transition: opacity 0.2s;
-            transform: translate(-50%, -100%); /* マウスの上に表示 */
+            transform: translate(-50%, -100%);
+            /* マウスの上に表示 */
             margin-top: -10px;
         }
+
         .custom-tooltip.show {
             opacity: 1;
         }
@@ -195,19 +226,23 @@
         /* ---------------------------------------------------------
            個別評価モーダル (ゲージUI)
            --------------------------------------------------------- */
-        
+
         .eval-gauge-table {
             width: 100%;
             border-collapse: collapse;
         }
+
         .eval-gauge-table th,
         .eval-gauge-table td {
             padding: var(--spacing-2);
             vertical-align: middle;
             border-bottom: 1px solid var(--color-base-secondary);
         }
-        .eval-gauge-table tr:last-child td { border-bottom: none; }
-        
+
+        .eval-gauge-table tr:last-child td {
+            border-bottom: none;
+        }
+
         /* カテゴリ行 (モーダル内) */
         .gauge-row-category {
             background-color: var(--color-base-secondary);
@@ -215,7 +250,7 @@
             font-size: var(--font-size-sm);
             color: var(--color-base-tertiary);
         }
-        
+
         /* 名称列 (スキル名/利用者名) */
         .gauge-col-name {
             width: 40%;
@@ -249,9 +284,20 @@
             background-color: var(--color-base-primary);
             transition: all 0.15s ease;
         }
-        .gauge-segment:first-child { border-top-left-radius: calc(var(--radius-button) - 2px); border-bottom-left-radius: calc(var(--radius-button) - 2px); }
-        .gauge-segment:last-child { border-top-right-radius: calc(var(--radius-button) - 2px); border-bottom-right-radius: calc(var(--radius-button) - 2px); }
-        .gauge-segment:hover { background-color: var(--palette-CEF); }
+
+        .gauge-segment:first-child {
+            border-top-left-radius: calc(var(--radius-button) - 2px);
+            border-bottom-left-radius: calc(var(--radius-button) - 2px);
+        }
+
+        .gauge-segment:last-child {
+            border-top-right-radius: calc(var(--radius-button) - 2px);
+            border-bottom-right-radius: calc(var(--radius-button) - 2px);
+        }
+
+        .gauge-segment:hover {
+            background-color: var(--palette-CEF);
+        }
 
         /* 未評価 (-) */
         .gauge-segment[data-level="0"] {
@@ -259,22 +305,63 @@
             border-right: 1px solid var(--color-base-secondary);
             margin-right: 4px;
         }
-        .gauge-segment[data-level="0"].active { background-color: var(--color-base-quaternary); color: white; }
+
+        .gauge-segment[data-level="0"].active {
+            background-color: var(--color-base-quaternary);
+            color: white;
+        }
 
         /* 選択状態 */
-        .gauge-segment.active[data-level="1"] { background-color: color-mix(in srgb, var(--color-theme-main) 20%, white); color: var(--color-theme-main); }
-        .gauge-segment.active[data-level="2"] { background-color: color-mix(in srgb, var(--color-theme-main) 40%, white); color: var(--color-base-tertiary); }
-        .gauge-segment.active[data-level="3"] { background-color: color-mix(in srgb, var(--color-theme-main) 60%, white); color: var(--color-base-primary); }
-        .gauge-segment.active[data-level="4"] { background-color: color-mix(in srgb, var(--color-theme-main) 80%, white); color: var(--color-base-primary); }
-        .gauge-segment.active[data-level="5"] { background-color: var(--color-theme-main); color: var(--color-base-primary); }
+        .gauge-segment.active[data-level="1"] {
+            background-color: color-mix(in srgb, var(--color-theme-main) 20%, white);
+            color: var(--color-theme-main);
+        }
+
+        .gauge-segment.active[data-level="2"] {
+            background-color: color-mix(in srgb, var(--color-theme-main) 40%, white);
+            color: var(--color-base-tertiary);
+        }
+
+        .gauge-segment.active[data-level="3"] {
+            background-color: color-mix(in srgb, var(--color-theme-main) 60%, white);
+            color: var(--color-base-primary);
+        }
+
+        .gauge-segment.active[data-level="4"] {
+            background-color: color-mix(in srgb, var(--color-theme-main) 80%, white);
+            color: var(--color-base-primary);
+        }
+
+        .gauge-segment.active[data-level="5"] {
+            background-color: var(--color-theme-main);
+            color: var(--color-base-primary);
+        }
 
         /* 塗りつぶし表現 (下位レベル) */
-        .gauge-segment.filled[data-level="1"] { background-color: color-mix(in srgb, var(--color-theme-main) 20%, white); opacity: 0.5; }
-        .gauge-segment.filled[data-level="2"] { background-color: color-mix(in srgb, var(--color-theme-main) 40%, white); opacity: 0.6; }
-        .gauge-segment.filled[data-level="3"] { background-color: color-mix(in srgb, var(--color-theme-main) 60%, white); opacity: 0.7; }
-        .gauge-segment.filled[data-level="4"] { background-color: color-mix(in srgb, var(--color-theme-main) 80%, white); opacity: 0.8; }
-        .gauge-segment.filled[data-level="5"] { background-color: var(--color-theme-main); opacity: 0.9; }
+        .gauge-segment.filled[data-level="1"] {
+            background-color: color-mix(in srgb, var(--color-theme-main) 20%, white);
+            opacity: 0.5;
+        }
 
+        .gauge-segment.filled[data-level="2"] {
+            background-color: color-mix(in srgb, var(--color-theme-main) 40%, white);
+            opacity: 0.6;
+        }
+
+        .gauge-segment.filled[data-level="3"] {
+            background-color: color-mix(in srgb, var(--color-theme-main) 60%, white);
+            opacity: 0.7;
+        }
+
+        .gauge-segment.filled[data-level="4"] {
+            background-color: color-mix(in srgb, var(--color-theme-main) 80%, white);
+            opacity: 0.8;
+        }
+
+        .gauge-segment.filled[data-level="5"] {
+            background-color: var(--color-theme-main);
+            opacity: 0.9;
+        }
     </style>
 
     <script>
@@ -292,21 +379,21 @@
             {
                 name: "PC基本操作",
                 skills: [
-                    "電源オンオフ", "マウス操作", "タイピング(かな)", "タイピング(英数)", "ファイル保存", 
+                    "電源オンオフ", "マウス操作", "タイピング(かな)", "タイピング(英数)", "ファイル保存",
                     "フォルダ整理", "検索エンジン活用", "ショートカットキー", "セキュリティ基礎", "チャットツール"
                 ]
             },
             {
                 name: "Officeソフト",
                 skills: [
-                    "Word文字入力", "Word書式設定", "Word印刷設定", "Excelデータ入力", "Excel表作成", 
+                    "Word文字入力", "Word書式設定", "Word印刷設定", "Excelデータ入力", "Excel表作成",
                     "Excel四則演算", "Excel関数基礎", "PowerPointスライド", "PDF保存", "バックアップ"
                 ]
             },
             {
                 name: "軽作業",
                 skills: [
-                    "封入作業", "封緘", "宛名シール貼り", "切手貼り", "チラシ折り", 
+                    "封入作業", "封緘", "宛名シール貼り", "切手貼り", "チラシ折り",
                     "検品(目視)", "計量・袋詰め", "箱組み立て", "梱包", "運搬・積み下ろし"
                 ]
             }
@@ -396,12 +483,12 @@
 
         function renderMatrixBody() {
             const tbody = document.getElementById('matrix-body');
-            
+
             dummySkillCategories.forEach(cat => {
                 // カテゴリ行
                 const catTr = document.createElement('tr');
                 catTr.className = 'row-category';
-                
+
                 const catTh = document.createElement('th');
                 catTh.textContent = cat.name;
                 catTr.appendChild(catTh);
@@ -409,13 +496,13 @@
                 const catTd = document.createElement('td');
                 catTd.colSpan = dummyUsers.length; // 全利用者分
                 catTr.appendChild(catTd);
-                
+
                 tbody.appendChild(catTr);
 
                 // スキル行
                 cat.skills.forEach(skill => {
                     const tr = document.createElement('tr');
-                    
+
                     // スキル名ヘッダー
                     const th = document.createElement('th');
                     th.innerHTML = `&emsp;${skill}`;
@@ -444,30 +531,30 @@
         // -----------------------------------------------------
         function generateGaugeHTML(currentLevel) {
             let html = '';
-            
+
             // レベル0 (未評価)
             const desc0 = dummyLevelDescriptions[0] || "";
             html += `<div class="gauge-segment ${currentLevel === 0 ? 'active' : ''}" data-level="0" data-tooltip="${desc0}" onclick="selectGauge(this, 0)">-</div>`;
-            
+
             // レベル1-5
             for (let i = 1; i <= 5; i++) {
                 let classes = 'gauge-segment';
                 if (i === currentLevel) classes += ' active';
                 else if (i < currentLevel) classes += ' filled';
-                
+
                 const desc = dummyLevelDescriptions[i] || "";
                 html += `<div class="${classes}" data-level="${i}" data-tooltip="${desc}" onclick="selectGauge(this, ${i})">${i}</div>`;
             }
             return html;
         }
 
-        window.selectGauge = function(el, level) {
+        window.selectGauge = function (el, level) {
             const container = el.parentElement;
             const segments = container.querySelectorAll('.gauge-segment');
             segments.forEach(seg => {
                 const segLevel = parseInt(seg.dataset.level);
                 seg.className = 'gauge-segment';
-                
+
                 if (segLevel === 0) {
                     if (level === 0) seg.classList.add('active');
                 } else {
@@ -489,15 +576,15 @@
         function renderUserGaugeList() {
             const container = document.getElementById('user-skill-list');
             container.innerHTML = '';
-            
+
             dummySkillCategories.forEach(group => {
                 const catRow = document.createElement('tr');
                 catRow.innerHTML = `<td colspan="2" class="gauge-row-category">${group.name}</td>`;
                 container.appendChild(catRow);
-                
+
                 group.skills.forEach((skill) => {
                     const row = document.createElement('tr');
-                    const initialLevel = Math.floor(Math.random() * 6); 
+                    const initialLevel = Math.floor(Math.random() * 6);
                     row.innerHTML = `
                         <td class="gauge-col-name">${skill}</td>
                         <td><div class="gauge-container">${generateGaugeHTML(initialLevel)}</div></td>
@@ -519,7 +606,7 @@
         function renderSkillUserList() {
             const container = document.getElementById('skill-user-list');
             container.innerHTML = '';
-            
+
             dummyUsers.forEach((user) => {
                 const row = document.createElement('tr');
                 const initialLevel = Math.floor(Math.random() * 6);
@@ -531,7 +618,7 @@
             });
         }
 
-    
+
         // サイドバーの現在地連動（アコーディオン自動展開）
         document.addEventListener("DOMContentLoaded", () => {
             const currentFile = window.location.pathname.split("/").pop();
@@ -562,23 +649,72 @@
             </div>
             <nav class="sidebar-nav">
                 <a href="index.html" class="nav-link">トップ</a>
-                <details class="nav-accordion"><summary>施設情報</summary><ul><li><a href="corporation.html">法人情報</a></li><li><a href="office.html">事業所情報</a></li></ul></details>
-                <details class="nav-accordion"><summary>関係者情報</summary><ul><li><a href="staff.html">職員情報</a></li><li><a href="members.html">利用者情報</a></li><li><a href="partners.html">取引先情報</a></li></ul></details>
-                <details class="nav-accordion" open><summary>スキル情報</summary><ul><li><a href="skills-settings.html">スキル設定</a></li><li><a href="skills-evaluation.html" class="nav-link active">スキル評価</a></li></ul></details>
-                <details class="nav-accordion"><summary>工賃・控除情報</summary><ul><li><a href="wages-settings.html">工賃設定</a></li><li><a href="deductions-settings.html">控除設定</a></li><li><a href="wages-evaluation.html">工賃レベル評価</a></li></ul></details>
-                <details class="nav-accordion"><summary>積立金情報</summary><ul><li><a href="savings-settings.html">積立金設定</a></li><li><a href="savings-history.html">積立金履歴</a></li></ul></details>
+                <details class="nav-accordion">
+                    <summary>施設情報</summary>
+                    <ul>
+                        <li><a href="corporation.html">法人情報</a></li>
+                        <li><a href="office.html">事業所情報</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>関係者情報</summary>
+                    <ul>
+                        <li><a href="staff.html">職員情報</a></li>
+                        <li><a href="members.html">利用者情報</a></li>
+                        <li><a href="partners.html">取引先情報</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion" open>
+                    <summary>スキル情報</summary>
+                    <ul>
+                        <li><a href="skills-settings.html">スキル設定</a></li>
+                        <li><a href="skills-evaluation.html" class="nav-link active">スキル評価</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>工賃・控除情報</summary>
+                    <ul>
+                        <li><a href="wages-settings.html">工賃設定</a></li>
+                        <li><a href="deductions-settings.html">控除設定</a></li>
+                        <li><a href="wages-evaluation.html">工賃レベル評価</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>積立金情報</summary>
+                    <ul>
+                        <li><a href="savings-settings.html">積立金設定</a></li>
+                        <li><a href="savings-history.html">積立金履歴</a></li>
+                    </ul>
+                </details>
                 <a href="attendance.html" class="nav-link">出欠情報</a>
                 <details class="nav-accordion">
-                <summary>生産活動</summary>
-                <ul>
-                <li><a href="projects.html">案件情報</a></li>
-                <li><a href="budget.html">予算・経費</a></li>
-                <li><a href="schedule.html">進捗状況</a></li>
-                </ul>
+                    <summary>生産活動</summary>
+                    <ul>
+                        <li><a href="projects.html">案件情報</a></li>
+                        <li><a href="budget.html">予算・経費</a></li>
+                        <li><a href="schedule.html">進捗状況</a></li>
+                    </ul>
                 </details>
-                <details class="nav-accordion"><summary>福祉事業活動</summary><ul><li><a href="support-plans.html">個別支援計画</a></li></ul></details>
-                <details class="nav-accordion"><summary>会計</summary><ul><li><a href="accounting-monthly.html">月次会計</a></li><li><a href="accounting-annual.html">年次会計</a></li></ul></details>
-                <details class="nav-accordion"><summary>分析</summary><ul><li><a href="analytics.html">分析ダッシュボード</a></li></ul></details>
+                <details class="nav-accordion">
+                    <summary>福祉事業活動</summary>
+                    <ul>
+                        <li><a href="support-plans.html">個別支援計画</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>会計</summary>
+                    <ul>
+                        <li><a href="accounting-monthly.html">月次会計</a></li>
+                        <li><a href="accounting-annual.html">年次会計</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>分析</summary>
+                    <ul>
+                        <li><a href="analytics-finance.html">収支分析</a></li>
+                        <li><a href="analytics-wages.html">平均工賃分析</a></li>
+                    </ul>
+                </details>
                 <a href="account.html" class="nav-link">ユーザーアカウント</a>
                 <a href="settings.html" class="nav-link">（その他設定）</a>
             </nav>
@@ -591,7 +727,8 @@
 
             <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
 
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
                     <h1 style="margin: 0;">スキル評価</h1>
                 </div>
 
@@ -599,48 +736,56 @@
                     <table class="table-matrix">
                         <thead>
                             <tr id="matrix-header-row">
-                                </tr>
+                            </tr>
                         </thead>
                         <tbody id="matrix-body">
-                            </tbody>
+                        </tbody>
                     </table>
                 </div>
-                
-                <div style="margin-top: var(--spacing-2); display: flex; gap: var(--spacing-4); font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
+
+                <div
+                    style="margin-top: var(--spacing-2); display: flex; gap: var(--spacing-4); font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
                     <div style="display: flex; align-items: center; gap: 4px;">
-                        <div class="cell-eval status-lv0" style="width: 20px; height: 20px; cursor: default;">-</div> 未評価
+                        <div class="cell-eval status-lv0" style="width: 20px; height: 20px; cursor: default;">-</div>
+                        未評価
                     </div>
                     <div style="display: flex; align-items: center; gap: 4px;">
-                        <div class="cell-eval status-lv1" style="width: 20px; height: 20px; cursor: default;">1</div> Lv.1
+                        <div class="cell-eval status-lv1" style="width: 20px; height: 20px; cursor: default;">1</div>
+                        Lv.1
                     </div>
                     <div style="display: flex; align-items: center; gap: 4px;">
-                        <div class="cell-eval status-lv2" style="width: 20px; height: 20px; cursor: default;">2</div> Lv.2
+                        <div class="cell-eval status-lv2" style="width: 20px; height: 20px; cursor: default;">2</div>
+                        Lv.2
                     </div>
                     <div style="display: flex; align-items: center; gap: 4px;">
-                        <div class="cell-eval status-lv3" style="width: 20px; height: 20px; cursor: default;">3</div> Lv.3
+                        <div class="cell-eval status-lv3" style="width: 20px; height: 20px; cursor: default;">3</div>
+                        Lv.3
                     </div>
                     <div style="display: flex; align-items: center; gap: 4px;">
-                        <div class="cell-eval status-lv4" style="width: 20px; height: 20px; cursor: default;">4</div> Lv.4
+                        <div class="cell-eval status-lv4" style="width: 20px; height: 20px; cursor: default;">4</div>
+                        Lv.4
                     </div>
                     <div style="display: flex; align-items: center; gap: 4px;">
-                        <div class="cell-eval status-lv5" style="width: 20px; height: 20px; cursor: default;">5</div> Lv.5
+                        <div class="cell-eval status-lv5" style="width: 20px; height: 20px; cursor: default;">5</div>
+                        Lv.5
                     </div>
                 </div>
 
             </div>
 
         </main>
-        
+
         <div class="modal-backdrop" id="modal-user-skills" style="display: none;">
             <div class="modal-content" style="max-width: 800px;">
                 <div class="modal-header">
                     スキル評価編集 (利用者): <span id="modal-user-name-title">利用者名</span>
                 </div>
                 <div class="modal-body">
-                    <div style="margin-bottom: var(--spacing-4); font-size: var(--font-size-sm); color: var(--color-base-quaternary);">
+                    <div
+                        style="margin-bottom: var(--spacing-4); font-size: var(--font-size-sm); color: var(--color-base-quaternary);">
                         評価レベルを選択してください。
                     </div>
-                    
+
                     <table class="eval-gauge-table">
                         <thead>
                             <tr>
@@ -649,12 +794,13 @@
                             </tr>
                         </thead>
                         <tbody id="user-skill-list">
-                            </tbody>
+                        </tbody>
                     </table>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-neutral" onclick="hideModal('modal-user-skills')">キャンセル</button>
-                    <button class="btn btn-primary" onclick="hideModal('modal-user-skills'); alert('一括保存しました');">保存する</button>
+                    <button class="btn btn-primary"
+                        onclick="hideModal('modal-user-skills'); alert('一括保存しました');">保存する</button>
                 </div>
             </div>
         </div>
@@ -665,10 +811,11 @@
                     スキル評価編集 (スキル): <span id="modal-skill-name-title">スキル名</span>
                 </div>
                 <div class="modal-body">
-                    <div style="margin-bottom: var(--spacing-4); font-size: var(--font-size-sm); color: var(--color-base-quaternary);">
+                    <div
+                        style="margin-bottom: var(--spacing-4); font-size: var(--font-size-sm); color: var(--color-base-quaternary);">
                         利用者ごとの評価レベルを選択してください。
                     </div>
-                    
+
                     <table class="eval-gauge-table">
                         <thead>
                             <tr>
@@ -677,12 +824,13 @@
                             </tr>
                         </thead>
                         <tbody id="skill-user-list">
-                            </tbody>
+                        </tbody>
                     </table>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-neutral" onclick="hideModal('modal-skill-users')">キャンセル</button>
-                    <button class="btn btn-primary" onclick="hideModal('modal-skill-users'); alert('一括保存しました');">保存する</button>
+                    <button class="btn btn-primary"
+                        onclick="hideModal('modal-skill-users'); alert('一括保存しました');">保存する</button>
                 </div>
             </div>
         </div>

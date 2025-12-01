@@ -22,12 +22,12 @@
             document.getElementById('input-wage-fixed').disabled = (type !== 'fixed');
             document.getElementById('input-wage-rate').disabled = (type !== 'rate');
         }
-        
+
         // チェックボックスによるエリア表示切り替え（簡易実装）
         function toggleSection(checkboxId, sectionId) {
             const checkbox = document.getElementById(checkboxId);
             const section = document.getElementById(sectionId);
-            if(checkbox.checked) {
+            if (checkbox.checked) {
                 section.style.display = 'block';
             } else {
                 section.style.display = 'none';
@@ -52,11 +52,37 @@
             </div>
             <nav class="sidebar-nav">
                 <a href="index.html" class="nav-link">トップ</a>
-                <details class="nav-accordion"><summary>施設情報</summary><ul><li><a href="corporation.html">法人情報</a></li><li><a href="office.html">事業所情報</a></li></ul></details>
-                <details class="nav-accordion"><summary>関係者情報</summary><ul><li><a href="staff.html">職員情報</a></li><li><a href="members.html">利用者情報</a></li><li><a href="partners.html">取引先情報</a></li></ul></details>
-                <details class="nav-accordion"><summary>スキル情報</summary><ul><li><a href="skills-settings.html">スキル設定</a></li><li><a href="skills-evaluation.html">スキル評価</a></li></ul></details>
-                <details class="nav-accordion"><summary>工賃・控除情報</summary><ul><li><a href="wages-settings.html">工賃設定</a></li><li><a href="deductions-settings.html">控除設定</a></li><li><a href="wages-evaluation.html">工賃レベル評価</a></li></ul></details>
-                
+                <details class="nav-accordion">
+                    <summary>施設情報</summary>
+                    <ul>
+                        <li><a href="corporation.html">法人情報</a></li>
+                        <li><a href="office.html">事業所情報</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>関係者情報</summary>
+                    <ul>
+                        <li><a href="staff.html">職員情報</a></li>
+                        <li><a href="members.html">利用者情報</a></li>
+                        <li><a href="partners.html">取引先情報</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>スキル情報</summary>
+                    <ul>
+                        <li><a href="skills-settings.html">スキル設定</a></li>
+                        <li><a href="skills-evaluation.html">スキル評価</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>工賃・控除情報</summary>
+                    <ul>
+                        <li><a href="wages-settings.html">工賃設定</a></li>
+                        <li><a href="deductions-settings.html">控除設定</a></li>
+                        <li><a href="wages-evaluation.html">工賃レベル評価</a></li>
+                    </ul>
+                </details>
+
                 <details class="nav-accordion" open>
                     <summary>積立金情報</summary>
                     <ul>
@@ -67,16 +93,33 @@
 
                 <a href="attendance.html" class="nav-link">出欠情報</a>
                 <details class="nav-accordion">
-                <summary>生産活動</summary>
-                <ul>
-                <li><a href="projects.html">案件情報</a></li>
-                <li><a href="budget.html">予算・経費</a></li>
-                <li><a href="schedule.html">進捗状況</a></li>
-                </ul>
+                    <summary>生産活動</summary>
+                    <ul>
+                        <li><a href="projects.html">案件情報</a></li>
+                        <li><a href="budget.html">予算・経費</a></li>
+                        <li><a href="schedule.html">進捗状況</a></li>
+                    </ul>
                 </details>
-                <details class="nav-accordion"><summary>福祉事業活動</summary><ul><li><a href="support-plans.html">個別支援計画</a></li></ul></details>
-                <details class="nav-accordion"><summary>会計</summary><ul><li><a href="accounting-monthly.html">月次会計</a></li><li><a href="accounting-annual.html">年次会計</a></li></ul></details>
-                <details class="nav-accordion"><summary>分析</summary><ul><li><a href="analytics.html">分析ダッシュボード</a></li></ul></details>
+                <details class="nav-accordion">
+                    <summary>福祉事業活動</summary>
+                    <ul>
+                        <li><a href="support-plans.html">個別支援計画</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>会計</summary>
+                    <ul>
+                        <li><a href="accounting-monthly.html">月次会計</a></li>
+                        <li><a href="accounting-annual.html">年次会計</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>分析</summary>
+                    <ul>
+                        <li><a href="analytics-finance.html">収支分析</a></li>
+                        <li><a href="analytics-wages.html">平均工賃分析</a></li>
+                    </ul>
+                </details>
                 <a href="account.html" class="nav-link">ユーザーアカウント</a>
                 <a href="settings.html" class="nav-link">（その他設定）</a>
             </nav>
@@ -89,7 +132,8 @@
 
             <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
 
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
                     <h1 style="margin: 0;">積立金設定</h1>
                     <button class="btn btn-primary" onclick="alert('設定を保存しました')">
                         <span class="material-symbols-outlined">save</span>
@@ -102,19 +146,24 @@
                         管理する積立金
                     </div>
                     <div class="card-body">
-                        <p style="color: var(--color-base-quaternary); font-size: var(--font-size-sm); margin-bottom: var(--spacing-4);">
+                        <p
+                            style="color: var(--color-base-quaternary); font-size: var(--font-size-sm); margin-bottom: var(--spacing-4);">
                             事業所として計上を計画する積立金を選択してください。<br>
                             ※実際の計上処理は、年度末の決算（年次会計）にて行います。ここでは積立方針と月次予算の目安を設定します。
                         </p>
 
                         <div style="display: flex; gap: var(--spacing-8);">
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="chk-wage" checked onclick="toggleSection('chk-wage', 'section-wage')">
-                                <label class="form-check-label" for="chk-wage" style="font-weight: bold;">工賃変動積立金</label>
+                                <input class="form-check-input" type="checkbox" id="chk-wage" checked
+                                    onclick="toggleSection('chk-wage', 'section-wage')">
+                                <label class="form-check-label" for="chk-wage"
+                                    style="font-weight: bold;">工賃変動積立金</label>
                             </div>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" id="chk-equip" checked onclick="toggleSection('chk-equip', 'section-equip')">
-                                <label class="form-check-label" for="chk-equip" style="font-weight: bold;">設備等整備積立金</label>
+                                <input class="form-check-input" type="checkbox" id="chk-equip" checked
+                                    onclick="toggleSection('chk-equip', 'section-equip')">
+                                <label class="form-check-label" for="chk-equip"
+                                    style="font-weight: bold;">設備等整備積立金</label>
                             </div>
                         </div>
                     </div>
@@ -126,37 +175,45 @@
                     </div>
                     <div class="card-body">
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-8);">
-                            
+
                             <div>
-                                <h4 style="margin-top: 0; margin-bottom: var(--spacing-3); font-size: var(--font-size-sm); color: var(--color-base-tertiary);">年度末の積立目標方針</h4>
+                                <h4
+                                    style="margin-top: 0; margin-bottom: var(--spacing-3); font-size: var(--font-size-sm); color: var(--color-base-tertiary);">
+                                    年度末の積立目標方針</h4>
                                 <div class="form-group">
                                     <div style="display: flex; flex-direction: column; gap: var(--spacing-3);">
                                         <div class="form-check">
-                                            <input class="form-check-input" type="radio" name="wage-target" id="wage-max" value="max" checked onclick="toggleWageTarget('max')">
+                                            <input class="form-check-input" type="radio" name="wage-target"
+                                                id="wage-max" value="max" checked onclick="toggleWageTarget('max')">
                                             <label class="form-check-label" for="wage-max">上限いっぱいまで積み立てる (推奨)</label>
-                                            <div style="padding-left: 1.75em; font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
+                                            <div
+                                                style="padding-left: 1.75em; font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
                                                 過去3年間の平均工賃の10%以内 (総額上限50%)
                                             </div>
                                         </div>
-                                        
+
                                         <div style="display: flex; align-items: center; gap: var(--spacing-4);">
                                             <div class="form-check" style="margin: 0;">
-                                                <input class="form-check-input" type="radio" name="wage-target" id="wage-fixed" value="fixed" onclick="toggleWageTarget('fixed')">
+                                                <input class="form-check-input" type="radio" name="wage-target"
+                                                    id="wage-fixed" value="fixed" onclick="toggleWageTarget('fixed')">
                                                 <label class="form-check-label" for="wage-fixed">固定額を目標にする</label>
                                             </div>
                                             <div style="display: flex; align-items: center; gap: var(--spacing-2);">
-                                                <input type="number" id="input-wage-fixed" class="input-field" disabled style="width: 120px; text-align: right;">
+                                                <input type="number" id="input-wage-fixed" class="input-field" disabled
+                                                    style="width: 120px; text-align: right;">
                                                 <span>円 / 年</span>
                                             </div>
                                         </div>
 
                                         <div style="display: flex; align-items: center; gap: var(--spacing-4);">
                                             <div class="form-check" style="margin: 0;">
-                                                <input class="form-check-input" type="radio" name="wage-target" id="wage-rate" value="rate" onclick="toggleWageTarget('rate')">
+                                                <input class="form-check-input" type="radio" name="wage-target"
+                                                    id="wage-rate" value="rate" onclick="toggleWageTarget('rate')">
                                                 <label class="form-check-label" for="wage-rate">剰余金の割合を指定</label>
                                             </div>
                                             <div style="display: flex; align-items: center; gap: var(--spacing-2);">
-                                                <input type="number" id="input-wage-rate" class="input-field" disabled style="width: 100px; text-align: right;">
+                                                <input type="number" id="input-wage-rate" class="input-field" disabled
+                                                    style="width: 100px; text-align: right;">
                                                 <span>%</span>
                                             </div>
                                         </div>
@@ -164,8 +221,11 @@
                                 </div>
                             </div>
 
-                            <div style="background-color: var(--palette-CEF); padding: var(--spacing-4); border-radius: var(--radius-card);">
-                                <h4 style="margin-top: 0; margin-bottom: var(--spacing-3); font-size: var(--font-size-sm); color: var(--color-theme-main);">月次予算シミュレーション</h4>
+                            <div
+                                style="background-color: var(--palette-CEF); padding: var(--spacing-4); border-radius: var(--radius-card);">
+                                <h4
+                                    style="margin-top: 0; margin-bottom: var(--spacing-3); font-size: var(--font-size-sm); color: var(--color-theme-main);">
+                                    月次予算シミュレーション</h4>
                                 <p style="font-size: var(--font-size-xs); margin-bottom: var(--spacing-4);">
                                     期末に目標を達成するために必要な、月々の「みなし積立額」を設定します。<br>
                                     この金額は分析ダッシュボードの予実管理で使用されます。
@@ -173,7 +233,8 @@
                                 <div class="form-group">
                                     <label class="form-label" for="wage-monthly-budget">月額目安</label>
                                     <div style="display: flex; align-items: center; gap: var(--spacing-2);">
-                                        <input type="number" id="wage-monthly-budget" class="input-field" value="50000" style="text-align: right; font-weight: bold;">
+                                        <input type="number" id="wage-monthly-budget" class="input-field" value="50000"
+                                            style="text-align: right; font-weight: bold;">
                                         <span>円</span>
                                     </div>
                                 </div>
@@ -188,20 +249,23 @@
                         設備等整備積立金の計画
                     </div>
                     <div class="card-body">
-                        
+
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-6);">
                             <div class="form-group" style="grid-column: 1 / -1;">
                                 <label class="form-label" for="equip-purpose">積立目的 (具体的計画)</label>
-                                <input type="text" id="equip-purpose" class="input-field" placeholder="例: 3年後の送迎車両(ハイエース)買い替えのため">
+                                <input type="text" id="equip-purpose" class="input-field"
+                                    placeholder="例: 3年後の送迎車両(ハイエース)買い替えのため">
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label" for="equip-target-total">目標総額</label>
                                 <div style="display: flex; align-items: center; gap: var(--spacing-2);">
-                                    <input type="number" id="equip-target-total" class="input-field" value="3000000" style="text-align: right;">
+                                    <input type="number" id="equip-target-total" class="input-field" value="3000000"
+                                        style="text-align: right;">
                                     <span>円</span>
                                 </div>
-                                <p style="font-size: var(--font-size-xs); color: var(--color-base-quaternary); margin-top: var(--spacing-1);">
+                                <p
+                                    style="font-size: var(--font-size-xs); color: var(--color-base-quaternary); margin-top: var(--spacing-1);">
                                     ※取得予定資産の75%以内
                                 </p>
                             </div>
@@ -209,10 +273,12 @@
                             <div class="form-group">
                                 <label class="form-label" for="equip-yearly-plan">毎期の積立目標額</label>
                                 <div style="display: flex; align-items: center; gap: var(--spacing-2);">
-                                    <input type="number" id="equip-yearly-plan" class="input-field" value="1000000" style="text-align: right;">
+                                    <input type="number" id="equip-yearly-plan" class="input-field" value="1000000"
+                                        style="text-align: right;">
                                     <span>円 / 年</span>
                                 </div>
-                                <p style="font-size: var(--font-size-xs); color: var(--color-base-quaternary); margin-top: var(--spacing-1);">
+                                <p
+                                    style="font-size: var(--font-size-xs); color: var(--color-base-quaternary); margin-top: var(--spacing-1);">
                                     ※就労支援事業収入の10%以内
                                 </p>
                             </div>

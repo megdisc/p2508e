@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>Compath - 分析ダッシュボード</title>
+    <title>Compath - 平均工賃分析</title>
 
     <link rel="stylesheet" href="globals.css">
     <link rel="stylesheet" href="ui.css">
@@ -35,7 +35,7 @@
             contents.forEach(content => content.classList.remove('is-active'));
             document.getElementById(tabId).classList.add('is-active');
         }
-    
+
         // サイドバーの現在地連動（アコーディオン自動展開）
         document.addEventListener("DOMContentLoaded", () => {
             const currentFile = window.location.pathname.split("/").pop();
@@ -70,8 +70,21 @@
 
                 <a href="index.html" class="nav-link">トップ</a>
 
-                <details class="nav-accordion"><summary>施設情報</summary><ul><li><a href="corporation.html">法人情報</a></li><li><a href="office.html">事業所情報</a></li></ul></details>
-                <details class="nav-accordion"><summary>関係者情報</summary><ul><li><a href="staff.html">職員情報</a></li><li><a href="members.html">利用者情報</a></li><li><a href="partners.html">取引先情報</a></li></ul></details>
+                <details class="nav-accordion">
+                    <summary>施設情報</summary>
+                    <ul>
+                        <li><a href="corporation.html">法人情報</a></li>
+                        <li><a href="office.html">事業所情報</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>関係者情報</summary>
+                    <ul>
+                        <li><a href="staff.html">職員情報</a></li>
+                        <li><a href="members.html">利用者情報</a></li>
+                        <li><a href="partners.html">取引先情報</a></li>
+                    </ul>
+                </details>
 
                 <details class="nav-accordion">
                     <summary>スキル情報</summary>
@@ -90,17 +103,23 @@
                     </ul>
                 </details>
 
-                <details class="nav-accordion"><summary>積立金情報</summary><ul><li><a href="savings-settings.html">積立金設定</a></li><li><a href="savings-history.html">積立金履歴</a></li></ul></details>
+                <details class="nav-accordion">
+                    <summary>積立金情報</summary>
+                    <ul>
+                        <li><a href="savings-settings.html">積立金設定</a></li>
+                        <li><a href="savings-history.html">積立金履歴</a></li>
+                    </ul>
+                </details>
 
                 <a href="attendance.html" class="nav-link">出欠情報</a>
 
                 <details class="nav-accordion">
-                <summary>生産活動</summary>
-                <ul>
-                <li><a href="projects.html">案件情報</a></li>
-                <li><a href="budget.html">予算・経費</a></li>
-                <li><a href="schedule.html">進捗状況</a></li>
-                </ul>
+                    <summary>生産活動</summary>
+                    <ul>
+                        <li><a href="projects.html">案件情報</a></li>
+                        <li><a href="budget.html">予算・経費</a></li>
+                        <li><a href="schedule.html">進捗状況</a></li>
+                    </ul>
                 </details>
 
                 <details class="nav-accordion">
@@ -121,7 +140,8 @@
                 <details class="nav-accordion">
                     <summary>分析</summary>
                     <ul>
-                        <li><a href="analytics.html">分析ダッシュボード</a></li>
+                        <li><a href="analytics-finance.html">収支分析</a></li>
+                        <li><a href="analytics-wages.html">平均工賃分析</a></li>
                     </ul>
                 </details>
 
@@ -143,18 +163,18 @@
 
             <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
 
-                <h1 style="margin: 0 0 var(--spacing-stack-md) 0;">分析ダッシュボード</h1>
+                <h1 style="margin: 0 0 var(--spacing-stack-md) 0;">平均工賃分析</h1>
 
                 <div class="card">
                     <div class="card-body">
-                        <p>これは「分析ダッシュボード」ページです。ここに内容を記述します。</p>
+                        <p>これは「平均工賃分析」ページです。ここに内容を記述します。</p>
                     </div>
                 </div>
 
             </div>
 
         </main>
-        </div>
+    </div>
 
 </body>
 

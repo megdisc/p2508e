@@ -22,12 +22,29 @@
         }
 
         /* インデント定義 */
-        .indent-0 { padding-left: 0; }
-        .indent-1 { padding-left: var(--spacing-8); }
-        .indent-2 { padding-left: var(--spacing-16); }
-        .indent-3 { padding-left: calc(var(--spacing-16) + var(--spacing-8)); }
-        .indent-4 { padding-left: calc(var(--spacing-16) * 2); }
-        .indent-5 { padding-left: calc(var(--spacing-16) * 2 + var(--spacing-8)); }
+        .indent-0 {
+            padding-left: 0;
+        }
+
+        .indent-1 {
+            padding-left: var(--spacing-8);
+        }
+
+        .indent-2 {
+            padding-left: var(--spacing-16);
+        }
+
+        .indent-3 {
+            padding-left: calc(var(--spacing-16) + var(--spacing-8));
+        }
+
+        .indent-4 {
+            padding-left: calc(var(--spacing-16) * 2);
+        }
+
+        .indent-5 {
+            padding-left: calc(var(--spacing-16) * 2 + var(--spacing-8));
+        }
 
         /* セル内のレイアウト */
         .tree-cell {
@@ -52,18 +69,22 @@
             padding: 0;
             flex-shrink: 0;
         }
+
         .tree-toggle-btn:hover {
             background-color: var(--color-base-secondary);
             color: var(--color-theme-main);
         }
+
         .tree-toggle-btn.leaf {
             visibility: hidden;
             pointer-events: none;
         }
+
         /* アイコン回転 (アニメーションなし) */
         .tree-toggle-btn.expanded {
             transform: rotate(90deg);
         }
+
         .tree-toggle-btn .material-symbols-outlined {
             font-size: 20px;
         }
@@ -76,7 +97,7 @@
             gap: var(--spacing-2);
             cursor: pointer;
         }
-        
+
         /* アクションボタン列 */
         .col-actions {
             width: 160px;
@@ -92,6 +113,7 @@
             padding: 2px;
             border: 1px solid var(--color-base-quinary);
         }
+
         .view-toggle label {
             padding: var(--spacing-1) var(--spacing-3);
             font-size: var(--font-size-sm);
@@ -100,8 +122,12 @@
             transition: all 0.2s;
             color: var(--color-base-quaternary);
         }
-        .view-toggle input[type="radio"] { display: none; }
-        .view-toggle input[type="radio"]:checked + label {
+
+        .view-toggle input[type="radio"] {
+            display: none;
+        }
+
+        .view-toggle input[type="radio"]:checked+label {
             background-color: var(--color-theme-main);
             color: var(--color-base-primary);
             box-shadow: var(--box-shadow-sm);
@@ -117,7 +143,7 @@
         function switchView(viewName) {
             document.getElementById('view-tree').style.display = 'none';
             document.getElementById('view-level').style.display = 'none';
-            
+
             // 追加ボタンの表示切り替え
             document.getElementById('btn-add-root').style.display = 'none';
             document.getElementById('btn-add-level').style.display = 'none';
@@ -130,7 +156,7 @@
                 document.getElementById('btn-add-level').style.display = 'inline-flex';
             }
         }
-    
+
         // サイドバーの現在地連動（アコーディオン自動展開）
         document.addEventListener("DOMContentLoaded", () => {
             const currentFile = window.location.pathname.split("/").pop();
@@ -161,23 +187,72 @@
             </div>
             <nav class="sidebar-nav">
                 <a href="index.html" class="nav-link">トップ</a>
-                <details class="nav-accordion"><summary>施設情報</summary><ul><li><a href="corporation.html">法人情報</a></li><li><a href="office.html">事業所情報</a></li></ul></details>
-                <details class="nav-accordion"><summary>関係者情報</summary><ul><li><a href="staff.html">職員情報</a></li><li><a href="members.html">利用者情報</a></li><li><a href="partners.html">取引先情報</a></li></ul></details>
-                <details class="nav-accordion" open><summary>スキル情報</summary><ul><li><a href="skills-settings.html" class="nav-link active">スキル設定</a></li><li><a href="skills-evaluation.html">スキル評価</a></li></ul></details>
-                <details class="nav-accordion"><summary>工賃・控除情報</summary><ul><li><a href="wages-settings.html">工賃設定</a></li><li><a href="deductions-settings.html">控除設定</a></li><li><a href="wages-evaluation.html">工賃レベル評価</a></li></ul></details>
-                <details class="nav-accordion"><summary>積立金情報</summary><ul><li><a href="savings-settings.html">積立金設定</a></li><li><a href="savings-history.html">積立金履歴</a></li></ul></details>
+                <details class="nav-accordion">
+                    <summary>施設情報</summary>
+                    <ul>
+                        <li><a href="corporation.html">法人情報</a></li>
+                        <li><a href="office.html">事業所情報</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>関係者情報</summary>
+                    <ul>
+                        <li><a href="staff.html">職員情報</a></li>
+                        <li><a href="members.html">利用者情報</a></li>
+                        <li><a href="partners.html">取引先情報</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion" open>
+                    <summary>スキル情報</summary>
+                    <ul>
+                        <li><a href="skills-settings.html" class="nav-link active">スキル設定</a></li>
+                        <li><a href="skills-evaluation.html">スキル評価</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>工賃・控除情報</summary>
+                    <ul>
+                        <li><a href="wages-settings.html">工賃設定</a></li>
+                        <li><a href="deductions-settings.html">控除設定</a></li>
+                        <li><a href="wages-evaluation.html">工賃レベル評価</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>積立金情報</summary>
+                    <ul>
+                        <li><a href="savings-settings.html">積立金設定</a></li>
+                        <li><a href="savings-history.html">積立金履歴</a></li>
+                    </ul>
+                </details>
                 <a href="attendance.html" class="nav-link">出欠情報</a>
                 <details class="nav-accordion">
-                <summary>生産活動</summary>
-                <ul>
-                <li><a href="projects.html">案件情報</a></li>
-                <li><a href="budget.html">予算・経費</a></li>
-                <li><a href="schedule.html">進捗状況</a></li>
-                </ul>
+                    <summary>生産活動</summary>
+                    <ul>
+                        <li><a href="projects.html">案件情報</a></li>
+                        <li><a href="budget.html">予算・経費</a></li>
+                        <li><a href="schedule.html">進捗状況</a></li>
+                    </ul>
                 </details>
-                <details class="nav-accordion"><summary>福祉事業活動</summary><ul><li><a href="support-plans.html">個別支援計画</a></li></ul></details>
-                <details class="nav-accordion"><summary>会計</summary><ul><li><a href="accounting-monthly.html">月次会計</a></li><li><a href="accounting-annual.html">年次会計</a></li></ul></details>
-                <details class="nav-accordion"><summary>分析</summary><ul><li><a href="analytics.html">分析ダッシュボード</a></li></ul></details>
+                <details class="nav-accordion">
+                    <summary>福祉事業活動</summary>
+                    <ul>
+                        <li><a href="support-plans.html">個別支援計画</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>会計</summary>
+                    <ul>
+                        <li><a href="accounting-monthly.html">月次会計</a></li>
+                        <li><a href="accounting-annual.html">年次会計</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>分析</summary>
+                    <ul>
+                        <li><a href="analytics-finance.html">収支分析</a></li>
+                        <li><a href="analytics-wages.html">平均工賃分析</a></li>
+                    </ul>
+                </details>
                 <a href="account.html" class="nav-link">ユーザーアカウント</a>
                 <a href="settings.html" class="nav-link">（その他設定）</a>
             </nav>
@@ -190,24 +265,27 @@
 
             <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
 
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
                     <h1 style="margin: 0;">スキル設定</h1>
-                    
+
                     <button id="btn-add-root" class="btn btn-primary" onclick="openEditModal(null, 'root')">
                         <span class="material-symbols-outlined">add</span>
                         ルートカテゴリ追加
                     </button>
-                    <button id="btn-add-level" class="btn btn-primary" onclick="openLevelModal()" style="display: none;">
+                    <button id="btn-add-level" class="btn btn-primary" onclick="openLevelModal()"
+                        style="display: none;">
                         <span class="material-symbols-outlined">add</span>
                         レベル追加
                     </button>
                 </div>
 
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
                     <div class="view-toggle">
                         <input type="radio" id="view-mode-tree" name="view-mode" checked onchange="switchView('tree')">
                         <label for="view-mode-tree">スキルツリー</label>
-                        
+
                         <input type="radio" id="view-mode-level" name="view-mode" onchange="switchView('level')">
                         <label for="view-mode-level">習熟度レベル</label>
                     </div>
@@ -224,10 +302,11 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                </tbody>
+                            </tbody>
                         </table>
                     </div>
-                    <div style="margin-top: var(--spacing-2); text-align: right; color: var(--color-base-quaternary); font-size: var(--font-size-xs);">
+                    <div
+                        style="margin-top: var(--spacing-2); text-align: right; color: var(--color-base-quaternary); font-size: var(--font-size-xs);">
                         ※ カテゴリ横の「＋」ボタンで子要素を追加できます。ラベルをクリックすると開閉します。
                     </div>
                 </div>
@@ -248,12 +327,16 @@
                                     <td>未習得、または見学段階。</td>
                                     <td class="col-actions">
                                         <div style="display: flex; justify-content: flex-end; gap: var(--spacing-2);">
-                                            <button class="btn btn-icon btn-icon-success btn-icon-sm" onclick="openLevelModal('l0')"><span class="material-symbols-outlined">edit</span></button>
-                                            <button class="btn btn-icon btn-icon-error btn-icon-sm" onclick="deleteLevel('l0')"><span class="material-symbols-outlined">delete</span></button>
+                                            <button class="btn btn-icon btn-icon-success btn-icon-sm"
+                                                onclick="openLevelModal('l0')"><span
+                                                    class="material-symbols-outlined">edit</span></button>
+                                            <button class="btn btn-icon btn-icon-error btn-icon-sm"
+                                                onclick="deleteLevel('l0')"><span
+                                                    class="material-symbols-outlined">delete</span></button>
                                         </div>
                                     </td>
                                 </tr>
-                                </tbody>
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -282,20 +365,23 @@
                             <label class="form-label">タイプ</label>
                             <div style="display: flex; gap: var(--spacing-4);">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="skill-type" id="type-category" value="category" checked>
+                                    <input class="form-check-input" type="radio" name="skill-type" id="type-category"
+                                        value="category" checked>
                                     <label class="form-check-label" for="type-category">カテゴリ</label>
                                 </div>
                                 <div class="form-check">
-                                    <input class="form-check-input" type="radio" name="skill-type" id="type-item" value="item">
+                                    <input class="form-check-input" type="radio" name="skill-type" id="type-item"
+                                        value="item">
                                     <label class="form-check-label" for="type-item">スキル</label>
                                 </div>
                             </div>
-                            <p style="font-size: var(--font-size-xs); color: var(--color-base-quaternary); margin-top: var(--spacing-1);">
+                            <p
+                                style="font-size: var(--font-size-xs); color: var(--color-base-quaternary); margin-top: var(--spacing-1);">
                                 ※「スキル」を選択すると、その下に子階層は作れません。
                             </p>
                         </div>
-                        
-                        </form>
+
+                    </form>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-neutral" onclick="hideModal('modal-edit-skill')">キャンセル</button>
@@ -316,12 +402,15 @@
 
                         <div class="form-group">
                             <label class="form-label">レベル名</label>
-                            <div id="level-name-display" style="padding: var(--spacing-2) 0; font-weight: bold; font-size: var(--font-size-sm); color: var(--color-base-tertiary);"></div>
+                            <div id="level-name-display"
+                                style="padding: var(--spacing-2) 0; font-weight: bold; font-size: var(--font-size-sm); color: var(--color-base-tertiary);">
+                            </div>
                         </div>
 
                         <div class="form-group">
                             <label class="form-label" for="level-description">説明・評価基準</label>
-                            <textarea id="level-description" class="input-field" rows="4" placeholder="このレベルに該当する基準を入力"></textarea>
+                            <textarea id="level-description" class="input-field" rows="4"
+                                placeholder="このレベルに該当する基準を入力"></textarea>
                         </div>
                     </form>
                 </div>
@@ -370,12 +459,12 @@
         const treeTableBody = document.querySelector('#skill-tree-table tbody');
 
         function isNodeVisible(node) {
-            if (node.parentId === null) return true; 
+            if (node.parentId === null) return true;
             let current = node;
             while (current.parentId !== null) {
                 const parent = skillData.find(d => d.id === current.parentId);
-                if (!parent) return false; 
-                if (!parent.isOpen) return false; 
+                if (!parent) return false;
+                if (!parent.isOpen) return false;
                 current = parent;
             }
             return true;
@@ -383,10 +472,10 @@
 
         function renderTree() {
             treeTableBody.innerHTML = '';
-            
+
             const renderNodes = (parentId, level) => {
                 const children = skillData.filter(item => item.parentId === parentId);
-                
+
                 children.forEach(node => {
                     const hasChildren = skillData.some(item => item.parentId === node.id);
                     const isExpanded = node.isOpen;
@@ -395,7 +484,7 @@
                     const tr = document.createElement('tr');
                     tr.className = `tree-table-row ${visible ? '' : 'hidden'}`;
                     tr.dataset.id = node.id;
-                    
+
                     tr.innerHTML = `
                         <td>
                             <div class="tree-cell indent-${level}">
@@ -418,12 +507,12 @@
                         </td>
                         <td class="col-actions">
                             <div style="display: flex; justify-content: flex-end; gap: var(--spacing-2);">
-                                ${node.type === 'category' ? 
-                                    `<button class="btn btn-icon btn-icon-primary btn-icon-sm" title="子を追加" onclick="openEditModal(null, '${node.id}')">
+                                ${node.type === 'category' ?
+                            `<button class="btn btn-icon btn-icon-primary btn-icon-sm" title="子を追加" onclick="openEditModal(null, '${node.id}')">
                                         <span class="material-symbols-outlined">add</span>
-                                    </button>` : 
-                                    `<span style="width: 2rem; display:inline-block;"></span>`
-                                }
+                                    </button>` :
+                            `<span style="width: 2rem; display:inline-block;"></span>`
+                        }
                                 <button class="btn btn-icon btn-icon-success btn-icon-sm" title="編集" onclick="openEditModal('${node.id}')">
                                     <span class="material-symbols-outlined">edit</span>
                                 </button>
@@ -441,21 +530,21 @@
             renderNodes(null, 0);
         }
 
-        window.toggleNode = function(id) {
+        window.toggleNode = function (id) {
             const node = skillData.find(d => d.id === id);
             if (node) {
                 node.isOpen = !node.isOpen;
-                renderTree(); 
+                renderTree();
             }
         };
 
         // --- スキル操作ロジック (追加・編集・削除) ---
 
-        window.openEditModal = function(id = null, parentId = null) {
+        window.openEditModal = function (id = null, parentId = null) {
             const modal = document.getElementById('modal-edit-skill');
             const modalTitle = document.getElementById('modal-title');
             const nameInput = document.getElementById('skill-name');
-            
+
             document.getElementById('edit-id').value = id || '';
             document.getElementById('parent-id').value = parentId || '';
             document.getElementById('edit-mode').value = id ? 'update' : 'create';
@@ -474,7 +563,7 @@
             showModal('modal-edit-skill');
         };
 
-        window.saveSkill = function() {
+        window.saveSkill = function () {
             const id = document.getElementById('edit-id').value;
             const parentId = document.getElementById('parent-id').value === 'root' ? null : document.getElementById('parent-id').value;
             const mode = document.getElementById('edit-mode').value;
@@ -493,7 +582,7 @@
                     parentId: parentId,
                     name: name,
                     type: type,
-                    isOpen: false 
+                    isOpen: false
                 });
                 if (parentId) {
                     const parent = skillData.find(d => d.id === parentId);
@@ -507,10 +596,10 @@
                 }
             }
             hideModal('modal-edit-skill');
-            renderTree(); 
+            renderTree();
         };
 
-        window.deleteNode = function(id) {
+        window.deleteNode = function (id) {
             const hasChildren = skillData.some(d => d.parentId === id);
             if (hasChildren) {
                 if (!confirm('このカテゴリには子要素が含まれています。すべて削除してよろしいですか？')) {
@@ -560,7 +649,7 @@
         }
 
         // --- レベル操作ロジック ---
-        window.openLevelModal = function(id = null) {
+        window.openLevelModal = function (id = null) {
             const modal = document.getElementById('modal-edit-level');
             const title = document.getElementById('modal-level-title');
             const nameDisplay = document.getElementById('level-name-display'); // 表示用要素
@@ -582,7 +671,7 @@
             showModal('modal-edit-level');
         };
 
-        window.saveLevel = function() {
+        window.saveLevel = function () {
             const id = document.getElementById('level-edit-id').value;
             const mode = document.getElementById('level-edit-mode').value;
             const desc = document.getElementById('level-description').value;
@@ -607,7 +696,7 @@
             renderLevels();
         };
 
-        window.deleteLevel = function(id) {
+        window.deleteLevel = function (id) {
             if (confirm('削除してよろしいですか？')) {
                 levelData = levelData.filter(l => l.id !== id);
                 renderLevels();
