@@ -241,6 +241,18 @@
                     </div>
                 </div>
 
+                <div class="card" style="margin-top: var(--spacing-6);">
+                    <div class="card-header">
+                        <span>詳細データ</span>
+                    </div>
+                    <div class="card-body" style="overflow-x: auto;">
+                        <table class="table" id="finance-table"
+                            style="width: 100%; min-width: 800px; white-space: nowrap;">
+                            <!-- JSで動的に生成 -->
+                        </table>
+                    </div>
+                </div>
+
                 <script>
                     let chartInstance = null;
                     let currentMode = 'monthly'; // 'monthly' or 'annual'
@@ -334,6 +346,7 @@
 
                         initPeriodSelector();
                         updateChart();
+                        updateTable();
                     }
 
                     // Custom Tooltip Handler
@@ -633,10 +646,78 @@
                         document.getElementById('chart-title').textContent = `収支推移 (${selectedText})`;
                     }
 
+                    function updateTable() {
+                        const table = document.getElementById('finance-table');
+                        const sourceData = currentMode === 'monthly' ? dataMonthly : dataAnnual;
+                        const formatter = new Intl.NumberFormat('ja-JP');
+
+                        let html = '';
+
+                        // Header
+                        html += '<thead><tr>';
+                        html += '<th style="text-align: left; min-width: 100px; position: sticky; left: 0; background-color: var(--color-base-secondary); z-index: 10;">期間</th>';
+
+                        // Income Columns
+                        html += '<th style="text-align: right; min-width: 120px; background-color: var(--color-base-secondary); font-weight: bold;">生産活動収入 計</th>';
+                        html += '<th style="text-align: right; min-width: 100px;">売上</th>';
+                        html += '<th style="text-align: right; min-width: 100px;">助成金</th>';
+                        html += '<th style="text-align: right; min-width: 100px;">その他収入</th>';
+
+                        // Expense Columns
+                        html += '<th style="text-align: right; min-width: 120px; background-color: var(--color-base-secondary); font-weight: bold;">生産活動経費 計</th>';
+                        html += '<th style="text-align: right; min-width: 100px;">工賃</th>';
+                        html += '<th style="text-align: right; min-width: 100px;">外注費</th>';
+                        html += '<th style="text-align: right; min-width: 100px;">その他経費</th>';
+
+                        // Reserve Columns
+                        html += '<th style="text-align: right; min-width: 120px; background-color: var(--color-base-secondary); font-weight: bold;">積立金 計</th>';
+                        html += '<th style="text-align: right; min-width: 100px;">工賃積立金</th>';
+                        html += '<th style="text-align: right; min-width: 100px;">その他の積立金</th>';
+
+                        html += '</tr></thead>';
+
+                        // Body
+                        html += '<tbody>';
+
+                        sourceData.labels.forEach((label, i) => {
+                            // Calculate Totals for this period (i)
+                            const incomeTotal = sourceData.income_sales[i] + sourceData.income_grants[i] + sourceData.income_other[i];
+                            const expenseTotal = sourceData.expense_wages[i] + sourceData.expense_outsourcing[i] + sourceData.expense_other[i];
+                            const reserveTotal = sourceData.reserve_wages[i] + sourceData.reserve_other[i];
+
+                            html += '<tr>';
+                            // Period Label
+                            html += `<td style="text-align: left; position: sticky; left: 0; background-color: var(--color-base-primary); font-weight: bold;">${label}</td>`;
+
+                            // Income Data
+                            html += `<td style="text-align: right; font-weight: bold; background-color: var(--color-base-secondary);">${formatter.format(incomeTotal * 1000)}</td>`;
+                            html += `<td style="text-align: right;">${formatter.format(sourceData.income_sales[i] * 1000)}</td>`;
+                            html += `<td style="text-align: right;">${formatter.format(sourceData.income_grants[i] * 1000)}</td>`;
+                            html += `<td style="text-align: right;">${formatter.format(sourceData.income_other[i] * 1000)}</td>`;
+
+                            // Expense Data
+                            html += `<td style="text-align: right; font-weight: bold; background-color: var(--color-base-secondary);">${formatter.format(expenseTotal * 1000)}</td>`;
+                            html += `<td style="text-align: right;">${formatter.format(sourceData.expense_wages[i] * 1000)}</td>`;
+                            html += `<td style="text-align: right;">${formatter.format(sourceData.expense_outsourcing[i] * 1000)}</td>`;
+                            html += `<td style="text-align: right;">${formatter.format(sourceData.expense_other[i] * 1000)}</td>`;
+
+                            // Reserve Data
+                            html += `<td style="text-align: right; font-weight: bold; background-color: var(--color-base-secondary);">${formatter.format(reserveTotal * 1000)}</td>`;
+                            html += `<td style="text-align: right;">${formatter.format(sourceData.reserve_wages[i] * 1000)}</td>`;
+                            html += `<td style="text-align: right;">${formatter.format(sourceData.reserve_other[i] * 1000)}</td>`;
+
+                            html += '</tr>';
+                        });
+
+                        html += '</tbody>';
+                        table.innerHTML = html;
+                    }
+
                     // 初期化
                     document.addEventListener('DOMContentLoaded', () => {
                         initPeriodSelector();
                         updateChart();
+                        updateTable();
                     });
                 </script>
 
