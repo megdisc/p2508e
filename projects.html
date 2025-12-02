@@ -411,7 +411,13 @@
                 totalRevenue += parseInt(item.amount || 0);
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
-                    <td><input type="text" class="input-field" value="${item.name}" onchange="updateRevenueItem(${index}, 'name', this.value)"></td>
+                    <td>
+                        <select class="input-field" onchange="updateRevenueItem(${index}, 'name', this.value)">
+                            <option value="売上" ${item.name === '売上' ? 'selected' : ''}>売上</option>
+                            <option value="助成金" ${item.name === '助成金' ? 'selected' : ''}>助成金</option>
+                            <option value="その他収入" ${item.name === 'その他収入' ? 'selected' : ''}>その他収入</option>
+                        </select>
+                    </td>
                     <td><input type="number" class="input-field" value="${item.amount}" onchange="updateRevenueItem(${index}, 'amount', this.value)" style="text-align: right;"></td>
                     <td><input type="text" class="input-field" value="${item.note || ''}" onchange="updateRevenueItem(${index}, 'note', this.value)"></td>
                     <td>
@@ -435,14 +441,14 @@
                     totalReserves += parseInt(exp.amount || 0);
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td><input type="text" class="input-field" value="${exp.name}" onchange="updateExpense(${index}, 'name', this.value)"></td>
-                        <td><input type="number" class="input-field" value="${exp.amount}" onchange="updateExpense(${index}, 'amount', this.value)" style="text-align: right;"></td>
-                        <td><input type="text" class="input-field" value="${exp.note || ''}" onchange="updateExpense(${index}, 'note', this.value)"></td>
                         <td>
-                            <button class="btn btn-icon btn-icon-error" onclick="removeExpense(${index})">
-                                <span class="material-symbols-outlined">delete</span>
-                            </button>
+                            <select class="input-field" disabled>
+                                <option value="工賃積立金" ${exp.name === '工賃積立金' ? 'selected' : ''}>工賃積立金</option>
+                                <option value="その他の積立金" ${exp.name === 'その他の積立金' ? 'selected' : ''}>その他の積立金</option>
+                            </select>
                         </td>
+                        <td><input type="number" class="input-field" value="${exp.amount}" disabled style="text-align: right;"></td>
+                        <td><input type="text" class="input-field" value="${exp.note || ''}" disabled></td>
                     `;
                     resContainer.appendChild(tr);
                 }
@@ -459,15 +465,19 @@
 
             tempProjectData.tasks.forEach((task, index) => {
                 const tr = document.createElement('tr');
-                const total = (task.unitPrice || 0) * (task.quantity || 0);
-                totalLabor += total;
-                task.total = total;
+                // For budget tab, we use 'amount' directly if available, or fallback to unitPrice * quantity
+                // But user requested "Amount" input. Let's assume we store it in `task.budgetAmount` or similar, 
+                // but to keep it simple and compatible with display, let's use `task.total` as the source of truth for this view?
+                // Actually, if we edit "Amount", we should probably update `task.total` directly.
+                // Note: This decouples it from unitPrice * quantity.
+
+                const amount = task.amount !== undefined ? task.amount : (task.unitPrice || 0) * (task.quantity || 0);
+                totalLabor += parseInt(amount || 0);
 
                 tr.innerHTML = `
                     <td>${task.name}</td>
-                    <td><input type="number" class="input-field" value="${task.unitPrice || 0}" onchange="updateTaskBudget(${index}, 'unitPrice', this.value)" style="text-align: right;"></td>
-                    <td><input type="number" class="input-field" value="${task.quantity || 0}" onchange="updateTaskBudget(${index}, 'quantity', this.value)" style="text-align: right;"></td>
-                    <td class="numeric">${formatCurrency(total)}</td>
+                    <td><input type="number" class="input-field" value="${amount}" onchange="updateTaskBudget(${index}, 'amount', this.value)" style="text-align: right;"></td>
+                    <td><input type="text" class="input-field" value="${task.note || ''}" onchange="updateTaskBudget(${index}, 'note', this.value)"></td>
                 `;
                 taskContainer.appendChild(tr);
             });
@@ -486,7 +496,6 @@
                         <td>
                             <select class="input-field" onchange="updateExpense(${index}, 'type', this.value)">
                                 <option ${exp.type === '材料費' ? 'selected' : ''}>材料費</option>
-                                <option ${exp.type === '外注費' ? 'selected' : ''}>外注費</option>
                                 <option ${exp.type === '消耗品費' ? 'selected' : ''}>消耗品費</option>
                                 <option ${exp.type === 'その他' ? 'selected' : ''}>その他</option>
                             </select>
@@ -508,14 +517,20 @@
         }
 
         function updateTaskBudget(index, field, value) {
-            tempProjectData.tasks[index][field] = parseInt(value) || 0;
+            if (field === 'amount') {
+                tempProjectData.tasks[index].amount = parseInt(value) || 0;
+                // Also update total for compatibility if needed, though we use amount now
+                tempProjectData.tasks[index].total = tempProjectData.tasks[index].amount;
+            } else {
+                tempProjectData.tasks[index][field] = value;
+            }
             renderBudgetEditor();
         }
 
         // Revenue Helpers
         function addRevenueItem() {
             if (!tempProjectData.revenueItems) tempProjectData.revenueItems = [];
-            tempProjectData.revenueItems.push({ name: '', amount: 0, note: '' });
+            tempProjectData.revenueItems.push({ name: '売上', amount: 0, note: '' });
             renderBudgetEditor();
         }
 
@@ -531,9 +546,9 @@
         }
 
         // Reserve Helpers
+        // addReserveItem is removed as it is read-only now
         function addReserveItem() {
-            tempProjectData.expenses.push({ name: '工賃積立金', type: '積立金', amount: 0, note: '' });
-            renderBudgetEditor();
+            // No-op or removed from HTML calling
         }
 
         // Other Expense Helpers
@@ -1304,10 +1319,7 @@
                                 <div class="card-header"
                                     style="display: flex; justify-content: space-between; align-items: center; background-color: var(--color-bg-subtle);">
                                     <span>積立金</span>
-                                    <button class="btn btn-sm btn-neutral" onclick="addReserveItem()">
-                                        <span class="material-symbols-outlined"
-                                            style="font-size: 16px; margin-right: 4px;">add</span> 追加
-                                    </button>
+                                    <!-- Read-only: Add button removed -->
                                 </div>
                                 <div class="card-body" style="padding: 0;">
                                     <table class="budget-table">
@@ -1316,7 +1328,7 @@
                                                 <th style="width: 40%;">項目名</th>
                                                 <th style="width: 30%;">金額</th>
                                                 <th style="width: 30%;">備考</th>
-                                                <th style="width: 40px;"></th>
+                                                <!-- Read-only: Action column removed -->
                                             </tr>
                                         </thead>
                                         <tbody id="edit-budget-reserve-list">
@@ -1335,14 +1347,13 @@
                                     <div style="margin-bottom: var(--spacing-stack-md);">
                                         <div
                                             style="font-weight: bold; margin-bottom: var(--spacing-2); color: var(--color-text-secondary);">
-                                            タスク (工賃)</div>
+                                            タスク</div>
                                         <table class="budget-table">
                                             <thead>
                                                 <tr>
                                                     <th style="width: 40%;">タスク名</th>
-                                                    <th style="width: 20%;">単価</th>
-                                                    <th style="width: 20%;">数量</th>
-                                                    <th style="width: 20%;">小計</th>
+                                                    <th style="width: 30%;">金額</th>
+                                                    <th style="width: 30%;">備考</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="edit-budget-task-list">
