@@ -522,7 +522,7 @@
                 alertBox.style.color = '';
                 alertBox.style.border = '';
                 alertBox.style.border = '';
-                alertBox.innerHTML = `<strong>注意:</strong> 予算に余剰があります。残り <strong>${formatCurrency(balance)}</strong> を工賃や経費に配分してください。`;
+                alertBox.innerHTML = `<strong>注意:</strong> 予算に<strong>${formatCurrency(balance)}円</strong>の余剰があります。工賃やその他費用に配分してください。`;
             } else if (balance < 0) {
                 // Deficit
                 alertBox.className = 'alert-error';
@@ -530,7 +530,7 @@
                 alertBox.style.backgroundColor = '';
                 alertBox.style.color = '';
                 alertBox.style.border = '';
-                alertBox.innerHTML = `<strong>エラー:</strong> 予算が不足しています。 <strong>${formatCurrency(Math.abs(balance))}</strong> 超過しています。経費を削減するか、収入を見直してください。`;
+                alertBox.innerHTML = `<strong>警告:</strong> 予算に<strong>${formatCurrency(Math.abs(balance))}円</strong>の不足があります。収入を増やすか、費用を減らしてください。`;
             } else {
                 // Balanced
                 alertBox.style.display = 'none';
