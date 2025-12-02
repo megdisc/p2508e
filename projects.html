@@ -159,10 +159,14 @@
                     { name: 'パン売上（外販）', amount: 50000, note: '' }
                 ],
                 tasks: [
-                    { id: 1, name: 'パン製造', skills: [{ name: '体力', level: 2 }], unitPrice: 0, quantity: 0, total: 0 },
-                    { id: 2, name: '販売', skills: [{ name: '接客', level: 2 }], unitPrice: 0, quantity: 0, total: 0 }
+                    { id: 1, name: 'パン製造', skills: [{ name: '体力', level: 2 }], unitPrice: 50, quantity: 1000, total: 50000 },
+                    { id: 2, name: '販売', skills: [{ name: '接客', level: 2 }], unitPrice: 30, quantity: 1000, total: 30000 }
                 ],
-                expenses: []
+                expenses: [
+                    { name: '材料費', type: '材料費', amount: 30000, note: '小麦粉、バター等' },
+                    { name: '包装資材', type: '材料費', amount: 5000, note: '袋、シール' },
+                    { name: '事業所積立金', type: '積立金', amount: 5000, note: '売上の5%' }
+                ]
             },
             'project-3': {
                 id: 'project-3',
@@ -175,9 +179,13 @@
                     { name: '清掃委託料', amount: 200000, note: '月額固定' }
                 ],
                 tasks: [
-                    { id: 1, name: '清掃作業', skills: [{ name: '体力', level: 3 }], unitPrice: 0, quantity: 0, total: 0 }
+                    { id: 1, name: '清掃作業', skills: [{ name: '体力', level: 3 }], unitPrice: 800, quantity: 100, total: 80000 }
                 ],
-                expenses: []
+                expenses: [
+                    { name: '清掃用具', type: '材料費', amount: 5000, note: '洗剤、モップ' },
+                    { name: '交通費', type: 'その他', amount: 10000, note: '移動費' },
+                    { name: '事業所積立金', type: '積立金', amount: 10000, note: '売上の5%' }
+                ]
             },
             'project-4': {
                 id: 'project-4',
@@ -190,11 +198,12 @@
                     { name: 'バザー売上', amount: 50000, note: '' }
                 ],
                 tasks: [
-                    { id: 1, name: '接客販売', skills: [{ name: '接客', level: 2 }], unitPrice: 0, quantity: 0, total: 0 },
-                    { id: 2, name: '搬入出', skills: [{ name: '体力', level: 2 }], unitPrice: 0, quantity: 0, total: 0 }
+                    { id: 1, name: '接客販売', skills: [{ name: '接客', level: 2 }], unitPrice: 1000, quantity: 10, total: 10000 },
+                    { id: 2, name: '搬入出', skills: [{ name: '体力', level: 2 }], unitPrice: 1000, quantity: 5, total: 5000 }
                 ],
                 expenses: [
-                    { name: '出店料', type: 'その他', amount: 5000, note: '' }
+                    { name: '出店料', type: 'その他', amount: 5000, note: '' },
+                    { name: '事業所積立金', type: '積立金', amount: 2500, note: '売上の5%' }
                 ]
             },
             'project-5': {
