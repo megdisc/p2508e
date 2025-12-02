@@ -183,6 +183,26 @@
                 expenses: [
                     { name: '出店料', type: 'その他', amount: 5000, note: '' }
                 ]
+            },
+            'project-5': {
+                id: 'project-5',
+                name: '花見イベント販売',
+                type: 'single',
+                source: 'in_house',
+                partner: '無し',
+                revenue: 0,
+                tasks: [],
+                expenses: []
+            },
+            'project-6': {
+                id: 'project-6',
+                name: '新規カフェ出店計画',
+                type: 'continuous',
+                source: 'in_house',
+                partner: '無し',
+                revenue: 0,
+                tasks: [],
+                expenses: []
             }
         };
 
@@ -712,7 +732,7 @@
 
                 <div class="card-grid">
 
-                    <!-- Card 1 -->
+                    <!-- Card 1: DM (In Progress - Blue) -->
                     <div class="card">
                         <div class="card-header"
                             style="display: flex; justify-content: space-between; align-items: flex-start;">
@@ -758,53 +778,7 @@
                         </div>
                     </div>
 
-                    <!-- Card 2 -->
-                    <div class="card">
-                        <div class="card-header"
-                            style="display: flex; justify-content: space-between; align-items: flex-start;">
-                            <div>
-                                <div
-                                    style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">
-                                    自主製品（パン）製造・販売
-                                </div>
-                                <div style="display: flex; gap: var(--spacing-2);">
-                                    <span class="badge badge-success">進行中</span>
-                                    <span class="badge badge-neutral">継続</span>
-                                    <span class="badge badge-neutral">自主事業</span>
-                                </div>
-                            </div>
-                            <div
-                                style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
-                                <button class="btn btn-icon btn-icon-success" title="編集"
-                                    onclick="showModal('modal-project-settings')">
-                                    <span class="material-symbols-outlined">edit</span>
-                                </button>
-                                <button class="btn btn-icon btn-icon-error" title="削除">
-                                    <span class="material-symbols-outlined">delete</span>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <dl class="data-list">
-                                <div>
-                                    <dt>期間</dt>
-                                    <dd>2025.10.01 - 継続中</dd>
-                                </div>
-
-                                <div style="grid-column: 1 / -1;">
-                                    <dt>概要</dt>
-                                    <dd>自主製品（パン）の製造および販売。</dd>
-                                </div>
-                            </dl>
-                            <div
-                                style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
-                                <button class="btn btn-neutral" onclick="showTaskViewModal('project-2')">タスク</button>
-                                <button class="btn btn-neutral" onclick="showBudgetViewModal('project-2')">予算</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Card 3 -->
+                    <!-- Card 3: Cleaning (Not Started - Gray) -->
                     <div class="card">
                         <div class="card-header"
                             style="display: flex; justify-content: space-between; align-items: flex-start;">
@@ -850,7 +824,53 @@
                         </div>
                     </div>
 
-                    <!-- Card 4 -->
+                    <!-- Card 2: Bread (In Progress - Blue) -->
+                    <div class="card">
+                        <div class="card-header"
+                            style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <div
+                                    style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">
+                                    自主製品（パン）製造・販売
+                                </div>
+                                <div style="display: flex; gap: var(--spacing-2);">
+                                    <span class="badge badge-primary">進行中</span>
+                                    <span class="badge badge-neutral">継続</span>
+                                    <span class="badge badge-neutral">自主事業</span>
+                                </div>
+                            </div>
+                            <div
+                                style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
+                                <button class="btn btn-icon btn-icon-success" title="編集"
+                                    onclick="showModal('modal-project-settings')">
+                                    <span class="material-symbols-outlined">edit</span>
+                                </button>
+                                <button class="btn btn-icon btn-icon-error" title="削除">
+                                    <span class="material-symbols-outlined">delete</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <dl class="data-list">
+                                <div>
+                                    <dt>期間</dt>
+                                    <dd>2025.10.01 - 継続中</dd>
+                                </div>
+
+                                <div style="grid-column: 1 / -1;">
+                                    <dt>概要</dt>
+                                    <dd>自主製品（パン）の製造および販売。</dd>
+                                </div>
+                            </dl>
+                            <div
+                                style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
+                                <button class="btn btn-neutral" onclick="showTaskViewModal('project-2')">タスク</button>
+                                <button class="btn btn-neutral" onclick="showBudgetViewModal('project-2')">予算</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 4: Bazaar (Completed - Green) -->
                     <div class="card">
                         <div class="card-header"
                             style="display: flex; justify-content: space-between; align-items: flex-start;">
@@ -892,6 +912,98 @@
                                 style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
                                 <button class="btn btn-neutral" onclick="showTaskViewModal('project-4')">タスク</button>
                                 <button class="btn btn-neutral" onclick="showBudgetViewModal('project-4')">予算</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 5: Cancelled (Red) -->
+                    <div class="card">
+                        <div class="card-header"
+                            style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <div
+                                    style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">
+                                    花見イベント販売
+                                </div>
+                                <div style="display: flex; gap: var(--spacing-2);">
+                                    <span class="badge badge-error">中止</span>
+                                    <span class="badge badge-neutral">単発</span>
+                                    <span class="badge badge-neutral">自主事業</span>
+                                </div>
+                            </div>
+                            <div
+                                style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
+                                <button class="btn btn-icon btn-icon-success" title="編集"
+                                    onclick="showModal('modal-project-settings')">
+                                    <span class="material-symbols-outlined">edit</span>
+                                </button>
+                                <button class="btn btn-icon btn-icon-error" title="削除">
+                                    <span class="material-symbols-outlined">delete</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <dl class="data-list">
+                                <div>
+                                    <dt>期間</dt>
+                                    <dd>2025.04.01 - 2025.04.01</dd>
+                                </div>
+
+                                <div style="grid-column: 1 / -1;">
+                                    <dt>概要</dt>
+                                    <dd>悪天候のため中止。</dd>
+                                </div>
+                            </dl>
+                            <div
+                                style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
+                                <button class="btn btn-neutral" onclick="showTaskViewModal('project-5')">タスク</button>
+                                <button class="btn btn-neutral" onclick="showBudgetViewModal('project-5')">予算</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 6: Pending (Yellow) -->
+                    <div class="card">
+                        <div class="card-header"
+                            style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <div
+                                    style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">
+                                    新規カフェ出店計画
+                                </div>
+                                <div style="display: flex; gap: var(--spacing-2);">
+                                    <span class="badge badge-warning">保留</span>
+                                    <span class="badge badge-neutral">継続</span>
+                                    <span class="badge badge-neutral">自主事業</span>
+                                </div>
+                            </div>
+                            <div
+                                style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
+                                <button class="btn btn-icon btn-icon-success" title="編集"
+                                    onclick="showModal('modal-project-settings')">
+                                    <span class="material-symbols-outlined">edit</span>
+                                </button>
+                                <button class="btn btn-icon btn-icon-error" title="削除">
+                                    <span class="material-symbols-outlined">delete</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <dl class="data-list">
+                                <div>
+                                    <dt>期間</dt>
+                                    <dd>未定</dd>
+                                </div>
+
+                                <div style="grid-column: 1 / -1;">
+                                    <dt>概要</dt>
+                                    <dd>新規事業としてのカフェ運営計画。物件選定中。</dd>
+                                </div>
+                            </dl>
+                            <div
+                                style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
+                                <button class="btn btn-neutral" onclick="showTaskViewModal('project-6')">タスク</button>
+                                <button class="btn btn-neutral" onclick="showBudgetViewModal('project-6')">予算</button>
                             </div>
                         </div>
                     </div>
