@@ -398,18 +398,70 @@
         }
 
         // --- Budget Logic ---
+        // --- Budget Logic ---
         function renderBudgetEditor() {
-            // Render Tasks for Budget (Unit Price & Quantity)
-            const taskContainer = document.getElementById('budget-task-list');
-            taskContainer.innerHTML = '';
+            // 1. Revenue Section
+            const revContainer = document.getElementById('edit-budget-revenue-list');
+            revContainer.innerHTML = '';
+            let totalRevenue = 0;
 
+            if (!tempProjectData.revenueItems) tempProjectData.revenueItems = [];
+
+            tempProjectData.revenueItems.forEach((item, index) => {
+                totalRevenue += parseInt(item.amount || 0);
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><input type="text" class="input-field" value="${item.name}" onchange="updateRevenueItem(${index}, 'name', this.value)"></td>
+                    <td><input type="number" class="input-field" value="${item.amount}" onchange="updateRevenueItem(${index}, 'amount', this.value)" style="text-align: right;"></td>
+                    <td><input type="text" class="input-field" value="${item.note || ''}" onchange="updateRevenueItem(${index}, 'note', this.value)"></td>
+                    <td>
+                        <button class="btn btn-icon btn-icon-error" onclick="removeRevenueItem(${index})">
+                            <span class="material-symbols-outlined">delete</span>
+                        </button>
+                    </td>
+                `;
+                revContainer.appendChild(tr);
+            });
+            document.getElementById('budget-summary-revenue').textContent = formatCurrency(totalRevenue);
+            tempProjectData.revenue = totalRevenue; // Sync total revenue
+
+            // 2. Reserves Section
+            const resContainer = document.getElementById('edit-budget-reserve-list');
+            resContainer.innerHTML = '';
+            let totalReserves = 0;
+
+            tempProjectData.expenses.forEach((exp, index) => {
+                if (exp.type === '積立金') {
+                    totalReserves += parseInt(exp.amount || 0);
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><input type="text" class="input-field" value="${exp.name}" onchange="updateExpense(${index}, 'name', this.value)"></td>
+                        <td><input type="number" class="input-field" value="${exp.amount}" onchange="updateExpense(${index}, 'amount', this.value)" style="text-align: right;"></td>
+                        <td><input type="text" class="input-field" value="${exp.note || ''}" onchange="updateExpense(${index}, 'note', this.value)"></td>
+                        <td>
+                            <button class="btn btn-icon btn-icon-error" onclick="removeExpense(${index})">
+                                <span class="material-symbols-outlined">delete</span>
+                            </button>
+                        </td>
+                    `;
+                    resContainer.appendChild(tr);
+                }
+            });
+            document.getElementById('budget-summary-reserves').textContent = formatCurrency(totalReserves);
+
+            // 3. Expenses Section
+            let totalExpenses = 0;
+
+            // Tasks (Labor)
+            const taskContainer = document.getElementById('edit-budget-task-list');
+            taskContainer.innerHTML = '';
             let totalLabor = 0;
 
             tempProjectData.tasks.forEach((task, index) => {
                 const tr = document.createElement('tr');
                 const total = (task.unitPrice || 0) * (task.quantity || 0);
                 totalLabor += total;
-                task.total = total; // Update total in data
+                task.total = total;
 
                 tr.innerHTML = `
                     <td>${task.name}</td>
@@ -420,48 +472,39 @@
                 taskContainer.appendChild(tr);
             });
 
-            document.getElementById('budget-total-labor').textContent = formatCurrency(totalLabor);
-
-            // Render Expenses
-            const expContainer = document.getElementById('budget-expense-list');
-            expContainer.innerHTML = '';
-            let totalExpenses = 0;
+            // Other Expenses
+            const otherExpContainer = document.getElementById('edit-budget-other-expense-list');
+            otherExpContainer.innerHTML = '';
+            let totalOtherExp = 0;
 
             tempProjectData.expenses.forEach((exp, index) => {
-                const tr = document.createElement('tr');
-                totalExpenses += parseInt(exp.amount || 0);
-
-                tr.innerHTML = `
-                    <td><input type="text" class="input-field" value="${exp.name}" onchange="updateExpense(${index}, 'name', this.value)"></td>
-                    <td>
-                        <select class="input-field" onchange="updateExpense(${index}, 'type', this.value)">
-                            <option ${exp.type === '材料費' ? 'selected' : ''}>材料費</option>
-                            <option ${exp.type === '外注費' ? 'selected' : ''}>外注費</option>
-                            <option ${exp.type === '消耗品費' ? 'selected' : ''}>消耗品費</option>
-                            <option ${exp.type === '積立金' ? 'selected' : ''}>積立金</option>
-                            <option ${exp.type === 'その他' ? 'selected' : ''}>その他</option>
-                        </select>
-                    </td>
-                    <td><input type="number" class="input-field" value="${exp.amount}" onchange="updateExpense(${index}, 'amount', this.value)" style="text-align: right;"></td>
-                    <td>
-                        <button class="btn btn-icon btn-icon-error" onclick="removeExpense(${index})">
-                            <span class="material-symbols-outlined">delete</span>
-                        </button>
-                    </td>
-                `;
-                expContainer.appendChild(tr);
+                if (exp.type !== '積立金') {
+                    totalOtherExp += parseInt(exp.amount || 0);
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><input type="text" class="input-field" value="${exp.name}" onchange="updateExpense(${index}, 'name', this.value)"></td>
+                        <td>
+                            <select class="input-field" onchange="updateExpense(${index}, 'type', this.value)">
+                                <option ${exp.type === '材料費' ? 'selected' : ''}>材料費</option>
+                                <option ${exp.type === '外注費' ? 'selected' : ''}>外注費</option>
+                                <option ${exp.type === '消耗品費' ? 'selected' : ''}>消耗品費</option>
+                                <option ${exp.type === 'その他' ? 'selected' : ''}>その他</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="input-field" value="${exp.amount}" onchange="updateExpense(${index}, 'amount', this.value)" style="text-align: right;"></td>
+                        <td><input type="text" class="input-field" value="${exp.note || ''}" onchange="updateExpense(${index}, 'note', this.value)"></td>
+                        <td>
+                            <button class="btn btn-icon btn-icon-error" onclick="removeExpense(${index})">
+                                <span class="material-symbols-outlined">delete</span>
+                            </button>
+                        </td>
+                    `;
+                    otherExpContainer.appendChild(tr);
+                }
             });
 
-            document.getElementById('budget-total-expenses').textContent = formatCurrency(totalExpenses);
-
-            // Summary
-            const revenue = parseInt(document.getElementById('input-revenue')?.value || tempProjectData.revenue || 0);
-            const totalCost = totalLabor + totalExpenses;
-            const profit = revenue - totalCost;
-
-            document.getElementById('budget-summary-revenue').textContent = formatCurrency(revenue);
-            document.getElementById('budget-summary-cost').textContent = formatCurrency(totalCost);
-            document.getElementById('budget-summary-profit').textContent = formatCurrency(profit);
+            totalExpenses = totalLabor + totalOtherExp;
+            document.getElementById('budget-summary-expenses').textContent = formatCurrency(totalExpenses);
         }
 
         function updateTaskBudget(index, field, value) {
@@ -469,7 +512,32 @@
             renderBudgetEditor();
         }
 
-        function addExpense() {
+        // Revenue Helpers
+        function addRevenueItem() {
+            if (!tempProjectData.revenueItems) tempProjectData.revenueItems = [];
+            tempProjectData.revenueItems.push({ name: '', amount: 0, note: '' });
+            renderBudgetEditor();
+        }
+
+        function removeRevenueItem(index) {
+            tempProjectData.revenueItems.splice(index, 1);
+            renderBudgetEditor();
+        }
+
+        function updateRevenueItem(index, field, value) {
+            if (field === 'amount') value = parseInt(value) || 0;
+            tempProjectData.revenueItems[index][field] = value;
+            renderBudgetEditor();
+        }
+
+        // Reserve Helpers
+        function addReserveItem() {
+            tempProjectData.expenses.push({ name: '工賃積立金', type: '積立金', amount: 0, note: '' });
+            renderBudgetEditor();
+        }
+
+        // Other Expense Helpers
+        function addOtherExpenseItem() {
             tempProjectData.expenses.push({ name: '', type: '材料費', amount: 0, note: '' });
             renderBudgetEditor();
         }
@@ -482,11 +550,6 @@
         function updateExpense(index, field, value) {
             if (field === 'amount') value = parseInt(value) || 0;
             tempProjectData.expenses[index][field] = value;
-            renderBudgetEditor();
-        }
-
-        function updateRevenue(value) {
-            tempProjectData.revenue = parseInt(value) || 0;
             renderBudgetEditor();
         }
 
@@ -1176,85 +1239,148 @@
                         </div>
                     </div>
 
-                    <!-- Budget Setting Tab -->
+                    <!-- Budget Tab -->
                     <div id="tab-budget" class="tab-content">
-                        <div class="form-group">
-                            <label class="form-label">受注総額 (予算)</label>
-                            <input type="number" id="input-revenue" class="input-field" value="300000"
-                                onchange="updateRevenue(this.value)">
-                        </div>
-
-                        <div class="card" style="margin-bottom: var(--spacing-stack-md);">
-                            <div class="card-header">タスク単価・数量設定</div>
-                            <div class="card-body" style="padding: 0;">
-                                <table class="budget-table">
-                                    <thead>
-                                        <tr>
-                                            <th>タスク名</th>
-                                            <th>単価</th>
-                                            <th>数量</th>
-                                            <th>小計</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="budget-task-list">
-                                        <!-- Injected via JS -->
-                                    </tbody>
-                                    <tfoot>
-                                        <tr style="background-color: var(--color-base-secondary); font-weight: bold;">
-                                            <td colspan="3" style="text-align: right;">工賃原資計</td>
-                                            <td class="numeric" id="budget-total-labor">0</td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
+                        <!-- Summary Cards -->
+                        <div
+                            style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-4); margin-bottom: var(--spacing-stack-md);">
+                            <div class="card" style="background-color: var(--color-bg-subtle);">
+                                <div class="card-body" style="text-align: center;">
+                                    <div
+                                        style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-bottom: var(--spacing-1);">
+                                        収入計</div>
+                                    <div class="summary-value" id="budget-summary-revenue">0</div>
+                                </div>
+                            </div>
+                            <div class="card" style="background-color: var(--color-bg-subtle);">
+                                <div class="card-body" style="text-align: center;">
+                                    <div
+                                        style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-bottom: var(--spacing-1);">
+                                        積立金計</div>
+                                    <div class="summary-value" id="budget-summary-reserves">0</div>
+                                </div>
+                            </div>
+                            <div class="card" style="background-color: var(--color-bg-subtle);">
+                                <div class="card-body" style="text-align: center;">
+                                    <div
+                                        style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-bottom: var(--spacing-1);">
+                                        費用計</div>
+                                    <div class="summary-value" id="budget-summary-expenses">0</div>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="card" style="margin-bottom: var(--spacing-stack-md);">
-                            <div class="card-header"
-                                style="display: flex; justify-content: space-between; align-items: center;">
-                                <div>経費・その他支出</div>
-                                <button class="btn btn-sm btn-primary" onclick="addExpense()">
-                                    <span class="material-symbols-outlined" style="font-size: 16px;">add</span> 追加
-                                </button>
-                            </div>
-                            <div class="card-body" style="padding: 0;">
-                                <table class="budget-table">
-                                    <thead>
-                                        <tr>
-                                            <th>項目</th>
-                                            <th>区分</th>
-                                            <th>金額</th>
-                                            <th>操作</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="budget-expense-list">
-                                        <!-- Injected via JS -->
-                                    </tbody>
-                                    <tfoot>
-                                        <tr style="background-color: var(--color-base-secondary); font-weight: bold;">
-                                            <td colspan="2" style="text-align: right;">経費計</td>
-                                            <td class="numeric" id="budget-total-expenses">0</td>
-                                            <td></td>
-                                        </tr>
-                                    </tfoot>
-                                </table>
-                            </div>
-                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr; gap: var(--spacing-stack-lg);">
 
-                        <div class="summary-card"
-                            style="flex-direction: row; justify-content: space-around; gap: var(--spacing-4);">
-                            <div style="text-align: center;">
-                                <div class="summary-label">売上</div>
-                                <div class="summary-value" id="budget-summary-revenue">0</div>
+                            <!-- Revenue Section -->
+                            <div class="card">
+                                <div class="card-header"
+                                    style="display: flex; justify-content: space-between; align-items: center; background-color: var(--color-bg-subtle);">
+                                    <span>収入</span>
+                                    <button class="btn btn-sm btn-neutral" onclick="addRevenueItem()">
+                                        <span class="material-symbols-outlined"
+                                            style="font-size: 16px; margin-right: 4px;">add</span> 追加
+                                    </button>
+                                </div>
+                                <div class="card-body" style="padding: 0;">
+                                    <table class="budget-table">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 40%;">項目名</th>
+                                                <th style="width: 30%;">金額</th>
+                                                <th style="width: 30%;">備考</th>
+                                                <th style="width: 40px;"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="edit-budget-revenue-list">
+                                            <!-- JS Injected -->
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-                            <div style="text-align: center;">
-                                <div class="summary-label">コスト</div>
-                                <div class="summary-value negative" id="budget-summary-cost">0</div>
+
+                            <!-- Reserves Section -->
+                            <div class="card">
+                                <div class="card-header"
+                                    style="display: flex; justify-content: space-between; align-items: center; background-color: var(--color-bg-subtle);">
+                                    <span>積立金</span>
+                                    <button class="btn btn-sm btn-neutral" onclick="addReserveItem()">
+                                        <span class="material-symbols-outlined"
+                                            style="font-size: 16px; margin-right: 4px;">add</span> 追加
+                                    </button>
+                                </div>
+                                <div class="card-body" style="padding: 0;">
+                                    <table class="budget-table">
+                                        <thead>
+                                            <tr>
+                                                <th style="width: 40%;">項目名</th>
+                                                <th style="width: 30%;">金額</th>
+                                                <th style="width: 30%;">備考</th>
+                                                <th style="width: 40px;"></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="edit-budget-reserve-list">
+                                            <!-- JS Injected -->
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
-                            <div style="text-align: center;">
-                                <div class="summary-label">利益</div>
-                                <div class="summary-value positive" id="budget-summary-profit">0</div>
+
+                            <!-- Expenses Section -->
+                            <div class="card">
+                                <div class="card-header" style="background-color: var(--color-bg-subtle);">費用</div>
+                                <div class="card-body" style="padding: var(--spacing-4);">
+
+                                    <!-- Tasks -->
+                                    <div style="margin-bottom: var(--spacing-stack-md);">
+                                        <div
+                                            style="font-weight: bold; margin-bottom: var(--spacing-2); color: var(--color-text-secondary);">
+                                            タスク (工賃)</div>
+                                        <table class="budget-table">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 40%;">タスク名</th>
+                                                    <th style="width: 20%;">単価</th>
+                                                    <th style="width: 20%;">数量</th>
+                                                    <th style="width: 20%;">小計</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="edit-budget-task-list">
+                                                <!-- JS Injected -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <!-- Other Expenses -->
+                                    <div>
+                                        <div
+                                            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-2);">
+                                            <div style="font-weight: bold; color: var(--color-text-secondary);">その他費用
+                                            </div>
+                                            <button class="btn btn-sm btn-neutral" onclick="addOtherExpenseItem()">
+                                                <span class="material-symbols-outlined"
+                                                    style="font-size: 16px; margin-right: 4px;">add</span> 追加
+                                            </button>
+                                        </div>
+                                        <table class="budget-table">
+                                            <thead>
+                                                <tr>
+                                                    <th style="width: 30%;">項目名</th>
+                                                    <th style="width: 20%;">種別</th>
+                                                    <th style="width: 20%;">金額</th>
+                                                    <th style="width: 20%;">備考</th>
+                                                    <th style="width: 40px;"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="edit-budget-other-expense-list">
+                                                <!-- JS Injected -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
