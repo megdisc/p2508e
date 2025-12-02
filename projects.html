@@ -120,6 +120,9 @@
                 source: 'external',
                 partner: '株式会社 福岡工芸',
                 revenue: 300000,
+                revenueItems: [
+                    { name: 'DM封入単価契約', amount: 300000, note: '3,000通 @100円' }
+                ],
                 tasks: [
                     {
                         id: 1,
@@ -151,6 +154,10 @@
                 source: 'in_house',
                 partner: '無し',
                 revenue: 150000,
+                revenueItems: [
+                    { name: 'パン売上（店頭）', amount: 100000, note: '' },
+                    { name: 'パン売上（外販）', amount: 50000, note: '' }
+                ],
                 tasks: [
                     { id: 1, name: 'パン製造', skills: [{ name: '体力', level: 2 }], unitPrice: 0, quantity: 0, total: 0 },
                     { id: 2, name: '販売', skills: [{ name: '接客', level: 2 }], unitPrice: 0, quantity: 0, total: 0 }
@@ -164,6 +171,9 @@
                 source: 'external',
                 partner: '天神オフィスサプライ',
                 revenue: 200000,
+                revenueItems: [
+                    { name: '清掃委託料', amount: 200000, note: '月額固定' }
+                ],
                 tasks: [
                     { id: 1, name: '清掃作業', skills: [{ name: '体力', level: 3 }], unitPrice: 0, quantity: 0, total: 0 }
                 ],
@@ -176,6 +186,9 @@
                 source: 'in_house',
                 partner: '無し',
                 revenue: 50000,
+                revenueItems: [
+                    { name: 'バザー売上', amount: 50000, note: '' }
+                ],
                 tasks: [
                     { id: 1, name: '接客販売', skills: [{ name: '接客', level: 2 }], unitPrice: 0, quantity: 0, total: 0 },
                     { id: 2, name: '搬入出', skills: [{ name: '体力', level: 2 }], unitPrice: 0, quantity: 0, total: 0 }
@@ -191,6 +204,7 @@
                 source: 'in_house',
                 partner: '無し',
                 revenue: 0,
+                revenueItems: [],
                 tasks: [],
                 expenses: []
             },
@@ -473,52 +487,86 @@
 
             document.getElementById('view-project-name').textContent = project.name;
 
-            const totalExpenses = project.expenses.reduce((sum, item) => sum + item.amount, 0);
-            const totalLabor = project.tasks.reduce((sum, item) => sum + (item.total || 0), 0);
-            const totalCost = totalExpenses + totalLabor;
-            const profit = project.revenue - totalCost;
+            // 1. Revenue
+            const revenueTbody = document.getElementById('view-tbody-revenue');
+            revenueTbody.innerHTML = '';
+            let totalRevenue = 0;
 
-            document.getElementById('view-val-revenue').textContent = formatCurrency(project.revenue);
-            document.getElementById('view-val-cost').textContent = formatCurrency(totalCost);
+            // Use revenueItems if available, otherwise fallback to single revenue entry
+            if (project.revenueItems && project.revenueItems.length > 0) {
+                project.revenueItems.forEach(item => {
+                    totalRevenue += item.amount;
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td>${item.name}</td><td class="numeric">${formatCurrency(item.amount)}</td>`;
+                    revenueTbody.appendChild(tr);
+                });
+            } else {
+                totalRevenue = project.revenue || 0;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>売上</td><td class="numeric">${formatCurrency(totalRevenue)}</td>`;
+                revenueTbody.appendChild(tr);
+            }
+            document.getElementById('view-total-revenue').textContent = formatCurrency(totalRevenue);
+
+            // 2. Expenses (Labor + General Expenses)
+            const expensesTbody = document.getElementById('view-tbody-expenses');
+            expensesTbody.innerHTML = '';
+            let totalExpenses = 0;
+
+            // Labor Costs from Tasks
+            if (project.tasks) {
+                project.tasks.forEach(task => {
+                    const laborCost = (task.unitPrice || 0) * (task.quantity || 0);
+                    if (laborCost > 0) {
+                        totalExpenses += laborCost;
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `<td>${task.name} (労務費)</td><td class="numeric">${formatCurrency(laborCost)}</td>`;
+                        expensesTbody.appendChild(tr);
+                    }
+                });
+            }
+
+            // General Expenses (excluding Reserves)
+            if (project.expenses) {
+                project.expenses.forEach(exp => {
+                    if (exp.type !== '積立金') {
+                        totalExpenses += parseInt(exp.amount || 0);
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `<td>${exp.name} (${exp.type})</td><td class="numeric">${formatCurrency(exp.amount)}</td>`;
+                        expensesTbody.appendChild(tr);
+                    }
+                });
+            }
+            document.getElementById('view-total-expenses').textContent = formatCurrency(totalExpenses);
+
+
+            // 3. Reserves
+            const reservesTbody = document.getElementById('view-tbody-reserves');
+            reservesTbody.innerHTML = '';
+            let totalReserves = 0;
+
+            if (project.expenses) {
+                project.expenses.forEach(exp => {
+                    if (exp.type === '積立金') {
+                        totalReserves += parseInt(exp.amount || 0);
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `<td>${exp.name}</td><td class="numeric">${formatCurrency(exp.amount)}</td>`;
+                        reservesTbody.appendChild(tr);
+                    }
+                });
+            }
+            document.getElementById('view-total-reserves').textContent = formatCurrency(totalReserves);
+
+            // Summary
+            const totalOutgoings = totalExpenses + totalReserves;
+            const profit = totalRevenue - totalOutgoings;
+
+            document.getElementById('view-val-revenue').textContent = formatCurrency(totalRevenue);
+            document.getElementById('view-val-cost').textContent = formatCurrency(totalOutgoings);
             document.getElementById('view-val-profit').textContent = formatCurrency(profit);
 
             const profitEl = document.getElementById('view-val-profit');
             profitEl.className = profit >= 0 ? 'summary-value positive' : 'summary-value negative';
-
-            // Progress Bar
-            const costPercent = project.revenue > 0 ? Math.min(100, (totalCost / project.revenue) * 100) : 0;
-            const profitPercent = Math.max(0, 100 - costPercent);
-
-            document.getElementById('view-bar-cost').style.width = `${costPercent}%`;
-            document.getElementById('view-bar-cost').textContent = `${costPercent.toFixed(1)}%`;
-            document.getElementById('view-bar-profit').style.width = `${profitPercent}%`;
-            document.getElementById('view-bar-profit').textContent = `${profitPercent.toFixed(1)}%`;
-
-            // Tables
-            const taskTbody = document.getElementById('view-tbody-tasks');
-            taskTbody.innerHTML = '';
-            project.tasks.forEach(task => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${task.name}</td>
-                    <td class="numeric">${formatCurrency(task.unitPrice || 0)}</td>
-                    <td class="numeric">${formatCurrency(task.quantity || 0)}</td>
-                    <td class="numeric">${formatCurrency(task.total || 0)}</td>
-                `;
-                taskTbody.appendChild(tr);
-            });
-
-            const expTbody = document.getElementById('view-tbody-expenses');
-            expTbody.innerHTML = '';
-            project.expenses.forEach(exp => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${exp.name}</td>
-                    <td>${exp.type}</td>
-                    <td class="numeric">${formatCurrency(exp.amount)}</td>
-                `;
-                expTbody.appendChild(tr);
-            });
 
             document.getElementById('modal-budget-view').style.display = 'flex';
         }
@@ -1224,76 +1272,125 @@
 
     <!-- Budget View Modal -->
     <div class="modal-backdrop" id="modal-budget-view" style="display: none;">
-        <div class="modal-content" style="max-width: 800px;">
+        <div class="modal-content" style="max-width: 900px;">
             <div class="modal-header">
-                予算詳細: <span id="view-project-name"></span>
+                案件予算詳細: <span id="view-project-name"></span>
             </div>
             <div class="modal-body">
-                <!-- Summary Section -->
-                <div style="display: flex; gap: var(--spacing-4); margin-bottom: var(--spacing-stack-md);">
-                    <div class="summary-card">
-                        <div class="summary-label">受注総額 (予算)</div>
-                        <div class="summary-value"><span id="view-val-revenue">0</span> <span
-                                style="font-size: 1rem; font-weight: normal;">円</span></div>
-                    </div>
-                    <div class="summary-card">
-                        <div class="summary-label">コスト計</div>
-                        <div class="summary-value negative"><span id="view-val-cost">0</span> <span
-                                style="font-size: 1rem; font-weight: normal;">円</span></div>
-                    </div>
-                    <div class="summary-card" style="background-color: var(--palette-FFC);">
-                        <div class="summary-label">見込利益</div>
-                        <div class="summary-value positive"><span id="view-val-profit">0</span> <span
-                                style="font-size: 1rem; font-weight: normal;">円</span></div>
-                    </div>
-                </div>
 
-                <div class="card" style="margin-bottom: var(--spacing-stack-md);">
-                    <div class="card-header">収支シミュレーション</div>
-                    <div class="card-body">
-                        <div class="profit-bar-container">
-                            <div id="view-bar-cost" class="profit-bar-segment bg-cost" style="width: 0%;">0%</div>
-                            <div id="view-bar-profit" class="profit-bar-segment bg-profit" style="width: 0%;">0%</div>
+                <!-- Summary Cards -->
+                <div
+                    style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-4); margin-bottom: var(--spacing-stack-md);">
+                    <div class="card" style="background-color: var(--color-bg-subtle);">
+                        <div class="card-body" style="text-align: center;">
+                            <div
+                                style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-bottom: var(--spacing-1);">
+                                収入計</div>
+                            <div class="summary-value" id="view-val-revenue">0</div>
+                        </div>
+                    </div>
+                    <div class="card" style="background-color: var(--color-bg-subtle);">
+                        <div class="card-body" style="text-align: center;">
+                            <div
+                                style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-bottom: var(--spacing-1);">
+                                支出計 (経費+積立)</div>
+                            <div class="summary-value" id="view-val-cost">0</div>
+                        </div>
+                    </div>
+                    <div class="card" style="background-color: var(--color-bg-subtle);">
+                        <div class="card-body" style="text-align: center;">
+                            <div
+                                style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-bottom: var(--spacing-1);">
+                                収支差額</div>
+                            <div class="summary-value" id="view-val-profit">0</div>
                         </div>
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-stack-md);">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--spacing-4);">
+
+                    <!-- Revenue Section -->
                     <div class="card">
-                        <div class="card-header">タスク予算</div>
-                        <div class="card-body" style="padding: 0;">
-                            <table class="budget-table">
-                                <thead>
-                                    <tr>
-                                        <th>タスク名</th>
-                                        <th>単価</th>
-                                        <th>数量</th>
-                                        <th>計</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="view-tbody-tasks"></tbody>
-                            </table>
+                        <div class="card-header" style="background-color: var(--color-bg-subtle); font-weight: bold;">収入
                         </div>
-                    </div>
-                    <div class="card">
-                        <div class="card-header">経費予算</div>
                         <div class="card-body" style="padding: 0;">
                             <table class="budget-table">
                                 <thead>
                                     <tr>
                                         <th>項目</th>
-                                        <th>区分</th>
                                         <th>金額</th>
                                     </tr>
                                 </thead>
-                                <tbody id="view-tbody-expenses"></tbody>
+                                <tbody id="view-tbody-revenue">
+                                    <!-- JS Injected -->
+                                </tbody>
+                                <tfoot>
+                                    <tr style="font-weight: bold; background-color: var(--color-base-secondary);">
+                                        <td style="text-align: right;">計</td>
+                                        <td class="numeric" id="view-total-revenue">0</td>
+                                    </tr>
+                                </tfoot>
                             </table>
                         </div>
                     </div>
+
+                    <!-- Expenses Section (Labor + Expenses) -->
+                    <div class="card">
+                        <div class="card-header" style="background-color: var(--color-bg-subtle); font-weight: bold;">
+                            経費・労務費</div>
+                        <div class="card-body" style="padding: 0;">
+                            <table class="budget-table">
+                                <thead>
+                                    <tr>
+                                        <th>項目</th>
+                                        <th>金額</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="view-tbody-expenses">
+                                    <!-- JS Injected -->
+                                </tbody>
+                                <tfoot>
+                                    <tr style="font-weight: bold; background-color: var(--color-base-secondary);">
+                                        <td style="text-align: right;">計</td>
+                                        <td class="numeric" id="view-total-expenses">0</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Reserves Section -->
+                    <div class="card">
+                        <div class="card-header" style="background-color: var(--color-bg-subtle); font-weight: bold;">
+                            積立金</div>
+                        <div class="card-body" style="padding: 0;">
+                            <table class="budget-table">
+                                <thead>
+                                    <tr>
+                                        <th>項目</th>
+                                        <th>金額</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="view-tbody-reserves">
+                                    <!-- JS Injected -->
+                                </tbody>
+                                <tfoot>
+                                    <tr style="font-weight: bold; background-color: var(--color-base-secondary);">
+                                        <td style="text-align: right;">計</td>
+                                        <td class="numeric" id="view-total-reserves">0</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+
                 </div>
+
             </div>
             <div class="modal-footer">
                 <button class="btn btn-neutral" onclick="hideModal('modal-budget-view')">閉じる</button>
+                <button class="btn btn-primary"
+                    onclick="hideModal('modal-budget-view'); showModal('modal-project-settings')">編集する</button>
             </div>
         </div>
     </div>
