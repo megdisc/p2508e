@@ -464,16 +464,68 @@
         }
 
         // サイドバー連動
-        document.addEventListener("DOMContentLoaded", () => {
-            const currentFile = window.location.pathname.split("/").pop();
-            document.querySelectorAll(".sidebar-nav a").forEach(link => {
-                if (link.getAttribute("href") === currentFile) {
-                    link.classList.add("active");
-                    const details = link.closest("details");
-                    if (details) details.open = true;
+        function showModal(id, mode = null) {
+            document.getElementById(id).style.display = 'flex';
+            if (id === 'modal-project-settings') {
+                currentEditingProjectId = 'project-1'; // Defaulting to project-1 for demo
+                if (mode === 'create') {
+                    document.querySelector('#modal-project-settings .modal-header').textContent = '案件 新規登録';
+                    tempProjectData = {
+                        id: Date.now(),
+                        name: '',
+                        type: 'single',
+                        source: 'external',
+                        partner: '',
+                        tasks: [],
+                        expenses: [],
+                        revenue: 0
+                    };
+                } else {
+                    // Load existing data into temp storage
+                    tempProjectData = JSON.parse(JSON.stringify(projectsData[currentEditingProjectId] || { tasks: [], expenses: [] }));
                 }
-            });
-        });
+
+                // Populate fields
+                document.getElementById('input-project-name').value = tempProjectData.name || '';
+                document.getElementById('input-project-type').value = tempProjectData.type || 'single';
+                document.getElementById('input-source-type').value = tempProjectData.source || 'external';
+                document.getElementById('input-partner').value = tempProjectData.partner || '';
+
+                togglePartnerSelect();
+                switchTab('basic'); // Reset to basic tab
+                renderTaskEditor();
+                renderBudgetEditor();
+            }
+        }
+
+        function updateProjectField(field, value) {
+            if (tempProjectData) {
+                tempProjectData[field] = value;
+            }
+        }
+
+        function togglePartnerSelect() {
+            const sourceType = document.getElementById('input-source-type').value;
+            const partnerSelect = document.getElementById('input-partner');
+            const noneOption = partnerSelect.querySelector('option[value="none"]');
+
+            if (sourceType === 'in_house') {
+                // In-house: Select "None" and disable
+                noneOption.style.display = 'block';
+                partnerSelect.value = 'none';
+                partnerSelect.disabled = true;
+                if (tempProjectData) tempProjectData.partner = '無し';
+            } else {
+                // External: Hide "None", enable select, and ensure valid selection
+                noneOption.style.display = 'none';
+                partnerSelect.disabled = false;
+                if (partnerSelect.value === 'none') {
+                    partnerSelect.selectedIndex = 1; // Select first valid option
+                    if (tempProjectData) tempProjectData.partner = partnerSelect.value;
+                }
+            }
+        }
+
     </script>
 </head>
 
@@ -773,24 +825,46 @@
                 <!-- Tabs -->
                 <nav class="tabs-nav">
                     <a class="tab-link is-active" id="tab-btn-basic" onclick="switchTab('basic')">基本情報</a>
-                    <a class="tab-link" id="tab-btn-tasks" onclick="switchTab('tasks')">タスク定義</a>
-                    <a class="tab-link" id="tab-btn-budget" onclick="switchTab('budget')">予算設定</a>
+                    <a class="tab-link" id="tab-btn-tasks" onclick="switchTab('tasks')">タスク</a>
+                    <a class="tab-link" id="tab-btn-budget" onclick="switchTab('budget')">予算</a>
                 </nav>
 
                 <div class="modal-body">
                     <!-- Basic Info Tab -->
                     <div id="tab-basic" class="tab-content is-active">
-                        <div class="form-group">
-                            <label class="form-label">案件名</label>
-                            <input type="text" class="input-field" value="10月度 DM封入作業">
+                        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: var(--spacing-4);">
+                            <div class="form-group">
+                                <label class="form-label">案件名</label>
+                                <input type="text" class="input-field" value="10月度 DM封入作業" id="input-project-name"
+                                    onchange="updateProjectField('name', this.value)">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">単発・継続種別</label>
+                                <select class="input-field" id="input-project-type"
+                                    onchange="updateProjectField('type', this.value)">
+                                    <option value="single">単発</option>
+                                    <option value="continuous">継続</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label class="form-label">取引先 (顧客)</label>
-                            <select class="input-field">
-                                <option selected>株式会社 福岡工芸</option>
-                                <option>天神オフィスサプライ</option>
-                                <option>自主事業</option>
-                            </select>
+                        <div style="display: grid; grid-template-columns: 1fr 2fr; gap: var(--spacing-4);">
+                            <div class="form-group">
+                                <label class="form-label">自主・受託種別</label>
+                                <select class="input-field" id="input-source-type"
+                                    onchange="updateProjectField('source', this.value); togglePartnerSelect();">
+                                    <option value="external">受託</option>
+                                    <option value="in_house">自主</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">顧客</label>
+                                <select class="input-field" id="input-partner"
+                                    onchange="updateProjectField('partner', this.value)">
+                                    <option value="none" style="display: none;">無し</option>
+                                    <option selected>株式会社 福岡工芸</option>
+                                    <option>天神オフィスサプライ</option>
+                                </select>
+                            </div>
                         </div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4);">
                             <div class="form-group">
