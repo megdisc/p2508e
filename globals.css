@@ -317,7 +317,7 @@
     /* -------------------------------------- */
     /* 3.8. アラート (Alert)
     /* -------------------------------------- */
-    --radius-alert: var(--border-radius-md);
+    --radius-alert: var(--border-radius-lg);
     --spacing-alert-padding: var(--spacing-inset-md);
     --color-alert-success-background: var(--color-semantic-success-sub);
     --color-alert-success-text: var(--color-semantic-success-main);
