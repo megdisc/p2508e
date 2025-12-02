@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>Compath - 予算・経費</title>
+    <title>Compath - 収入・経費実績</title>
 
     <link rel="stylesheet" href="globals.css">
     <link rel="stylesheet" href="ui.css">
@@ -179,7 +179,7 @@
             badgesContainer.appendChild(sourceBadge);
 
             // Summary Cards
-            const revenueLabel = project.source === 'external' ? '受注総額 (予算)' : '売上目標 (月次)';
+            const revenueLabel = project.source === 'external' ? '売上実績' : '売上実績 (月次)';
             document.getElementById('label-revenue').textContent = revenueLabel;
             document.getElementById('val-revenue').textContent = formatCurrency(project.revenue);
 
@@ -345,8 +345,8 @@
                     <summary>生産活動</summary>
                     <ul>
                         <li><a href="projects.html">案件情報</a></li>
-                        <li><a href="budget.html" class="active">予算・経費</a></li>
                         <li><a href="schedule.html">進捗状況</a></li>
+                        <li><a href="actuals.html" class="active">収入・経費実績</a></li>
                     </ul>
                 </details>
                 <details class="nav-accordion">
@@ -386,7 +386,7 @@
                     <div>
                         <div
                             style="display: flex; align-items: center; gap: var(--spacing-2); margin-bottom: var(--spacing-1);">
-                            <h1 style="margin: 0;">予算・経費</h1>
+                            <h1 style="margin: 0;">収入・経費実績</h1>
                             <div id="project-badges" style="display: flex; gap: var(--spacing-1);">
                                 <!-- Badges injected here -->
                             </div>
@@ -409,7 +409,7 @@
                 <!-- サマリーセクション -->
                 <div style="display: flex; gap: var(--spacing-4); margin-bottom: var(--spacing-stack-lg);">
                     <div class="summary-card">
-                        <div class="summary-label" id="label-revenue">受注総額 (予算)</div>
+                        <div class="summary-label" id="label-revenue">売上実績</div>
                         <div class="summary-value"><span id="val-revenue">0</span> <span
                                 style="font-size: 1rem; font-weight: normal;">円</span>
                         </div>
@@ -420,7 +420,7 @@
                                 style="font-size: 1rem; font-weight: normal;">円</span></div>
                     </div>
                     <div class="summary-card" style="background-color: var(--palette-FFC);">
-                        <div class="summary-label">見込利益</div>
+                        <div class="summary-label">利益実績</div>
                         <div class="summary-value positive"><span id="val-profit">0</span> <span
                                 style="font-size: 1rem; font-weight: normal;">円</span></div>
                     </div>
@@ -449,7 +449,7 @@
                     <div class="card">
                         <div class="card-header"
                             style="display: flex; justify-content: space-between; align-items: center;">
-                            <div>タスク別予算配分</div>
+                            <div>工賃実績</div>
                             <button class="btn btn-icon btn-icon-primary btn-icon-sm" title="タスク追加"><span
                                     class="material-symbols-outlined">add</span></button>
                         </div>
@@ -474,7 +474,7 @@
                     <div class="card">
                         <div class="card-header"
                             style="display: flex; justify-content: space-between; align-items: center;">
-                            <div>経費・その他支出</div>
+                            <div>経費・その他支出実績</div>
                             <button class="btn btn-icon btn-icon-primary btn-icon-sm" title="経費追加"
                                 onclick="showModal('modal-add-expense')"><span
                                     class="material-symbols-outlined">add</span></button>

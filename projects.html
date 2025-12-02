@@ -13,30 +13,145 @@
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
+    <style>
+        /* 予算・費用テーブル用スタイル */
+        .budget-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: var(--spacing-stack-md);
+        }
+
+        .budget-table th {
+            background-color: var(--color-base-secondary);
+            color: var(--color-base-quaternary);
+            font-weight: var(--font-weight-medium);
+            text-align: center;
+            border-bottom: var(--border-width-sm) solid var(--color-table-border);
+            padding: var(--spacing-2);
+            font-size: var(--font-size-xs);
+            white-space: nowrap;
+        }
+
+        .budget-table td {
+            border-bottom: var(--border-width-sm) solid var(--color-table-border);
+            padding: var(--spacing-2) var(--spacing-4);
+            font-size: var(--font-size-sm);
+            vertical-align: middle;
+        }
+
+        .budget-table td.numeric {
+            text-align: right;
+            font-family: monospace;
+        }
+
+        /* サマリーカード */
+        .summary-card {
+            background-color: var(--color-base-primary);
+            border: 1px solid var(--color-base-quinary);
+            border-radius: var(--radius-card);
+            padding: var(--spacing-4);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+        }
+
+        .summary-label {
+            font-size: var(--font-size-xs);
+            color: var(--color-base-quaternary);
+            margin-bottom: var(--spacing-1);
+        }
+
+        .summary-value {
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-bold);
+        }
+
+        .summary-value.positive {
+            color: var(--color-semantic-success-main);
+        }
+
+        .summary-value.negative {
+            color: var(--color-semantic-error-main);
+        }
+
+        /* プログレスバー（収支シミュレーション用） */
+        .profit-bar-container {
+            height: 24px;
+            background-color: var(--color-base-secondary);
+            border-radius: var(--radius-full);
+            overflow: hidden;
+            display: flex;
+            margin-top: var(--spacing-2);
+        }
+
+        .profit-bar-segment {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .bg-revenue {
+            background-color: var(--color-semantic-primary-main);
+        }
+
+        .bg-cost {
+            background-color: var(--color-semantic-error-main);
+        }
+
+        .bg-profit {
+            background-color: var(--color-semantic-success-main);
+        }
+    </style>
+
     <script>
         // Mock Data Store
-        let projectTasks = {
-            'project-1': [
-                {
-                    id: 1,
-                    name: '封入作業',
-                    skills: [
-                        { name: '手先作業', level: 2 },
-                        { name: '集中力', level: 3 }
-                    ]
-                },
-                {
-                    id: 2,
-                    name: '検品作業',
-                    skills: [
-                        { name: '目視確認', level: 3 }
-                    ]
-                }
-            ]
+        let projectsData = {
+            'project-1': {
+                id: 'project-1',
+                name: '10月度 DM封入作業',
+                type: 'single',
+                source: 'external',
+                partner: '株式会社 福岡工芸',
+                revenue: 300000,
+                tasks: [
+                    {
+                        id: 1,
+                        name: '封入作業',
+                        skills: [{ name: '手先作業', level: 2 }, { name: '集中力', level: 3 }],
+                        unitPrice: 10,
+                        quantity: 3000,
+                        total: 30000
+                    },
+                    {
+                        id: 2,
+                        name: '検品作業',
+                        skills: [{ name: '目視確認', level: 3 }],
+                        unitPrice: 5,
+                        quantity: 3000,
+                        total: 15000
+                    }
+                ],
+                expenses: [
+                    { name: '封筒・資材代', type: '材料費', amount: 20000, note: '立替払済' },
+                    { name: '配送業者委託費', type: '外注費', amount: 15000, note: 'ヤマト運輸' },
+                    { name: '事業所積立金', type: '積立金', amount: 10000, note: '規定により5%' }
+                ]
+            }
         };
 
         let currentEditingProjectId = null;
-        let tempTasks = []; // Temporary storage for editing
+        let tempProjectData = null; // Temporary storage for editing
+
+        function formatCurrency(num) {
+            return new Intl.NumberFormat('ja-JP').format(num);
+        }
 
         function showModal(id, mode = null) {
             document.getElementById(id).style.display = 'flex';
@@ -44,13 +159,20 @@
                 currentEditingProjectId = 'project-1'; // Defaulting to project-1 for demo
                 if (mode === 'create') {
                     document.querySelector('#modal-project-settings .modal-header').textContent = '案件 新規登録';
-                    tempTasks = [];
+                    tempProjectData = {
+                        id: Date.now(),
+                        name: '',
+                        tasks: [],
+                        expenses: [],
+                        revenue: 0
+                    };
                 } else {
-                    // Load existing tasks into temp storage
-                    tempTasks = JSON.parse(JSON.stringify(projectTasks[currentEditingProjectId] || []));
+                    // Load existing data into temp storage
+                    tempProjectData = JSON.parse(JSON.stringify(projectsData[currentEditingProjectId] || { tasks: [], expenses: [] }));
                 }
                 switchTab('basic'); // Reset to basic tab
                 renderTaskEditor();
+                renderBudgetEditor();
             }
         }
 
@@ -71,7 +193,7 @@
 
         // --- View Modal Logic ---
         function showTaskViewModal(projectId) {
-            const tasks = projectTasks[projectId] || [];
+            const tasks = projectsData[projectId]?.tasks || [];
             const container = document.getElementById('task-list-view-body');
             container.innerHTML = '';
 
@@ -107,7 +229,7 @@
             const container = document.getElementById('task-list-editor');
             container.innerHTML = '';
 
-            tempTasks.forEach((task, taskIndex) => {
+            tempProjectData.tasks.forEach((task, taskIndex) => {
                 const taskEl = document.createElement('div');
                 taskEl.className = 'card';
                 taskEl.style.border = '1px solid var(--border-subtle)';
@@ -153,7 +275,7 @@
         }
 
         function addTask() {
-            tempTasks.push({
+            tempProjectData.tasks.push({
                 id: Date.now(),
                 name: '新規タスク',
                 skills: []
@@ -163,33 +285,182 @@
 
         function removeTask(index) {
             if (confirm('このタスクを削除しますか？')) {
-                tempTasks.splice(index, 1);
+                tempProjectData.tasks.splice(index, 1);
                 renderTaskEditor();
             }
         }
 
         function updateTaskName(index, value) {
-            tempTasks[index].name = value;
+            tempProjectData.tasks[index].name = value;
         }
 
         function addSkill(taskIndex) {
-            tempTasks[taskIndex].skills.push({ name: '', level: 1 });
+            tempProjectData.tasks[taskIndex].skills.push({ name: '', level: 1 });
             renderTaskEditor();
         }
 
         function removeSkill(taskIndex, skillIndex) {
-            tempTasks[taskIndex].skills.splice(skillIndex, 1);
+            tempProjectData.tasks[taskIndex].skills.splice(skillIndex, 1);
             renderTaskEditor();
         }
 
         function updateSkill(taskIndex, skillIndex, field, value) {
-            tempTasks[taskIndex].skills[skillIndex][field] = value;
+            tempProjectData.tasks[taskIndex].skills[skillIndex][field] = value;
         }
 
         function saveProjectTasks() {
             if (currentEditingProjectId) {
-                projectTasks[currentEditingProjectId] = JSON.parse(JSON.stringify(tempTasks));
+                projectsData[currentEditingProjectId] = JSON.parse(JSON.stringify(tempProjectData));
             }
+        }
+
+        // --- Budget Logic ---
+        function renderBudgetEditor() {
+            // Render Tasks for Budget (Unit Price & Quantity)
+            const taskContainer = document.getElementById('budget-task-list');
+            taskContainer.innerHTML = '';
+
+            let totalLabor = 0;
+
+            tempProjectData.tasks.forEach((task, index) => {
+                const tr = document.createElement('tr');
+                const total = (task.unitPrice || 0) * (task.quantity || 0);
+                totalLabor += total;
+                task.total = total; // Update total in data
+
+                tr.innerHTML = `
+                    <td>${task.name}</td>
+                    <td><input type="number" class="input-field" value="${task.unitPrice || 0}" onchange="updateTaskBudget(${index}, 'unitPrice', this.value)" style="text-align: right;"></td>
+                    <td><input type="number" class="input-field" value="${task.quantity || 0}" onchange="updateTaskBudget(${index}, 'quantity', this.value)" style="text-align: right;"></td>
+                    <td class="numeric">${formatCurrency(total)}</td>
+                `;
+                taskContainer.appendChild(tr);
+            });
+
+            document.getElementById('budget-total-labor').textContent = formatCurrency(totalLabor);
+
+            // Render Expenses
+            const expContainer = document.getElementById('budget-expense-list');
+            expContainer.innerHTML = '';
+            let totalExpenses = 0;
+
+            tempProjectData.expenses.forEach((exp, index) => {
+                const tr = document.createElement('tr');
+                totalExpenses += parseInt(exp.amount || 0);
+
+                tr.innerHTML = `
+                    <td><input type="text" class="input-field" value="${exp.name}" onchange="updateExpense(${index}, 'name', this.value)"></td>
+                    <td>
+                        <select class="input-field" onchange="updateExpense(${index}, 'type', this.value)">
+                            <option ${exp.type === '材料費' ? 'selected' : ''}>材料費</option>
+                            <option ${exp.type === '外注費' ? 'selected' : ''}>外注費</option>
+                            <option ${exp.type === '消耗品費' ? 'selected' : ''}>消耗品費</option>
+                            <option ${exp.type === '積立金' ? 'selected' : ''}>積立金</option>
+                            <option ${exp.type === 'その他' ? 'selected' : ''}>その他</option>
+                        </select>
+                    </td>
+                    <td><input type="number" class="input-field" value="${exp.amount}" onchange="updateExpense(${index}, 'amount', this.value)" style="text-align: right;"></td>
+                    <td>
+                        <button class="btn btn-icon btn-icon-error" onclick="removeExpense(${index})">
+                            <span class="material-symbols-outlined">delete</span>
+                        </button>
+                    </td>
+                `;
+                expContainer.appendChild(tr);
+            });
+
+            document.getElementById('budget-total-expenses').textContent = formatCurrency(totalExpenses);
+
+            // Summary
+            const revenue = parseInt(document.getElementById('input-revenue')?.value || tempProjectData.revenue || 0);
+            const totalCost = totalLabor + totalExpenses;
+            const profit = revenue - totalCost;
+
+            document.getElementById('budget-summary-revenue').textContent = formatCurrency(revenue);
+            document.getElementById('budget-summary-cost').textContent = formatCurrency(totalCost);
+            document.getElementById('budget-summary-profit').textContent = formatCurrency(profit);
+        }
+
+        function updateTaskBudget(index, field, value) {
+            tempProjectData.tasks[index][field] = parseInt(value) || 0;
+            renderBudgetEditor();
+        }
+
+        function addExpense() {
+            tempProjectData.expenses.push({ name: '', type: '材料費', amount: 0, note: '' });
+            renderBudgetEditor();
+        }
+
+        function removeExpense(index) {
+            tempProjectData.expenses.splice(index, 1);
+            renderBudgetEditor();
+        }
+
+        function updateExpense(index, field, value) {
+            if (field === 'amount') value = parseInt(value) || 0;
+            tempProjectData.expenses[index][field] = value;
+            renderBudgetEditor();
+        }
+
+        function updateRevenue(value) {
+            tempProjectData.revenue = parseInt(value) || 0;
+            renderBudgetEditor();
+        }
+
+        function showBudgetViewModal(projectId) {
+            const project = projectsData[projectId];
+            if (!project) return;
+
+            document.getElementById('view-project-name').textContent = project.name;
+
+            const totalExpenses = project.expenses.reduce((sum, item) => sum + item.amount, 0);
+            const totalLabor = project.tasks.reduce((sum, item) => sum + (item.total || 0), 0);
+            const totalCost = totalExpenses + totalLabor;
+            const profit = project.revenue - totalCost;
+
+            document.getElementById('view-val-revenue').textContent = formatCurrency(project.revenue);
+            document.getElementById('view-val-cost').textContent = formatCurrency(totalCost);
+            document.getElementById('view-val-profit').textContent = formatCurrency(profit);
+
+            const profitEl = document.getElementById('view-val-profit');
+            profitEl.className = profit >= 0 ? 'summary-value positive' : 'summary-value negative';
+
+            // Progress Bar
+            const costPercent = project.revenue > 0 ? Math.min(100, (totalCost / project.revenue) * 100) : 0;
+            const profitPercent = Math.max(0, 100 - costPercent);
+
+            document.getElementById('view-bar-cost').style.width = `${costPercent}%`;
+            document.getElementById('view-bar-cost').textContent = `${costPercent.toFixed(1)}%`;
+            document.getElementById('view-bar-profit').style.width = `${profitPercent}%`;
+            document.getElementById('view-bar-profit').textContent = `${profitPercent.toFixed(1)}%`;
+
+            // Tables
+            const taskTbody = document.getElementById('view-tbody-tasks');
+            taskTbody.innerHTML = '';
+            project.tasks.forEach(task => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${task.name}</td>
+                    <td class="numeric">${formatCurrency(task.unitPrice || 0)}</td>
+                    <td class="numeric">${formatCurrency(task.quantity || 0)}</td>
+                    <td class="numeric">${formatCurrency(task.total || 0)}</td>
+                `;
+                taskTbody.appendChild(tr);
+            });
+
+            const expTbody = document.getElementById('view-tbody-expenses');
+            expTbody.innerHTML = '';
+            project.expenses.forEach(exp => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${exp.name}</td>
+                    <td>${exp.type}</td>
+                    <td class="numeric">${formatCurrency(exp.amount)}</td>
+                `;
+                expTbody.appendChild(tr);
+            });
+
+            document.getElementById('modal-budget-view').style.display = 'flex';
         }
 
         // サイドバー連動
@@ -264,8 +535,8 @@
                     <summary>生産活動</summary>
                     <ul>
                         <li><a href="projects.html" class="active">案件情報</a></li>
-                        <li><a href="budget.html">予算・経費</a></li>
                         <li><a href="schedule.html">進捗状況</a></li>
+                        <li><a href="actuals.html">収入・経費実績</a></li>
                     </ul>
                 </details>
                 <details class="nav-accordion">
@@ -390,6 +661,7 @@
                             <div
                                 style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
                                 <button class="btn btn-neutral" onclick="showTaskViewModal('project-1')">タスク</button>
+                                <button class="btn btn-neutral" onclick="showBudgetViewModal('project-1')">予算</button>
                             </div>
                         </div>
                     </div>
@@ -435,6 +707,7 @@
                             <div
                                 style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
                                 <button class="btn btn-neutral" onclick="showTaskViewModal('project-1')">タスク</button>
+                                <button class="btn btn-neutral" onclick="showBudgetViewModal('project-1')">予算</button>
                             </div>
                         </div>
                     </div>
@@ -480,6 +753,7 @@
                             <div
                                 style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
                                 <button class="btn btn-neutral" onclick="showTaskViewModal('project-1')">タスク</button>
+                                <button class="btn btn-neutral" onclick="showBudgetViewModal('project-1')">予算</button>
                             </div>
                         </div>
                     </div>
@@ -500,6 +774,7 @@
                 <nav class="tabs-nav">
                     <a class="tab-link is-active" id="tab-btn-basic" onclick="switchTab('basic')">基本情報</a>
                     <a class="tab-link" id="tab-btn-tasks" onclick="switchTab('tasks')">タスク定義</a>
+                    <a class="tab-link" id="tab-btn-budget" onclick="switchTab('budget')">予算設定</a>
                 </nav>
 
                 <div class="modal-body">
@@ -555,6 +830,88 @@
                             <!-- Tasks will be rendered here via JS -->
                         </div>
                     </div>
+
+                    <!-- Budget Setting Tab -->
+                    <div id="tab-budget" class="tab-content">
+                        <div class="form-group">
+                            <label class="form-label">受注総額 (予算)</label>
+                            <input type="number" id="input-revenue" class="input-field" value="300000"
+                                onchange="updateRevenue(this.value)">
+                        </div>
+
+                        <div class="card" style="margin-bottom: var(--spacing-stack-md);">
+                            <div class="card-header">タスク単価・数量設定</div>
+                            <div class="card-body" style="padding: 0;">
+                                <table class="budget-table">
+                                    <thead>
+                                        <tr>
+                                            <th>タスク名</th>
+                                            <th>単価</th>
+                                            <th>数量</th>
+                                            <th>小計</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="budget-task-list">
+                                        <!-- Injected via JS -->
+                                    </tbody>
+                                    <tfoot>
+                                        <tr style="background-color: var(--color-base-secondary); font-weight: bold;">
+                                            <td colspan="3" style="text-align: right;">工賃原資計</td>
+                                            <td class="numeric" id="budget-total-labor">0</td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="card" style="margin-bottom: var(--spacing-stack-md);">
+                            <div class="card-header"
+                                style="display: flex; justify-content: space-between; align-items: center;">
+                                <div>経費・その他支出</div>
+                                <button class="btn btn-sm btn-primary" onclick="addExpense()">
+                                    <span class="material-symbols-outlined" style="font-size: 16px;">add</span> 追加
+                                </button>
+                            </div>
+                            <div class="card-body" style="padding: 0;">
+                                <table class="budget-table">
+                                    <thead>
+                                        <tr>
+                                            <th>項目</th>
+                                            <th>区分</th>
+                                            <th>金額</th>
+                                            <th>操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="budget-expense-list">
+                                        <!-- Injected via JS -->
+                                    </tbody>
+                                    <tfoot>
+                                        <tr style="background-color: var(--color-base-secondary); font-weight: bold;">
+                                            <td colspan="2" style="text-align: right;">経費計</td>
+                                            <td class="numeric" id="budget-total-expenses">0</td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="summary-card"
+                            style="flex-direction: row; justify-content: space-around; gap: var(--spacing-4);">
+                            <div style="text-align: center;">
+                                <div class="summary-label">売上</div>
+                                <div class="summary-value" id="budget-summary-revenue">0</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div class="summary-label">コスト</div>
+                                <div class="summary-value negative" id="budget-summary-cost">0</div>
+                            </div>
+                            <div style="text-align: center;">
+                                <div class="summary-label">利益</div>
+                                <div class="summary-value positive" id="budget-summary-profit">0</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-neutral" onclick="hideModal('modal-project-settings')">キャンセル</button>
@@ -591,6 +948,82 @@
             </div>
         </div>
 
+    </div>
+
+    <!-- Budget View Modal -->
+    <div class="modal-backdrop" id="modal-budget-view" style="display: none;">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                予算詳細: <span id="view-project-name"></span>
+            </div>
+            <div class="modal-body">
+                <!-- Summary Section -->
+                <div style="display: flex; gap: var(--spacing-4); margin-bottom: var(--spacing-stack-md);">
+                    <div class="summary-card">
+                        <div class="summary-label">受注総額 (予算)</div>
+                        <div class="summary-value"><span id="view-val-revenue">0</span> <span
+                                style="font-size: 1rem; font-weight: normal;">円</span></div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-label">コスト計</div>
+                        <div class="summary-value negative"><span id="view-val-cost">0</span> <span
+                                style="font-size: 1rem; font-weight: normal;">円</span></div>
+                    </div>
+                    <div class="summary-card" style="background-color: var(--palette-FFC);">
+                        <div class="summary-label">見込利益</div>
+                        <div class="summary-value positive"><span id="view-val-profit">0</span> <span
+                                style="font-size: 1rem; font-weight: normal;">円</span></div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-bottom: var(--spacing-stack-md);">
+                    <div class="card-header">収支シミュレーション</div>
+                    <div class="card-body">
+                        <div class="profit-bar-container">
+                            <div id="view-bar-cost" class="profit-bar-segment bg-cost" style="width: 0%;">0%</div>
+                            <div id="view-bar-profit" class="profit-bar-segment bg-profit" style="width: 0%;">0%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-stack-md);">
+                    <div class="card">
+                        <div class="card-header">タスク予算</div>
+                        <div class="card-body" style="padding: 0;">
+                            <table class="budget-table">
+                                <thead>
+                                    <tr>
+                                        <th>タスク名</th>
+                                        <th>単価</th>
+                                        <th>数量</th>
+                                        <th>計</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="view-tbody-tasks"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">経費予算</div>
+                        <div class="card-body" style="padding: 0;">
+                            <table class="budget-table">
+                                <thead>
+                                    <tr>
+                                        <th>項目</th>
+                                        <th>区分</th>
+                                        <th>金額</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="view-tbody-expenses"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-neutral" onclick="hideModal('modal-budget-view')">閉じる</button>
+            </div>
+        </div>
     </div>
 
 </body>
