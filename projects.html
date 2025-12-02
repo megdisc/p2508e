@@ -491,83 +491,111 @@
             const revenueTbody = document.getElementById('view-tbody-revenue');
             revenueTbody.innerHTML = '';
             let totalRevenue = 0;
+            let revSales = 0;
+            let revGrants = 0;
+            let revOther = 0;
 
-            // Use revenueItems if available, otherwise fallback to single revenue entry
             if (project.revenueItems && project.revenueItems.length > 0) {
                 project.revenueItems.forEach(item => {
-                    totalRevenue += item.amount;
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `<td>${item.name}</td><td class="numeric">${formatCurrency(item.amount)}</td>`;
-                    revenueTbody.appendChild(tr);
+                    revSales += item.amount; // Default to Sales for now
                 });
             } else {
-                totalRevenue = project.revenue || 0;
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td>売上</td><td class="numeric">${formatCurrency(totalRevenue)}</td>`;
-                revenueTbody.appendChild(tr);
+                revSales = project.revenue || 0;
             }
+            totalRevenue = revSales + revGrants + revOther;
+
+            const revRows = [
+                { name: '売上', val: revSales },
+                { name: '助成金', val: revGrants },
+                { name: 'その他収入', val: revOther }
+            ];
+
+            revRows.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${row.name}</td><td class="numeric">${formatCurrency(row.val)}</td>`;
+                revenueTbody.appendChild(tr);
+            });
             document.getElementById('view-total-revenue').textContent = formatCurrency(totalRevenue);
 
-            // 2. Expenses (Labor + General Expenses)
-            const expensesTbody = document.getElementById('view-tbody-expenses');
-            expensesTbody.innerHTML = '';
-            let totalExpenses = 0;
-
-            // Labor Costs from Tasks
-            if (project.tasks) {
-                project.tasks.forEach(task => {
-                    const laborCost = (task.unitPrice || 0) * (task.quantity || 0);
-                    if (laborCost > 0) {
-                        totalExpenses += laborCost;
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `<td>${task.name} (労務費)</td><td class="numeric">${formatCurrency(laborCost)}</td>`;
-                        expensesTbody.appendChild(tr);
-                    }
-                });
-            }
-
-            // General Expenses (excluding Reserves)
-            if (project.expenses) {
-                project.expenses.forEach(exp => {
-                    if (exp.type !== '積立金') {
-                        totalExpenses += parseInt(exp.amount || 0);
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `<td>${exp.name} (${exp.type})</td><td class="numeric">${formatCurrency(exp.amount)}</td>`;
-                        expensesTbody.appendChild(tr);
-                    }
-                });
-            }
-            document.getElementById('view-total-expenses').textContent = formatCurrency(totalExpenses);
-
-
-            // 3. Reserves
+            // 2. Reserves
             const reservesTbody = document.getElementById('view-tbody-reserves');
             reservesTbody.innerHTML = '';
             let totalReserves = 0;
+            let resWages = 0;
+            let resOther = 0;
 
             if (project.expenses) {
                 project.expenses.forEach(exp => {
                     if (exp.type === '積立金') {
-                        totalReserves += parseInt(exp.amount || 0);
-                        const tr = document.createElement('tr');
-                        tr.innerHTML = `<td>${exp.name}</td><td class="numeric">${formatCurrency(exp.amount)}</td>`;
-                        reservesTbody.appendChild(tr);
+                        // Simple logic: map all '積立金' to '工賃積立金' for now, or check name
+                        resWages += parseInt(exp.amount || 0);
                     }
                 });
             }
+            totalReserves = resWages + resOther;
+
+            const resRows = [
+                { name: '工賃積立金', val: resWages },
+                { name: 'その他の積立金', val: resOther }
+            ];
+
+            resRows.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${row.name}</td><td class="numeric">${formatCurrency(row.val)}</td>`;
+                reservesTbody.appendChild(tr);
+            });
             document.getElementById('view-total-reserves').textContent = formatCurrency(totalReserves);
 
+            // 3. Expenses (Costs)
+            const expensesTbody = document.getElementById('view-tbody-expenses');
+            expensesTbody.innerHTML = '';
+            let totalExpenses = 0;
+            let expWages = 0;
+            let expOutsourcing = 0;
+            let expOther = 0;
+
+            // Labor Costs from Tasks -> Wages
+            if (project.tasks) {
+                project.tasks.forEach(task => {
+                    const laborCost = (task.unitPrice || 0) * (task.quantity || 0);
+                    if (laborCost > 0) {
+                        expWages += laborCost;
+                    }
+                });
+            }
+
+            // General Expenses
+            if (project.expenses) {
+                project.expenses.forEach(exp => {
+                    if (exp.type !== '積立金') {
+                        const amt = parseInt(exp.amount || 0);
+                        if (exp.type === '外注費') {
+                            expOutsourcing += amt;
+                        } else {
+                            expOther += amt;
+                        }
+                    }
+                });
+            }
+            totalExpenses = expWages + expOutsourcing + expOther;
+
+            const expRows = [
+                { name: '工賃', val: expWages },
+                { name: '外注費', val: expOutsourcing },
+                { name: 'その他費用', val: expOther }
+            ];
+
+            expRows.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `<td>${row.name}</td><td class="numeric">${formatCurrency(row.val)}</td>`;
+                expensesTbody.appendChild(tr);
+            });
+            document.getElementById('view-total-expenses').textContent = formatCurrency(totalExpenses);
+
             // Summary
-            const totalOutgoings = totalExpenses + totalReserves;
-            const profit = totalRevenue - totalOutgoings;
-
             document.getElementById('view-val-revenue').textContent = formatCurrency(totalRevenue);
-            document.getElementById('view-val-cost').textContent = formatCurrency(totalOutgoings);
-            document.getElementById('view-val-profit').textContent = formatCurrency(profit);
-
-            const profitEl = document.getElementById('view-val-profit');
-            profitEl.className = profit >= 0 ? 'summary-value positive' : 'summary-value negative';
-
+            document.getElementById('view-val-reserves').textContent = formatCurrency(totalReserves);
+            document.getElementById('view-val-expenses').textContent = formatCurrency(totalExpenses);
             document.getElementById('modal-budget-view').style.display = 'flex';
         }
 
@@ -1272,7 +1300,7 @@
 
     <!-- Budget View Modal -->
     <div class="modal-backdrop" id="modal-budget-view" style="display: none;">
-        <div class="modal-content" style="max-width: 900px;">
+        <div class="modal-content">
             <div class="modal-header">
                 案件予算詳細: <span id="view-project-name"></span>
             </div>
@@ -1293,16 +1321,16 @@
                         <div class="card-body" style="text-align: center;">
                             <div
                                 style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-bottom: var(--spacing-1);">
-                                支出計</div>
-                            <div class="summary-value" id="view-val-cost">0</div>
+                                積立金計</div>
+                            <div class="summary-value" id="view-val-reserves">0</div>
                         </div>
                     </div>
                     <div class="card" style="background-color: var(--color-bg-subtle);">
                         <div class="card-body" style="text-align: center;">
                             <div
                                 style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-bottom: var(--spacing-1);">
-                                収支</div>
-                            <div class="summary-value" id="view-val-profit">0</div>
+                                費用計</div>
+                            <div class="summary-value" id="view-val-expenses">0</div>
                         </div>
                     </div>
                 </div>
@@ -1389,8 +1417,6 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-neutral" onclick="hideModal('modal-budget-view')">閉じる</button>
-                <button class="btn btn-primary"
-                    onclick="hideModal('modal-budget-view'); showModal('modal-project-settings')">編集する</button>
             </div>
         </div>
     </div>
