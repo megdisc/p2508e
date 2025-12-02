@@ -115,7 +115,7 @@
         let projectsData = {
             'project-1': {
                 id: 'project-1',
-                name: '10月度 DM封入作業',
+                name: 'DM封入作業',
                 type: 'single',
                 source: 'external',
                 partner: '株式会社 福岡工芸',
@@ -142,6 +142,46 @@
                     { name: '封筒・資材代', type: '材料費', amount: 20000, note: '立替払済' },
                     { name: '配送業者委託費', type: '外注費', amount: 15000, note: 'ヤマト運輸' },
                     { name: '事業所積立金', type: '積立金', amount: 10000, note: '規定により5%' }
+                ]
+            },
+            'project-2': {
+                id: 'project-2',
+                name: '自主製品（パン）製造・販売',
+                type: 'continuous',
+                source: 'in_house',
+                partner: '無し',
+                revenue: 150000,
+                tasks: [
+                    { id: 1, name: 'パン製造', skills: [{ name: '体力', level: 2 }], unitPrice: 0, quantity: 0, total: 0 },
+                    { id: 2, name: '販売', skills: [{ name: '接客', level: 2 }], unitPrice: 0, quantity: 0, total: 0 }
+                ],
+                expenses: []
+            },
+            'project-3': {
+                id: 'project-3',
+                name: '施設外就労（清掃）',
+                type: 'continuous',
+                source: 'external',
+                partner: '天神オフィスサプライ',
+                revenue: 200000,
+                tasks: [
+                    { id: 1, name: '清掃作業', skills: [{ name: '体力', level: 3 }], unitPrice: 0, quantity: 0, total: 0 }
+                ],
+                expenses: []
+            },
+            'project-4': {
+                id: 'project-4',
+                name: '地域バザー出店',
+                type: 'single',
+                source: 'in_house',
+                partner: '無し',
+                revenue: 50000,
+                tasks: [
+                    { id: 1, name: '接客販売', skills: [{ name: '接客', level: 2 }], unitPrice: 0, quantity: 0, total: 0 },
+                    { id: 2, name: '搬入出', skills: [{ name: '体力', level: 2 }], unitPrice: 0, quantity: 0, total: 0 }
+                ],
+                expenses: [
+                    { name: '出店料', type: 'その他', amount: 5000, note: '' }
                 ]
             }
         };
@@ -679,12 +719,12 @@
                             <div>
                                 <div
                                     style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">
-                                    10月度 DM封入作業
+                                    DM封入作業
                                 </div>
                                 <div style="display: flex; gap: var(--spacing-2);">
                                     <span class="badge badge-primary">進行中</span>
                                     <span class="badge badge-neutral">単発</span>
-                                    <span class="badge badge-neutral">株式会社 福岡工芸</span>
+                                    <span class="badge badge-neutral">受託｜株式会社 福岡工芸</span>
                                 </div>
                             </div>
                             <div
@@ -725,56 +765,10 @@
                             <div>
                                 <div
                                     style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">
-                                    名刺データ入力
+                                    自主製品（パン）製造・販売
                                 </div>
                                 <div style="display: flex; gap: var(--spacing-2);">
-                                    <span class="badge badge-success">完了</span>
-                                    <span class="badge badge-neutral">単発</span>
-                                    <span class="badge badge-neutral">天神オフィスサプライ</span>
-                                </div>
-                            </div>
-                            <div
-                                style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
-                                <button class="btn btn-icon btn-icon-success" title="編集"
-                                    onclick="showModal('modal-project-settings')">
-                                    <span class="material-symbols-outlined">edit</span>
-                                </button>
-                                <button class="btn btn-icon btn-icon-error" title="削除">
-                                    <span class="material-symbols-outlined">delete</span>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <dl class="data-list">
-                                <div>
-                                    <dt>期間</dt>
-                                    <dd>2025.10.05 - 2025.10.15</dd>
-                                </div>
-
-                                <div style="grid-column: 1 / -1;">
-                                    <dt>概要</dt>
-                                    <dd>名刺500枚分のデータ入力作業。</dd>
-                                </div>
-                            </dl>
-                            <div
-                                style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
-                                <button class="btn btn-neutral" onclick="showTaskViewModal('project-1')">タスク</button>
-                                <button class="btn btn-neutral" onclick="showBudgetViewModal('project-1')">予算</button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Card 3 -->
-                    <div class="card">
-                        <div class="card-header"
-                            style="display: flex; justify-content: space-between; align-items: flex-start;">
-                            <div>
-                                <div
-                                    style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">
-                                    11月度 清掃準備
-                                </div>
-                                <div style="display: flex; gap: var(--spacing-2);">
-                                    <span class="badge badge-neutral">未着手</span>
+                                    <span class="badge badge-success">進行中</span>
                                     <span class="badge badge-neutral">継続</span>
                                     <span class="badge badge-neutral">自主事業</span>
                                 </div>
@@ -794,18 +788,110 @@
                             <dl class="data-list">
                                 <div>
                                     <dt>期間</dt>
-                                    <dd>2025.11.01 - 2025.11.05</dd>
+                                    <dd>2025.10.01 - 継続中</dd>
                                 </div>
 
                                 <div style="grid-column: 1 / -1;">
                                     <dt>概要</dt>
-                                    <dd>施設内清掃の準備作業。</dd>
+                                    <dd>自主製品（パン）の製造および販売。</dd>
                                 </div>
                             </dl>
                             <div
                                 style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
-                                <button class="btn btn-neutral" onclick="showTaskViewModal('project-1')">タスク</button>
-                                <button class="btn btn-neutral" onclick="showBudgetViewModal('project-1')">予算</button>
+                                <button class="btn btn-neutral" onclick="showTaskViewModal('project-2')">タスク</button>
+                                <button class="btn btn-neutral" onclick="showBudgetViewModal('project-2')">予算</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="card">
+                        <div class="card-header"
+                            style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <div
+                                    style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">
+                                    施設外就労（清掃）
+                                </div>
+                                <div style="display: flex; gap: var(--spacing-2);">
+                                    <span class="badge badge-neutral">未着手</span>
+                                    <span class="badge badge-neutral">継続</span>
+                                    <span class="badge badge-neutral">受託｜天神オフィスサプライ</span>
+                                </div>
+                            </div>
+                            <div
+                                style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
+                                <button class="btn btn-icon btn-icon-success" title="編集"
+                                    onclick="showModal('modal-project-settings')">
+                                    <span class="material-symbols-outlined">edit</span>
+                                </button>
+                                <button class="btn btn-icon btn-icon-error" title="削除">
+                                    <span class="material-symbols-outlined">delete</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <dl class="data-list">
+                                <div>
+                                    <dt>期間</dt>
+                                    <dd>2025.11.01 - 継続中</dd>
+                                </div>
+
+                                <div style="grid-column: 1 / -1;">
+                                    <dt>概要</dt>
+                                    <dd>オフィスビルの定期清掃業務。</dd>
+                                </div>
+                            </dl>
+                            <div
+                                style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
+                                <button class="btn btn-neutral" onclick="showTaskViewModal('project-3')">タスク</button>
+                                <button class="btn btn-neutral" onclick="showBudgetViewModal('project-3')">予算</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card 4 -->
+                    <div class="card">
+                        <div class="card-header"
+                            style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <div
+                                    style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">
+                                    地域バザー出店
+                                </div>
+                                <div style="display: flex; gap: var(--spacing-2);">
+                                    <span class="badge badge-success">完了</span>
+                                    <span class="badge badge-neutral">単発</span>
+                                    <span class="badge badge-neutral">自主事業</span>
+                                </div>
+                            </div>
+                            <div
+                                style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
+                                <button class="btn btn-icon btn-icon-success" title="編集"
+                                    onclick="showModal('modal-project-settings')">
+                                    <span class="material-symbols-outlined">edit</span>
+                                </button>
+                                <button class="btn btn-icon btn-icon-error" title="削除">
+                                    <span class="material-symbols-outlined">delete</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <dl class="data-list">
+                                <div>
+                                    <dt>期間</dt>
+                                    <dd>2025.11.10 - 2025.11.10</dd>
+                                </div>
+
+                                <div style="grid-column: 1 / -1;">
+                                    <dt>概要</dt>
+                                    <dd>地域交流イベントでの自主製品販売。</dd>
+                                </div>
+                            </dl>
+                            <div
+                                style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
+                                <button class="btn btn-neutral" onclick="showTaskViewModal('project-4')">タスク</button>
+                                <button class="btn btn-neutral" onclick="showBudgetViewModal('project-4')">予算</button>
                             </div>
                         </div>
                     </div>
@@ -819,7 +905,7 @@
         <div class="modal-backdrop" id="modal-project-settings" style="display: none;">
             <div class="modal-content" style="max-width: 800px;">
                 <div class="modal-header">
-                    案件詳細設定: 10月度 DM封入作業
+                    案件詳細設定: DM封入作業
                 </div>
 
                 <!-- Tabs -->
@@ -835,7 +921,7 @@
                         <div style="display: grid; grid-template-columns: 2fr 1fr; gap: var(--spacing-4);">
                             <div class="form-group">
                                 <label class="form-label">案件名</label>
-                                <input type="text" class="input-field" value="10月度 DM封入作業" id="input-project-name"
+                                <input type="text" class="input-field" value="DM封入作業" id="input-project-name"
                                     onchange="updateProjectField('name', this.value)">
                             </div>
                             <div class="form-group">
