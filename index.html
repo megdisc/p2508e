@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,7 +8,8 @@
     <title>Compath スタイルガイド (v5 分割版)</title>
     <link rel="stylesheet" href="globals.css">
     <link rel="stylesheet" href="ui.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <script>
         function showModal(id) { document.getElementById(id).style.display = 'flex'; }
         function hideModal(id) { document.getElementById(id).style.display = 'none'; }
@@ -19,7 +21,7 @@
             contents.forEach(content => content.classList.remove('is-active'));
             document.getElementById(tabId).classList.add('is-active');
         }
-    
+
         // サイドバーの現在地連動（アコーディオン自動展開）
         document.addEventListener("DOMContentLoaded", () => {
             const currentFile = window.location.pathname.split("/").pop();
@@ -33,6 +35,7 @@
         });
     </script>
 </head>
+
 <body>
     <div class="page-wrapper">
         <aside class="sidebar">
@@ -47,8 +50,21 @@
             </div>
             <nav class="sidebar-nav">
                 <a href="index.html" class="nav-link">トップ</a>
-                <details class="nav-accordion"><summary>施設情報</summary><ul><li><a href="corporation.html">法人情報</a></li><li><a href="office.html">事業所情報</a></li></ul></details>
-                <details class="nav-accordion"><summary>関係者情報</summary><ul><li><a href="staff.html">職員情報</a></li><li><a href="members.html">利用者情報</a></li><li><a href="partners.html">取引先情報</a></li></ul></details>
+                <details class="nav-accordion">
+                    <summary>施設情報</summary>
+                    <ul>
+                        <li><a href="corporation.html">法人情報</a></li>
+                        <li><a href="office.html">事業所情報</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>関係者情報</summary>
+                    <ul>
+                        <li><a href="staff.html">職員情報</a></li>
+                        <li><a href="members.html">利用者情報</a></li>
+                        <li><a href="partners.html">取引先情報</a></li>
+                    </ul>
+                </details>
                 <details class="nav-accordion">
                     <summary>スキル情報</summary>
                     <ul>
@@ -64,11 +80,17 @@
                         <li><a href="wages-evaluation.html">工賃レベル評価</a></li>
                     </ul>
                 </details>
-                <details class="nav-accordion"><summary>積立金情報</summary><ul><li><a href="savings-settings.html">積立金設定</a></li><li><a href="savings-history.html">積立金履歴</a></li></ul></details>
+                <details class="nav-accordion">
+                    <summary>積立金情報</summary>
+                    <ul>
+                        <li><a href="savings-settings.html">積立金設定</a></li>
+                        <li><a href="savings-history.html">積立金履歴</a></li>
+                    </ul>
+                </details>
                 <a href="attendance.html" class="nav-link">出欠情報</a>
                 <details class="nav-accordion">
-                <summary>生産活動</summary>
-                <ul>
+                    <summary>生産活動</summary>
+                    <ul>
                         <li><a href="projects.html">案件情報</a></li>
                         <li><a href="schedule.html">進捗状況</a></li>
                         <li><a href="actuals.html">収入・経費実績</a></li>
@@ -107,7 +129,7 @@
         <main class="main-content">
             <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
                 <p style="font: var(--font-body-sm); color: var(--color-page-heading);">スタイルガイド</p>
-                
+
                 <h1 style="margin-top: 0;">1. タイポグラフィ</h1>
                 <div class="card">
                     <div class="card-body">
@@ -133,12 +155,18 @@
 
                         <div style="width: 100%; border-top: 1px solid var(--palette-EEE); margin: 8px 0;"></div>
 
-                        <button class="btn btn-icon btn-icon-primary"><span class="material-symbols-outlined">add</span></button>
-                        <button class="btn btn-icon btn-icon-success"><span class="material-symbols-outlined">edit</span></button>
-                        <button class="btn btn-icon btn-icon-warning"><span class="material-symbols-outlined">warning</span></button>
-                        <button class="btn btn-icon btn-icon-error"><span class="material-symbols-outlined">delete</span></button>
-                        <button class="btn btn-icon btn-icon-neutral"><span class="material-symbols-outlined">settings</span></button>
-                        <button class="btn btn-icon btn-icon-cancelled"><span class="material-symbols-outlined">cancel</span></button>
+                        <button class="btn btn-icon btn-icon-primary"><span
+                                class="material-symbols-outlined">add</span></button>
+                        <button class="btn btn-icon btn-icon-success"><span
+                                class="material-symbols-outlined">edit</span></button>
+                        <button class="btn btn-icon btn-icon-warning"><span
+                                class="material-symbols-outlined">warning</span></button>
+                        <button class="btn btn-icon btn-icon-error"><span
+                                class="material-symbols-outlined">delete</span></button>
+                        <button class="btn btn-icon btn-icon-neutral"><span
+                                class="material-symbols-outlined">settings</span></button>
+                        <button class="btn btn-icon btn-icon-cancelled"><span
+                                class="material-symbols-outlined">cancel</span></button>
 
                         <div style="width: 100%; border-top: 1px solid var(--palette-EEE); margin: 8px 0;"></div>
 
@@ -149,8 +177,10 @@
 
                         <div style="width: 100%; border-top: 1px solid var(--palette-EEE); margin: 16px 0;"></div>
 
-                        <div style="width: 100%; margin-bottom: 8px; font-size: var(--font-size-xs); color: var(--color-base-quaternary);">Disabled State (Click Impossible)</div>
-                        
+                        <div
+                            style="width: 100%; margin-bottom: 8px; font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
+                            Disabled State (Click Impossible)</div>
+
                         <div style="display: flex; gap: 16px; flex-wrap: wrap;">
                             <button class="btn btn-primary" disabled>Primary</button>
                             <button class="btn btn-success" disabled>Success</button>
@@ -159,14 +189,20 @@
                             <button class="btn btn-neutral" disabled>Neutral</button>
                             <button class="btn btn-cancelled" disabled>Cancelled</button>
                         </div>
-                        
+
                         <div style="width: 100%; margin-top: 16px; display: flex; gap: 16px; flex-wrap: wrap;">
-                            <button class="btn btn-icon btn-icon-primary" disabled><span class="material-symbols-outlined">add</span></button>
-                            <button class="btn btn-icon btn-icon-success" disabled><span class="material-symbols-outlined">edit</span></button>
-                            <button class="btn btn-icon btn-icon-warning" disabled><span class="material-symbols-outlined">warning</span></button>
-                            <button class="btn btn-icon btn-icon-error" disabled><span class="material-symbols-outlined">delete</span></button>
-                            <button class="btn btn-icon btn-icon-neutral" disabled><span class="material-symbols-outlined">settings</span></button>
-                            <button class="btn btn-icon btn-icon-cancelled" disabled><span class="material-symbols-outlined">cancel</span></button>
+                            <button class="btn btn-icon btn-icon-primary" disabled><span
+                                    class="material-symbols-outlined">add</span></button>
+                            <button class="btn btn-icon btn-icon-success" disabled><span
+                                    class="material-symbols-outlined">edit</span></button>
+                            <button class="btn btn-icon btn-icon-warning" disabled><span
+                                    class="material-symbols-outlined">warning</span></button>
+                            <button class="btn btn-icon btn-icon-error" disabled><span
+                                    class="material-symbols-outlined">delete</span></button>
+                            <button class="btn btn-icon btn-icon-neutral" disabled><span
+                                    class="material-symbols-outlined">settings</span></button>
+                            <button class="btn btn-icon btn-icon-cancelled" disabled><span
+                                    class="material-symbols-outlined">cancel</span></button>
                         </div>
                     </div>
                 </div>
@@ -188,7 +224,8 @@
                     <div class="card-body">
                         <div class="form-group">
                             <label class="form-label" for="form-text">テキスト入力 (ラベル 12.8px, 300)</label>
-                            <input type="text" id="form-text" class="input-field" placeholder="プレースホルダーテキスト (16px, 500)">
+                            <input type="text" id="form-text" class="input-field"
+                                placeholder="プレースホルダーテキスト (16px, 500)">
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="form-num">数値入力</label>
@@ -212,7 +249,8 @@
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="form-textarea">テキストエリア</label>
-                            <textarea id="form-textarea" class="input-field" rows="3" placeholder="複数行の入力..."></textarea>
+                            <textarea id="form-textarea" class="input-field" rows="3"
+                                placeholder="複数行の入力..."></textarea>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="form-error">エラー状態</label>
@@ -251,7 +289,7 @@
                 </div>
 
                 <h1 style="margin-top: 48px;">6. テーブル</h1>
-                
+
                 <h4 style="margin-top: 24px;">A. セクション内表示 (カード内部などに配置)</h4>
                 <div class="card">
                     <div class="card-body">
@@ -280,8 +318,9 @@
                 </div>
 
                 <h4 style="margin-top: 24px;">B. 単体表示 (独立したコンポーネントとして配置)</h4>
-                <p style="margin-bottom: 16px;">カードで囲わずに配置する場合は <code>.table-container.is-standalone</code> を使用します。カードと同じ影と背景色が適用されます。</p>
-                
+                <p style="margin-bottom: 16px;">カードで囲わずに配置する場合は <code>.table-container.is-standalone</code>
+                    を使用します。カードと同じ影と背景色が適用されます。</p>
+
                 <div class="table-container is-standalone">
                     <table class="table">
                         <thead>
@@ -319,6 +358,9 @@
                         <div class="alert-success">
                             <strong>成功 (16px, 600):</strong> メッセージは正常に保存されました。
                         </div>
+                        <div class="alert-warning">
+                            <strong>注意:</strong> 予算に余剰があります。残り 210,000 を工賃や経費に配分してください。
+                        </div>
                         <div class="alert-error">
                             <strong>エラー:</strong> 保存に失敗しました。必須項目を確認してください。
                         </div>
@@ -329,7 +371,8 @@
                 <div class="card">
                     <div class="card-body">
                         <nav class="tabs-nav" id="tab-group-1">
-                            <a class="tab-link is-active" onclick="activateTab('tab-group-1', 'tab-1-1')">基本情報 (16px, 600)</a>
+                            <a class="tab-link is-active" onclick="activateTab('tab-group-1', 'tab-1-1')">基本情報 (16px,
+                                600)</a>
                             <a class="tab-link" onclick="activateTab('tab-group-1', 'tab-1-2')">支援記録</a>
                             <a class="tab-link" onclick="activateTab('tab-group-1', 'tab-1-3')">工賃履歴</a>
                         </nav>
@@ -395,9 +438,11 @@
                             </div>
                             <div>
                                 <dt>備考</dt>
-                                <dd>これはデータリストコンポーネントの表示サンプルです。ラベル(dt)と値(dd)がペアになってグリッド状に表示されます。画面幅に応じて自動的に列数が調整されます。</dd>
+                                <dd>これはデータリストコンポーネントの表示サンプルです。ラベル(dt)と値(dd)がペアになってグリッド状に表示されます。画面幅に応じて自動的に列数が調整されます。
+                                </dd>
                             </div>
-                        </dl></div>
+                        </dl>
+                    </div>
                 </div>
 
                 <h1 style="margin-top: 48px;">12. カードグリッド</h1>
@@ -441,4 +486,5 @@
         </main>
     </div>
 </body>
+
 </html>

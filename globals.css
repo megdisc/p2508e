@@ -7,7 +7,7 @@
     /* -------------------------------------- */
     /* 1.1. カラーパレット (Colors)
     /* -------------------------------------- */
-    
+
     /* 有彩色 (Chromatic Colors) */
     --palette-126: #112266;
     --palette-066: #006666;
@@ -25,7 +25,7 @@
     --palette-CCC: #CCCCCC;
     --palette-EEE: #EEEEEE;
     --palette-FFF: #FFFFFF;
-    
+
     /* 透過色 (Translucent Colors) */
     --palette-translucent-0002: rgba(0, 0, 0, 0.2);
     --palette-translucent-0008: rgba(0, 0, 0, 0.8);
@@ -35,28 +35,40 @@
     /* -------------------------------------- */
     /* 1.2. タイポグラフィ (Typography) (★游ゴシック)
     /* -------------------------------------- */
-    
+
     /* フォントファミリー (★游ゴシック) */
     --font-family-base: "Yu Gothic Medium", "游ゴシック Medium", YuGothic, "游ゴシック体", "ヒラギノ角ゴ Pro W3", "メイリオ", Meiryo, Osaka, "ＭＳ Ｐゴシック", "MS PGothic", sans-serif;
     --font-family-heading: var(--font-family-base);
     --font-family-code: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
 
     /* フォントサイズスケール (★1.25倍率) */
-    --font-size-2xs: 0.64rem;     /* 10.24px (12.8 / 1.25) */
-    --font-size-xs: 0.8rem;     /* 12.8px (16 / 1.25) */
-    --font-size-sm: 1rem;       /* 16px (基準) */
-    --font-size-md: 1.25rem;    /* 20px (16 * 1.25) */
-    --font-size-lg: 1.5625rem;  /* 25px (20 * 1.25) */
-    --font-size-xl: 1.9531rem;  /* 31.25px (25 * 1.25) */
-    --font-size-2xl: 2.4414rem; /* 39.06px (31.25 * 1.25) */
-    --font-size-3xl: 3.0518rem; /* 48.82px (39.06 * 1.25) */
-    --font-size-4xl: 3.8147rem; /* 61.03px (48.82 * 1.25) */
+    --font-size-2xs: 0.64rem;
+    /* 10.24px (12.8 / 1.25) */
+    --font-size-xs: 0.8rem;
+    /* 12.8px (16 / 1.25) */
+    --font-size-sm: 1rem;
+    /* 16px (基準) */
+    --font-size-md: 1.25rem;
+    /* 20px (16 * 1.25) */
+    --font-size-lg: 1.5625rem;
+    /* 25px (20 * 1.25) */
+    --font-size-xl: 1.9531rem;
+    /* 31.25px (25 * 1.25) */
+    --font-size-2xl: 2.4414rem;
+    /* 39.06px (31.25 * 1.25) */
+    --font-size-3xl: 3.0518rem;
+    /* 48.82px (39.06 * 1.25) */
+    --font-size-4xl: 3.8147rem;
+    /* 61.03px (48.82 * 1.25) */
 
     /* フォントウェイト (★標準 500) */
     --font-weight-light: 300;
-    --font-weight-regular: 500; /* 標準 500 */
-    --font-weight-medium: 600;  /* Medium 600 */
-    --font-weight-bold: 700;    /* Bold 700 */
+    --font-weight-regular: 500;
+    /* 標準 500 */
+    --font-weight-medium: 600;
+    /* Medium 600 */
+    --font-weight-bold: 700;
+    /* Bold 700 */
 
     /* 行の高さ */
     --line-height-tight: 1.25;
@@ -131,7 +143,7 @@
     /* -------------------------------------- */
     /* 2.1. 色 (Colors) (★罫線色 変更)
     /* -------------------------------------- */
-    
+
     /* テーマカラー (Theme) */
     --color-theme-main: var(--palette-126);
     --color-theme-sub: var(--palette-CCC);
@@ -139,12 +151,17 @@
     /* (★) --color-theme-accent-text: var(--color-base-tertiary); (★) 削除 */
 
     /* ベースカラー (Base) (★役割を明確化) */
-    --color-base-primary: var(--palette-FFF);   /* 白 (メイン背景) */
-    --color-base-secondary: var(--palette-EEE); /* ごく薄いグレー (補助背景 / ホバー色) */
-    --color-base-tertiary: var(--palette-333);  /* 濃いグレー (メインテキスト) */
-    --color-base-quaternary: var(--palette-666);/* 中間グレー (サブテキスト) */
-    --color-base-quinary: var(--palette-CCC);   /* 薄いグレー (基本罫線) */
-    
+    --color-base-primary: var(--palette-FFF);
+    /* 白 (メイン背景) */
+    --color-base-secondary: var(--palette-EEE);
+    /* ごく薄いグレー (補助背景 / ホバー色) */
+    --color-base-tertiary: var(--palette-333);
+    /* 濃いグレー (メインテキスト) */
+    --color-base-quaternary: var(--palette-666);
+    /* 中間グレー (サブテキスト) */
+    --color-base-quinary: var(--palette-CCC);
+    /* 薄いグレー (基本罫線) */
+
     /* セマンティック (状態) */
     --color-semantic-primary-main: var(--palette-126);
     --color-semantic-primary-sub: var(--palette-CEF);
@@ -179,20 +196,23 @@
     --spacing-inset-lg: var(--spacing-6);
     --spacing-stack-xs: var(--spacing-2);
     --spacing-stack-sm: var(--spacing-4);
-    --spacing-stack-md: var(--spacing-8); /* ★変更 (1.5rem -> 2rem) */
+    --spacing-stack-md: var(--spacing-8);
+    /* ★変更 (1.5rem -> 2rem) */
     --spacing-stack-lg: var(--spacing-8);
-    
+
     /* -------------------------------------- */
     /* 2.4. レイアウト (Layout)
     /* -------------------------------------- */
     --layout-header-height: var(--spacing-12);
     --layout-sidebar-width: 240px;
-    
+
     /* -------------------------------------- */
     /* 2.5. ボーダー (Borders) (★変更)
     /* -------------------------------------- */
-    --border-default: var(--border-width-sm) solid var(--color-base-quinary); /* 基本罫線 (CCC) */
-    --border-subtle: var(--border-width-sm) solid var(--color-base-secondary); /* 補助罫線 (EEE) */
+    --border-default: var(--border-width-sm) solid var(--color-base-quinary);
+    /* 基本罫線 (CCC) */
+    --border-subtle: var(--border-width-sm) solid var(--color-base-secondary);
+    /* 補助罫線 (EEE) */
     --border-emphasis: var(--border-width-sm) solid var(--color-base-quaternary);
 }
 
@@ -207,7 +227,8 @@
     /* -------------------------------------- */
     --color-page-background: var(--color-base-secondary);
     --color-page-text: var(--color-base-tertiary);
-    --color-page-heading: var(--color-base-quaternary); /* (★) ページ見出し色 (666) */
+    --color-page-heading: var(--color-base-quaternary);
+    /* (★) ページ見出し色 (666) */
     --font-page-default: var(--font-body);
 
     /* -------------------------------------- */
@@ -216,24 +237,27 @@
     --color-card-background: var(--color-base-primary);
     --color-card-border: var(--border-default);
     --shadow-card: var(--box-shadow-md);
-    --radius-card: var(--border-radius-lg); /* ★変更 (md -> lg) */
+    --radius-card: var(--border-radius-lg);
+    /* ★変更 (md -> lg) */
     --spacing-card-padding: var(--spacing-inset-md);
 
     /* -------------------------------------- */
     /* 3.3. ボタン (Button)
     /* -------------------------------------- */
-    --radius-button: var(--border-radius-full); /* ★変更 (sm -> full) */
-    --spacing-button-padding-y: var(--spacing-1); /* ★変更 (spacing-2 -> spacing-1) */
+    --radius-button: var(--border-radius-full);
+    /* ★変更 (sm -> full) */
+    --spacing-button-padding-y: var(--spacing-1);
+    /* ★変更 (spacing-2 -> spacing-1) */
     --spacing-button-padding-x: var(--spacing-4);
-    
+
     --color-button-primary-background: var(--color-theme-main);
     --color-button-primary-text: var(--color-base-primary);
     --color-button-primary-border: var(--color-theme-main);
-    
+
     --color-button-secondary-background: var(--color-semantic-neutral-sub);
     --color-button-secondary-text: var(--color-semantic-neutral-main);
     --color-button-secondary-border: var(--color-semantic-neutral-sub);
-    
+
     --color-button-error-background: var(--color-semantic-error-main);
     --color-button-error-text: var(--color-base-primary);
     --color-button-error-border: var(--color-semantic-error-main);
@@ -248,10 +272,12 @@
     --color-input-border-focus: var(--color-theme-main);
     --color-input-border-error: var(--color-semantic-error-main);
     --color-input-text-error: var(--color-semantic-error-main);
-    --radius-input: 20px; /* ★変更 (sm -> full) */
-    --spacing-input-padding-y: var(--spacing-1); /* ★変更 (spacing-2 -> spacing-1) */
+    --radius-input: 20px;
+    /* ★変更 (sm -> full) */
+    --spacing-input-padding-y: var(--spacing-1);
+    /* ★変更 (spacing-2 -> spacing-1) */
     --spacing-input-padding-x: var(--spacing-3);
-    
+
     /* -------------------------------------- */
     /* 3.5. バッジ (Badge)
     /* -------------------------------------- */
@@ -268,10 +294,14 @@
     /* -------------------------------------- */
     /* 3.6. テーブル (Table) (★変更)
     /* -------------------------------------- */
-    --color-table-border: var(--color-base-secondary); /* (★補助罫線 EEE) */
-    --color-table-container-border: var(--color-base-quinary); /* (★) テーブル外枠用の罫線 (CCC) */
-    --color-table-header-background: var(--color-base-secondary); /* ごく薄いグレー(EEE) */
-    --color-table-row-background-hover: var(--color-base-secondary); /* ごく薄いグレー(EEE) */
+    --color-table-border: var(--color-base-secondary);
+    /* (★補助罫線 EEE) */
+    --color-table-container-border: var(--color-base-quinary);
+    /* (★) テーブル外枠用の罫線 (CCC) */
+    --color-table-header-background: var(--color-base-secondary);
+    /* ごく薄いグレー(EEE) */
+    --color-table-row-background-hover: var(--color-base-secondary);
+    /* ごく薄いグレー(EEE) */
     --spacing-table-cell-padding-y: var(--spacing-3);
     --spacing-table-cell-padding-x: var(--spacing-4);
 
@@ -292,6 +322,9 @@
     --color-alert-success-background: var(--color-semantic-success-sub);
     --color-alert-success-text: var(--color-semantic-success-main);
     --color-alert-success-border: var(--color-semantic-success-main);
+    --color-alert-warning-background: var(--color-semantic-warning-sub);
+    --color-alert-warning-text: var(--color-semantic-warning-main);
+    --color-alert-warning-border: var(--color-semantic-warning-main);
     --color-alert-error-background: var(--color-semantic-error-sub);
     --color-alert-error-text: var(--color-semantic-error-main);
     --color-alert-error-border: var(--color-semantic-error-main);
@@ -315,10 +348,14 @@
     /* -------------------------------------- */
     /* 3.11. データリスト (Data List) (★変更)
     /* -------------------------------------- */
-    --color-data-list-label-text: var(--color-base-quaternary); /* #666 */
-    --color-data-list-value-text: var(--color-base-tertiary); /* #333 */
-    --color-data-list-border: var(--border-subtle); /* 補助罫線(EEE) */
-    --spacing-data-list-padding-y: var(--spacing-2); /* ★変更 (12px -> 8px) */
+    --color-data-list-label-text: var(--color-base-quaternary);
+    /* #666 */
+    --color-data-list-value-text: var(--color-base-tertiary);
+    /* #333 */
+    --color-data-list-border: var(--border-subtle);
+    /* 補助罫線(EEE) */
+    --spacing-data-list-padding-y: var(--spacing-2);
+    /* ★変更 (12px -> 8px) */
 }
 
 
@@ -353,8 +390,10 @@ body {
     font: var(--font-page-default);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-feature-settings: 'palt'; /* ★プロポーショナルメトリクス */
-    font-variant-ligatures: common-ligatures; /* ★標準の合字 */
+    font-feature-settings: 'palt';
+    /* ★プロポーショナルメトリクス */
+    font-variant-ligatures: common-ligatures;
+    /* ★標準の合字 */
     overflow: hidden;
     font-kerning: normal;
     text-rendering: optimizeLegibility;
@@ -363,7 +402,12 @@ body {
 /* -------------------------------------- */
 /* 4.3. タイポグラフィの適用 (★変更)
 /* -------------------------------------- */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     margin: var(--spacing-stack-md) 0 var(--spacing-stack-sm) 0;
     color: var(--color-base-tertiary);
     line-height: var(--line-height-tight);
@@ -371,15 +415,32 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ★フォントスケール変更に伴い、H1-H4の参照先を調整 */
-h1 { font-size: var(--font-size-2xl); } /* H1 (39px) */
-h2 { font-size: var(--font-size-xl); } /* H2 (31px) */
-h3 { font-size: var(--font-size-lg); } /* H3 (25px) */
-h4 { font-size: var(--font-size-md); } /* H4 (20px) */
+h1 {
+    font-size: var(--font-size-2xl);
+}
+
+/* H1 (39px) */
+h2 {
+    font-size: var(--font-size-xl);
+}
+
+/* H2 (31px) */
+h3 {
+    font-size: var(--font-size-lg);
+}
+
+/* H3 (25px) */
+h4 {
+    font-size: var(--font-size-md);
+}
+
+/* H4 (20px) */
 
 p {
     margin: 0 0 var(--spacing-stack-sm) 0;
     line-height: var(--line-height-relaxed);
-    text-align: justify; /* ★両端揃え (長文ブロックのみ) */
+    text-align: justify;
+    /* ★両端揃え (長文ブロックのみ) */
 }
 
 a {

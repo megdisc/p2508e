@@ -507,6 +507,34 @@
 
             totalExpenses = totalLabor + totalOtherExp;
             document.getElementById('budget-summary-expenses').textContent = formatCurrency(totalExpenses);
+
+            // Balance Alert Logic
+            const availableFunds = totalRevenue - totalReserves;
+            const balance = availableFunds - totalExpenses;
+            const alertBox = document.getElementById('budget-balance-alert');
+
+            if (balance > 0) {
+                // Surplus
+                alertBox.className = 'alert-warning';
+                alertBox.style.display = 'block';
+                // Inline styles removed, using class
+                alertBox.style.backgroundColor = '';
+                alertBox.style.color = '';
+                alertBox.style.border = '';
+                alertBox.style.border = '';
+                alertBox.innerHTML = `<strong>注意:</strong> 予算に余剰があります。残り <strong>${formatCurrency(balance)}</strong> を工賃や経費に配分してください。`;
+            } else if (balance < 0) {
+                // Deficit
+                alertBox.className = 'alert-error';
+                alertBox.style.display = 'block';
+                alertBox.style.backgroundColor = '';
+                alertBox.style.color = '';
+                alertBox.style.border = '';
+                alertBox.innerHTML = `<strong>エラー:</strong> 予算が不足しています。 <strong>${formatCurrency(Math.abs(balance))}</strong> 超過しています。経費を削減するか、収入を見直してください。`;
+            } else {
+                // Balanced
+                alertBox.style.display = 'none';
+            }
         }
 
         function updateTaskBudget(index, field, value) {
@@ -1279,6 +1307,9 @@
                             </div>
                         </div>
 
+                        <!-- Budget Balance Alert -->
+
+
                         <div style="display: grid; grid-template-columns: 1fr; gap: var(--spacing-stack-lg);">
 
                             <!-- Revenue Section -->
@@ -1386,6 +1417,12 @@
                             </div>
 
                         </div>
+                    </div>
+
+                    <!-- Budget Balance Alert (Moved to bottom) -->
+                    <div id="budget-balance-alert" class="alert"
+                        style="display: none; margin-top: var(--spacing-stack-md);">
+                        <!-- JS Injected -->
                     </div>
                 </div>
                 <div class="modal-footer">
