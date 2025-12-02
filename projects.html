@@ -550,46 +550,34 @@
             const expensesTbody = document.getElementById('view-tbody-expenses');
             expensesTbody.innerHTML = '';
             let totalExpenses = 0;
-            let expWages = 0;
-            let expOutsourcing = 0;
-            let expOther = 0;
 
-            // Labor Costs from Tasks -> Wages
+            // Tasks (Individual Items)
             if (project.tasks) {
                 project.tasks.forEach(task => {
                     const laborCost = (task.unitPrice || 0) * (task.quantity || 0);
                     if (laborCost > 0) {
-                        expWages += laborCost;
+                        totalExpenses += laborCost;
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `<td>${task.name}</td><td class="numeric">${formatCurrency(laborCost)}</td>`;
+                        expensesTbody.appendChild(tr);
                     }
                 });
             }
 
-            // General Expenses
+            // General Expenses (Aggregated)
+            let otherExpensesTotal = 0;
             if (project.expenses) {
                 project.expenses.forEach(exp => {
                     if (exp.type !== '積立金') {
-                        const amt = parseInt(exp.amount || 0);
-                        if (exp.type === '外注費') {
-                            expOutsourcing += amt;
-                        } else {
-                            expOther += amt;
-                        }
+                        otherExpensesTotal += parseInt(exp.amount || 0);
                     }
                 });
             }
-            totalExpenses = expWages + expOutsourcing + expOther;
+            totalExpenses += otherExpensesTotal;
 
-            const expRows = [
-                { name: '工賃', val: expWages },
-                { name: '外注費', val: expOutsourcing },
-                { name: 'その他費用', val: expOther }
-            ];
-
-            expRows.forEach(row => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `<td>${row.name}</td><td class="numeric">${formatCurrency(row.val)}</td>`;
-                expensesTbody.appendChild(tr);
-            });
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>その他費用</td><td class="numeric">${formatCurrency(otherExpensesTotal)}</td>`;
+            expensesTbody.appendChild(tr);
             document.getElementById('view-total-expenses').textContent = formatCurrency(totalExpenses);
 
             // Summary
@@ -1377,11 +1365,11 @@
                                 <tbody id="view-tbody-reserves">
                                     <!-- JS Injected -->
                                 </tbody>
-                                tfoot>
-                                <tr style="font-weight: bold; background-color: var(--color-base-secondary);">
-                                    <td style="text-align: right;">積立金計</td>
-                                    <td class="numeric" id="view-total-reserves">0</td>
-                                </tr>
+                                <tfoot>
+                                    <tr style="font-weight: bold; background-color: var(--color-base-secondary);">
+                                        <td style="text-align: right;">積立金計</td>
+                                        <td class="numeric" id="view-total-reserves">0</td>
+                                    </tr>
                                 </tfoot>
                             </table>
                         </div>
