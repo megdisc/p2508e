@@ -312,49 +312,79 @@
             const container = document.getElementById('task-list-editor');
             container.innerHTML = '';
 
-            tempProjectData.tasks.forEach((task, taskIndex) => {
-                const taskEl = document.createElement('div');
-                taskEl.className = 'card';
-                taskEl.style.border = '1px solid var(--border-subtle)';
+            const tableContainer = document.createElement('div');
+            tableContainer.className = 'table-container';
 
-                let skillsHtml = '';
-                if (task.skills && task.skills.length > 0) {
-                    skillsHtml = task.skills.map((skill, skillIndex) => `
-                        <div style="display: flex; align-items: center; gap: var(--spacing-2); margin-top: var(--spacing-2);">
-                            <input type="text" class="input-field" style="padding: 4px 8px; font-size: 12px;" value="${skill.name}" onchange="updateSkill(${taskIndex}, ${skillIndex}, 'name', this.value)" placeholder="スキル名">
-                            <select class="input-field" style="padding: 4px 8px; font-size: 12px; width: 80px;" onchange="updateSkill(${taskIndex}, ${skillIndex}, 'level', this.value)">
-                                <option value="1" ${skill.level == 1 ? 'selected' : ''}>Lv.1</option>
-                                <option value="2" ${skill.level == 2 ? 'selected' : ''}>Lv.2</option>
-                                <option value="3" ${skill.level == 3 ? 'selected' : ''}>Lv.3</option>
-                                <option value="4" ${skill.level == 4 ? 'selected' : ''}>Lv.4</option>
-                                <option value="5" ${skill.level == 5 ? 'selected' : ''}>Lv.5</option>
-                            </select>
-                            <button class="btn btn-icon btn-icon-error" onclick="removeSkill(${taskIndex}, ${skillIndex})" title="スキル削除">
-                                <span class="material-symbols-outlined" style="font-size: 16px;">close</span>
-                            </button>
-                        </div>
-                    `).join('');
-                }
+            const table = document.createElement('table');
+            table.className = 'table';
+            table.style.width = '100%';
 
-                taskEl.innerHTML = `
-                    <div class="card-body" style="padding: var(--spacing-3);">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-2);">
-                            <input type="text" class="input-field" value="${task.name}" onchange="updateTaskName(${taskIndex}, this.value)" placeholder="タスク名" style="font-weight: bold;">
+            // Header
+            const thead = document.createElement('thead');
+            thead.innerHTML = `
+                <tr>
+                    <th style="width: 30%;">タスク名</th>
+                    <th>必要スキル</th>
+                    <th style="width: 80px; text-align: center;">操作</th>
+                </tr>
+            `;
+            table.appendChild(thead);
+
+            const tbody = document.createElement('tbody');
+
+            if (tempProjectData.tasks.length === 0) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = '<td colspan="3" style="text-align: center; color: var(--color-base-quaternary); padding: var(--spacing-4);">タスクが登録されていません。</td>';
+                tbody.appendChild(tr);
+            } else {
+                tempProjectData.tasks.forEach((task, taskIndex) => {
+                    const tr = document.createElement('tr');
+
+                    // Skills
+                    let skillsHtml = '';
+                    if (task.skills && task.skills.length > 0) {
+                        skillsHtml = task.skills.map((skill, skillIndex) => `
+                            <div style="display: flex; align-items: center; gap: var(--spacing-2); margin-bottom: var(--spacing-2);">
+                                <input type="text" class="input-field" style="padding: 4px 8px; font-size: 12px; width: 140px;" value="${skill.name}" onchange="updateSkill(${taskIndex}, ${skillIndex}, 'name', this.value)" placeholder="スキル名">
+                                <select class="input-field" style="padding: 4px 8px; font-size: 12px; width: 80px;" onchange="updateSkill(${taskIndex}, ${skillIndex}, 'level', this.value)">
+                                    <option value="1" ${skill.level == 1 ? 'selected' : ''}>Lv.1</option>
+                                    <option value="2" ${skill.level == 2 ? 'selected' : ''}>Lv.2</option>
+                                    <option value="3" ${skill.level == 3 ? 'selected' : ''}>Lv.3</option>
+                                    <option value="4" ${skill.level == 4 ? 'selected' : ''}>Lv.4</option>
+                                    <option value="5" ${skill.level == 5 ? 'selected' : ''}>Lv.5</option>
+                                </select>
+                                <button class="btn btn-icon btn-icon-error" style="width: 24px; height: 24px; font-size: 14px;" onclick="removeSkill(${taskIndex}, ${skillIndex})" title="スキル削除">
+                                    <span class="material-symbols-outlined" style="font-size: 14px;">close</span>
+                                </button>
+                            </div>
+                        `).join('');
+                    }
+                    skillsHtml += `
+                        <button class="btn btn-sm btn-neutral" onclick="addSkill(${taskIndex})" style="padding: 2px 8px; font-size: 11px; height: auto;">
+                            <span class="material-symbols-outlined" style="font-size: 12px;">add</span> スキル追加
+                        </button>
+                    `;
+
+                    tr.innerHTML = `
+                        <td style="vertical-align: top;">
+                            <input type="text" class="input-field" value="${task.name}" onchange="updateTaskName(${taskIndex}, this.value)" placeholder="タスク名">
+                        </td>
+                        <td style="vertical-align: top;">
+                            ${skillsHtml}
+                        </td>
+                        <td style="vertical-align: top; text-align: center;">
                             <button class="btn btn-icon btn-icon-error" onclick="removeTask(${taskIndex})" title="タスク削除">
                                 <span class="material-symbols-outlined">delete</span>
                             </button>
-                        </div>
-                        <div style="padding-left: var(--spacing-3); border-left: 2px solid var(--border-subtle);">
-                            <div style="font-size: var(--font-body-xs); color: var(--color-text-secondary); margin-bottom: var(--spacing-1);">必要スキル</div>
-                            ${skillsHtml}
-                            <button class="btn btn-sm btn-ghost" onclick="addSkill(${taskIndex})" style="margin-top: var(--spacing-2); padding-left: 0;">
-                                <span class="material-symbols-outlined" style="font-size: 14px;">add</span> スキル追加
-                            </button>
-                        </div>
-                    </div>
-                `;
-                container.appendChild(taskEl);
-            });
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+
+            table.appendChild(tbody);
+            tableContainer.appendChild(table);
+            container.appendChild(tableContainer);
         }
 
         function addTask() {
@@ -1264,15 +1294,14 @@
 
                     <!-- Task Definition Tab -->
                     <div id="tab-tasks" class="tab-content">
-                        <div style="margin-bottom: var(--spacing-stack-md); display: flex; justify-content: flex-end;">
+                        <div id="task-list-editor" style="margin-bottom: var(--spacing-stack-md);">
+                            <!-- Tasks will be rendered here via JS -->
+                        </div>
+                        <div style="display: flex; justify-content: center;">
                             <button class="btn btn-sm btn-primary" onclick="addTask()">
                                 <span class="material-symbols-outlined" style="font-size: 16px;">add</span>
                                 タスク追加
                             </button>
-                        </div>
-                        <div id="task-list-editor"
-                            style="display: flex; flex-direction: column; gap: var(--spacing-stack-md);">
-                            <!-- Tasks will be rendered here via JS -->
                         </div>
                     </div>
 

@@ -135,6 +135,11 @@
     border-color: var(--color-semantic-neutral-sub);
 }
 
+.btn-sm {
+    padding: var(--spacing-1) var(--spacing-3);
+    font-size: var(--font-size-xs);
+}
+
 /* アイコンボタン */
 .btn.btn-icon {
     width: 2.125rem;
@@ -143,6 +148,12 @@
     border-radius: 50%;
     font-size: 1.25rem;
     line-height: 1;
+}
+
+.btn.btn-icon-sm {
+    width: 1.75rem;
+    height: 1.75rem;
+    font-size: 1rem;
 }
 
 .btn.btn-icon-primary {
