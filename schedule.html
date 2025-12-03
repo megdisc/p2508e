@@ -152,7 +152,11 @@
         }
 
         .bar-status-cancelled {
-            background-color: var(--color-semantic-cancelled-main);
+            background-color: var(--color-semantic-error-main);
+        }
+
+        .bar-status-pending {
+            background-color: var(--color-semantic-warning-main);
         }
 
         /* 職員用バー */
@@ -471,6 +475,7 @@
                                     <option value="">すべて</option>
                                     <option value="not-started">未着手</option>
                                     <option value="in-progress">進行中</option>
+                                    <option value="pending">保留</option>
                                     <option value="completed">完了</option>
                                     <option value="cancelled">中止</option>
                                 </select>
@@ -573,15 +578,15 @@
                             <tr>
                                 <td class="col-fixed">
                                     <div class="info-cell">
-                                        <div class="cell-text">名刺データ入力</div>
-                                        <div><span class="badge badge-success badge-sm">完了</span></div>
+                                        <div class="cell-text">自主製品（パン）製造・販売</div>
+                                        <div><span class="badge badge-primary badge-sm">進行中</span></div>
                                     </div>
                                 </td>
                                 <td colspan="1"></td>
                                 <td colspan="10">
-                                    <div class="gantt-bar bar-status-completed"
-                                        onclick="showModal('modal-edit-task', null, '名刺データ入力: 入力')" title="入力: 高橋 一郎">
-                                        入力: 高橋 一郎
+                                    <div class="gantt-bar bar-status-in-progress"
+                                        onclick="showModal('modal-edit-task', null, 'パン製造')" title="パン製造">
+                                        パン製造
                                     </div>
                                 </td>
                                 <td colspan="20"></td>
@@ -589,15 +594,15 @@
                             <tr>
                                 <td class="col-fixed">
                                     <div class="info-cell">
-                                        <div class="cell-text">11月度清掃準備</div>
-                                        <div><span class="badge badge-neutral badge-sm">未着手</span></div>
+                                        <div class="cell-text">施設外就労（清掃）</div>
+                                        <div><span class="badge badge-primary badge-sm">進行中</span></div>
                                     </div>
                                 </td>
                                 <td colspan="25"></td>
                                 <td colspan="2">
-                                    <div class="gantt-bar bar-status-not-started"
-                                        onclick="showModal('modal-edit-task', null, '11月度清掃準備: 準備')" title="準備: 全員">
-                                        準備: 全員
+                                    <div class="gantt-bar bar-status-in-progress"
+                                        onclick="showModal('modal-edit-task', null, '清掃作業')" title="清掃作業">
+                                        清掃作業
                                     </div>
                                 </td>
                                 <td colspan="4"></td>
@@ -605,18 +610,43 @@
                             <tr>
                                 <td class="col-fixed">
                                     <div class="info-cell">
-                                        <div class="cell-text">イベント用菓子製造</div>
-                                        <div><span class="badge badge-cancelled badge-sm">中止</span></div>
+                                        <div class="cell-text">地域バザー出店</div>
+                                        <div><span class="badge badge-success badge-sm">完了</span></div>
+                                    </div>
+                                </td>
+                                <td colspan="10"></td>
+                                <td colspan="5">
+                                    <div class="gantt-bar bar-status-completed"
+                                        onclick="showModal('modal-edit-task', null, '接客販売')" title="接客販売">
+                                        接客販売
+                                    </div>
+                                </td>
+                                <td colspan="16"></td>
+                            </tr>
+                            <tr>
+                                <td class="col-fixed">
+                                    <div class="info-cell">
+                                        <div class="cell-text">花見イベント販売</div>
+                                        <div><span class="badge badge-error badge-sm">中止</span></div>
                                     </div>
                                 </td>
                                 <td colspan="15"></td>
                                 <td colspan="5">
                                     <div class="gantt-bar bar-status-cancelled"
-                                        onclick="showModal('modal-edit-task', null, 'イベント用菓子製造: 製造')" title="製造: (中止)">
-                                        製造: (中止)
+                                        onclick="showModal('modal-edit-task', null, '販売')" title="販売: (中止)">
+                                        販売: (中止)
                                     </div>
                                 </td>
                                 <td colspan="11"></td>
+                            </tr>
+                            <tr>
+                                <td class="col-fixed">
+                                    <div class="info-cell">
+                                        <div class="cell-text">新規カフェ出店計画</div>
+                                        <div><span class="badge badge-warning badge-sm">保留</span></div>
+                                    </div>
+                                </td>
+                                <td colspan="31"></td>
                             </tr>
                             <tr>
                                 <td class="col-fixed" style="height: 4rem;"></td>
