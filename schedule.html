@@ -281,14 +281,116 @@
     </style>
 
     <script>
+        // --- Mock Data ---
+        const staffData = [
+            { id: 'staff1', name: '田中 健司' },
+            { id: 'staff2', name: '伊藤 良子' },
+            { id: 'staff3', name: '佐藤 吾郎' }
+        ];
+
+        const userData = [
+            { id: 'user1', name: '山田 太郎', skills: ['1-1-1', '1-2-1'] }, // 封入, Instagram
+            { id: 'user2', name: '鈴木 花子', skills: ['1-1-1', '2-1-1'] }, // 封入, ワイヤーフレーム
+            { id: 'user3', name: '高橋 一郎', skills: ['3-1-1'] },          // HTML/CSS
+            { id: 'user4', name: '中村 次郎', skills: [] }
+        ];
+
+        const subcontractorData = [
+            { id: 'sub1', name: '株式会社A' },
+            { id: 'sub2', name: '有限会社B' }
+        ];
+
+        const clientData = [
+            { id: 'client1', name: '○○市役所' },
+            { id: 'client2', name: '△△商事' }
+        ];
+
+        // Task to Skill mapping (Task Name -> Skill ID)
+        const taskSkills = {
+            'DM封入作業: 封入': ['1-1-1'],
+            'DM封入作業: 検品': [], // No specific skill required or handled by staff
+            'パン製造': [],
+            '清掃作業': [],
+            '接客販売': [],
+            '名刺データ入力: 入力': ['3-1-1'] // Assuming data entry needs some skill, mapping to HTML for demo
+        };
+
+        let currentEditingTaskName = null;
+
         function showModal(id, mode = null, taskName = null) {
             document.getElementById(id).style.display = 'flex';
             if (id === 'modal-edit-task' && taskName) {
                 document.querySelector('#modal-edit-task .modal-header').textContent = taskName;
+                currentEditingTaskName = taskName;
+
+                // Reset to default view (e.g., Staff) or load existing assignment
+                // For now, default to Staff
+                // Reset to default view (e.g., Staff) or load existing assignment
+                // For now, default to Staff
+                // document.querySelector('input[name="assignee-type"][value="staff"]').checked = true;
+                renderAssignees();
             }
         }
         function hideModal(id) {
             document.getElementById(id).style.display = 'none';
+        }
+
+        function renderAssignees() {
+            // Clear current lists
+            document.getElementById('list-staff').innerHTML = '';
+            document.getElementById('list-user').innerHTML = '';
+            document.getElementById('list-subcontractor').innerHTML = '';
+            document.getElementById('list-client').innerHTML = '';
+
+            const groups = [
+                { type: 'staff', targetId: 'list-staff', data: staffData },
+                { type: 'user', targetId: 'list-user', data: userData },
+                { type: 'subcontractor', targetId: 'list-subcontractor', data: subcontractorData },
+                { type: 'client', targetId: 'list-client', data: clientData }
+            ];
+
+            groups.forEach(group => {
+                let groupData = group.data;
+                const container = document.getElementById(group.targetId);
+
+                // Filter users based on skills
+                if (group.type === 'user') {
+                    const requiredSkills = taskSkills[currentEditingTaskName] || [];
+                    if (requiredSkills.length > 0) {
+                        groupData = groupData.filter(user =>
+                            requiredSkills.every(reqSkill => user.skills.includes(reqSkill))
+                        );
+                    }
+                }
+
+                if (groupData.length > 0) {
+                    groupData.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'form-check';
+                        div.style.marginBottom = 'var(--spacing-1)';
+
+                        const input = document.createElement('input');
+                        input.className = 'form-check-input';
+                        input.type = 'radio';
+                        input.name = 'assignee';
+                        input.id = `assignee-${item.id}`;
+                        input.value = item.id;
+
+                        if (group.type === 'staff' && item.id === 'staff1') input.checked = true;
+
+                        const label = document.createElement('label');
+                        label.className = 'form-check-label';
+                        label.htmlFor = `assignee-${item.id}`;
+                        label.textContent = item.name;
+
+                        div.appendChild(input);
+                        div.appendChild(label);
+                        container.appendChild(div);
+                    });
+                } else {
+                    container.innerHTML = '<div style="color: var(--color-base-quaternary); font-size: var(--font-size-sm);">なし</div>';
+                }
+            });
         }
 
         function openDailyReportModal(taskName = '', staffName = '') {
@@ -802,7 +904,7 @@
         </main>
 
         <div class="modal-backdrop" id="modal-edit-task" style="display: none;">
-            <div class="modal-content">
+            <div class="modal-content" style="max-width: 900px;">
                 <div class="modal-header">作業割り当て編集</div>
                 <div class="modal-body">
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4);">
@@ -811,17 +913,43 @@
                         <div class="form-group"><label class="form-label">終了日</label><input type="date"
                                 class="input-field" value="2025-08-08"></div>
                     </div>
-                    <div class="form-group"><label class="form-label">担当者</label>
-                        <div style="display: flex; flex-direction: column; gap: var(--spacing-2);">
-                            <label style="display: flex; align-items: center; gap: var(--spacing-2); cursor: pointer;">
-                                <input type="radio" name="staff" value="yamada" checked> 山田 太郎
-                            </label>
-                            <label style="display: flex; align-items: center; gap: var(--spacing-2); cursor: pointer;">
-                                <input type="radio" name="staff" value="suzuki"> 鈴木 花子
-                            </label>
-                            <label style="display: flex; align-items: center; gap: var(--spacing-2); cursor: pointer;">
-                                <input type="radio" name="staff" value="tanaka"> 田中 健司
-                            </label>
+
+                    <div class="form-group"><label class="form-label">担当者選択</label>
+                        <div
+                            style="display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--spacing-4); border: 1px solid var(--color-input-border); border-radius: var(--radius-input); padding: var(--spacing-4);">
+
+                            <!-- Column 1: Staff -->
+                            <div>
+                                <div
+                                    style="font-size: var(--font-size-xs); color: var(--color-base-quaternary); margin-bottom: var(--spacing-2); font-weight: bold; border-bottom: 1px solid var(--color-base-quinary); padding-bottom: var(--spacing-1);">
+                                    職員</div>
+                                <div id="list-staff"></div>
+                            </div>
+
+                            <!-- Column 2: User -->
+                            <div>
+                                <div
+                                    style="font-size: var(--font-size-xs); color: var(--color-base-quaternary); margin-bottom: var(--spacing-2); font-weight: bold; border-bottom: 1px solid var(--color-base-quinary); padding-bottom: var(--spacing-1);">
+                                    利用者</div>
+                                <div id="list-user"></div>
+                            </div>
+
+                            <!-- Column 3: Subcontractor -->
+                            <div>
+                                <div
+                                    style="font-size: var(--font-size-xs); color: var(--color-base-quaternary); margin-bottom: var(--spacing-2); font-weight: bold; border-bottom: 1px solid var(--color-base-quinary); padding-bottom: var(--spacing-1);">
+                                    外注先</div>
+                                <div id="list-subcontractor"></div>
+                            </div>
+
+                            <!-- Column 4: Client -->
+                            <div>
+                                <div
+                                    style="font-size: var(--font-size-xs); color: var(--color-base-quaternary); margin-bottom: var(--spacing-2); font-weight: bold; border-bottom: 1px solid var(--color-base-quinary); padding-bottom: var(--spacing-1);">
+                                    顧客</div>
+                                <div id="list-client"></div>
+                            </div>
+
                         </div>
                     </div>
                 </div>
