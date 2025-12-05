@@ -554,11 +554,10 @@
                     <div style="display: flex; align-items: center; gap: var(--spacing-2);">
                         <button class="btn btn-icon btn-neutral" onclick="changeDate(-1)"><span
                                 class="material-symbols-outlined">chevron_left</span></button>
-                        <input type="date" id="schedule-date" class="input-field" value="2025-11-22"
-                            style="width: auto;">
+                        <input type="month" id="schedule-date" class="input-field" value="2025-11" style="width: auto;">
                         <button class="btn btn-icon btn-neutral" onclick="changeDate(1)"><span
                                 class="material-symbols-outlined">chevron_right</span></button>
-                        <button class="btn btn-neutral" onclick="changeDate(0)">今日</button>
+                        <button class="btn btn-neutral" onclick="changeDate(0)">今月</button>
                     </div>
                 </div>
 
@@ -811,6 +810,7 @@
                                 <td class="col-fixed">
                                     <div class="info-cell">
                                         <div class="cell-text">山田 太郎</div>
+                                        <div><span class="badge badge-warning badge-sm">利用者</span></div>
                                     </div>
                                 </td>
                                 <td colspan="3"></td>
@@ -827,7 +827,7 @@
                                 </td>
                                 <td colspan="12"></td>
                                 <td colspan="2">
-                                    <div class="gantt-bar bar-status-not-started"
+                                    <div class="gantt-bar bar-status-in-progress"
                                         onclick="showModal('modal-edit-task', null, '11月度清掃準備: 準備')"
                                         title="11月度清掃準備: 準備">
                                         清掃準備: 準備</div>
@@ -838,6 +838,7 @@
                                 <td class="col-fixed">
                                     <div class="info-cell">
                                         <div class="cell-text">鈴木 花子</div>
+                                        <div><span class="badge badge-warning badge-sm">利用者</span></div>
                                     </div>
                                 </td>
                                 <td colspan="3"></td>
@@ -848,7 +849,7 @@
                                 </td>
                                 <td colspan="17"></td>
                                 <td colspan="2">
-                                    <div class="gantt-bar bar-status-not-started"
+                                    <div class="gantt-bar bar-status-in-progress"
                                         onclick="showModal('modal-edit-task', null, '11月度清掃準備: 準備')"
                                         title="11月度清掃準備: 準備">
                                         清掃準備: 準備</div>
@@ -859,6 +860,7 @@
                                 <td class="col-fixed">
                                     <div class="info-cell">
                                         <div class="cell-text">高橋 一郎</div>
+                                        <div><span class="badge badge-warning badge-sm">利用者</span></div>
                                     </div>
                                 </td>
                                 <td colspan="1"></td>
@@ -869,7 +871,7 @@
                                 </td>
                                 <td colspan="14"></td>
                                 <td colspan="2">
-                                    <div class="gantt-bar bar-status-not-started"
+                                    <div class="gantt-bar bar-status-in-progress"
                                         onclick="showModal('modal-edit-task', null, '11月度清掃準備: 準備')"
                                         title="11月度清掃準備: 準備">
                                         清掃準備: 準備</div>
@@ -880,16 +882,34 @@
                                 <td class="col-fixed">
                                     <div class="info-cell">
                                         <div class="cell-text">伊藤 良子</div>
-                                        <div><span class="badge badge-neutral badge-sm">職員</span></div>
+                                        <div><span class="badge badge-primary badge-sm">職員</span></div>
                                     </div>
                                 </td>
                                 <td colspan="5"></td>
                                 <td colspan="5">
-                                    <div class="gantt-bar bar-staff"
+                                    <div class="gantt-bar bar-status-in-progress"
                                         onclick="showModal('modal-edit-task', null, 'DM封入作業: 検品')" title="DM封入作業: 検品">
                                         DM封入作業: 検品</div>
                                 </td>
                                 <td colspan="21"></td>
+                            </tr>
+                            <tr>
+                                <td class="col-fixed">
+                                    <div class="info-cell">
+                                        <div class="cell-text">株式会社A</div>
+                                        <div><span class="badge badge-neutral badge-sm">外注先</span></div>
+                                    </div>
+                                </td>
+                                <td colspan="31"></td>
+                            </tr>
+                            <tr>
+                                <td class="col-fixed">
+                                    <div class="info-cell">
+                                        <div class="cell-text">○○市役所</div>
+                                        <div><span class="badge badge-neutral badge-sm">顧客</span></div>
+                                    </div>
+                                </td>
+                                <td colspan="31"></td>
                             </tr>
                             <tr>
                                 <td class="col-fixed" style="height: 4rem;"></td>
