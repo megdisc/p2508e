@@ -35,7 +35,7 @@
             contents.forEach(content => content.classList.remove('is-active'));
             document.getElementById(tabId).classList.add('is-active');
         }
-    
+
         // サイドバーの現在地連動（アコーディオン自動展開）
         document.addEventListener("DOMContentLoaded", () => {
             const currentFile = window.location.pathname.split("/").pop();
@@ -70,8 +70,21 @@
 
                 <a href="index.html" class="nav-link">トップ</a>
 
-                <details class="nav-accordion"><summary>施設情報</summary><ul><li><a href="corporation.html">法人情報</a></li><li><a href="office.html">事業所情報</a></li></ul></details>
-                <details class="nav-accordion"><summary>関係者情報</summary><ul><li><a href="staff.html">職員情報</a></li><li><a href="members.html">利用者情報</a></li><li><a href="partners.html">取引先情報</a></li></ul></details>
+                <details class="nav-accordion">
+                    <summary>施設情報</summary>
+                    <ul>
+                        <li><a href="corporation.html">法人情報</a></li>
+                        <li><a href="office.html">事業所情報</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>関係者情報</summary>
+                    <ul>
+                        <li><a href="staff.html">職員情報</a></li>
+                        <li><a href="members.html">利用者情報</a></li>
+                        <li><a href="partners.html">取引先情報</a></li>
+                    </ul>
+                </details>
 
                 <details class="nav-accordion">
                     <summary>スキル情報</summary>
@@ -90,13 +103,19 @@
                     </ul>
                 </details>
 
-                <details class="nav-accordion"><summary>積立金情報</summary><ul><li><a href="savings-settings.html">積立金設定</a></li><li><a href="savings-history.html">積立金履歴</a></li></ul></details>
+                <details class="nav-accordion">
+                    <summary>積立金情報</summary>
+                    <ul>
+                        <li><a href="savings-settings.html">積立金設定</a></li>
+                        <li><a href="savings-history.html">積立金履歴</a></li>
+                    </ul>
+                </details>
 
                 <a href="attendance.html" class="nav-link">出欠情報</a>
 
                 <details class="nav-accordion">
-                <summary>生産活動</summary>
-                <ul>
+                    <summary>生産活動</summary>
+                    <ul>
                         <li><a href="projects.html">案件情報</a></li>
                         <li><a href="schedule.html">進捗状況</a></li>
                         <li><a href="actuals.html">収入・経費実績</a></li>
@@ -147,14 +166,19 @@
                 <h1 style="margin: 0 0 var(--spacing-stack-md) 0;">法人情報</h1>
 
                 <div class="card">
-                    
-                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
+
+                    <div class="card-header"
+                        style="display: flex; justify-content: space-between; align-items: flex-start;">
                         <div>
-                            <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">株式会社こんぱす</div>
-                            </div>
-                        <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
-                            
-                            <button class="btn btn-icon btn-icon-success" title="修正" onclick="showModal('modal-edit-corporation')">
+                            <div
+                                style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">
+                                株式会社こんぱす</div>
+                        </div>
+                        <div
+                            style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
+
+                            <button class="btn btn-icon btn-icon-success" title="修正"
+                                onclick="showModal('modal-edit-corporation')">
                                 <span class="material-symbols-outlined">edit</span>
                             </button>
                         </div>
@@ -165,6 +189,10 @@
                             <div>
                                 <dt>法人番号</dt>
                                 <dd>1234567890123</dd>
+                            </div>
+                            <div>
+                                <dt>決算期</dt>
+                                <dd>12月31日</dd>
                             </div>
                             <div>
                                 <dt>代表者名</dt>
@@ -182,33 +210,88 @@
                                 <dt>FAX番号</dt>
                                 <dd>092-123-4568</dd>
                             </div>
-                            </dl>
+                        </dl>
                     </div>
                 </div>
 
             </div>
 
         </main>
-        
+
         <div class="modal-backdrop" id="modal-edit-corporation" style="display: none;">
             <div class="modal-content">
                 <div class="modal-header">
                     法人情報の編集
                 </div>
                 <div class="modal-body">
-                    
+
                     <form id="corporation-edit-form">
-                        
-                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4);">
-                            
+
+                        <div
+                            style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4);">
+
                             <div class="form-group" style="margin-bottom: 0;">
                                 <label class="form-label" for="corp-name">法人名</label>
                                 <input type="text" id="corp-name" class="input-field" value="株式会社こんぱす">
                             </div>
-                            
+
                             <div class="form-group" style="margin-bottom: 0;">
                                 <label class="form-label" for="corp-number">法人番号</label>
-                                <input type="number" id="corp-number" class="input-field" value="1234567890123" placeholder="13桁の半角数字">
+                                <input type="number" id="corp-number" class="input-field" value="1234567890123"
+                                    placeholder="13桁の半角数字">
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label class="form-label">決算期</label>
+                                <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                    <select id="corp-fiscal-month" class="input-field">
+                                        <option value="1">1月</option>
+                                        <option value="2">2月</option>
+                                        <option value="3">3月</option>
+                                        <option value="4">4月</option>
+                                        <option value="5">5月</option>
+                                        <option value="6">6月</option>
+                                        <option value="7">7月</option>
+                                        <option value="8">8月</option>
+                                        <option value="9">9月</option>
+                                        <option value="10">10月</option>
+                                        <option value="11">11月</option>
+                                        <option value="12" selected>12月</option>
+                                    </select>
+                                    <select id="corp-fiscal-day" class="input-field">
+                                        <option value="1">1日</option>
+                                        <option value="2">2日</option>
+                                        <option value="3">3日</option>
+                                        <option value="4">4日</option>
+                                        <option value="5">5日</option>
+                                        <option value="6">6日</option>
+                                        <option value="7">7日</option>
+                                        <option value="8">8日</option>
+                                        <option value="9">9日</option>
+                                        <option value="10">10日</option>
+                                        <option value="11">11日</option>
+                                        <option value="12">12日</option>
+                                        <option value="13">13日</option>
+                                        <option value="14">14日</option>
+                                        <option value="15">15日</option>
+                                        <option value="16">16日</option>
+                                        <option value="17">17日</option>
+                                        <option value="18">18日</option>
+                                        <option value="19">19日</option>
+                                        <option value="20">20日</option>
+                                        <option value="21">21日</option>
+                                        <option value="22">22日</option>
+                                        <option value="23">23日</option>
+                                        <option value="24">24日</option>
+                                        <option value="25">25日</option>
+                                        <option value="26">26日</option>
+                                        <option value="27">27日</option>
+                                        <option value="28">28日</option>
+                                        <option value="29">29日</option>
+                                        <option value="30">30日</option>
+                                        <option value="31" selected>31日</option>
+                                    </select>
+                                </div>
                             </div>
 
                             <div class="form-group" style="margin-bottom: 0;">
@@ -217,32 +300,38 @@
                             </div>
                         </div>
 
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-6);">
+                        <div
+                            style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-6);">
 
                             <div class="form-group" style="margin-bottom: 0; grid-column: 1 / 2;">
                                 <label class="form-label" for="corp-zip1">郵便番号</label>
                                 <div style="display: flex; align-items: center; gap: var(--spacing-2);">
                                     <input type="text" id="corp-zip1" class="input-field" value="810" placeholder="810">
                                     <span>-</span>
-                                    <input type="text" id="corp-zip2" class="input-field" value="0001" placeholder="0001">
+                                    <input type="text" id="corp-zip2" class="input-field" value="0001"
+                                        placeholder="0001">
                                 </div>
                             </div>
-                            
+
                             <div class="form-group" style="margin-bottom: 0; grid-column: 1 / -1;">
                                 <label class="form-label" for="corp-address1">住所</label>
-                                <div style="display: grid; grid-template-columns: 1fr 1.5fr 1.5fr; gap: var(--spacing-3);">
+                                <div
+                                    style="display: grid; grid-template-columns: 1fr 1.5fr 1.5fr; gap: var(--spacing-3);">
                                     <select id="corp-address1" class="input-field">
                                         <option value="">都道府県</option>
                                         <option value="福岡県" selected>福岡県</option>
-                                        </select>
-                                    <input type="text" id="corp-address2" class="input-field" value="福岡市中央区天神1-1-1" placeholder="市区町村丁目番地">
-                                    <input type="text" id="corp-address3" class="input-field" value="天神ビル 5F" placeholder="建物名・部屋番号">
+                                    </select>
+                                    <input type="text" id="corp-address2" class="input-field" value="福岡市中央区天神1-1-1"
+                                        placeholder="市区町村丁目番地">
+                                    <input type="text" id="corp-address3" class="input-field" value="天神ビル 5F"
+                                        placeholder="建物名・部屋番号">
                                 </div>
                             </div>
                         </div>
 
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-6);">
-                            
+                        <div
+                            style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-6);">
+
                             <div class="form-group" style="margin-bottom: 0;">
                                 <label class="form-label" for="corp-phone1">電話番号</label>
                                 <div style="display: flex; align-items: center; gap: var(--spacing-2);">
@@ -253,7 +342,7 @@
                                     <input type="text" id="corp-phone3" class="input-field" value="4567">
                                 </div>
                             </div>
-                            
+
                             <div class="form-group" style="margin-bottom: 0;">
                                 <label class="form-label" for="corp-fax1">FAX番号</label>
                                 <div style="display: flex; align-items: center; gap: var(--spacing-2);">
