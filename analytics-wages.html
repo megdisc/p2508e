@@ -468,7 +468,11 @@
                         // 平均工賃計算
                         const averageWages = sourceData.total_wages.map((total, i) => {
                             const count = sourceData.paid_user_count[i];
-                            return count > 0 ? Math.round(total / count) : 0;
+                            let avg = count > 0 ? total / count : 0;
+                            if (currentMode === 'annual') {
+                                avg = avg / 12; // 年次は月額平均にする
+                            }
+                            return Math.round(avg);
                         });
 
                         const colorPrimary = getCssVar('--color-semantic-primary-main') || '#007BFF';
@@ -501,6 +505,10 @@
                             options: {
                                 responsive: true,
                                 maintainAspectRatio: false,
+                                interaction: {
+                                    mode: 'index',
+                                    intersect: false,
+                                },
                                 plugins: {
                                     title: {
                                         display: false,
@@ -579,7 +587,12 @@
                             const totalUsersAttendance = sourceData.total_users_attendance[i];
                             const openDays = sourceData.open_days[i];
 
-                            const averageWage = paidUserCount > 0 ? Math.round(totalWages / paidUserCount) : 0;
+                            let averageWage = paidUserCount > 0 ? totalWages / paidUserCount : 0;
+                            if (currentMode === 'annual') {
+                                averageWage = averageWage / 12;
+                            }
+                            averageWage = Math.round(averageWage);
+
                             const averageUsersPerDay = openDays > 0 ? (totalUsersAttendance / openDays).toFixed(1) : 0;
 
                             html += '<tr>';
