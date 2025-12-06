@@ -479,6 +479,18 @@
                         const colorText = getCssVar('--color-base-quaternary') || '#666666';
                         const colorGrid = getCssVar('--color-base-quinary') || '#CCCCCC';
 
+                        // Y軸の最小値・最大値を計算（表示範囲を調整するため）
+                        const minWage = Math.min(...averageWages);
+                        const maxWage = Math.max(...averageWages);
+                        // マージンを持たせる（最小値は少し下、最大値は少し上）
+                        // データの振れ幅が小さい場合も見やすくするため、データ範囲の10%程度のマージンを設定
+                        const range = maxWage - minWage;
+                        const margin = range * 0.1 || 1000; // rangeが0の場合は1000円のマージン
+
+                        // 最小値が0を下回らないように調整
+                        const yMin = Math.max(0, Math.floor((minWage - margin) / 100) * 100);
+                        const yMax = Math.ceil((maxWage + margin) / 100) * 100;
+
                         const chartData = {
                             labels: sourceData.labels,
                             datasets: [
@@ -490,7 +502,7 @@
                                     borderColor: colorPrimary,
                                     borderWidth: 2,
                                     fill: true,
-                                    tension: 0.3
+                                    tension: 0 // 直線にする
                                 }
                             ]
                         };
@@ -535,7 +547,9 @@
                                         }
                                     },
                                     y: {
-                                        beginAtZero: true,
+                                        beginAtZero: false, // 0始まりにしない
+                                        min: yMin,
+                                        max: yMax,
                                         ticks: {
                                             color: colorText,
                                             font: {
