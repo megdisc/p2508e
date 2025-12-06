@@ -1,58 +1,96 @@
 import os
 import re
 
-def reorder_nav_items(content):
-    # Find the Production Activity accordion
-    # We look for <summary>生産活動</summary> followed by <ul> containing the items
-    pattern = r'(<summary>生産活動</summary>\s*<ul>)(.*?)(</ul>)'
+def restructure_nav(content):
+    # 1. Remove the "Reserves Information" accordion
+    # Pattern: <details class="nav-accordion"[^>]*>\s*<summary>積立金情報</summary>.*?</ul>\s*</details>
+    reserves_accordion_pattern = r'(<details class="nav-accordion"[^>]*>\s*<summary>積立金情報</summary>.*?</ul>\s*</details>)'
     
-    def replace_callback(match):
+    # Check if the block exists
+    match = re.search(reserves_accordion_pattern, content, re.DOTALL)
+    if not match:
+        # If not found, maybe it's already removed or format is different.
+        # But we still need to add the links if they are missing (though this script assumes a one-time migration).
+        # Let's proceed assuming we might need to insert things even if removal fails (or if already removed).
+        pass
+    else:
+        # Remove it
+        content = content.replace(match.group(1), '')
+
+    # 2. Insert "Reserves Settings" link after "Wages/Deductions Information" accordion
+    # Find the end of Wages/Deductions accordion
+    # It usually ends with </details> followed by a newline and maybe spaces.
+    # We look for the specific accordion content to be sure.
+    wages_accordion_end_pattern = r'(<summary>工賃・控除情報</summary>.*?</ul>\s*</details>)'
+    
+    def insert_settings_link(match):
+        block = match.group(1)
+        # Check if link already exists to avoid duplication
+        if 'href="savings-settings.html"' in content:
+            return block
+        
+        # Determine active class
+        active_class = ' class="nav-link active"' if 'savings-settings.html" class="nav-link active"' in content or 'savings-settings.html" class="active"' in content else ' class="nav-link"'
+        # Actually, since we are processing the file content, we can check if this file IS savings-settings.html by context, 
+        # but the simple way is to check if the original link had 'active'.
+        # However, we just removed the original link. So we should have captured that state.
+        
+        # Let's refine: We should capture the active state BEFORE removing the original block.
+        return block + '\n\n                <a href="savings-settings.html" class="nav-link">積立金設定</a>'
+
+    # We need to handle the active state correctly.
+    # Let's restart the logic slightly.
+    
+    is_settings_active = 'href="savings-settings.html" class="nav-link active"' in content or 'href="savings-settings.html" class="active"' in content
+    is_history_active = 'href="savings-history.html" class="nav-link active"' in content or 'href="savings-history.html" class="active"' in content # Though history is usually in li > a
+    
+    # Remove the old block
+    content = re.sub(reserves_accordion_pattern, '', content, flags=re.DOTALL)
+    
+    # Insert Settings Link
+    settings_link = '<a href="savings-settings.html" class="nav-link' + (' active' if is_settings_active else '') + '">積立金設定</a>'
+    
+    # Regex to find the Wages accordion and append the link
+    # We use a lookbehind or just match the whole block and append
+    content = re.sub(
+        r'(<details class="nav-accordion"[^>]*>\s*<summary>工賃・控除情報</summary>.*?</ul>\s*</details>)', 
+        lambda m: m.group(1) + '\n\n                ' + settings_link, 
+        content, 
+        flags=re.DOTALL
+    )
+
+    # 3. Insert "Reserves History" into "Analytics" accordion
+    # Find the list inside Analytics accordion
+    analytics_list_pattern = r'(<summary>分析</summary>\s*<ul>)(.*?)(</ul>)'
+    
+    def insert_history_link(match):
         header = match.group(1)
         body = match.group(2)
         footer = match.group(3)
         
-        # Extract list items
-        # We assume each li is on its own line or clearly separated
-        # Let's split by </li> and reconstruct, or just find all <li>...</li>
-        
-        # Regex to find full <li>...</li> blocks, including newlines
-        li_pattern = r'(<li><a href="[^"]+".*?</a></li>)'
-        items = re.findall(li_pattern, body, re.DOTALL)
-        
-        if not items:
+        if 'savings-history.html' in body:
             return match.group(0)
             
-        # Map items by their href key
-        item_map = {}
-        for item in items:
-            if 'projects.html' in item:
-                item_map['projects'] = item
-            elif 'actuals.html' in item:
-                item_map['actuals'] = item
-            elif 'schedule.html' in item:
-                item_map['schedule'] = item
-            else:
-                # Keep other items if any (though unlikely based on request)
-                pass
+        # Append to the end of the list
+        history_item = '<li><a href="savings-history.html">積立金履歴</a></li>'
+        # If active, we might need to add class to a? usually li>a doesn't have class in this design, or does it?
+        # Checking other files: <li><a href="production-balance.html">生産活動収支</a></li>
+        # So no class on a tag usually for these lists, unless active?
+        # Let's check sidebar-nav ul a styles.
+        # If we need to mark it active:
+        if is_history_active:
+             history_item = '<li><a href="savings-history.html" class="active">積立金履歴</a></li>' # Assuming class active works here or we need to check css
         
-        # Define new order: projects, schedule, actuals
-        new_order = []
-        if 'projects' in item_map: new_order.append(item_map['projects'])
-        if 'schedule' in item_map: new_order.append(item_map['schedule'])
-        if 'actuals' in item_map: new_order.append(item_map['actuals'])
-        
-        # Reconstruct the body with proper indentation
-        # We'll assume standard indentation of 24 spaces based on previous file views, 
-        # or just use the indentation found in the original string if possible.
-        # For simplicity, we'll join with the whitespace that was likely there.
-        
-        # A simple join with newlines and indentation
-        indent = "\n                        "
-        new_body = indent + indent.join(new_order) + "\n                    "
-        
-        return f"{header}{new_body}{footer}"
+        # Add indentation
+        new_item = '\n                        ' + history_item
+        return f"{header}{body}{new_item}{footer}"
 
-    return re.sub(pattern, replace_callback, content, flags=re.DOTALL)
+    content = re.sub(analytics_list_pattern, insert_history_link, content, flags=re.DOTALL)
+    
+    # Clean up extra newlines if any
+    content = re.sub(r'\n\s*\n\s*\n', '\n\n', content)
+
+    return content
 
 def main():
     directory = '/home/megdisc/dev/p2508e'
@@ -62,7 +100,7 @@ def main():
             with open(filepath, 'r', encoding='utf-8') as f:
                 content = f.read()
             
-            new_content = reorder_nav_items(content)
+            new_content = restructure_nav(content)
             
             if new_content != content:
                 with open(filepath, 'w', encoding='utf-8') as f:
