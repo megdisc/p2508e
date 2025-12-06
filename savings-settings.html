@@ -27,7 +27,7 @@
 
         // --- View Rendering ---
         function renderView() {
-            // Update Base Revenue Display (if we want to show it, maybe in the note)
+            // Update Base Revenue Display
             document.getElementById('view-base-revenue').textContent = currentSettings.baseRevenue.toLocaleString();
 
             // Wage
@@ -249,10 +249,6 @@
                     style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
                     <div style="display: flex; align-items: center; gap: var(--spacing-4);">
                         <h1 style="margin: 0;">積立金設定</h1>
-                        <select class="input-field" style="width: auto; font-weight: bold;">
-                            <option value="2025">2025年度</option>
-                            <option value="2024">2024年度</option>
-                        </select>
                     </div>
                 </div>
 
@@ -260,10 +256,8 @@
                     <div class="card-header"
                         style="display: flex; justify-content: space-between; align-items: center;">
                         <span>月次積立設定</span>
-                        <button class="btn btn-sm btn-neutral" onclick="showModal('modal-edit-savings')">
-                            <span class="material-symbols-outlined"
-                                style="font-size: 16px; margin-right: 4px;">edit</span>
-                            編集
+                        <button class="btn btn-icon btn-sm btn-neutral" onclick="showModal('modal-edit-savings')">
+                            <span class="material-symbols-outlined">edit</span>
                         </button>
                     </div>
                     <div class="card-body">
@@ -314,39 +308,32 @@
                         年間積立見込
                     </div>
                     <div class="card-body">
-                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-4);">
+                        <div class="card-grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));">
 
-                            <div
-                                style="background-color: var(--color-bg-subtle); padding: var(--spacing-4); border-radius: var(--radius-card); text-align: center;">
-                                <div
-                                    style="font-size: var(--font-size-sm); color: var(--color-base-tertiary); margin-bottom: var(--spacing-2);">
-                                    工賃変動積立金 (年額)</div>
-                                <div style="font-size: var(--font-size-lg); font-weight: bold;" id="val-wage-annual">0
-                                </div>
-                                <div style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">円
+                            <div class="card"
+                                style="background-color: var(--color-bg-subtle); border: none; box-shadow: none;">
+                                <div class="card-body" style="text-align: center;">
+                                    <div
+                                        style="font-size: var(--font-size-sm); color: var(--color-base-tertiary); margin-bottom: var(--spacing-2);">
+                                        工賃変動積立金 (年額)</div>
+                                    <div style="font-size: var(--font-size-lg); font-weight: bold;"
+                                        id="val-wage-annual">0</div>
+                                    <div style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">円
+                                    </div>
                                 </div>
                             </div>
 
-                            <div
-                                style="background-color: var(--color-bg-subtle); padding: var(--spacing-4); border-radius: var(--radius-card); text-align: center;">
-                                <div
-                                    style="font-size: var(--font-size-sm); color: var(--color-base-tertiary); margin-bottom: var(--spacing-2);">
-                                    設備等整備積立金 (年額)</div>
-                                <div style="font-size: var(--font-size-lg); font-weight: bold;" id="val-equip-annual">0
+                            <div class="card"
+                                style="background-color: var(--color-bg-subtle); border: none; box-shadow: none;">
+                                <div class="card-body" style="text-align: center;">
+                                    <div
+                                        style="font-size: var(--font-size-sm); color: var(--color-base-tertiary); margin-bottom: var(--spacing-2);">
+                                        設備等整備積立金 (年額)</div>
+                                    <div style="font-size: var(--font-size-lg); font-weight: bold;"
+                                        id="val-equip-annual">0</div>
+                                    <div style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">円
+                                    </div>
                                 </div>
-                                <div style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">円
-                                </div>
-                            </div>
-
-                            <div
-                                style="background-color: var(--color-theme-main); color: var(--color-base-primary); padding: var(--spacing-4); border-radius: var(--radius-card); text-align: center;">
-                                <div
-                                    style="font-size: var(--font-size-sm); margin-bottom: var(--spacing-2); opacity: 0.9;">
-                                    積立金合計 (年額)</div>
-                                <div style="font-size: var(--font-size-xl); font-weight: bold;" id="val-total-annual">0
-                                </div>
-                                <div style="font-size: var(--font-size-xs); opacity: 0.8;">(月額合計: <span
-                                        id="val-total-monthly">0</span>円)</div>
                             </div>
 
                         </div>
@@ -366,7 +353,7 @@
                 <div class="modal-body">
 
                     <div
-                        style="background-color: var(--color-bg-subtle); padding: var(--spacing-4); border-radius: var(--radius-card); margin-bottom: var(--spacing-stack-md);">
+                        style="background-color: var(--color-base-secondary); padding: var(--spacing-4); border-radius: var(--radius-card); margin-bottom: var(--spacing-stack-md);">
                         <div class="form-group" style="margin-bottom: 0;">
                             <label class="form-label" for="input-base-revenue">月次売上目安 (定率計算の基準額)</label>
                             <div style="display: flex; align-items: center; gap: var(--spacing-2);">
