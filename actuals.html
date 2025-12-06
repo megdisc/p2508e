@@ -14,264 +14,224 @@
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
     <style>
-        /* 予算・費用テーブル用スタイル */
-        .budget-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: var(--spacing-stack-md);
+        .summary-section {
+            margin-top: var(--spacing-4);
+            padding-top: var(--spacing-4);
+            border-top: var(--border-subtle);
         }
 
-        .budget-table th {
-            background-color: var(--color-base-secondary);
-            color: var(--color-base-quaternary);
-            font-weight: var(--font-weight-medium);
-            text-align: center;
-            border-bottom: var(--border-width-sm) solid var(--color-table-border);
-            padding: var(--spacing-2);
-            font-size: var(--font-size-xs);
-            white-space: nowrap;
-        }
-
-        .budget-table td {
-            border-bottom: var(--border-width-sm) solid var(--color-table-border);
-            padding: var(--spacing-2) var(--spacing-4);
-            font-size: var(--font-size-sm);
-            vertical-align: middle;
-        }
-
-        .budget-table td.numeric {
-            text-align: right;
-            font-family: monospace;
-        }
-
-        /* サマリーカード */
-        .summary-card {
-            background-color: var(--color-base-primary);
-            border: 1px solid var(--color-base-quinary);
-            border-radius: var(--radius-card);
-            padding: var(--spacing-4);
+        .summary-row {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            flex: 1;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: var(--spacing-2);
+        }
+
+        .summary-item {
+            text-align: right;
         }
 
         .summary-label {
             font-size: var(--font-size-xs);
-            color: var(--color-base-quaternary);
-            margin-bottom: var(--spacing-1);
+            color: var(--color-text-secondary);
+            margin-bottom: 2px;
         }
 
         .summary-value {
-            font-size: var(--font-size-xl);
             font-weight: var(--font-weight-bold);
+            font-family: monospace;
+            font-size: var(--font-size-lg);
         }
 
-        .summary-value.positive {
+        .text-success {
             color: var(--color-semantic-success-main);
         }
 
-        .summary-value.negative {
+        .text-error {
             color: var(--color-semantic-error-main);
         }
 
-        /* プログレスバー（収支シミュレーション用） */
-        .profit-bar-container {
-            height: 24px;
-            background-color: var(--color-base-secondary);
-            border-radius: var(--radius-full);
-            overflow: hidden;
-            display: flex;
-            margin-top: var(--spacing-2);
-        }
-
-        .profit-bar-segment {
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
-            color: #fff;
-            white-space: nowrap;
-            overflow: hidden;
-        }
-
-        .bg-revenue {
-            background-color: var(--color-semantic-primary-main);
-        }
-
-        .bg-cost {
-            background-color: var(--color-semantic-error-main);
-        }
-
-        .bg-profit {
-            background-color: var(--color-semantic-success-main);
+        .text-neutral {
+            color: var(--color-text-primary);
         }
     </style>
 
     <script>
-        // Mock Data
-        const projects = {
-            'p1': {
+        // Mock Data (Mirrors projects.html with added financial data)
+        const projects = [
+            {
                 id: 'p1',
-                name: '10月度 DM封入作業',
-                type: 'single', // single | continuous
-                source: 'external', // external | in_house
+                name: 'DM封入作業',
+                status: 'in_progress', // in_progress, completed, not_started, cancelled, pending
+                type: 'single',
+                source: 'external',
                 partner: '株式会社 福岡工芸',
-                revenue: 300000, // Contract amount
+                period: '2025.10.01 - 2025.10.31',
+                revenue: 300000,
                 tasks: [
-                    { name: '封入作業', unitPrice: 10, quantity: 3000, total: 30000 },
-                    { name: '検品作業', unitPrice: 5, quantity: 3000, total: 15000 },
-                    { name: '梱包・発送', unitPrice: 5000, quantity: 1, total: 5000 }
+                    { name: '封入作業', total: 30000 },
+                    { name: '検品作業', total: 15000 },
+                    { name: '梱包・発送', total: 5000 }
                 ],
                 expenses: [
-                    { name: '封筒・資材代', type: '材料費', amount: 20000, note: '立替払済' },
-                    { name: '配送業者委託費', type: '外注費', amount: 15000, note: 'ヤマト運輸' },
-                    { name: '事業所積立金', type: '積立金', amount: 10000, note: '規定により5%' }
+                    { name: '封筒・資材代', amount: 20000 },
+                    { name: '配送業者委託費', amount: 15000 },
+                    { name: '事業所積立金', amount: 10000 }
                 ]
             },
-            'p2': {
+            {
                 id: 'p2',
-                name: 'パン製造・販売 (11月度)',
+                name: '自主製品（パン）製造・販売',
+                status: 'in_progress',
                 type: 'continuous',
                 source: 'in_house',
                 partner: '自主事業',
-                revenue: 450000, // Sales target/actual
+                period: '2025.10.01 - 継続中',
+                revenue: 450000,
                 tasks: [
-                    { name: '生地作り', unitPrice: 1200, quantity: 20, total: 24000 }, // quantity is hours/units
-                    { name: '成形・焼成', unitPrice: 1200, quantity: 40, total: 48000 },
-                    { name: '販売接客', unitPrice: 1000, quantity: 60, total: 60000 }
+                    { name: '生地作り', total: 24000 },
+                    { name: '成形・焼成', total: 48000 },
+                    { name: '販売接客', total: 60000 }
                 ],
                 expenses: [
-                    { name: '小麦粉・材料費', type: '材料費', amount: 80000, note: '月次平均' },
-                    { name: '光熱費按分', type: '光熱費', amount: 15000, note: '' },
-                    { name: '包装資材', type: '消耗品費', amount: 5000, note: '' }
+                    { name: '小麦粉・材料費', amount: 80000 },
+                    { name: '光熱費按分', amount: 15000 },
+                    { name: '包装資材', amount: 5000 }
                 ]
+            },
+            {
+                id: 'p3',
+                name: '施設外就労（清掃）',
+                status: 'not_started',
+                type: 'continuous',
+                source: 'external',
+                partner: '天神オフィスサプライ',
+                period: '2025.11.01 - 継続中',
+                revenue: 200000,
+                tasks: [],
+                expenses: []
+            },
+            {
+                id: 'p4',
+                name: '地域バザー出店',
+                status: 'completed',
+                type: 'single',
+                source: 'in_house',
+                partner: '自主事業',
+                period: '2025.11.10 - 2025.11.10',
+                revenue: 50000,
+                tasks: [
+                    { name: '接客販売', total: 10000 },
+                    { name: '搬入出', total: 5000 }
+                ],
+                expenses: [
+                    { name: '出店料', amount: 5000 },
+                    { name: '事業所積立金', amount: 2500 }
+                ]
+            },
+            {
+                id: 'p5',
+                name: '花見イベント販売',
+                status: 'cancelled',
+                type: 'single',
+                source: 'in_house',
+                partner: '自主事業',
+                period: '2025.04.01 - 2025.04.01',
+                revenue: 0,
+                tasks: [],
+                expenses: []
+            },
+            {
+                id: 'p6',
+                name: '新規カフェ出店計画',
+                status: 'pending',
+                type: 'continuous',
+                source: 'in_house',
+                partner: '自主事業',
+                period: '未定',
+                revenue: 0,
+                tasks: [],
+                expenses: []
             }
-        };
-
-        let currentProjectId = 'p1';
+        ];
 
         function formatCurrency(num) {
             return new Intl.NumberFormat('ja-JP').format(num);
         }
 
-        function renderProject() {
-            const project = projects[currentProjectId];
-
-            // Header
-            document.getElementById('project-name').textContent = project.name;
-            document.getElementById('project-partner').textContent = project.partner;
-
-            // Badges
-            const badgesContainer = document.getElementById('project-badges');
-            badgesContainer.innerHTML = '';
-
-            const typeBadge = document.createElement('span');
-            typeBadge.className = 'badge badge-neutral';
-            typeBadge.textContent = project.type === 'single' ? '単発' : '継続';
-            badgesContainer.appendChild(typeBadge);
-
-            const sourceBadge = document.createElement('span');
-            sourceBadge.className = 'badge badge-neutral';
-            sourceBadge.textContent = project.source === 'external' ? '受託' : '自主';
-            badgesContainer.appendChild(sourceBadge);
-
-            // Summary Cards
-            const revenueLabel = project.source === 'external' ? '売上実績' : '売上実績 (月次)';
-            document.getElementById('label-revenue').textContent = revenueLabel;
-            document.getElementById('val-revenue').textContent = formatCurrency(project.revenue);
-
-            const totalExpenses = project.expenses.reduce((sum, item) => sum + item.amount, 0);
-            const totalLabor = project.tasks.reduce((sum, item) => sum + item.total, 0);
-            const totalCost = totalExpenses + totalLabor;
-            const profit = project.revenue - totalCost;
-
-            document.getElementById('val-cost').textContent = formatCurrency(totalCost);
-            document.getElementById('val-profit').textContent = formatCurrency(profit);
-
-            const profitEl = document.getElementById('val-profit');
-            if (profit >= 0) {
-                profitEl.className = 'summary-value positive';
-            } else {
-                profitEl.className = 'summary-value negative';
+        function getStatusBadge(status) {
+            switch (status) {
+                case 'in_progress': return '<span class="badge badge-primary">進行中</span>';
+                case 'completed': return '<span class="badge badge-success">完了</span>';
+                case 'not_started': return '<span class="badge badge-neutral">未着手</span>';
+                case 'cancelled': return '<span class="badge badge-error">中止</span>';
+                case 'pending': return '<span class="badge badge-warning">保留</span>';
+                default: return '<span class="badge badge-neutral">不明</span>';
             }
+        }
 
-            // Progress Bar
-            const costPercent = Math.min(100, (totalCost / project.revenue) * 100);
-            const profitPercent = Math.max(0, 100 - costPercent);
+        function renderProjects() {
+            const grid = document.getElementById('project-grid');
+            grid.innerHTML = '';
 
-            document.getElementById('bar-cost').style.width = `${costPercent}%`;
-            document.getElementById('bar-cost').textContent = `${costPercent.toFixed(1)}%`;
-            document.getElementById('bar-profit').style.width = `${profitPercent}%`;
-            document.getElementById('bar-profit').textContent = `${profitPercent.toFixed(1)}%`;
+            projects.forEach(project => {
+                // Calculate Financials
+                const totalExpenses = project.expenses.reduce((sum, item) => sum + item.amount, 0);
+                const totalLabor = project.tasks.reduce((sum, item) => sum + item.total, 0);
+                const totalCost = totalExpenses + totalLabor;
+                const profit = project.revenue - totalCost;
 
-            document.getElementById('text-cost-val').textContent = `コスト: ${formatCurrency(totalCost)}円`;
-            document.getElementById('text-margin-val').textContent = `利益マージン: ${profitPercent.toFixed(1)}%`;
+                // Create Card
+                const card = document.createElement('div');
+                card.className = 'card';
 
-            // Task Table
-            const taskTbody = document.getElementById('tbody-tasks');
-            taskTbody.innerHTML = '';
-            project.tasks.forEach(task => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${task.name}</td>
-                    <td class="numeric">${formatCurrency(task.unitPrice)}</td>
-                    <td class="numeric">${formatCurrency(task.quantity)}</td>
-                    <td class="numeric">${formatCurrency(task.total)}</td>
+                const typeLabel = project.type === 'single' ? '単発' : '継続';
+                const sourceLabel = project.source === 'external' ? '受託' : '自主事業';
+                const partnerLabel = project.source === 'external' ? `｜${project.partner}` : '';
+
+                const profitClass = profit >= 0 ? 'text-success' : 'text-error';
+                const profitSign = profit > 0 ? '+' : '';
+
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div style="margin-bottom: var(--spacing-2);">
+                            <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">
+                                ${project.name}
+                            </div>
+                            <div style="display: flex; gap: var(--spacing-2); flex-wrap: wrap;">
+                                ${getStatusBadge(project.status)}
+                                <span class="badge badge-neutral">${typeLabel}</span>
+                                <span class="badge badge-neutral">${sourceLabel}${partnerLabel}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-bottom: var(--spacing-2);">
+                            期間: ${project.period}
+                        </div>
+                        
+                        <div class="summary-section">
+                            <div class="summary-row">
+                                <div class="summary-label">収入実績</div>
+                                <div class="summary-value text-neutral">${formatCurrency(project.revenue)}円</div>
+                            </div>
+                            <div class="summary-row">
+                                <div class="summary-label">支出計 (経費+工賃)</div>
+                                <div class="summary-value text-neutral">-${formatCurrency(totalCost)}円</div>
+                            </div>
+                            <div style="border-top: 1px solid var(--color-border-default); margin-top: var(--spacing-2); padding-top: var(--spacing-2); display: flex; justify-content: space-between; align-items: flex-end;">
+                                <div class="summary-label" style="font-weight: bold;">収支差額</div>
+                                <div class="summary-value ${profitClass}">${profitSign}${formatCurrency(profit)}円</div>
+                            </div>
+                        </div>
+                    </div>
                 `;
-                taskTbody.appendChild(tr);
+                grid.appendChild(card);
             });
-            // Task Subtotal
-            const trTaskSub = document.createElement('tr');
-            trTaskSub.style.backgroundColor = 'var(--color-base-secondary)';
-            trTaskSub.style.fontWeight = 'bold';
-            trTaskSub.innerHTML = `
-                <td colspan="3" style="text-align: right;">小計 (工賃原資)</td>
-                <td class="numeric">${formatCurrency(totalLabor)}</td>
-            `;
-            taskTbody.appendChild(trTaskSub);
-
-            // Expense Table
-            const expTbody = document.getElementById('tbody-expenses');
-            expTbody.innerHTML = '';
-            project.expenses.forEach(exp => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${exp.name}</td>
-                    <td>${exp.type}</td>
-                    <td class="numeric">${formatCurrency(exp.amount)}</td>
-                    <td>${exp.note}</td>
-                `;
-                expTbody.appendChild(tr);
-            });
-            // Expense Subtotal
-            const trExpSub = document.createElement('tr');
-            trExpSub.style.backgroundColor = 'var(--color-base-secondary)';
-            trExpSub.style.fontWeight = 'bold';
-            trExpSub.innerHTML = `
-                <td colspan="2" style="text-align: right;">小計 (経費)</td>
-                <td class="numeric">${formatCurrency(totalExpenses)}</td>
-                <td></td>
-            `;
-            expTbody.appendChild(trExpSub);
         }
 
-        function switchProject(id) {
-            currentProjectId = id;
-            renderProject();
-        }
-
-        function showModal(id) {
-            document.getElementById(id).style.display = 'flex';
-        }
-        function hideModal(id) {
-            document.getElementById(id).style.display = 'none';
-        }
-
-        // サイドバー連動
         document.addEventListener("DOMContentLoaded", () => {
+            // Sidebar Active State
             const currentFile = window.location.pathname.split("/").pop();
             document.querySelectorAll(".sidebar-nav a").forEach(link => {
                 if (link.getAttribute("href") === currentFile) {
@@ -281,8 +241,7 @@
                 }
             });
 
-            // Initial Render
-            renderProject();
+            renderProjects();
         });
     </script>
 </head>
@@ -383,160 +342,54 @@
 
                 <div
                     style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
-                    <div>
-                        <div
-                            style="display: flex; align-items: center; gap: var(--spacing-2); margin-bottom: var(--spacing-1);">
-                            <h1 style="margin: 0;">収入・経費実績</h1>
-                            <div id="project-badges" style="display: flex; gap: var(--spacing-1);">
-                                <!-- Badges injected here -->
+                    <h1 style="margin: 0;">収入・経費実績</h1>
+                </div>
+
+                <div
+                    style="display: flex; gap: var(--spacing-stack-md); flex-wrap: wrap; margin-bottom: var(--spacing-stack-md);">
+                    <div class="card" style="flex: 1; min-width: 320px;">
+                        <div class="card-body"
+                            style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
+                            <div class="form-group" style="margin: 0; flex: 1; min-width: 200px;">
+                                <label class="form-label">キーワード検索</label>
+                                <input type="text" class="input-field" placeholder="案件名、取引先...">
+                            </div>
+                            <div class="form-group" style="margin: 0; min-width: 160px;">
+                                <label class="form-label">進捗ステータス</label>
+                                <select class="input-field">
+                                    <option value="">すべて</option>
+                                    <option value="not-started">未着手</option>
+                                    <option value="in-progress">進行中</option>
+                                    <option value="pending">保留</option>
+                                    <option value="completed">完了</option>
+                                    <option value="cancelled">中止</option>
+                                </select>
                             </div>
                         </div>
-                        <div style="font-size: var(--font-size-sm); color: var(--color-base-quaternary);">
-                            取引先: <span id="project-partner"></span>
-                        </div>
                     </div>
-                    <div style="display: flex; gap: var(--spacing-2);">
-                        <select class="input-field" style="width: auto;" onchange="switchProject(this.value)">
-                            <option value="p1">10月度 DM封入作業</option>
-                            <option value="p2">パン製造・販売 (11月度)</option>
-                        </select>
-                        <button class="btn btn-neutral">
-                            <span class="material-symbols-outlined">print</span> 印刷
-                        </button>
-                    </div>
-                </div>
-
-                <!-- サマリーセクション -->
-                <div style="display: flex; gap: var(--spacing-4); margin-bottom: var(--spacing-stack-lg);">
-                    <div class="summary-card">
-                        <div class="summary-label" id="label-revenue">売上実績</div>
-                        <div class="summary-value"><span id="val-revenue">0</span> <span
-                                style="font-size: 1rem; font-weight: normal;">円</span>
-                        </div>
-                    </div>
-                    <div class="summary-card">
-                        <div class="summary-label">コスト計 (経費+工賃)</div>
-                        <div class="summary-value negative"><span id="val-cost">0</span> <span
-                                style="font-size: 1rem; font-weight: normal;">円</span></div>
-                    </div>
-                    <div class="summary-card" style="background-color: var(--palette-FFC);">
-                        <div class="summary-label">利益実績</div>
-                        <div class="summary-value positive"><span id="val-profit">0</span> <span
-                                style="font-size: 1rem; font-weight: normal;">円</span></div>
-                    </div>
-                </div>
-
-                <div class="card" style="margin-bottom: var(--spacing-stack-lg);">
-                    <div class="card-header">
-                        <span id="project-name"></span> 収支シミュレーション
-                    </div>
-                    <div class="card-body">
-                        <div
-                            style="margin-bottom: var(--spacing-2); display: flex; justify-content: space-between; font-size: var(--font-size-xs);">
-                            <span id="text-cost-val">コスト: 0円</span>
-                            <span id="text-margin-val">利益マージン: 0%</span>
-                        </div>
-                        <div class="profit-bar-container">
-                            <div id="bar-cost" class="profit-bar-segment bg-cost" style="width: 0%;">0%</div>
-                            <div id="bar-profit" class="profit-bar-segment bg-profit" style="width: 0%;">0%</div>
+                    <div class="card" style="flex: 0 0 auto;">
+                        <div class="card-body"
+                            style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
+                            <div class="form-group" style="margin: 0; width: 180px;">
+                                <label class="form-label">並び替え</label>
+                                <select class="input-field">
+                                    <option value="start_asc">開始日 (早い順)</option>
+                                    <option value="start_desc">開始日 (遅い順)</option>
+                                    <option value="profit_desc">利益 (多い順)</option>
+                                    <option value="profit_asc">利益 (少ない順)</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-stack-md);">
-
-                    <!-- 予算配分（タスク構成） -->
-                    <div class="card">
-                        <div class="card-header"
-                            style="display: flex; justify-content: space-between; align-items: center;">
-                            <div>工賃実績</div>
-                            <button class="btn btn-icon btn-icon-primary btn-icon-sm" title="タスク追加"><span
-                                    class="material-symbols-outlined">add</span></button>
-                        </div>
-                        <div class="card-body" style="padding: 0;">
-                            <table class="budget-table">
-                                <thead>
-                                    <tr>
-                                        <th style="text-align: left;">タスク名</th>
-                                        <th>単価</th>
-                                        <th>数量</th>
-                                        <th>配分額</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tbody-tasks">
-                                    <!-- Injected via JS -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- 経費管理 -->
-                    <div class="card">
-                        <div class="card-header"
-                            style="display: flex; justify-content: space-between; align-items: center;">
-                            <div>経費・その他支出実績</div>
-                            <button class="btn btn-icon btn-icon-primary btn-icon-sm" title="経費追加"
-                                onclick="showModal('modal-add-expense')"><span
-                                    class="material-symbols-outlined">add</span></button>
-                        </div>
-                        <div class="card-body" style="padding: 0;">
-                            <table class="budget-table">
-                                <thead>
-                                    <tr>
-                                        <th style="text-align: left;">項目</th>
-                                        <th>区分</th>
-                                        <th>金額</th>
-                                        <th>備考</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="tbody-expenses">
-                                    <!-- Injected via JS -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
+                <div id="project-grid" class="card-grid">
+                    <!-- Projects injected here -->
                 </div>
 
             </div>
 
         </main>
-
-        <div class="modal-backdrop" id="modal-add-expense" style="display: none;">
-            <div class="modal-content">
-                <div class="modal-header">経費登録</div>
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label class="form-label">項目名</label>
-                        <input type="text" class="input-field" placeholder="例: ガソリン代">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">区分</label>
-                        <select class="input-field">
-                            <option>材料費</option>
-                            <option>外注費</option>
-                            <option>消耗品費</option>
-                            <option>旅費交通費</option>
-                            <option>積立金</option>
-                            <option>その他</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">金額</label>
-                        <input type="number" class="input-field" placeholder="0">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">備考</label>
-                        <input type="text" class="input-field">
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-neutral" onclick="hideModal('modal-add-expense')">キャンセル</button>
-                    <button class="btn btn-primary"
-                        onclick="hideModal('modal-add-expense'); alert('経費を追加しました');">追加する</button>
-                </div>
-            </div>
-        </div>
 
     </div>
 
