@@ -212,8 +212,8 @@
 
                 <h1 style="margin: 0 0 var(--spacing-stack-md) 0;">生産活動収支</h1>
 
-                <div class="alert-warning" style="margin-bottom: var(--spacing-stack-md);">
-                    ※生産活動収支の年度区分は、運営法人の決算期に基づく「事業年度」となります。行政の「会計年度」（4月〜3月）とは異なりますのでご注意ください。
+                <div id="fiscal-year-alert" class="alert-warning" style="margin-bottom: var(--spacing-stack-md);">
+                    <!-- JSで動的に生成 -->
                 </div>
 
                 <div class="dashboard-controls">
@@ -266,6 +266,24 @@
                 <script>
                     let chartInstance = null;
                     let currentMode = 'monthly'; // 'monthly' or 'annual'
+
+                    // 法人情報 (モックデータ: corporation.htmlと同期)
+                    const mockCorporationData = {
+                        name: '株式会社こんぱす',
+                        fiscalYearEnd: { month: 12, day: 31 }
+                    };
+
+                    // アラートメッセージの生成
+                    function updateFiscalYearAlert() {
+                        const alertEl = document.getElementById('fiscal-year-alert');
+                        if (!alertEl) return;
+
+                        const endMonth = mockCorporationData.fiscalYearEnd.month;
+                        // 開始月は決算月の翌月 (12月決算なら1月開始)
+                        const startMonth = (endMonth % 12) + 1;
+
+                        alertEl.textContent = `注意：生産活動収支の年度区分は、${mockCorporationData.name}の決算期に基づく事業年度（${startMonth}月～${endMonth}月）となります。行政の会計年度（4月〜3月）とは異なりますのでご注意ください。`;
+                    }
 
                     // ダミーデータ (細分化)
                     const dataMonthly = {
@@ -783,6 +801,7 @@
 
                     // 初期化
                     document.addEventListener('DOMContentLoaded', () => {
+                        updateFiscalYearAlert();
                         initPeriodSelector();
                         updateChart();
                         updateTable();
