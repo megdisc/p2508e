@@ -25,7 +25,6 @@
         // タブ
         function activateTab(tabGroup, tabId) {
             // リンクのアクティブ状態を切り替え
-            // (注: シェル変数  と誤認されないよう ${...} とエスケープ)
             const links = document.querySelectorAll(`#${tabGroup} .tab-link`);
             links.forEach(link => link.classList.remove('is-active'));
             document.querySelector(`#${tabGroup} .tab-link[onclick*="'${tabId}'"]`).classList.add('is-active');
@@ -48,6 +47,53 @@
             });
         });
     </script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* ダッシュボード用スタイル */
+        .dashboard-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--spacing-stack-md);
+            flex-wrap: wrap;
+            gap: var(--spacing-4);
+        }
+
+        /* 表示切り替えボタングループ（プライマリカラー化） */
+        .view-toggle {
+            display: flex;
+            background-color: var(--color-base-secondary);
+            border-radius: var(--radius-button);
+            padding: 2px;
+            border: 1px solid var(--color-base-quinary);
+        }
+
+        .view-toggle label {
+            padding: var(--spacing-1) var(--spacing-3);
+            font-size: var(--font-size-sm);
+            cursor: pointer;
+            border-radius: var(--radius-button);
+            transition: all 0.2s;
+            color: var(--color-base-quaternary);
+        }
+
+        .view-toggle input[type="radio"] {
+            display: none;
+        }
+
+        .view-toggle input[type="radio"]:checked+label {
+            background-color: var(--color-theme-main);
+            color: var(--color-base-primary);
+            box-shadow: var(--box-shadow-sm);
+            font-weight: var(--font-weight-medium);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            width: 100%;
+        }
+    </style>
 </head>
 
 <body>
@@ -165,11 +211,398 @@
 
                 <h1 style="margin: 0 0 var(--spacing-stack-md) 0;">平均工賃分析</h1>
 
-                <div class="card">
-                    <div class="card-body">
-                        <p>これは「平均工賃分析」ページです。ここに内容を記述します。</p>
+                <div class="alert-warning" style="margin-bottom: var(--spacing-stack-md);">
+                    注意：平均工賃の年度区分は、行政の会計年度（4月〜3月）となります。
+                </div>
+
+                <div class="dashboard-controls">
+                    <div class="view-toggle">
+                        <input type="radio" id="view-mode-monthly" name="view-mode" checked
+                            onchange="setMode('monthly')">
+                        <label for="view-mode-monthly">月次推移</label>
+
+                        <input type="radio" id="view-mode-annual" name="view-mode" onchange="setMode('annual')">
+                        <label for="view-mode-annual">年次推移</label>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                        <button class="btn btn-icon btn-neutral" onclick="changePeriod(-1)">
+                            <span class="material-symbols-outlined">chevron_left</span>
+                        </button>
+                        <select id="period-selector" class="input-field" style="width: auto; min-width: 200px;"
+                            onchange="updateChart(); updateTable();">
+                            <!-- JSで動的に生成 -->
+                        </select>
+                        <button class="btn btn-icon btn-neutral" onclick="changePeriod(1)">
+                            <span class="material-symbols-outlined">chevron_right</span>
+                        </button>
                     </div>
                 </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <span id="chart-title">平均工賃推移</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <canvas id="wagesChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: var(--spacing-6);">
+                    <div class="card-header">
+                        <span>詳細データ</span>
+                    </div>
+                    <div class="card-body" style="overflow-x: auto;">
+                        <table class="table" id="wages-table"
+                            style="width: 100%; min-width: 800px; white-space: nowrap;">
+                            <!-- JSで動的に生成 -->
+                        </table>
+                    </div>
+                </div>
+
+                <script>
+                    let chartInstance = null;
+                    let currentMode = 'monthly'; // 'monthly' or 'annual'
+
+                    // ダミーデータ (平均工賃分析用 - 4月始まり)
+                    const dataMonthly = {
+                        labels: ['4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月', '1月', '2月', '3月'],
+                        total_wages: [330000, 300000, 350000, 360000, 340000, 380000, 390000, 370000, 400000, 320000, 310000, 340000],
+                        paid_user_count: [21, 20, 22, 22, 21, 23, 23, 22, 24, 20, 20, 21], // 工賃支払対象者数
+                        total_users_attendance: [420, 400, 440, 440, 420, 460, 460, 440, 480, 400, 400, 420], // 延利用者数
+                        open_days: [20, 20, 22, 21, 20, 21, 22, 20, 21, 19, 19, 21] // 開所日数
+                    };
+
+                    const dataAnnual = {
+                        labels: ['2021年度', '2022年度', '2023年度', '2024年度', '2025年度'],
+                        total_wages: [3600000, 3800000, 4000000, 4200000, 4500000],
+                        paid_user_count: [18, 19, 20, 21, 22], // 年間平均など
+                        total_users_attendance: [4320, 4560, 4800, 5040, 5280],
+                        open_days: [240, 242, 241, 243, 240]
+                    };
+
+                    // CSS変数から色を取得するヘルパー
+                    function getCssVar(name) {
+                        return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+                    }
+
+                    // HEX to RGBA helper
+                    function hexToRgba(hex, alpha) {
+                        let c;
+                        if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
+                            c = hex.substring(1).split('');
+                            if (c.length == 3) {
+                                c = [c[0], c[0], c[1], c[1], c[2], c[2]];
+                            }
+                            c = '0x' + c.join('');
+                            return 'rgba(' + [(c >> 16) & 255, (c >> 8) & 255, c & 255].join(',') + ',' + alpha + ')';
+                        }
+                        return hex; // fallback
+                    }
+
+                    function initPeriodSelector() {
+                        const selector = document.getElementById('period-selector');
+                        selector.innerHTML = '';
+
+                        if (currentMode === 'monthly') {
+                            const options = [
+                                { value: '2025', text: '2025年度 (2025.4 - 2026.3)' },
+                                { value: '2024', text: '2024年度 (2024.4 - 2025.3)' },
+                                { value: '2023', text: '2023年度 (2023.4 - 2024.3)' },
+                            ];
+                            options.forEach(opt => {
+                                const el = document.createElement('option');
+                                el.value = opt.value;
+                                el.textContent = opt.text;
+                                selector.appendChild(el);
+                            });
+                        } else {
+                            const options = [
+                                { value: 'recent5', text: '直近5年間' },
+                                { value: 'all', text: '全期間' },
+                            ];
+                            options.forEach(opt => {
+                                const el = document.createElement('option');
+                                el.value = opt.value;
+                                el.textContent = opt.text;
+                                selector.appendChild(el);
+                            });
+                        }
+                    }
+
+                    function changePeriod(offset) {
+                        const selector = document.getElementById('period-selector');
+                        const currentIndex = selector.selectedIndex;
+                        const newIndex = currentIndex - offset;
+
+                        let targetIndex = currentIndex;
+
+                        if (offset < 0) {
+                            // Left button pressed (Prev) -> Go to older (Higher index)
+                            targetIndex = currentIndex + 1;
+                        } else {
+                            // Right button pressed (Next) -> Go to newer (Lower index)
+                            targetIndex = currentIndex - 1;
+                        }
+
+                        if (targetIndex >= 0 && targetIndex < selector.options.length) {
+                            selector.selectedIndex = targetIndex;
+                            updateChart();
+                            updateTable();
+                        }
+                    }
+
+                    function setMode(mode) {
+                        currentMode = mode;
+                        initPeriodSelector();
+                        updateChart();
+                        updateTable();
+                    }
+
+                    // Custom Tooltip Handler (Adapted for Line Chart)
+                    const getOrCreateTooltip = (chart) => {
+                        let tooltipEl = chart.canvas.parentNode.querySelector('div.chartjs-tooltip');
+                        if (!tooltipEl) {
+                            tooltipEl = document.createElement('div');
+                            tooltipEl.classList.add('chartjs-tooltip');
+                            tooltipEl.style.opacity = 0;
+                            tooltipEl.style.pointerEvents = 'none';
+                            tooltipEl.style.position = 'absolute';
+                            tooltipEl.style.transform = 'translate(-50%, 0)';
+                            tooltipEl.style.transition = 'all .1s ease';
+                            tooltipEl.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                            tooltipEl.style.borderRadius = '4px';
+                            tooltipEl.style.color = '#fff';
+                            tooltipEl.style.padding = '10px';
+                            tooltipEl.style.zIndex = '100';
+                            tooltipEl.style.fontFamily = getCssVar('--font-family-base');
+                            tooltipEl.style.fontSize = '12px';
+                            tooltipEl.style.lineHeight = '1.4';
+                            tooltipEl.style.boxShadow = '0 2px 4px rgba(0,0,0,0.2)';
+                            tooltipEl.style.minWidth = '150px'; // Slightly smaller than the complex one
+
+                            chart.canvas.parentNode.appendChild(tooltipEl);
+                        }
+                        return tooltipEl;
+                    };
+
+                    const externalTooltipHandler = (context) => {
+                        // Tooltip Element
+                        const { chart, tooltip } = context;
+                        const tooltipEl = getOrCreateTooltip(chart);
+
+                        // Hide if no tooltip
+                        if (tooltip.opacity === 0) {
+                            tooltipEl.style.opacity = 0;
+                            return;
+                        }
+
+                        // Set Text
+                        if (tooltip.body) {
+                            const titleLines = tooltip.title || [];
+                            const bodyLines = tooltip.body.map(b => b.lines);
+
+                            const formatter = new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' });
+
+                            let innerHtml = '';
+
+                            // Title (Period)
+                            titleLines.forEach(title => {
+                                innerHtml += `<div style="font-size: 1.1rem; font-weight: bold; margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.3); padding-bottom: 4px;">${title}</div>`;
+                            });
+
+                            // Body (Average Wage)
+                            const dataPoints = tooltip.dataPoints;
+                            dataPoints.forEach(dp => {
+                                const dataset = chart.data.datasets[dp.datasetIndex];
+                                const val = dp.parsed.y;
+
+                                innerHtml += `<div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.9rem; margin-top: 4px;">
+                                    <div style="display: flex; align-items: center;">
+                                        <span style="display:inline-block; width:10px; height:10px; background-color: ${dataset.borderColor}; margin-right:6px; border-radius: 50%;"></span>
+                                        <span>${dataset.label}</span>
+                                    </div>
+                                    <span style="font-weight: bold;">${formatter.format(val)}</span>
+                                </div>`;
+                            });
+
+                            tooltipEl.innerHTML = innerHtml;
+                        }
+
+                        const { offsetLeft: positionX, offsetTop: positionY } = chart.canvas;
+
+                        // Display, position, and set styles for font
+                        tooltipEl.style.opacity = 1;
+
+                        // Smart positioning
+                        const tooltipWidth = tooltipEl.offsetWidth;
+                        const chartWidth = chart.width;
+                        const chartHeight = chart.height;
+                        const chartArea = chart.chartArea;
+                        // Center vertically in the chart area
+                        const centerY = chartArea ? (chartArea.top + chartArea.height / 2) : (chartHeight / 2);
+
+                        let left = positionX + tooltip.caretX;
+
+                        // If caret is on the left half, show tooltip on the right
+                        if (tooltip.caretX < chartWidth / 2) {
+                            left += 20; // Offset to the right
+                        } else {
+                            left -= tooltipWidth + 20; // Offset to the left
+                        }
+
+                        tooltipEl.style.left = left + 'px';
+                        tooltipEl.style.top = (positionY + centerY) + 'px';
+                        tooltipEl.style.transform = 'translate(0, -50%)';
+                        tooltipEl.style.pointerEvents = 'none';
+                    };
+
+                    function updateChart() {
+                        const ctx = document.getElementById('wagesChart').getContext('2d');
+
+                        // データ選択
+                        const sourceData = currentMode === 'monthly' ? dataMonthly : dataAnnual;
+
+                        // 平均工賃計算
+                        const averageWages = sourceData.total_wages.map((total, i) => {
+                            const count = sourceData.paid_user_count[i];
+                            return count > 0 ? Math.round(total / count) : 0;
+                        });
+
+                        const colorPrimary = getCssVar('--color-semantic-primary-main') || '#007BFF';
+                        const colorText = getCssVar('--color-base-quaternary') || '#666666';
+                        const colorGrid = getCssVar('--color-base-quinary') || '#CCCCCC';
+
+                        const chartData = {
+                            labels: sourceData.labels,
+                            datasets: [
+                                {
+                                    type: 'line', // 折れ線グラフに変更
+                                    label: '平均工賃',
+                                    data: averageWages,
+                                    backgroundColor: hexToRgba(colorPrimary, 0.2),
+                                    borderColor: colorPrimary,
+                                    borderWidth: 2,
+                                    fill: true,
+                                    tension: 0.3
+                                }
+                            ]
+                        };
+
+                        if (chartInstance) {
+                            chartInstance.destroy();
+                        }
+
+                        chartInstance = new Chart(ctx, {
+                            type: 'line',
+                            data: chartData,
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                plugins: {
+                                    title: {
+                                        display: false,
+                                    },
+                                    legend: {
+                                        display: false
+                                    },
+                                    tooltip: {
+                                        enabled: false, // Disable default tooltip
+                                        external: externalTooltipHandler
+                                    }
+                                },
+                                scales: {
+                                    x: {
+                                        ticks: {
+                                            color: colorText,
+                                            font: {
+                                                family: getCssVar('--font-family-base')
+                                            }
+                                        },
+                                        grid: {
+                                            color: colorGrid,
+                                            drawBorder: false
+                                        }
+                                    },
+                                    y: {
+                                        beginAtZero: true,
+                                        ticks: {
+                                            color: colorText,
+                                            font: {
+                                                family: getCssVar('--font-family-base')
+                                            },
+                                            callback: function (value) {
+                                                return value.toLocaleString() + '円';
+                                            }
+                                        },
+                                        grid: {
+                                            color: colorGrid,
+                                            drawBorder: false,
+                                            borderDash: [2, 2]
+                                        }
+                                    }
+                                }
+                            }
+                        });
+
+                        // タイトル更新
+                        const selector = document.getElementById('period-selector');
+                        const selectedText = selector.options[selector.selectedIndex].text;
+                        document.getElementById('chart-title').textContent = `平均工賃推移 (${selectedText})`;
+                    }
+
+                    function updateTable() {
+                        const table = document.getElementById('wages-table');
+                        const sourceData = currentMode === 'monthly' ? dataMonthly : dataAnnual;
+                        const formatter = new Intl.NumberFormat('ja-JP');
+
+                        let html = '';
+
+                        // Header
+                        html += '<thead><tr>';
+                        html += '<th style="text-align: left; min-width: 100px; position: sticky; left: 0; background-color: var(--color-base-secondary); z-index: 10;">期間</th>';
+                        html += '<th style="text-align: right; min-width: 120px; background-color: var(--color-base-secondary); font-weight: bold;">平均工賃</th>';
+                        html += '<th style="text-align: right; min-width: 120px;">工賃総額</th>';
+                        html += '<th style="text-align: right; min-width: 120px;">平均利用者数/日</th>';
+                        html += '<th style="text-align: right; min-width: 120px;">延利用者数</th>';
+                        html += '<th style="text-align: right; min-width: 100px;">開所日数</th>';
+                        html += '</tr></thead>';
+
+                        // Body
+                        html += '<tbody>';
+
+                        sourceData.labels.forEach((label, i) => {
+                            const totalWages = sourceData.total_wages[i];
+                            const paidUserCount = sourceData.paid_user_count[i];
+                            const totalUsersAttendance = sourceData.total_users_attendance[i];
+                            const openDays = sourceData.open_days[i];
+
+                            const averageWage = paidUserCount > 0 ? Math.round(totalWages / paidUserCount) : 0;
+                            const averageUsersPerDay = openDays > 0 ? (totalUsersAttendance / openDays).toFixed(1) : 0;
+
+                            html += '<tr>';
+                            html += `<td style="text-align: left; position: sticky; left: 0; background-color: var(--color-base-primary); font-weight: bold;">${label}</td>`;
+                            html += `<td style="text-align: right; font-weight: bold; background-color: var(--color-base-secondary);">${formatter.format(averageWage)}円</td>`;
+                            html += `<td style="text-align: right;">${formatter.format(totalWages)}円</td>`;
+                            html += `<td style="text-align: right;">${averageUsersPerDay}名</td>`;
+                            html += `<td style="text-align: right;">${totalUsersAttendance}名</td>`;
+                            html += `<td style="text-align: right;">${openDays}日</td>`;
+                            html += '</tr>';
+                        });
+
+                        html += '</tbody>';
+                        table.innerHTML = html;
+                    }
+
+                    // 初期化
+                    document.addEventListener('DOMContentLoaded', () => {
+                        initPeriodSelector();
+                        updateChart();
+                        updateTable();
+                    });
+                </script>
 
             </div>
 
