@@ -438,9 +438,19 @@
                         tooltipEl.style.transform = 'translate(0, -50%)';
                     };
 
+                    // 累積計算ヘルパー
+                    function calculateCumulative(arr) {
+                        let sum = 0;
+                        return arr.map(val => sum += val);
+                    }
+
                     function updateChart() {
                         const ctx = document.getElementById('savingsChart').getContext('2d');
                         const sourceData = currentMode === 'monthly' ? dataMonthly : dataAnnual;
+
+                        // 累積値を計算
+                        const cumulativeWage = calculateCumulative(sourceData.reserve_wage);
+                        const cumulativeEquip = calculateCumulative(sourceData.reserve_equip);
 
                         const colorWarning = getCssVar('--color-semantic-warning-main') || '#FFC107';
                         const colorText = getCssVar('--color-base-quaternary') || '#666666';
@@ -452,16 +462,20 @@
                                 {
                                     type: 'bar',
                                     label: '工賃変動積立金',
-                                    data: sourceData.reserve_wage,
+                                    data: cumulativeWage,
                                     backgroundColor: hexToRgba(colorWarning, 1.0),
-                                    stack: 'stack0',
+                                    // stack: 'stack0', // スタック解除
+                                    barPercentage: 0.8,
+                                    categoryPercentage: 0.8
                                 },
                                 {
                                     type: 'bar',
                                     label: '設備等整備積立金',
-                                    data: sourceData.reserve_equip,
+                                    data: cumulativeEquip,
                                     backgroundColor: hexToRgba(colorWarning, 0.6),
-                                    stack: 'stack0',
+                                    // stack: 'stack0', // スタック解除
+                                    barPercentage: 0.8,
+                                    categoryPercentage: 0.8
                                 }
                             ]
                         };
@@ -495,7 +509,7 @@
                                 },
                                 scales: {
                                     x: {
-                                        stacked: true,
+                                        stacked: false, // スタック解除
                                         ticks: {
                                             color: colorText,
                                             font: { family: getCssVar('--font-family-base') }
@@ -506,7 +520,7 @@
                                         }
                                     },
                                     y: {
-                                        stacked: true,
+                                        stacked: false, // スタック解除
                                         beginAtZero: true,
                                         ticks: {
                                             color: colorText,
@@ -527,7 +541,7 @@
 
                         const selector = document.getElementById('period-selector');
                         const selectedText = selector.options[selector.selectedIndex].text;
-                        document.getElementById('chart-title').textContent = `積立金推移 (${selectedText})`;
+                        document.getElementById('chart-title').textContent = `積立金推移 (累積) - ${selectedText}`;
                     }
 
                     function updateTable() {
@@ -535,22 +549,29 @@
                         const sourceData = currentMode === 'monthly' ? dataMonthly : dataAnnual;
                         const formatter = new Intl.NumberFormat('ja-JP');
 
+                        // 累積値を計算
+                        const cumulativeWage = calculateCumulative(sourceData.reserve_wage);
+                        const cumulativeEquip = calculateCumulative(sourceData.reserve_equip);
+
                         let html = '';
                         html += '<thead><tr>';
                         html += '<th style="text-align: left; min-width: 100px; position: sticky; left: 0; background-color: var(--color-base-secondary); z-index: 10;">期間</th>';
-                        html += '<th style="text-align: right; min-width: 120px; background-color: var(--color-base-secondary); font-weight: bold;">積立金 合計</th>';
-                        html += '<th style="text-align: right; min-width: 120px;">工賃変動積立金</th>';
-                        html += '<th style="text-align: right; min-width: 120px;">設備等整備積立金</th>';
+                        html += '<th style="text-align: right; min-width: 120px; background-color: var(--color-base-secondary); font-weight: bold;">積立金 合計(累積)</th>';
+                        html += '<th style="text-align: right; min-width: 120px;">工賃変動積立金(累積)</th>';
+                        html += '<th style="text-align: right; min-width: 120px;">設備等整備積立金(累積)</th>';
                         html += '</tr></thead>';
 
                         html += '<tbody>';
                         sourceData.labels.forEach((label, i) => {
-                            const total = sourceData.reserve_wage[i] + sourceData.reserve_equip[i];
+                            const wage = cumulativeWage[i];
+                            const equip = cumulativeEquip[i];
+                            const total = wage + equip;
+
                             html += '<tr>';
                             html += `<td style="text-align: left; position: sticky; left: 0; background-color: var(--color-base-primary); font-weight: bold;">${label}</td>`;
                             html += `<td style="text-align: right; font-weight: bold; background-color: var(--color-base-secondary);">${formatter.format(total * 1000)}</td>`;
-                            html += `<td style="text-align: right;">${formatter.format(sourceData.reserve_wage[i] * 1000)}</td>`;
-                            html += `<td style="text-align: right;">${formatter.format(sourceData.reserve_equip[i] * 1000)}</td>`;
+                            html += `<td style="text-align: right;">${formatter.format(wage * 1000)}</td>`;
+                            html += `<td style="text-align: right;">${formatter.format(equip * 1000)}</td>`;
                             html += '</tr>';
                         });
                         html += '</tbody>';
