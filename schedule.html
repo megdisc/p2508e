@@ -313,6 +313,16 @@
             '名刺データ入力: 入力': ['3-1-1'] // Assuming data entry needs some skill, mapping to HTML for demo
         };
 
+        // Mock Task Amounts (from projects.html)
+        const taskAmounts = {
+            'DM封入作業: 封入': 30000,
+            'DM封入作業: 検品': 15000,
+            'パン製造': 50000,
+            '清掃作業': 80000,
+            '接客販売': 10000,
+            '名刺データ入力: 入力': 5000
+        };
+
         let currentEditingTaskName = null;
 
         function showModal(id, mode = null, taskName = null) {
@@ -327,7 +337,27 @@
                 // For now, default to Staff
                 // document.querySelector('input[name="assignee-type"][value="staff"]').checked = true;
                 renderAssignees();
+
+                // Reset and Calculate Incentive
+                document.getElementById('task-progress').value = 0;
+                document.getElementById('task-deduction').value = 0;
+                calculateIncentive();
             }
+        }
+
+        function calculateIncentive() {
+            if (!currentEditingTaskName) return;
+
+            const amount = taskAmounts[currentEditingTaskName] || 0;
+            const progress = parseFloat(document.getElementById('task-progress').value) || 0;
+            const deduction = parseFloat(document.getElementById('task-deduction').value) || 0;
+
+            // Calculation: (Task Amount * Progress / 100) - Deduction
+            let incentive = Math.floor((amount * progress / 100) - deduction);
+            if (incentive < 0) incentive = 0;
+
+            document.getElementById('task-incentive').textContent = incentive.toLocaleString() + ' 円';
+            document.getElementById('task-base-amount').textContent = amount.toLocaleString() + ' 円';
         }
         function hideModal(id) {
             document.getElementById(id).style.display = 'none';
@@ -486,7 +516,7 @@
                 </details>
 
                 <a href="savings-settings.html" class="nav-link">積立金設定</a>
-                
+
                 <a href="attendance.html" class="nav-link">出欠状況</a>
                 <details class="nav-accordion">
                     <summary>生産活動</summary>
@@ -514,8 +544,9 @@
                     <ul>
                         <li><a href="analytics-production.html">生産活動収支分析</a></li>
                         <li><a href="analytics-wages.html">平均工賃分析</a></li>
-                    
-                        <li><a href="analytics-savings.html">積立金分析</a></li></ul>
+
+                        <li><a href="analytics-savings.html">積立金分析</a></li>
+                    </ul>
                 </details>
                 <a href="account.html" class="nav-link">ユーザーアカウント</a>
             </nav>
@@ -963,6 +994,34 @@
                                 <div id="list-client"></div>
                             </div>
 
+                        </div>
+                    </div>
+
+
+                    <div
+                        style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: 1px solid var(--color-base-quinary);">
+                        <div class="form-group">
+                            <label class="form-label">進捗率 (%)</label>
+                            <input type="number" id="task-progress" class="input-field" value="0" min="0" max="100"
+                                oninput="calculateIncentive()">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">差引金額 (円) <span
+                                    style="font-size: 0.8em; color: var(--color-base-quaternary);">※職員サポート等</span></label>
+                            <input type="number" id="task-deduction" class="input-field" value="0" min="0"
+                                oninput="calculateIncentive()">
+                        </div>
+                    </div>
+                    <div
+                        style="background-color: var(--color-base-secondary); padding: var(--spacing-3); border-radius: var(--radius-sm); display: flex; justify-content: space-between; align-items: center;">
+                        <div style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
+                            タスク設定金額: <span id="task-base-amount">0 円</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                            <span style="font-size: var(--font-size-sm); font-weight: bold;">インセンティブ (工賃)</span>
+                            <span id="task-incentive"
+                                style="font-size: var(--font-size-lg); font-weight: bold; color: var(--color-theme-main);">0
+                                円</span>
                         </div>
                     </div>
                 </div>
