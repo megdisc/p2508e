@@ -331,33 +331,107 @@
                 document.querySelector('#modal-edit-task .modal-header').textContent = taskName;
                 currentEditingTaskName = taskName;
 
-                // Reset to default view (e.g., Staff) or load existing assignment
-                // For now, default to Staff
-                // Reset to default view (e.g., Staff) or load existing assignment
-                // For now, default to Staff
-                // document.querySelector('input[name="assignee-type"][value="staff"]').checked = true;
-                renderAssignees();
+                // Initialize with one empty row if no data (mocking data loading)
+                const tbody = document.getElementById('assignment-table-body');
+                tbody.innerHTML = '';
+                addAssignmentRow(); // Add initial row
 
-                // Reset and Calculate Incentive
-                document.getElementById('task-progress').value = 0;
-                document.getElementById('task-deduction').value = 0;
-                calculateIncentive();
+                // Update Base Amount Display
+                const baseAmount = taskAmounts[taskName] || 0;
+                document.getElementById('modal-base-amount').textContent = baseAmount.toLocaleString();
             }
         }
 
-        function calculateIncentive() {
-            if (!currentEditingTaskName) return;
+        function addAssignmentRow(data = null) {
+            const tbody = document.getElementById('assignment-table-body');
+            const row = document.createElement('tr');
 
-            const amount = taskAmounts[currentEditingTaskName] || 0;
-            const progress = parseFloat(document.getElementById('task-progress').value) || 0;
-            const deduction = parseFloat(document.getElementById('task-deduction').value) || 0;
+            // Default values
+            const startDate = data?.startDate || '2025-08-04';
+            const endDate = data?.endDate || '2025-08-08';
+            const type = data?.type || ''; // Default to empty (unselected)
+            const assigneeId = data?.assigneeId || '';
+            const progress = data?.progress || 0;
+            const deduction = data?.deduction || 0;
 
-            // Calculation: (Task Amount * Progress / 100) - Deduction
-            let incentive = Math.floor((amount * progress / 100) - deduction);
+            row.innerHTML = `
+                <td>
+                    <div style="display: flex; flex-direction: row; gap: 4px; align-items: center;">
+                        <input type="date" class="input-field" style="padding: 2px 4px; font-size: 0.8rem; width: 110px;" value="${startDate}">
+                        <span style="color: var(--color-text-tertiary);">~</span>
+                        <input type="date" class="input-field" style="padding: 2px 4px; font-size: 0.8rem; width: 110px;" value="${endDate}">
+                    </div>
+                </td>
+                <td>
+                    <div style="display: flex; flex-direction: row; gap: 4px;">
+                        <select class="input-field assignee-type" style="padding: 2px 4px; font-size: 0.8rem; width: 80px;" onchange="updateAssigneeOptions(this)">
+                            <option value="">種別</option>
+                            <option value="staff" ${type === 'staff' ? 'selected' : ''}>職員</option>
+                            <option value="user" ${type === 'user' ? 'selected' : ''}>利用者</option>
+                            <option value="subcontractor" ${type === 'subcontractor' ? 'selected' : ''}>外注先</option>
+                            <option value="client" ${type === 'client' ? 'selected' : ''}>顧客</option>
+                        </select>
+                        <select class="input-field assignee-name" style="padding: 2px 4px; font-size: 0.8rem; flex: 1;">
+                            <!-- Options populated by JS -->
+                        </select>
+                    </div>
+                </td>
+                <td>
+                    <input type="number" class="input-field row-progress" value="${progress}" min="0" max="100" style="padding: 4px; text-align: right;" oninput="calculateRowIncentive(this)">
+                </td>
+                <td>
+                    <input type="number" class="input-field row-deduction" value="${deduction}" min="0" style="padding: 4px; text-align: right;" oninput="calculateRowIncentive(this)">
+                </td>
+                <td style="text-align: right; font-weight: bold;">
+                    <span class="row-incentive">0</span> 円
+                </td>
+                <td style="text-align: center;">
+                    <button class="btn btn-icon-sm btn-icon-error" onclick="this.closest('tr').remove()"><span class="material-symbols-outlined">delete</span></button>
+                </td>
+            `;
+
+            tbody.appendChild(row);
+
+            // Initialize Assignee Options
+            const typeSelect = row.querySelector('.assignee-type');
+            updateAssigneeOptions(typeSelect, assigneeId);
+
+            // Initial Calculation
+            calculateRowIncentive(row.querySelector('.row-progress'));
+        }
+
+        function updateAssigneeOptions(selectElement, selectedId = null) {
+            const type = selectElement.value;
+            const nameSelect = selectElement.closest('td').querySelector('.assignee-name');
+            nameSelect.innerHTML = '<option value="">担当者</option>'; // Add default unselected option
+
+            if (!type) return; // If no type selected, stop here
+
+            let data = [];
+            if (type === 'staff') data = staffData;
+            else if (type === 'user') data = userData; // Should filter by skill if needed
+            else if (type === 'subcontractor') data = subcontractorData;
+            else if (type === 'client') data = clientData;
+
+            data.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item.id;
+                option.textContent = item.name;
+                if (selectedId === item.id) option.selected = true;
+                nameSelect.appendChild(option);
+            });
+        }
+
+        function calculateRowIncentive(inputElement) {
+            const row = inputElement.closest('tr');
+            const baseAmount = taskAmounts[currentEditingTaskName] || 0;
+            const progress = parseFloat(row.querySelector('.row-progress').value) || 0;
+            const deduction = parseFloat(row.querySelector('.row-deduction').value) || 0;
+
+            let incentive = Math.floor((baseAmount * progress / 100) - deduction);
             if (incentive < 0) incentive = 0;
 
-            document.getElementById('task-incentive').textContent = incentive.toLocaleString() + ' 円';
-            document.getElementById('task-base-amount').textContent = amount.toLocaleString() + ' 円';
+            row.querySelector('.row-incentive').textContent = incentive.toLocaleString();
         }
         function hideModal(id) {
             document.getElementById(id).style.display = 'none';
@@ -948,81 +1022,38 @@
         </main>
 
         <div class="modal-backdrop" id="modal-edit-task" style="display: none;">
-            <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-content" style="max-width: 1100px;">
                 <div class="modal-header">作業割り当て編集</div>
                 <div class="modal-body">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4);">
-                        <div class="form-group"><label class="form-label">開始日</label><input type="date"
-                                class="input-field" value="2025-08-04"></div>
-                        <div class="form-group"><label class="form-label">終了日</label><input type="date"
-                                class="input-field" value="2025-08-08"></div>
-                    </div>
-
-                    <div class="form-group"><label class="form-label">担当者選択</label>
-                        <div
-                            style="display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--spacing-4); border: 1px solid var(--color-input-border); border-radius: var(--radius-input); padding: var(--spacing-4);">
-
-                            <!-- Column 1: Staff -->
-                            <div>
-                                <div
-                                    style="font-size: var(--font-size-xs); color: var(--color-base-quaternary); margin-bottom: var(--spacing-2); font-weight: bold; border-bottom: 1px solid var(--color-base-quinary); padding-bottom: var(--spacing-1);">
-                                    職員</div>
-                                <div id="list-staff"></div>
-                            </div>
-
-                            <!-- Column 2: User -->
-                            <div>
-                                <div
-                                    style="font-size: var(--font-size-xs); color: var(--color-base-quaternary); margin-bottom: var(--spacing-2); font-weight: bold; border-bottom: 1px solid var(--color-base-quinary); padding-bottom: var(--spacing-1);">
-                                    利用者</div>
-                                <div id="list-user"></div>
-                            </div>
-
-                            <!-- Column 3: Subcontractor -->
-                            <div>
-                                <div
-                                    style="font-size: var(--font-size-xs); color: var(--color-base-quaternary); margin-bottom: var(--spacing-2); font-weight: bold; border-bottom: 1px solid var(--color-base-quinary); padding-bottom: var(--spacing-1);">
-                                    外注先</div>
-                                <div id="list-subcontractor"></div>
-                            </div>
-
-                            <!-- Column 4: Client -->
-                            <div>
-                                <div
-                                    style="font-size: var(--font-size-xs); color: var(--color-base-quaternary); margin-bottom: var(--spacing-2); font-weight: bold; border-bottom: 1px solid var(--color-base-quinary); padding-bottom: var(--spacing-1);">
-                                    顧客</div>
-                                <div id="list-client"></div>
-                            </div>
-
-                        </div>
-                    </div>
-
-
                     <div
-                        style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: 1px solid var(--color-base-quinary);">
-                        <div class="form-group">
-                            <label class="form-label">進捗率 (%)</label>
-                            <input type="number" id="task-progress" class="input-field" value="0" min="0" max="100"
-                                oninput="calculateIncentive()">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">差引金額 (円) <span
-                                    style="font-size: 0.8em; color: var(--color-base-quaternary);">※職員サポート等</span></label>
-                            <input type="number" id="task-deduction" class="input-field" value="0" min="0"
-                                oninput="calculateIncentive()">
-                        </div>
+                        style="margin-bottom: var(--spacing-4); font-size: var(--font-size-sm); color: var(--color-base-tertiary);">
+                        タスク設定金額: <span id="modal-base-amount" style="font-weight: bold;">0</span> 円
                     </div>
-                    <div
-                        style="background-color: var(--color-base-secondary); padding: var(--spacing-3); border-radius: var(--radius-sm); display: flex; justify-content: space-between; align-items: center;">
-                        <div style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
-                            タスク設定金額: <span id="task-base-amount">0 円</span>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: var(--spacing-2);">
-                            <span style="font-size: var(--font-size-sm); font-weight: bold;">インセンティブ (工賃)</span>
-                            <span id="task-incentive"
-                                style="font-size: var(--font-size-lg); font-weight: bold; color: var(--color-theme-main);">0
-                                円</span>
-                        </div>
+
+                    <div class="table-container">
+                        <table class="table" style="min-width: 900px;">
+                            <thead>
+                                <tr>
+                                    <th style="width: 250px;">期間</th>
+                                    <th style="width: 250px;">担当者</th>
+                                    <th style="width: 80px;">進捗(%)</th>
+                                    <th style="width: 100px;">差引(円)</th>
+                                    <th style="width: 120px;">インセンティブ</th>
+                                    <th style="width: 50px;"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="assignment-table-body">
+                                <!-- Rows generated by JS -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div style="margin-top: var(--spacing-2);">
+                        <button class="btn btn-neutral btn-sm" onclick="addAssignmentRow()">
+                            <span class="material-symbols-outlined"
+                                style="font-size: 1.2em; vertical-align: bottom; margin-right: 4px;">add</span>
+                            担当者を追加
+                        </button>
                     </div>
                 </div>
                 <div class="modal-footer" style="justify-content: flex-end;">
