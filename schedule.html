@@ -276,6 +276,47 @@
             vertical-align: middle;
             transform: translateY(-0.5em);
         }
+
+        /* Tooltip Styles (Dark Theme to match Analytics) */
+        .gantt-tooltip {
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            border-radius: 4px;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            z-index: 9999;
+            pointer-events: none;
+            display: none;
+            min-width: 200px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .gantt-tooltip-title {
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 4px;
+            color: #fff;
+        }
+
+        .gantt-tooltip-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2px;
+        }
+
+        .gantt-tooltip-label {
+            color: #ddd;
+            margin-right: 8px;
+        }
+
+        .gantt-tooltip-value {
+            color: #fff;
+            font-weight: bold;
+        }
     </style>
 
     <script>
@@ -321,6 +362,47 @@
             '清掃作業': 80000,
             '接客販売': 10000,
             '名刺データ入力: 入力': 5000
+        };
+
+        // Mock Task Details for Tooltip
+        const taskDetailsMap = {
+            'DM封入作業: 封入': {
+                name: 'DM封入作業: 封入',
+                assignments: [
+                    { period: '2025/08/04 - 2025/08/08', assignee: '山田 太郎 (利用者)', progress: 80 },
+                    { period: '2025/08/04 - 2025/08/08', assignee: '鈴木 花子 (利用者)', progress: 60 }
+                ]
+            },
+            'DM封入作業: 検品': {
+                name: 'DM封入作業: 検品',
+                assignments: [
+                    { period: '2025/08/06 - 2025/08/08', assignee: '伊藤 良子 (職員)', progress: 50 }
+                ]
+            },
+            'パン製造': {
+                name: 'パン製造',
+                assignments: [
+                    { period: '2025/08/02 - 2025/08/03', assignee: '佐藤 吾郎 (職員)', progress: 100 }
+                ]
+            },
+            '清掃作業': {
+                name: '清掃作業',
+                assignments: [
+                    { period: '2025/08/25 - 2025/08/26', assignee: '田中 健司 (職員)', progress: 30 }
+                ]
+            },
+            '接客販売': {
+                name: '接客販売',
+                assignments: [
+                    { period: '2025/08/10', assignee: '伊藤 良子 (職員)', progress: 100 }
+                ]
+            },
+            '名刺データ入力: 入力': {
+                name: '名刺データ入力: 入力',
+                assignments: [
+                    { period: '2025/08/02 - 2025/08/05', assignee: '高橋 一郎 (利用者)', progress: 100 }
+                ]
+            }
         };
 
         let currentEditingTaskName = null;
@@ -537,6 +619,81 @@
                     const details = link.closest("details");
                     if (details) details.open = true;
                 }
+            });
+
+            // Gantt chart tooltip logic
+            const tooltip = document.createElement('div');
+            tooltip.className = 'gantt-tooltip';
+            document.body.appendChild(tooltip);
+
+            const bars = document.querySelectorAll('.gantt-bar');
+            bars.forEach(bar => {
+                bar.addEventListener('mouseenter', (e) => {
+                    // Extract task name from onclick attribute
+                    // Format: showModal('modal-edit-task', null, 'Task Name')
+                    const onclickAttr = bar.getAttribute('onclick');
+                    let taskName = '';
+                    if (onclickAttr) {
+                        // More robust regex to find the 3rd argument (single quoted string)
+                        const match = onclickAttr.match(/,\s*'([^']+)'\s*\)/);
+                        if (match) {
+                            taskName = match[1];
+                        }
+                    }
+
+                    if (!taskName) {
+                        // Fallback to title if extraction fails, though title might be "Task: Assignee"
+                        taskName = bar.getAttribute('title') || '';
+                        // Try to split by colon if title format is "Task: Assignee"
+                        if (taskName.includes(':')) {
+                            // This is risky if task name has colon, but better than nothing for fallback
+                            // taskName = taskName.split(':')[0].trim(); 
+                        }
+                    }
+
+                    const details = taskDetailsMap[taskName];
+
+                    if (details) {
+                        let html = `<div class="gantt-tooltip-title">${details.name}</div>`;
+                        if (details.assignments && details.assignments.length > 0) {
+                            details.assignments.forEach(assign => {
+                                html += `
+                                    <div style="margin-bottom: 8px;">
+                                        <div class="gantt-tooltip-row">
+                                            <span class="gantt-tooltip-label">期間:</span>
+                                            <span class="gantt-tooltip-value">${assign.period}</span>
+                                        </div>
+                                        <div class="gantt-tooltip-row">
+                                            <span class="gantt-tooltip-label">担当:</span>
+                                            <span class="gantt-tooltip-value">${assign.assignee}</span>
+                                        </div>
+                                        <div class="gantt-tooltip-row">
+                                            <span class="gantt-tooltip-label">進捗:</span>
+                                            <span class="gantt-tooltip-value">${assign.progress}%</span>
+                                        </div>
+                                    </div>
+                                `;
+                            });
+                        } else {
+                            html += '<div style="color: #ccc;">詳細情報なし</div>';
+                        }
+                        tooltip.innerHTML = html;
+                        tooltip.style.display = 'block';
+
+                        // Initial position
+                        tooltip.style.left = (e.pageX + 15) + 'px';
+                        tooltip.style.top = (e.pageY + 15) + 'px';
+                    }
+                });
+
+                bar.addEventListener('mousemove', (e) => {
+                    tooltip.style.left = (e.pageX + 15) + 'px';
+                    tooltip.style.top = (e.pageY + 15) + 'px';
+                });
+
+                bar.addEventListener('mouseleave', () => {
+                    tooltip.style.display = 'none';
+                });
             });
         });
     </script>
@@ -1135,4 +1292,5 @@
 
     </div>
 
+    <div id="gantt-tooltip" class="gantt-tooltip"></div>
 </body>
