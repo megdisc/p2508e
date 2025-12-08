@@ -663,20 +663,27 @@
                         let html = `<div class="gantt-tooltip-title">${details.name}</div>`;
                         if (details.assignments && details.assignments.length > 0) {
                             details.assignments.forEach(assign => {
+                                // Parse period to simplified format (e.g., "2025/08/04 - ..." -> "4日～8日")
+                                let periodDisplay = assign.period;
+                                const dates = assign.period.split(' - ');
+                                if (dates.length > 0) {
+                                    const parseDay = (dateStr) => {
+                                        const parts = dateStr.split('/');
+                                        return parts.length === 3 ? parseInt(parts[2], 10) : '';
+                                    };
+
+                                    if (dates.length === 2) {
+                                        periodDisplay = `${parseDay(dates[0])}日～${parseDay(dates[1])}日`;
+                                    } else {
+                                        periodDisplay = `${parseDay(dates[0])}日`;
+                                    }
+                                }
+
                                 html += `
-                                    <div style="margin-bottom: 8px;">
-                                        <div class="gantt-tooltip-row">
-                                            <span class="gantt-tooltip-label">期間:</span>
-                                            <span class="gantt-tooltip-value">${assign.period}</span>
-                                        </div>
-                                        <div class="gantt-tooltip-row">
-                                            <span class="gantt-tooltip-label">担当:</span>
-                                            <span class="gantt-tooltip-value">${assign.assignee}</span>
-                                        </div>
-                                        <div class="gantt-tooltip-row">
-                                            <span class="gantt-tooltip-label">進捗:</span>
-                                            <span class="gantt-tooltip-value">${assign.progress}%</span>
-                                        </div>
+                                    <div style="margin-bottom: 4px; white-space: nowrap;">
+                                        <span style="font-weight: bold; margin-right: 8px;">${periodDisplay}</span>
+                                        <span style="margin-right: 8px;">${assign.assignee}</span>
+                                        <span>${assign.progress}%</span>
                                     </div>
                                 `;
                             });
