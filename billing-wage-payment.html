@@ -25,7 +25,6 @@
         // タブ
         function activateTab(tabGroup, tabId) {
             // リンクのアクティブ状態を切り替え
-            // (注: シェル変数  と誤認されないよう ${...} とエスケープ)
             const links = document.querySelectorAll(`#${tabGroup} .tab-link`);
             links.forEach(link => link.classList.remove('is-active'));
             document.querySelector(`#${tabGroup} .tab-link[onclick*="'${tabId}'"]`).classList.add('is-active');
@@ -35,7 +34,7 @@
             contents.forEach(content => content.classList.remove('is-active'));
             document.getElementById(tabId).classList.add('is-active');
         }
-    
+
         // サイドバーの現在地連動（アコーディオン自動展開）
         document.addEventListener("DOMContentLoaded", () => {
             const currentFile = window.location.pathname.split("/").pop();
@@ -70,8 +69,21 @@
 
                 <a href="index.html" class="nav-link">トップ</a>
 
-                <details class="nav-accordion"><summary>施設情報</summary><ul><li><a href="corporation.html">法人情報</a></li><li><a href="office.html">事業所情報</a></li></ul></details>
-                <details class="nav-accordion"><summary>関係者情報</summary><ul><li><a href="staff.html">職員情報</a></li><li><a href="members.html">利用者情報</a></li><li><a href="partners.html">取引先情報</a></li></ul></details>
+                <details class="nav-accordion">
+                    <summary>施設情報</summary>
+                    <ul>
+                        <li><a href="corporation.html">法人情報</a></li>
+                        <li><a href="office.html">事業所情報</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>関係者情報</summary>
+                    <ul>
+                        <li><a href="staff.html">職員情報</a></li>
+                        <li><a href="members.html">利用者情報</a></li>
+                        <li><a href="partners.html">取引先情報</a></li>
+                    </ul>
+                </details>
 
                 <details class="nav-accordion">
                     <summary>スキル情報</summary>
@@ -95,8 +107,8 @@
                 <a href="attendance.html" class="nav-link">出欠状況</a>
 
                 <details class="nav-accordion">
-                <summary>生産活動</summary>
-                <ul>
+                    <summary>生産活動</summary>
+                    <ul>
                         <li><a href="projects.html">案件情報</a></li>
                         <li><a href="schedule.html">進捗状況</a></li>
                         <li><a href="actuals.html">収入・経費実績</a></li>
@@ -123,8 +135,9 @@
                     <ul>
                         <li><a href="analytics-production.html">生産活動収支分析</a></li>
                         <li><a href="analytics-wages.html">平均工賃分析</a></li>
-                    
-                        <li><a href="analytics-savings.html">積立金分析</a></li></ul>
+
+                        <li><a href="analytics-savings.html">積立金分析</a></li>
+                    </ul>
                 </details>
 
                 <a href="account.html" class="nav-link">ユーザーアカウント</a>
@@ -143,18 +156,167 @@
 
             <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
 
-                <h1 style="margin: 0 0 var(--spacing-stack-md) 0;">工賃支払・控除請求</h1>
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
+                    <h1 style="margin: 0;">工賃支払・控除請求</h1>
+                    <div style="display: flex; gap: var(--spacing-3);">
+                        <button class="btn btn-neutral">
+                            <span class="material-symbols-outlined">print</span>
+                            印刷
+                        </button>
+                        <button class="btn btn-neutral">
+                            <span class="material-symbols-outlined">download</span>
+                            CSV出力
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-bottom: var(--spacing-stack-md);">
+                    <div class="card-body" style="display: flex; gap: var(--spacing-4); align-items: center;">
+                        <div class="form-group" style="margin: 0;">
+                            <label class="form-label">対象月</label>
+                            <input type="month" class="input-field" value="2023-10">
+                        </div>
+                        <div style="margin-left: auto; display: flex; gap: var(--spacing-6);">
+                            <div style="text-align: right;">
+                                <div style="font-size: var(--font-size-sm); color: var(--color-base-quaternary);">工賃総額
+                                </div>
+                                <div style="font-size: var(--font-size-xl); font-weight: var(--font-weight-bold);">¥
+                                    145,200</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: var(--font-size-sm); color: var(--color-base-quaternary);">控除総額
+                                </div>
+                                <div
+                                    style="font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); color: var(--color-error);">
+                                    ¥ 12,500</div>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: var(--font-size-sm); color: var(--color-base-quaternary);">差引支給額
+                                </div>
+                                <div
+                                    style="font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); color: var(--color-primary);">
+                                    ¥ 132,700</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="card">
+                    <div class="card-header">
+                        支給一覧
+                    </div>
                     <div class="card-body">
-                        <p>これは「工賃支払・控除請求」ページです。ここに内容を記述します。</p>
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>氏名</th>
+                                        <th>工賃</th>
+                                        <th>控除</th>
+                                        <th>支給額</th>
+                                        <th>ステータス</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div style="font-weight: var(--font-weight-bold);">山田 太郎</div>
+                                            <div
+                                                style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
+                                                やまだ たろう</div>
+                                        </td>
+                                        <td>
+                                            <div>¥ 45,000</div>
+                                            <div
+                                                style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
+                                                基本: 40,000 / 調整: 5,000</div>
+                                        </td>
+                                        <td>
+                                            <div style="color: var(--color-error);">- ¥ 5,000</div>
+                                            <div
+                                                style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
+                                                昼食: 5,000</div>
+                                        </td>
+                                        <td>
+                                            <div
+                                                style="font-weight: var(--font-weight-bold); color: var(--color-primary);">
+                                                ¥ 40,000</div>
+                                        </td>
+                                        <td><span class="badge badge-warning">未払</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-neutral">詳細</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div style="font-weight: var(--font-weight-bold);">鈴木 花子</div>
+                                            <div
+                                                style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
+                                                すずき はなこ</div>
+                                        </td>
+                                        <td>
+                                            <div>¥ 38,000</div>
+                                            <div
+                                                style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
+                                                基本: 38,000</div>
+                                        </td>
+                                        <td>
+                                            <div style="color: var(--color-error);">- ¥ 2,500</div>
+                                            <div
+                                                style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
+                                                昼食: 2,500</div>
+                                        </td>
+                                        <td>
+                                            <div
+                                                style="font-weight: var(--font-weight-bold); color: var(--color-primary);">
+                                                ¥ 35,500</div>
+                                        </td>
+                                        <td><span class="badge badge-success">支払済</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-neutral">詳細</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div style="font-weight: var(--font-weight-bold);">高橋 一郎</div>
+                                            <div
+                                                style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
+                                                たかはし いちろう</div>
+                                        </td>
+                                        <td>
+                                            <div>¥ 62,200</div>
+                                            <div
+                                                style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
+                                                基本: 60,000 / 調整: 2,200</div>
+                                        </td>
+                                        <td>
+                                            <div style="color: var(--color-error);">- ¥ 5,000</div>
+                                            <div
+                                                style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
+                                                昼食: 5,000</div>
+                                        </td>
+                                        <td>
+                                            <div
+                                                style="font-weight: var(--font-weight-bold); color: var(--color-primary);">
+                                                ¥ 57,200</div>
+                                        </td>
+                                        <td><span class="badge badge-warning">未払</span></td>
+                                        <td>
+                                            <button class="btn btn-sm btn-neutral">詳細</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
             </div>
 
         </main>
-        </div>
+    </div>
 
 </body>
 
