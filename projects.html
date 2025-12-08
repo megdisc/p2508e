@@ -179,7 +179,7 @@
                     { name: '清掃委託料', amount: 200000, note: '月額固定' }
                 ],
                 tasks: [
-                    { id: 1, name: '清掃作業', skills: [{ name: '体力', level: 3 }], unitPrice: 800, quantity: 100, total: 80000 }
+                    { id: 1, name: '清掃作業', skills: [{ name: '体力', level: 3 }], amount: 80000, total: 80000 }
                 ],
                 expenses: [
                     { name: '清掃用具', type: '材料費', amount: 5000, note: '洗剤、モップ' },
@@ -439,6 +439,46 @@
         // --- Budget Logic ---
         // --- Budget Logic ---
         function renderBudgetEditor() {
+            // Update labels based on project type
+            const amountLabel = tempProjectData.type === 'continuous' ? '月額' : '総額';
+            const suffixLabel = tempProjectData.type === 'continuous' ? '月額' : '総額';
+            const bgColor = tempProjectData.type === 'continuous' ? 'var(--color-semantic-warning-sub)' : 'var(--color-semantic-primary-sub)';
+
+            const headers = [
+                'th-edit-revenue-amount',
+                'th-edit-reserves-amount',
+                'th-edit-task-amount',
+                'th-edit-other-amount'
+            ];
+
+            headers.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.textContent = amountLabel;
+                    el.style.backgroundColor = bgColor;
+                }
+            });
+
+            const summaryCardIds = [
+                'card-edit-summary-revenue',
+                'card-edit-summary-reserves',
+                'card-edit-summary-expenses'
+            ];
+
+            // Reset card background
+            summaryCardIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.style.backgroundColor = 'var(--color-bg-subtle)';
+                }
+            });
+
+            const suffixHtml = `<span style="background-color: ${bgColor}; padding: 2px 6px; border-radius: 4px; margin-left: 4px; font-size: 0.9em;">${suffixLabel}</span>`;
+
+            document.getElementById('label-edit-summary-revenue').innerHTML = '収入' + suffixHtml;
+            document.getElementById('label-edit-summary-reserves').innerHTML = '積立金' + suffixHtml;
+            document.getElementById('label-edit-summary-expenses').innerHTML = '費用' + suffixHtml;
+
             // 1. Revenue Section
             const revContainer = document.getElementById('edit-budget-revenue-list');
             revContainer.innerHTML = '';
@@ -635,6 +675,45 @@
 
             document.getElementById('view-project-name').textContent = project.name;
 
+            // Update labels based on project type
+            const amountLabel = project.type === 'continuous' ? '月額' : '総額';
+            const suffixLabel = project.type === 'continuous' ? '月額' : '総額';
+            const bgColor = project.type === 'continuous' ? 'var(--color-semantic-warning-sub)' : 'var(--color-semantic-primary-sub)';
+
+            const headers = [
+                'th-view-revenue-amount',
+                'th-view-reserves-amount',
+                'th-view-expenses-amount'
+            ];
+
+            headers.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.textContent = amountLabel;
+                    el.style.backgroundColor = bgColor;
+                }
+            });
+
+            const summaryCardIds = [
+                'card-view-summary-revenue',
+                'card-view-summary-reserves',
+                'card-view-summary-expenses'
+            ];
+
+            // Reset card background
+            summaryCardIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.style.backgroundColor = 'var(--color-bg-subtle)';
+                }
+            });
+
+            const suffixHtml = `<span style="background-color: ${bgColor}; padding: 2px 6px; border-radius: 4px; margin-left: 4px; font-size: 0.9em;">${suffixLabel}</span>`;
+
+            document.getElementById('label-view-summary-revenue').innerHTML = '収入' + suffixHtml;
+            document.getElementById('label-view-summary-reserves').innerHTML = '積立金' + suffixHtml;
+            document.getElementById('label-view-summary-expenses').innerHTML = '費用' + suffixHtml;
+
             // 1. Revenue
             const revenueTbody = document.getElementById('view-tbody-revenue');
             revenueTbody.innerHTML = '';
@@ -736,11 +815,11 @@
         }
 
         // サイドバー連動
-        function showModal(id, mode = null) {
+        function showModal(id, mode = null, projectId = null) {
             document.getElementById(id).style.display = 'flex';
             if (id === 'modal-project-settings') {
-                currentEditingProjectId = 'project-1'; // Defaulting to project-1 for demo
                 if (mode === 'create') {
+                    currentEditingProjectId = null;
                     document.querySelector('#modal-project-settings .modal-header').textContent = '案件 新規登録';
                     tempProjectData = {
                         id: Date.now(),
@@ -753,8 +832,10 @@
                         revenue: 0
                     };
                 } else {
+                    currentEditingProjectId = projectId || 'project-1';
                     // Load existing data into temp storage
                     tempProjectData = JSON.parse(JSON.stringify(projectsData[currentEditingProjectId] || { tasks: [], expenses: [] }));
+                    document.querySelector('#modal-project-settings .modal-header').textContent = '案件詳細設定: ' + tempProjectData.name;
                 }
 
                 // Populate fields
@@ -773,6 +854,9 @@
         function updateProjectField(field, value) {
             if (tempProjectData) {
                 tempProjectData[field] = value;
+                if (field === 'type') {
+                    renderBudgetEditor();
+                }
             }
         }
 
@@ -960,7 +1044,7 @@
                             <div
                                 style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
                                 <button class="btn btn-icon btn-icon-success" title="編集"
-                                    onclick="showModal('modal-project-settings')">
+                                    onclick="showModal('modal-project-settings', 'edit', 'project-1')">
                                     <span class="material-symbols-outlined">edit</span>
                                 </button>
                                 <button class="btn btn-icon btn-icon-error" title="削除">
@@ -1006,7 +1090,7 @@
                             <div
                                 style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
                                 <button class="btn btn-icon btn-icon-success" title="編集"
-                                    onclick="showModal('modal-project-settings')">
+                                    onclick="showModal('modal-project-settings', 'edit', 'project-3')">
                                     <span class="material-symbols-outlined">edit</span>
                                 </button>
                                 <button class="btn btn-icon btn-icon-error" title="削除">
@@ -1052,7 +1136,7 @@
                             <div
                                 style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
                                 <button class="btn btn-icon btn-icon-success" title="編集"
-                                    onclick="showModal('modal-project-settings')">
+                                    onclick="showModal('modal-project-settings', 'edit', 'project-4')">
                                     <span class="material-symbols-outlined">edit</span>
                                 </button>
                                 <button class="btn btn-icon btn-icon-error" title="削除">
@@ -1098,7 +1182,7 @@
                             <div
                                 style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
                                 <button class="btn btn-icon btn-icon-success" title="編集"
-                                    onclick="showModal('modal-project-settings')">
+                                    onclick="showModal('modal-project-settings', 'edit', 'project-2')">
                                     <span class="material-symbols-outlined">edit</span>
                                 </button>
                                 <button class="btn btn-icon btn-icon-error" title="削除">
@@ -1144,7 +1228,7 @@
                             <div
                                 style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
                                 <button class="btn btn-icon btn-icon-success" title="編集"
-                                    onclick="showModal('modal-project-settings')">
+                                    onclick="showModal('modal-project-settings', 'edit', 'project-5')">
                                     <span class="material-symbols-outlined">edit</span>
                                 </button>
                                 <button class="btn btn-icon btn-icon-error" title="削除">
@@ -1190,7 +1274,7 @@
                             <div
                                 style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
                                 <button class="btn btn-icon btn-icon-success" title="編集"
-                                    onclick="showModal('modal-project-settings')">
+                                    onclick="showModal('modal-project-settings', 'edit', 'project-6')">
                                     <span class="material-symbols-outlined">edit</span>
                                 </button>
                                 <button class="btn btn-icon btn-icon-error" title="削除">
@@ -1317,9 +1401,10 @@
                         <!-- Summary Cards -->
                         <div
                             style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-4); margin-bottom: var(--spacing-stack-md);">
-                            <div class="card" style="background-color: var(--color-bg-subtle);">
+                            <div class="card" id="card-edit-summary-revenue"
+                                style="background-color: var(--color-bg-subtle);">
                                 <div class="card-body" style="text-align: center;">
-                                    <div
+                                    <div id="label-edit-summary-revenue"
                                         style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-bottom: var(--spacing-1);">
                                         収入計</div>
                                     <div class="summary-value" id="budget-summary-revenue">0</div>
@@ -1327,7 +1412,7 @@
                             </div>
                             <div class="card" style="background-color: var(--color-bg-subtle);">
                                 <div class="card-body" style="text-align: center;">
-                                    <div
+                                    <div id="label-edit-summary-reserves"
                                         style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-bottom: var(--spacing-1);">
                                         積立金計</div>
                                     <div class="summary-value" id="budget-summary-reserves">0</div>
@@ -1335,7 +1420,7 @@
                             </div>
                             <div class="card" style="background-color: var(--color-bg-subtle);">
                                 <div class="card-body" style="text-align: center;">
-                                    <div
+                                    <div id="label-edit-summary-expenses"
                                         style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-bottom: var(--spacing-1);">
                                         費用計</div>
                                     <div class="summary-value" id="budget-summary-expenses">0</div>
@@ -1362,7 +1447,7 @@
                                         <thead>
                                             <tr>
                                                 <th style="width: 40%;">項目名</th>
-                                                <th style="width: 30%;">金額</th>
+                                                <th style="width: 30%;" id="th-edit-revenue-amount">金額</th>
                                                 <th style="width: 30%;">備考</th>
                                                 <th style="width: 40px;">操作</th>
                                             </tr>
@@ -1386,7 +1471,7 @@
                                         <thead>
                                             <tr>
                                                 <th style="width: 40%;">項目名</th>
-                                                <th style="width: 30%;">金額</th>
+                                                <th style="width: 30%;" id="th-edit-reserves-amount">金額</th>
                                                 <th style="width: 30%;">備考</th>
                                                 <!-- Read-only: Action column removed -->
                                             </tr>
@@ -1412,7 +1497,7 @@
                                             <thead>
                                                 <tr>
                                                     <th style="width: 40%;">タスク名</th>
-                                                    <th style="width: 30%;">金額</th>
+                                                    <th style="width: 30%;" id="th-edit-task-amount">金額</th>
                                                     <th style="width: 30%;">備考</th>
                                                 </tr>
                                             </thead>
@@ -1437,7 +1522,7 @@
                                             <thead>
                                                 <tr>
                                                     <th style="width: 30%;">項目名</th>
-                                                    <th style="width: 30%;">金額</th>
+                                                    <th style="width: 30%;" id="th-edit-other-amount">金額</th>
                                                     <th style="width: 30%;">備考</th>
                                                     <th style="width: 40px;">操作</th>
                                                 </tr>
@@ -1508,9 +1593,9 @@
                 <!-- Summary Cards -->
                 <div
                     style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-4); margin-bottom: var(--spacing-stack-md);">
-                    <div class="card" style="background-color: var(--color-bg-subtle);">
+                    <div class="card" id="card-view-summary-revenue" style="background-color: var(--color-bg-subtle);">
                         <div class="card-body" style="text-align: center;">
-                            <div
+                            <div id="label-view-summary-revenue"
                                 style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-bottom: var(--spacing-1);">
                                 収入計</div>
                             <div class="summary-value" id="view-val-revenue">0</div>
@@ -1518,7 +1603,7 @@
                     </div>
                     <div class="card" style="background-color: var(--color-bg-subtle);">
                         <div class="card-body" style="text-align: center;">
-                            <div
+                            <div id="label-view-summary-reserves"
                                 style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-bottom: var(--spacing-1);">
                                 積立金計</div>
                             <div class="summary-value" id="view-val-reserves">0</div>
@@ -1526,7 +1611,7 @@
                     </div>
                     <div class="card" style="background-color: var(--color-bg-subtle);">
                         <div class="card-body" style="text-align: center;">
-                            <div
+                            <div id="label-view-summary-expenses"
                                 style="font-size: var(--font-size-sm); color: var(--color-text-secondary); margin-bottom: var(--spacing-1);">
                                 費用計</div>
                             <div class="summary-value" id="view-val-expenses">0</div>
@@ -1545,7 +1630,7 @@
                                 <thead>
                                     <tr>
                                         <th>項目</th>
-                                        <th>金額</th>
+                                        <th id="th-view-revenue-amount">金額</th>
                                     </tr>
                                 </thead>
                                 <tbody id="view-tbody-revenue">
@@ -1570,7 +1655,7 @@
                                 <thead>
                                     <tr>
                                         <th>項目</th>
-                                        <th>金額</th>
+                                        <th id="th-view-reserves-amount">金額</th>
                                     </tr>
                                 </thead>
                                 <tbody id="view-tbody-reserves">
@@ -1595,7 +1680,7 @@
                                 <thead>
                                     <tr>
                                         <th>項目</th>
-                                        <th>金額</th>
+                                        <th id="th-view-expenses-amount">金額</th>
                                     </tr>
                                 </thead>
                                 <tbody id="view-tbody-expenses">
