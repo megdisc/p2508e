@@ -183,8 +183,9 @@
                     <ul>
                         <li><a href="analytics-production.html">生産活動収支分析</a></li>
                         <li><a href="analytics-wages.html">平均工賃分析</a></li>
-                    
-                        <li><a href="analytics-savings.html">積立金分析</a></li></ul>
+
+                        <li><a href="analytics-savings.html">積立金分析</a></li>
+                    </ul>
                 </details>
 
                 <a href="account.html" class="nav-link">ユーザーアカウント</a>
@@ -496,7 +497,7 @@
                             });
 
                             // Render Groups
-                            ['income', 'expense', 'reserve'].forEach(key => {
+                            ['income', 'expense'].forEach(key => {
                                 const group = groups[key];
                                 if (group.items.length > 0) {
                                     // Total Header
@@ -628,26 +629,6 @@
                                     stack: 'stack1',
                                     order: 2,
                                     category: 'expense'
-                                },
-
-                                // --- 積立金 (Stack 2) ---
-                                {
-                                    type: 'bar',
-                                    label: '工賃積立金',
-                                    data: sourceData.reserve_wages,
-                                    backgroundColor: hexToRgba(colorWarning, 1.0),
-                                    stack: 'stack2',
-                                    order: 3,
-                                    category: 'reserve'
-                                },
-                                {
-                                    type: 'bar',
-                                    label: 'その他の積立金',
-                                    data: sourceData.reserve_other,
-                                    backgroundColor: hexToRgba(colorWarning, 0.6),
-                                    stack: 'stack2',
-                                    order: 3,
-                                    category: 'reserve'
                                 }
                             ]
                         };
@@ -748,11 +729,6 @@
                         html += '<th style="text-align: right; min-width: 100px;">外注費</th>';
                         html += '<th style="text-align: right; min-width: 100px;">その他経費</th>';
 
-                        // Reserve Columns
-                        html += '<th style="text-align: right; min-width: 120px; background-color: var(--color-base-secondary); font-weight: bold;">積立金 計</th>';
-                        html += '<th style="text-align: right; min-width: 100px;">工賃積立金</th>';
-                        html += '<th style="text-align: right; min-width: 100px;">その他の積立金</th>';
-
                         html += '</tr></thead>';
 
                         // Body
@@ -762,7 +738,6 @@
                             // Calculate Totals for this period (i)
                             const incomeTotal = sourceData.income_sales[i] + sourceData.income_grants[i] + sourceData.income_other[i];
                             const expenseTotal = sourceData.expense_wages[i] + sourceData.expense_outsourcing[i] + sourceData.expense_other[i];
-                            const reserveTotal = sourceData.reserve_wages[i] + sourceData.reserve_other[i];
 
                             html += '<tr>';
                             // Period Label
@@ -779,11 +754,6 @@
                             html += `<td style="text-align: right;">${formatter.format(sourceData.expense_wages[i] * 1000)}</td>`;
                             html += `<td style="text-align: right;">${formatter.format(sourceData.expense_outsourcing[i] * 1000)}</td>`;
                             html += `<td style="text-align: right;">${formatter.format(sourceData.expense_other[i] * 1000)}</td>`;
-
-                            // Reserve Data
-                            html += `<td style="text-align: right; font-weight: bold; background-color: var(--color-base-secondary);">${formatter.format(reserveTotal * 1000)}</td>`;
-                            html += `<td style="text-align: right;">${formatter.format(sourceData.reserve_wages[i] * 1000)}</td>`;
-                            html += `<td style="text-align: right;">${formatter.format(sourceData.reserve_other[i] * 1000)}</td>`;
 
                             html += '</tr>';
                         });

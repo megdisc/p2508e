@@ -257,15 +257,12 @@
                         const alertEl = document.getElementById('fiscal-year-alert');
                         if (!alertEl) return;
 
-                        const endMonth = mockCorporationData.fiscalYearEnd.month;
-                        const startMonth = (endMonth % 12) + 1;
-
-                        alertEl.textContent = `注意：積立金分析の年度区分は、${mockCorporationData.name}の決算期に基づく事業年度（${startMonth}月～${endMonth}月）となります。行政の会計年度（4月〜3月）とは異なりますのでご注意ください。`;
+                        alertEl.textContent = `注意：積立金分析の年度区分は、行政の会計年度（4月〜3月）となります。`;
                     }
 
                     // ダミーデータ
                     const dataMonthly = {
-                        labels: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+                        labels: ['4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月', '1月', '2月', '3月'],
                         reserve_wage: [50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50, 50], // 工賃変動積立金 (定額例)
                         reserve_equip: [30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30, 30] // 設備等整備積立金 (定額例)
                     };
@@ -301,9 +298,9 @@
 
                         if (currentMode === 'monthly') {
                             const options = [
-                                { value: '2025', text: '2025年 (2025.1 - 2025.12)' },
-                                { value: '2024', text: '2024年 (2024.1 - 2024.12)' },
-                                { value: '2023', text: '2023年 (2023.1 - 2023.12)' },
+                                { value: '2025', text: '2025年度 (2025.4 - 2026.3)' },
+                                { value: '2024', text: '2024年度 (2024.4 - 2025.3)' },
+                                { value: '2023', text: '2023年度 (2023.4 - 2024.3)' },
                             ];
                             options.forEach(opt => {
                                 const el = document.createElement('option');
