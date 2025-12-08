@@ -404,7 +404,7 @@
 
                                 innerHtml += `<div style="display: flex; align-items: center; justify-content: space-between; font-size: 0.85rem; margin-top: 4px;">
                                     <div style="display: flex; align-items: center;">
-                                        <span style="display:inline-block; width:10px; height:10px; background-color: ${dataset.backgroundColor}; margin-right:6px;"></span>
+                                        <span style="display:inline-block; width:10px; height:10px; background: linear-gradient(0deg, ${dataset.backgroundColor}, ${dataset.backgroundColor}), #fff; margin-right:6px;"></span>
                                         <span>${dataset.label}</span>
                                     </div>
                                     <span style="color: #ddd;">${formatter.format(val * 1000)}</span>
