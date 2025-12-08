@@ -371,8 +371,8 @@
             'DM封入作業: 封入': {
                 name: 'DM封入作業: 封入',
                 assignments: [
-                    { period: '2025/08/04 - 2025/08/08', assignee: '山田 太郎 (利用者)', progress: 80 },
-                    { period: '2025/08/04 - 2025/08/08', assignee: '鈴木 花子 (利用者)', progress: 60 }
+                    { period: '2025/08/04 - 2025/08/05', assignee: '山田 太郎 (利用者)', progress: 100 },
+                    { period: '2025/08/06 - 2025/08/08', assignee: '鈴木 花子 (利用者)', progress: 50 }
                 ]
             },
             'DM封入作業: 検品': {
@@ -418,7 +418,28 @@
                 // Initialize with one empty row if no data (mocking data loading)
                 const tbody = document.getElementById('assignment-table-body');
                 tbody.innerHTML = '';
-                addAssignmentRow(); // Add initial row
+
+                if (taskName === 'DM封入作業: 封入') {
+                    // Mock data for assignee change simulation
+                    addAssignmentRow({
+                        startDate: '2025-08-04',
+                        endDate: '2025-08-05',
+                        type: 'user',
+                        assigneeId: 'user1', // 山田 太郎
+                        progress: 100,
+                        deduction: 0
+                    });
+                    addAssignmentRow({
+                        startDate: '2025-08-06',
+                        endDate: '2025-08-08',
+                        type: 'user',
+                        assigneeId: 'user2', // 鈴木 花子
+                        progress: 50,
+                        deduction: 0
+                    });
+                } else {
+                    addAssignmentRow(); // Add initial default row
+                }
 
                 // Update Base Amount Display
                 const baseAmount = taskAmounts[taskName] || 0;
