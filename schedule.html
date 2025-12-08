@@ -291,6 +291,8 @@
             min-width: 200px;
             font-size: 12px;
             line-height: 1.4;
+            transform: translateY(-100%);
+            /* Move up to sit above the cursor */
         }
 
         .gantt-tooltip-title {
@@ -629,12 +631,18 @@
             const bars = document.querySelectorAll('.gantt-bar');
             bars.forEach(bar => {
                 bar.addEventListener('mouseenter', (e) => {
-                    // Extract task name from onclick attribute
+                    // 1. Suppress default browser tooltip
+                    const originalTitle = bar.getAttribute('title');
+                    if (originalTitle) {
+                        bar.setAttribute('data-original-title', originalTitle);
+                        bar.removeAttribute('title');
+                    }
+
+                    // 2. Extract task name
                     // Format: showModal('modal-edit-task', null, 'Task Name')
                     const onclickAttr = bar.getAttribute('onclick');
                     let taskName = '';
                     if (onclickAttr) {
-                        // More robust regex to find the 3rd argument (single quoted string)
                         const match = onclickAttr.match(/,\s*'([^']+)'\s*\)/);
                         if (match) {
                             taskName = match[1];
@@ -642,11 +650,9 @@
                     }
 
                     if (!taskName) {
-                        // Fallback to title if extraction fails, though title might be "Task: Assignee"
-                        taskName = bar.getAttribute('title') || '';
-                        // Try to split by colon if title format is "Task: Assignee"
+                        // Fallback to stored title or attribute
+                        taskName = originalTitle || '';
                         if (taskName.includes(':')) {
-                            // This is risky if task name has colon, but better than nothing for fallback
                             // taskName = taskName.split(':')[0].trim(); 
                         }
                     }
@@ -680,19 +686,27 @@
                         tooltip.innerHTML = html;
                         tooltip.style.display = 'block';
 
-                        // Initial position
-                        tooltip.style.left = (e.pageX + 15) + 'px';
-                        tooltip.style.top = (e.pageY + 15) + 'px';
+                        // Initial position (Above cursor)
+                        tooltip.style.left = (e.pageX + 10) + 'px';
+                        tooltip.style.top = (e.pageY - 10) + 'px';
                     }
                 });
 
                 bar.addEventListener('mousemove', (e) => {
-                    tooltip.style.left = (e.pageX + 15) + 'px';
-                    tooltip.style.top = (e.pageY + 15) + 'px';
+                    // Update position (Above cursor)
+                    tooltip.style.left = (e.pageX + 10) + 'px';
+                    tooltip.style.top = (e.pageY - 10) + 'px';
                 });
 
                 bar.addEventListener('mouseleave', () => {
                     tooltip.style.display = 'none';
+
+                    // Restore default tooltip title
+                    const originalTitle = bar.getAttribute('data-original-title');
+                    if (originalTitle) {
+                        bar.setAttribute('title', originalTitle);
+                        bar.removeAttribute('data-original-title');
+                    }
                 });
             });
         });
