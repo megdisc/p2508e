@@ -194,15 +194,20 @@
 
                 card.innerHTML = `
                     <div class="card-header">
-                        <div style="margin-bottom: var(--spacing-2);">
-                            <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">
-                                ${project.name}
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div style="margin-bottom: var(--spacing-2);">
+                                <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">
+                                    ${project.name}
+                                </div>
+                                <div style="display: flex; gap: var(--spacing-2); flex-wrap: wrap;">
+                                    ${getStatusBadge(project.status)}
+                                    <span class="badge badge-neutral">${typeLabel}</span>
+                                    <span class="badge badge-neutral">${sourceLabel}${partnerLabel}</span>
+                                </div>
                             </div>
-                            <div style="display: flex; gap: var(--spacing-2); flex-wrap: wrap;">
-                                ${getStatusBadge(project.status)}
-                                <span class="badge badge-neutral">${typeLabel}</span>
-                                <span class="badge badge-neutral">${sourceLabel}${partnerLabel}</span>
-                            </div>
+                            <button class="btn btn-icon-sm btn-icon-neutral" onclick="openEditModal('${project.id}')">
+                                <span class="material-symbols-outlined">edit</span>
+                            </button>
                         </div>
                     </div>
                     <div class="card-body">
@@ -243,6 +248,75 @@
 
             renderProjects();
         });
+
+        // --- Edit Modal Logic ---
+        let currentEditingProjectId = null;
+
+        function openEditModal(projectId) {
+            currentEditingProjectId = projectId;
+            const project = projects.find(p => p.id === projectId);
+            if (!project) return;
+
+            document.getElementById('modal-project-name').textContent = project.name;
+            document.getElementById('edit-revenue').value = project.revenue;
+
+            // Render Expenses
+            const expenseList = document.getElementById('expense-list');
+            expenseList.innerHTML = '';
+            project.expenses.forEach(expense => {
+                addExpenseRow(expense.name, expense.amount);
+            });
+            // Add one empty row if empty? No, just leave as is or add button usage.
+
+            document.getElementById('modal-edit-actuals').style.display = 'flex';
+        }
+
+        function closeEditModal() {
+            document.getElementById('modal-edit-actuals').style.display = 'none';
+            currentEditingProjectId = null;
+        }
+
+        function addExpenseRow(name = '', amount = 0) {
+            const list = document.getElementById('expense-list');
+            const div = document.createElement('div');
+            div.className = 'form-group-row expense-row';
+            div.style.marginBottom = 'var(--spacing-2)';
+            div.style.display = 'flex';
+            div.style.gap = 'var(--spacing-2)';
+            div.alignItems = 'center';
+
+            div.innerHTML = `
+                <input type="text" class="input-field expense-name" value="${name}" placeholder="経費名" style="flex: 2;">
+                <input type="number" class="input-field expense-amount" value="${amount}" placeholder="金額" style="flex: 1; text-align: right;">
+                <button class="btn btn-icon-sm btn-icon-error" onclick="this.parentElement.remove()"><span class="material-symbols-outlined">delete</span></button>
+            `;
+            list.appendChild(div);
+        }
+
+        function saveActuals() {
+            if (!currentEditingProjectId) return;
+            const project = projects.find(p => p.id === currentEditingProjectId);
+            if (!project) return;
+
+            // Update Revenue
+            const revenueInput = document.getElementById('edit-revenue');
+            project.revenue = parseInt(revenueInput.value) || 0;
+
+            // Update Expenses
+            const expenseRows = document.querySelectorAll('.expense-row');
+            const newExpenses = [];
+            expenseRows.forEach(row => {
+                const name = row.querySelector('.expense-name').value;
+                const amount = parseInt(row.querySelector('.expense-amount').value) || 0;
+                if (name) {
+                    newExpenses.push({ name, amount });
+                }
+            });
+            project.expenses = newExpenses;
+
+            renderProjects();
+            closeEditModal();
+        }
     </script>
 </head>
 
@@ -294,7 +368,7 @@
                 </details>
 
                 <a href="savings-settings.html" class="nav-link">積立金設定</a>
-                
+
                 <a href="attendance.html" class="nav-link">出欠状況</a>
                 <details class="nav-accordion" open>
                     <summary>生産活動</summary>
@@ -322,8 +396,9 @@
                     <ul>
                         <li><a href="analytics-production.html">生産活動収支分析</a></li>
                         <li><a href="analytics-wages.html">平均工賃分析</a></li>
-                    
-                        <li><a href="analytics-savings.html">積立金分析</a></li></ul>
+
+                        <li><a href="analytics-savings.html">積立金分析</a></li>
+                    </ul>
                 </details>
                 <a href="account.html" class="nav-link">ユーザーアカウント</a>
             </nav>
@@ -387,6 +462,37 @@
 
         </main>
 
+    </div>
+
+    </div>
+
+    <!-- Edit Modal -->
+    <div id="modal-edit-actuals" class="modal-backdrop" style="display: none;">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <span id="modal-project-name">案件名</span>
+                <button class="btn-close" onclick="closeEditModal()"><span
+                        class="material-symbols-outlined">close</span></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">収入実績 (円)</label>
+                    <input type="number" id="edit-revenue" class="input-field" style="text-align: right;">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">経費明細</label>
+                    <div id="expense-list" style="margin-bottom: var(--spacing-2);">
+                        <!-- Expense Rows -->
+                    </div>
+                    <button class="btn btn-secondary btn-sm" onclick="addExpenseRow()">+ 経費を追加</button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-neutral" onclick="closeEditModal()">キャンセル</button>
+                <button class="btn btn-primary" onclick="saveActuals()">保存</button>
+            </div>
+        </div>
     </div>
 
 </body>
