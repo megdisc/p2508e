@@ -54,6 +54,27 @@
         .text-neutral {
             color: var(--color-text-primary);
         }
+
+        /* Refactored Utility Classes */
+        .card-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .profit-summary-box {
+            background-color: var(--color-base-secondary);
+            padding: var(--spacing-3);
+            border-radius: var(--radius-card);
+            margin-bottom: var(--spacing-4);
+        }
+
+        .list-group-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: var(--spacing-1);
+            font-size: var(--font-size-sm);
+        }
     </style>
 
     <script>
@@ -194,7 +215,7 @@
 
                 card.innerHTML = `
                     <div class="card-header">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                        <div class="card-header-flex">
                             <div style="margin-bottom: var(--spacing-2);">
                                 <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">
                                     ${project.name}
@@ -228,6 +249,9 @@
                                 <div class="summary-label" style="font-weight: bold;">収支差額</div>
                                 <div class="summary-value ${profitClass}">${profitSign}${formatCurrency(profit)}円</div>
                             </div>
+                        </div>
+                        <div style="margin-top: var(--spacing-4); text-align: center;">
+                            <button class="btn btn-neutral btn-sm" style="width: 100%;" onclick="openDetailsModal('${project.id}')">詳細</button>
                         </div>
                     </div>
                 `;
@@ -316,6 +340,82 @@
 
             renderProjects();
             closeEditModal();
+        }
+
+        // --- Details Modal Logic ---
+        function openDetailsModal(projectId) {
+            const project = projects.find(p => p.id === projectId);
+            if (!project) return;
+
+            document.getElementById('modal-details-title').textContent = project.name;
+
+            // Basic Info
+            let statusBadge = getStatusBadge(project.status);
+            document.getElementById('details-status').innerHTML = statusBadge;
+            document.getElementById('details-period').textContent = project.period;
+
+            // Financials
+            const totalExpenses = project.expenses.reduce((sum, item) => sum + item.amount, 0);
+            const totalLabor = project.tasks.reduce((sum, item) => sum + item.total, 0);
+            const totalCost = totalExpenses + totalLabor;
+            const profit = project.revenue - totalCost;
+
+            document.getElementById('details-revenue').textContent = formatCurrency(project.revenue) + '円';
+            document.getElementById('details-expenses-total').textContent = formatCurrency(totalExpenses) + '円';
+            document.getElementById('details-labor-total').textContent = formatCurrency(totalLabor) + '円';
+
+            const profitEl = document.getElementById('details-profit');
+            profitEl.textContent = (profit > 0 ? '+' : '') + formatCurrency(profit) + '円';
+
+            if (profit >= 0) {
+                profitEl.classList.remove('text-error');
+                profitEl.classList.add('text-success');
+            } else {
+                profitEl.classList.remove('text-success');
+                profitEl.classList.add('text-error');
+            }
+
+            // Expense List
+            const expenseList = document.getElementById('details-expense-list');
+            expenseList.innerHTML = '';
+            if (project.expenses.length > 0) {
+                const ul = document.createElement('ul');
+                ul.style.listStyle = 'none';
+                ul.style.padding = '0';
+                project.expenses.forEach(item => {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item';
+                    li.innerHTML = `<span>${item.name}</span><span>${formatCurrency(item.amount)}円</span>`;
+                    ul.appendChild(li);
+                });
+                expenseList.appendChild(ul);
+            } else {
+                expenseList.textContent = 'なし';
+            }
+
+            // Task List
+            const taskList = document.getElementById('details-task-list');
+            taskList.innerHTML = '';
+            if (project.tasks.length > 0) {
+                const ul = document.createElement('ul');
+                ul.style.listStyle = 'none';
+                ul.style.padding = '0';
+                project.tasks.forEach(item => {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item';
+                    li.innerHTML = `<span>${item.name}</span><span>${formatCurrency(item.total)}円</span>`;
+                    ul.appendChild(li);
+                });
+                taskList.appendChild(ul);
+            } else {
+                taskList.textContent = 'なし';
+            }
+
+            document.getElementById('modal-details-actuals').style.display = 'flex';
+        }
+
+        function closeDetailsModal() {
+            document.getElementById('modal-details-actuals').style.display = 'none';
         }
     </script>
 </head>
@@ -491,6 +591,60 @@
             <div class="modal-footer">
                 <button class="btn btn-neutral" onclick="closeEditModal()">キャンセル</button>
                 <button class="btn btn-primary" onclick="saveActuals()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Details Modal -->
+    <div id="modal-details-actuals" class="modal-backdrop" style="display: none;">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                <span id="modal-details-title">案件詳細</span>
+                <button class="btn-close" onclick="closeDetailsModal()"><span
+                        class="material-symbols-outlined">close</span></button>
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: var(--spacing-4);">
+                    <div style="display: flex; gap: var(--spacing-2); margin-bottom: var(--spacing-2);">
+                        <span id="details-status"></span>
+                    </div>
+                    <div style="font-size: var(--font-size-sm); color: var(--color-base-quaternary);">
+                        期間: <span id="details-period"></span>
+                    </div>
+                </div>
+
+                <div class="profit-summary-box">
+                    <div class="summary-row">
+                        <div class="summary-label">収入実績</div>
+                        <div class="summary-value text-neutral" id="details-revenue">0円</div>
+                    </div>
+                    <div class="summary-row">
+                        <div class="summary-label">経費計</div>
+                        <div class="summary-value text-neutral" id="details-expenses-total">0円</div>
+                    </div>
+                    <div class="summary-row">
+                        <div class="summary-label">工賃計</div>
+                        <div class="summary-value text-neutral" id="details-labor-total">0円</div>
+                    </div>
+                    <div
+                        style="border-top: 1px solid var(--palette-translucent-0002); margin-top: var(--spacing-2); padding-top: var(--spacing-2); display: flex; justify-content: space-between; align-items: flex-end;">
+                        <div class="summary-label" style="font-weight: bold;">収支差額</div>
+                        <div class="summary-value" id="details-profit">0円</div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: var(--spacing-4);">
+                    <h5 style="margin-bottom: var(--spacing-2); font-size: var(--font-size-sm);">経費内訳</h5>
+                    <div id="details-expense-list" style="color: var(--color-base-tertiary);"></div>
+                </div>
+
+                <div style="margin-bottom: var(--spacing-4);">
+                    <h5 style="margin-bottom: var(--spacing-2); font-size: var(--font-size-sm);">工賃内訳</h5>
+                    <div id="details-task-list" style="color: var(--color-base-tertiary);"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-neutral" onclick="closeDetailsModal()">閉じる</button>
             </div>
         </div>
     </div>
