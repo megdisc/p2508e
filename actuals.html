@@ -285,8 +285,8 @@
             document.getElementById('edit-revenue').value = project.revenue;
 
             // Render Expenses
-            const expenseList = document.getElementById('expense-list');
-            expenseList.innerHTML = '';
+            const expenseListBody = document.getElementById('expense-list-body');
+            expenseListBody.innerHTML = '';
             project.expenses.forEach(expense => {
                 addExpenseRow(expense.name, expense.amount);
             });
@@ -301,20 +301,20 @@
         }
 
         function addExpenseRow(name = '', amount = 0) {
-            const list = document.getElementById('expense-list');
-            const div = document.createElement('div');
-            div.className = 'form-group-row expense-row';
-            div.style.marginBottom = 'var(--spacing-2)';
-            div.style.display = 'flex';
-            div.style.gap = 'var(--spacing-2)';
-            div.alignItems = 'center';
+            const list = document.getElementById('expense-list-body');
+            const tr = document.createElement('tr');
+            tr.className = 'expense-row';
 
-            div.innerHTML = `
-                <input type="text" class="input-field expense-name" value="${name}" placeholder="経費名" style="flex: 2;">
-                <input type="number" class="input-field expense-amount" value="${amount}" placeholder="金額" style="flex: 1; text-align: right;">
-                <button class="btn btn-icon-sm btn-icon-error" onclick="this.parentElement.remove()"><span class="material-symbols-outlined">delete</span></button>
+            tr.innerHTML = `
+                <td><input type="text" class="input-field expense-name" value="${name}" placeholder="経費名"></td>
+                <td><input type="number" class="input-field expense-amount" value="${amount}" placeholder="金額" style="text-align: right;"></td>
+                <td style="text-align: center;">
+                    <button class="btn btn-icon-sm btn-icon-error" onclick="this.closest('tr').remove()">
+                        <span class="material-symbols-outlined">delete</span>
+                    </button>
+                </td>
             `;
-            list.appendChild(div);
+            list.appendChild(tr);
         }
 
         function saveActuals() {
@@ -379,16 +379,17 @@
             const expenseList = document.getElementById('details-expense-list');
             expenseList.innerHTML = '';
             if (project.expenses.length > 0) {
-                const ul = document.createElement('ul');
-                ul.style.listStyle = 'none';
-                ul.style.padding = '0';
+                const table = document.createElement('table');
+                table.className = 'table';
+                table.innerHTML = `<thead><tr><th>経費名</th><th style="text-align: right;">金額</th></tr></thead><tbody id="details-expense-tbody"></tbody>`;
+                const tbody = table.querySelector('tbody');
+
                 project.expenses.forEach(item => {
-                    const li = document.createElement('li');
-                    li.className = 'list-group-item';
-                    li.innerHTML = `<span>${item.name}</span><span>${formatCurrency(item.amount)}円</span>`;
-                    ul.appendChild(li);
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td>${item.name}</td><td style="text-align: right;">${formatCurrency(item.amount)}円</td>`;
+                    tbody.appendChild(tr);
                 });
-                expenseList.appendChild(ul);
+                expenseList.appendChild(table);
             } else {
                 expenseList.textContent = 'なし';
             }
@@ -397,16 +398,17 @@
             const taskList = document.getElementById('details-task-list');
             taskList.innerHTML = '';
             if (project.tasks.length > 0) {
-                const ul = document.createElement('ul');
-                ul.style.listStyle = 'none';
-                ul.style.padding = '0';
+                const table = document.createElement('table');
+                table.className = 'table';
+                table.innerHTML = `<thead><tr><th>タスク名</th><th style="text-align: right;">工賃</th></tr></thead><tbody id="details-task-tbody"></tbody>`;
+                const tbody = table.querySelector('tbody');
+
                 project.tasks.forEach(item => {
-                    const li = document.createElement('li');
-                    li.className = 'list-group-item';
-                    li.innerHTML = `<span>${item.name}</span><span>${formatCurrency(item.total)}円</span>`;
-                    ul.appendChild(li);
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td>${item.name}</td><td style="text-align: right;">${formatCurrency(item.total)}円</td>`;
+                    tbody.appendChild(tr);
                 });
-                taskList.appendChild(ul);
+                taskList.appendChild(table);
             } else {
                 taskList.textContent = 'なし';
             }
@@ -582,8 +584,19 @@
 
                 <div class="form-group">
                     <label class="form-label">経費明細</label>
-                    <div id="expense-list" style="margin-bottom: var(--spacing-2);">
-                        <!-- Expense Rows -->
+                    <div class="table-container" style="margin-bottom: var(--spacing-2);">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>経費名</th>
+                                    <th>金額</th>
+                                    <th style="width: 50px;"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="expense-list-body">
+                                <!-- Expense Rows -->
+                            </tbody>
+                        </table>
                     </div>
                     <button class="btn btn-secondary btn-sm" onclick="addExpenseRow()">+ 経費を追加</button>
                 </div>
@@ -635,12 +648,12 @@
 
                 <div style="margin-bottom: var(--spacing-4);">
                     <h5 style="margin-bottom: var(--spacing-2); font-size: var(--font-size-sm);">経費内訳</h5>
-                    <div id="details-expense-list" style="color: var(--color-base-tertiary);"></div>
+                    <div id="details-expense-list" class="table-container is-standalone"></div>
                 </div>
 
                 <div style="margin-bottom: var(--spacing-4);">
                     <h5 style="margin-bottom: var(--spacing-2); font-size: var(--font-size-sm);">工賃内訳</h5>
-                    <div id="details-task-list" style="color: var(--color-base-tertiary);"></div>
+                    <div id="details-task-list" class="table-container is-standalone"></div>
                 </div>
             </div>
             <div class="modal-footer">
