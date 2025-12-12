@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>Compath - 収入・経費実績</title>
+    <title>Compath - 収入・費用実績</title>
 
     <link rel="stylesheet" href="globals.css">
     <link rel="stylesheet" href="ui.css">
@@ -75,6 +75,7 @@
 
     <script>
         // Mock Data (Mirrors projects.html with added financial data)
+        // Mock Data (Mirrors projects.html with added financial data)
         const projects = [
             {
                 id: 'p1',
@@ -85,15 +86,18 @@
                 partner: '株式会社 福岡工芸',
                 period: '2025.10.01 - 2025.10.31',
                 revenue: 300000,
+                revenueItems: [
+                    { name: '売上', amount: 300000, note: '3,000通 @100円' }
+                ],
                 tasks: [
                     { name: '封入作業', total: 30000 },
                     { name: '検品作業', total: 15000 },
                     { name: '梱包・発送', total: 5000 }
                 ],
                 expenses: [
-                    { name: '封筒・資材代', amount: 20000 },
-                    { name: '配送業者委託費', amount: 15000 },
-                    { name: '事業所積立金', amount: 10000 }
+                    { name: '封筒・資材代', type: '材料費', amount: 20000 },
+                    { name: '配送業者委託費', type: '外注費', amount: 15000 },
+                    { name: '事業所積立金', type: '積立金', amount: 10000 }
                 ]
             },
             {
@@ -105,15 +109,19 @@
                 partner: '自主事業',
                 period: '2025.10.01 - 継続中',
                 revenue: 450000,
+                revenueItems: [
+                    { name: '売上', amount: 450000, note: '店舗・外販合計' }
+                ],
                 tasks: [
                     { name: '生地作り', total: 24000 },
                     { name: '成形・焼成', total: 48000 },
                     { name: '販売接客', total: 60000 }
                 ],
                 expenses: [
-                    { name: '小麦粉・材料費', amount: 80000 },
-                    { name: '光熱費按分', amount: 15000 },
-                    { name: '包装資材', amount: 5000 }
+                    { name: '小麦粉・材料費', type: '材料費', amount: 80000 },
+                    { name: '光熱費按分', type: 'その他', amount: 15000 },
+                    { name: '包装資材', type: '材料費', amount: 5000 },
+                    { name: '事業所積立金', type: '積立金', amount: 22500 }
                 ]
             },
             {
@@ -125,8 +133,13 @@
                 partner: '天神オフィスサプライ',
                 period: '2025.11.01 - 継続中',
                 revenue: 200000,
+                revenueItems: [
+                    { name: '売上', amount: 200000, note: '月額委託料' }
+                ],
                 tasks: [],
-                expenses: []
+                expenses: [
+                    { name: '事業所積立金', type: '積立金', amount: 10000 }
+                ]
             },
             {
                 id: 'p4',
@@ -137,13 +150,16 @@
                 partner: '自主事業',
                 period: '2025.11.10 - 2025.11.10',
                 revenue: 50000,
+                revenueItems: [
+                    { name: '売上', amount: 50000, note: '当日売上' }
+                ],
                 tasks: [
                     { name: '接客販売', total: 10000 },
                     { name: '搬入出', total: 5000 }
                 ],
                 expenses: [
-                    { name: '出店料', amount: 5000 },
-                    { name: '事業所積立金', amount: 2500 }
+                    { name: '出店料', type: 'その他', amount: 5000 },
+                    { name: '事業所積立金', type: '積立金', amount: 2500 }
                 ]
             },
             {
@@ -238,7 +254,7 @@
                                 <div class="summary-value text-neutral">${formatCurrency(project.revenue)}円</div>
                             </div>
                             <div class="summary-row">
-                                <div class="summary-label">支出計 (経費+工賃)</div>
+                                <div class="summary-label">支出計 (費用+工賃)</div>
                                 <div class="summary-value text-neutral">-${formatCurrency(totalCost)}円</div>
                             </div>
                             <div style="border-top: 1px solid var(--color-border-default); margin-top: var(--spacing-2); padding-top: var(--spacing-2); display: flex; justify-content: space-between; align-items: flex-end;">
@@ -273,6 +289,7 @@
 
         // --- Edit Modal Logic ---
         let currentEditingProjectId = null;
+        let tempEditData = null; // Temporary storage for editing
 
         function openEditModal(projectId) {
             currentEditingProjectId = projectId;
@@ -280,15 +297,17 @@
             if (!project) return;
 
             document.getElementById('modal-project-name').textContent = project.name;
-            document.getElementById('edit-revenue').value = project.revenue;
 
-            // Render Expenses
-            const expenseListBody = document.getElementById('expense-list-body');
-            expenseListBody.innerHTML = '';
-            project.expenses.forEach(expense => {
-                addExpenseRow(expense.name, expense.amount);
-            });
-            // Add one empty row if empty? No, just leave as is or add button usage.
+            // Deep copy to temp data
+            tempEditData = JSON.parse(JSON.stringify(project));
+
+            // Initialize arrays if missing
+            if (!tempEditData.revenueItems) tempEditData.revenueItems = [];
+            if (!tempEditData.expenses) tempEditData.expenses = [];
+            // Tasks (Labor) are assumed to exist or empty array
+
+            switchEditTab('income'); // Default tab
+            renderEditTabs();
 
             document.getElementById('modal-edit-actuals').style.display = 'flex';
         }
@@ -296,45 +315,184 @@
         function closeEditModal() {
             document.getElementById('modal-edit-actuals').style.display = 'none';
             currentEditingProjectId = null;
+            tempEditData = null;
         }
 
-        function addExpenseRow(name = '', amount = 0) {
-            const list = document.getElementById('expense-list-body');
-            const tr = document.createElement('tr');
-            tr.className = 'expense-row';
+        function switchEditTab(tabName) {
+            // Remove active
+            document.querySelectorAll('.tab-link').forEach(el => el.classList.remove('is-active'));
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('is-active'));
 
-            tr.innerHTML = `
-                <td><input type="text" class="input-field expense-name" value="${name}" placeholder="経費名"></td>
-                <td><input type="number" class="input-field expense-amount" value="${amount}" placeholder="金額" style="text-align: right;"></td>
-                <td style="text-align: center;">
-                    <button class="btn btn-icon-sm btn-icon-error" onclick="this.closest('tr').remove()">
-                        <span class="material-symbols-outlined">delete</span>
-                    </button>
-                </td>
-            `;
-            list.appendChild(tr);
+            // Add active
+            const link = document.getElementById(`tab-link-${tabName}`);
+            const content = document.getElementById(`tab-content-${tabName}`);
+            if (link) link.classList.add('is-active');
+            if (content) content.classList.add('is-active');
+        }
+
+        function renderEditTabs() {
+            if (!tempEditData) return;
+
+            // 1. Income Tab
+            const incomeList = document.getElementById('edit-income-list');
+            incomeList.innerHTML = '';
+            let totalIncome = 0;
+
+            tempEditData.revenueItems.forEach((item, index) => {
+                totalIncome += parseInt(item.amount || 0);
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <select class="input-field" onchange="updateEditItem('revenueItems', ${index}, 'name', this.value)">
+                            <option value="売上" ${item.name === '売上' ? 'selected' : ''}>売上</option>
+                            <option value="助成金" ${item.name === '助成金' ? 'selected' : ''}>助成金</option>
+                            <option value="その他収入" ${item.name === 'その他収入' ? 'selected' : ''}>その他収入</option>
+                        </select>
+                    </td>
+                    <td><input type="number" class="input-field" value="${item.amount}" onchange="updateEditItem('revenueItems', ${index}, 'amount', this.value)" style="text-align: right;"></td>
+                    <td><input type="text" class="input-field" value="${item.note || ''}" onchange="updateEditItem('revenueItems', ${index}, 'note', this.value)"></td>
+                    <td style="text-align: center;">
+                        <button class="btn btn-icon btn-icon-error" style="width: 24px; height: 24px; font-size: 14px;" onclick="removeEditItem('revenueItems', ${index})">
+                            <span class="material-symbols-outlined" style="font-size: 14px;">close</span>
+                        </button>
+                    </td>
+                `;
+                incomeList.appendChild(tr);
+            });
+            document.getElementById('edit-summary-income').textContent = formatCurrency(totalIncome);
+
+            // 2. Savings Tab
+            const savingsList = document.getElementById('edit-savings-list');
+            savingsList.innerHTML = '';
+            let totalSavings = 0;
+
+            // Filter for savings in expenses array
+            const savingsIndices = [];
+            tempEditData.expenses.forEach((item, realIndex) => {
+                if (item.type === '積立金') {
+                    savingsIndices.push(realIndex);
+                    totalSavings += parseInt(item.amount || 0);
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>
+                            <select class="input-field" onchange="updateEditItem('expenses', ${realIndex}, 'name', this.value)">
+                                <option value="工賃積立金" ${item.name === '工賃積立金' ? 'selected' : ''}>工賃積立金</option>
+                                <option value="その他の積立金" ${item.name === 'その他の積立金' ? 'selected' : ''}>その他の積立金</option>
+                            </select>
+                        </td>
+                        <td><input type="number" class="input-field" value="${item.amount}" onchange="updateEditItem('expenses', ${realIndex}, 'amount', this.value)" style="text-align: right;"></td>
+                        <td><input type="text" class="input-field" value="${item.note || ''}" onchange="updateEditItem('expenses', ${realIndex}, 'note', this.value)"></td>
+                        <td style="text-align: center;">
+                            <button class="btn btn-icon btn-icon-error" style="width: 24px; height: 24px; font-size: 14px;" onclick="removeEditItem('expenses', ${realIndex})">
+                                <span class="material-symbols-outlined" style="font-size: 14px;">close</span>
+                            </button>
+                        </td>
+                    `;
+                    savingsList.appendChild(tr);
+                }
+            });
+            document.getElementById('edit-summary-savings').textContent = formatCurrency(totalSavings);
+
+            // 3. Cost Tab
+            // 3a. Labor
+            const laborList = document.getElementById('edit-labor-list');
+            laborList.innerHTML = '';
+            let totalLabor = 0;
+
+            if (tempEditData.tasks) {
+                tempEditData.tasks.forEach((task, index) => {
+                    const amount = parseInt(task.total || 0); // Using 'total' as the editable field for Actuals
+                    totalLabor += amount;
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${task.name}</td>
+                        <td><input type="number" class="input-field" value="${amount}" onchange="updateEditTaskTotal(${index}, this.value)" style="text-align: right;"></td>
+                    `;
+                    laborList.appendChild(tr);
+                });
+            }
+
+            // 3b. Other Expenses
+            const otherCostList = document.getElementById('edit-other-cost-list');
+            otherCostList.innerHTML = '';
+            let totalOtherCost = 0;
+
+            tempEditData.expenses.forEach((item, realIndex) => {
+                if (item.type !== '積立金') {
+                    totalOtherCost += parseInt(item.amount || 0);
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                         <td>
+                            <select class="input-field" onchange="updateEditItem('expenses', ${realIndex}, 'type', this.value)">
+                                <option value="材料費" ${item.type === '材料費' ? 'selected' : ''}>材料費</option>
+                                <option value="外注費" ${item.type === '外注費' ? 'selected' : ''}>外注費</option>
+                                <option value="その他" ${item.type === 'その他' ? 'selected' : ''}>その他</option>
+                            </select>
+                        </td>
+                        <td><input type="text" class="input-field" value="${item.name}" onchange="updateEditItem('expenses', ${realIndex}, 'name', this.value)"></td>
+                        <td><input type="number" class="input-field" value="${item.amount}" onchange="updateEditItem('expenses', ${realIndex}, 'amount', this.value)" style="text-align: right;"></td>
+                        <td><input type="text" class="input-field" value="${item.note || ''}" onchange="updateEditItem('expenses', ${realIndex}, 'note', this.value)"></td>
+                        <td style="text-align: center;">
+                            <button class="btn btn-icon btn-icon-error" style="width: 24px; height: 24px; font-size: 14px;" onclick="removeEditItem('expenses', ${realIndex})">
+                                <span class="material-symbols-outlined" style="font-size: 14px;">close</span>
+                            </button>
+                        </td>
+                    `;
+                    otherCostList.appendChild(tr);
+                }
+            });
+
+            document.getElementById('edit-summary-cost').textContent = formatCurrency(totalLabor + totalOtherCost);
+        }
+
+        // --- Helpers ---
+
+        function updateEditItem(arrayName, index, field, value) {
+            if (field === 'amount') value = parseInt(value) || 0;
+            tempEditData[arrayName][index][field] = value;
+            renderEditTabs();
+        }
+
+        function removeEditItem(arrayName, index) {
+            tempEditData[arrayName].splice(index, 1);
+            renderEditTabs();
+        }
+
+        function updateEditTaskTotal(index, value) {
+            tempEditData.tasks[index].total = parseInt(value) || 0;
+            renderEditTabs();
+        }
+
+        function addRevenueItem() {
+            tempEditData.revenueItems.push({ name: '売上', amount: 0, note: '' });
+            renderEditTabs();
+        }
+
+        function addSavingsItem() {
+            tempEditData.expenses.push({ name: '工賃積立金', type: '積立金', amount: 0, note: '' });
+            renderEditTabs();
+        }
+
+        function addOtherCostItem() {
+            tempEditData.expenses.push({ name: '', type: '材料費', amount: 0, note: '' });
+            renderEditTabs();
         }
 
         function saveActuals() {
-            if (!currentEditingProjectId) return;
-            const project = projects.find(p => p.id === currentEditingProjectId);
-            if (!project) return;
+            if (!currentEditingProjectId || !tempEditData) return;
 
-            // Update Revenue
-            const revenueInput = document.getElementById('edit-revenue');
-            project.revenue = parseInt(revenueInput.value) || 0;
+            const projectIndex = projects.findIndex(p => p.id === currentEditingProjectId);
+            if (projectIndex === -1) return;
 
-            // Update Expenses
-            const expenseRows = document.querySelectorAll('.expense-row');
-            const newExpenses = [];
-            expenseRows.forEach(row => {
-                const name = row.querySelector('.expense-name').value;
-                const amount = parseInt(row.querySelector('.expense-amount').value) || 0;
-                if (name) {
-                    newExpenses.push({ name, amount });
-                }
-            });
-            project.expenses = newExpenses;
+            // Recalculate total revenue
+            const totalRevenue = tempEditData.revenueItems.reduce((sum, item) => sum + (parseInt(item.amount) || 0), 0);
+            tempEditData.revenue = totalRevenue;
+
+            // Update project data
+            projects[projectIndex] = JSON.parse(JSON.stringify(tempEditData));
 
             renderProjects();
             closeEditModal();
@@ -379,7 +537,7 @@
             if (project.expenses.length > 0) {
                 const table = document.createElement('table');
                 table.className = 'table';
-                table.innerHTML = `<thead><tr><th>経費名</th><th style="text-align: right;">金額</th></tr></thead><tbody id="details-expense-tbody"></tbody>`;
+                table.innerHTML = `<thead><tr><th>費用名</th><th style="text-align: right;">金額</th></tr></thead><tbody id="details-expense-tbody"></tbody>`;
                 const tbody = table.querySelector('tbody');
 
                 project.expenses.forEach(item => {
@@ -476,7 +634,7 @@
                     <ul>
                         <li><a href="projects.html">案件情報</a></li>
                         <li><a href="schedule.html">進捗状況</a></li>
-                        <li><a href="actuals.html" class="active">収入・経費実績</a></li>
+                        <li><a href="actuals.html" class="active">収入・費用実績</a></li>
                     </ul>
                 </details>
                 <details class="nav-accordion">
@@ -514,7 +672,7 @@
 
                 <div
                     style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
-                    <h1 style="margin: 0;">収入・経費実績</h1>
+                    <h1 style="margin: 0;">収入・費用実績</h1>
                 </div>
 
                 <div
@@ -568,37 +726,125 @@
     </div>
 
     <!-- Edit Modal -->
+    <!-- Edit Modal -->
     <div id="modal-edit-actuals" class="modal-backdrop" style="display: none;">
-        <div class="modal-content modal-sm">
+        <div class="modal-content modal-lg">
             <div class="modal-header">
                 <span id="modal-project-name">案件名</span>
                 <button class="btn-close" onclick="closeEditModal()"><span
                         class="material-symbols-outlined">close</span></button>
             </div>
             <div class="modal-body">
-                <div class="form-group">
-                    <label class="form-label">収入実績 (円)</label>
-                    <input type="number" id="edit-revenue" class="input-field" style="text-align: right;">
+
+                <!-- Tabs -->
+                <div class="tabs-nav">
+                    <div class="tab-link is-active" id="tab-link-income" onclick="switchEditTab('income')">収入</div>
+                    <div class="tab-link" id="tab-link-savings" onclick="switchEditTab('savings')">積立金</div>
+                    <div class="tab-link" id="tab-link-cost" onclick="switchEditTab('cost')">費用</div>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label">経費明細</label>
-                    <div class="table-container" style="margin-bottom: var(--spacing-2);">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>経費名</th>
-                                    <th>金額</th>
-                                    <th style="width: 50px;"></th>
-                                </tr>
-                            </thead>
-                            <tbody id="expense-list-body">
-                                <!-- Expense Rows -->
-                            </tbody>
-                        </table>
+                <!-- Tab Content: Income -->
+                <div id="tab-content-income" class="tab-content is-active">
+                    <div class="form-group">
+                        <label class="form-label">収入明細</label>
+                        <div class="table-container" style="margin-bottom: var(--spacing-2);">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 160px;">項目</th>
+                                        <th>金額</th>
+                                        <th>備考</th>
+                                        <th style="width: 50px;"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="edit-income-list">
+                                    <!-- JS Rendered -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <button class="btn btn-secondary btn-sm" onclick="addRevenueItem()">+ 収入を追加</button>
                     </div>
-                    <button class="btn btn-secondary btn-sm" onclick="addExpenseRow()">+ 経費を追加</button>
+                    <div style="text-align: right; margin-top: var(--spacing-2); font-weight: bold;">
+                        合計: <span id="edit-summary-income">0</span>円
+                    </div>
                 </div>
+
+                <!-- Tab Content: Savings -->
+                <div id="tab-content-savings" class="tab-content">
+                    <div class="form-group">
+                        <label class="form-label">積立金設定</label>
+                        <div class="table-container" style="margin-bottom: var(--spacing-2);">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 160px;">項目</th>
+                                        <th>金額</th>
+                                        <th>備考</th>
+                                        <th style="width: 50px;"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="edit-savings-list">
+                                    <!-- JS Rendered -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <button class="btn btn-secondary btn-sm" onclick="addSavingsItem()">+ 積立金を追加</button>
+                    </div>
+                    <div style="text-align: right; margin-top: var(--spacing-2); font-weight: bold;">
+                        合計: <span id="edit-summary-savings">0</span>円
+                    </div>
+                </div>
+
+                <!-- Tab Content: Cost (Expenses + Labor) -->
+                <div id="tab-content-cost" class="tab-content">
+
+                    <!-- Labor Costs -->
+                    <div class="form-group">
+                        <label class="form-label">工賃 (タスク別実績)</label>
+                        <div class="table-container" style="margin-bottom: var(--spacing-4);">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>タスク名</th>
+                                        <th style="width: 150px;">工賃実績</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="edit-labor-list">
+                                    <!-- JS Rendered -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Other Expenses -->
+                    <div class="form-group">
+                        <label class="form-label">その他費用 (材料費・外注費など)</label>
+                        <div class="table-container" style="margin-bottom: var(--spacing-2);">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 120px;">種別</th>
+                                        <th>費用名</th>
+                                        <th>金額</th>
+                                        <th>備考</th>
+                                        <th style="width: 50px;"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="edit-other-cost-list">
+                                    <!-- JS Rendered -->
+                                </tbody>
+                            </table>
+                        </div>
+                        <div style="margin-bottom: var(--spacing-2);">
+                            <button class="btn btn-secondary btn-sm" onclick="addOtherCostItem()">+ 費用を追加</button>
+                        </div>
+                    </div>
+
+                    <div style="text-align: right; margin-top: var(--spacing-2); font-weight: bold;">
+                        費用合計 (工賃+その他): <span id="edit-summary-cost">0</span>円
+                    </div>
+                </div>
+
             </div>
             <div class="modal-footer">
                 <button class="btn btn-neutral" onclick="closeEditModal()">キャンセル</button>
