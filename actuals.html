@@ -87,17 +87,17 @@
                 period: '2025.10.01 - 2025.10.31',
                 revenue: 300000,
                 revenueItems: [
-                    { name: '売上', amount: 300000, note: '3,000通 @100円' }
+                    { name: '売上', amount: 300000, date: '2025-10-31', note: '3,000通 @100円' }
                 ],
                 tasks: [
-                    { name: '封入作業', total: 30000 },
-                    { name: '検品作業', total: 15000 },
-                    { name: '梱包・発送', total: 5000 }
+                    { name: '封入作業', total: 30000, date: '2025-10-15' },
+                    { name: '検品作業', total: 15000, date: '2025-10-20' },
+                    { name: '梱包・発送', total: 5000, date: '2025-10-25' }
                 ],
                 expenses: [
-                    { name: '封筒・資材代', type: '材料費', amount: 20000 },
-                    { name: '配送業者委託費', type: '外注費', amount: 15000 },
-                    { name: '事業所積立金', type: '積立金', amount: 10000 }
+                    { name: '封筒・資材代', type: '材料費', amount: 20000, date: '2025-10-01' },
+                    { name: '配送業者委託費', type: '外注費', amount: 15000, date: '2025-10-25' },
+                    { name: '事業所積立金', type: '積立金', amount: 10000, date: '2025-10-31' }
                 ]
             },
             {
@@ -110,18 +110,18 @@
                 period: '2025.10.01 - 継続中',
                 revenue: 450000,
                 revenueItems: [
-                    { name: '売上', amount: 450000, note: '店舗・外販合計' }
+                    { name: '売上', amount: 450000, date: '2025-10-31', note: '店舗・外販合計' }
                 ],
                 tasks: [
-                    { name: '生地作り', total: 24000 },
-                    { name: '成形・焼成', total: 48000 },
-                    { name: '販売接客', total: 60000 }
+                    { name: '生地作り', total: 24000, date: '2025-10-10' },
+                    { name: '成形・焼成', total: 48000, date: '2025-10-11' },
+                    { name: '販売接客', total: 60000, date: '2025-10-12' }
                 ],
                 expenses: [
-                    { name: '小麦粉・材料費', type: '材料費', amount: 80000 },
-                    { name: '光熱費按分', type: 'その他', amount: 15000 },
-                    { name: '包装資材', type: '材料費', amount: 5000 },
-                    { name: '事業所積立金', type: '積立金', amount: 22500 }
+                    { name: '小麦粉・材料費', type: '材料費', amount: 80000, date: '2025-10-01' },
+                    { name: '光熱費按分', type: 'その他', amount: 15000, date: '2025-10-31' },
+                    { name: '包装資材', type: '材料費', amount: 5000, date: '2025-10-05' },
+                    { name: '事業所積立金', type: '積立金', amount: 22500, date: '2025-10-31' }
                 ]
             },
             {
@@ -134,11 +134,11 @@
                 period: '2025.11.01 - 継続中',
                 revenue: 200000,
                 revenueItems: [
-                    { name: '売上', amount: 200000, note: '月額委託料' }
+                    { name: '売上', amount: 200000, date: '2025-11-30', note: '月額委託料' }
                 ],
                 tasks: [],
                 expenses: [
-                    { name: '事業所積立金', type: '積立金', amount: 10000 }
+                    { name: '事業所積立金', type: '積立金', amount: 10000, date: '2025-11-30' }
                 ]
             },
             {
@@ -151,15 +151,15 @@
                 period: '2025.11.10 - 2025.11.10',
                 revenue: 50000,
                 revenueItems: [
-                    { name: '売上', amount: 50000, note: '当日売上' }
+                    { name: '売上', amount: 50000, date: '2025-11-10', note: '当日売上' }
                 ],
                 tasks: [
-                    { name: '接客販売', total: 10000 },
-                    { name: '搬入出', total: 5000 }
+                    { name: '接客販売', total: 10000, date: '2025-11-10' },
+                    { name: '搬入出', total: 5000, date: '2025-11-10' }
                 ],
                 expenses: [
-                    { name: '出店料', type: 'その他', amount: 5000 },
-                    { name: '事業所積立金', type: '積立金', amount: 2500 }
+                    { name: '出店料', type: 'その他', amount: 5000, date: '2025-11-01' },
+                    { name: '事業所積立金', type: '積立金', amount: 2500, date: '2025-11-10' }
                 ]
             },
             {
@@ -342,6 +342,7 @@
                 totalIncome += parseInt(item.amount || 0);
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
+                    <td><input type="date" class="input-field" value="${item.date || ''}" onchange="updateEditItem('revenueItems', ${index}, 'date', this.value)"></td>
                     <td>
                         <select class="input-field" onchange="updateEditItem('revenueItems', ${index}, 'name', this.value)">
                             <option value="売上" ${item.name === '売上' ? 'selected' : ''}>売上</option>
@@ -375,6 +376,7 @@
 
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
+                        <td><input type="date" class="input-field" value="${item.date || ''}" onchange="updateEditItem('expenses', ${realIndex}, 'date', this.value)"></td>
                         <td>
                             <select class="input-field" onchange="updateEditItem('expenses', ${realIndex}, 'name', this.value)">
                                 <option value="工賃積立金" ${item.name === '工賃積立金' ? 'selected' : ''}>工賃積立金</option>
@@ -408,7 +410,8 @@
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td>${task.name}</td>
-                        <td><input type="number" class="input-field" value="${amount}" onchange="updateEditTaskTotal(${index}, this.value)" style="text-align: right;"></td>
+                        <td><input type="date" class="input-field" value="${task.date || ''}" onchange="updateEditTask( ${index}, 'date', this.value)"></td>
+                        <td><input type="number" class="input-field" value="${amount}" onchange="updateEditTask( ${index}, 'total', this.value)" style="text-align: right;"></td>
                     `;
                     laborList.appendChild(tr);
                 });
@@ -425,6 +428,7 @@
 
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
+                        <td><input type="date" class="input-field" value="${item.date || ''}" onchange="updateEditItem('expenses', ${realIndex}, 'date', this.value)"></td>
                          <td>
                             <select class="input-field" onchange="updateEditItem('expenses', ${realIndex}, 'type', this.value)">
                                 <option value="材料費" ${item.type === '材料費' ? 'selected' : ''}>材料費</option>
@@ -461,23 +465,24 @@
             renderEditTabs();
         }
 
-        function updateEditTaskTotal(index, value) {
-            tempEditData.tasks[index].total = parseInt(value) || 0;
+        function updateEditTask(index, field, value) {
+            if (field === 'total') value = parseInt(value) || 0;
+            tempEditData.tasks[index][field] = value;
             renderEditTabs();
         }
 
         function addRevenueItem() {
-            tempEditData.revenueItems.push({ name: '売上', amount: 0, note: '' });
+            tempEditData.revenueItems.push({ name: '売上', amount: 0, note: '', date: '' });
             renderEditTabs();
         }
 
         function addSavingsItem() {
-            tempEditData.expenses.push({ name: '工賃積立金', type: '積立金', amount: 0, note: '' });
+            tempEditData.expenses.push({ name: '工賃積立金', type: '積立金', amount: 0, note: '', date: '' });
             renderEditTabs();
         }
 
         function addOtherCostItem() {
-            tempEditData.expenses.push({ name: '', type: '材料費', amount: 0, note: '' });
+            tempEditData.expenses.push({ name: '', type: '材料費', amount: 0, note: '', date: '' });
             renderEditTabs();
         }
 
@@ -751,6 +756,7 @@
                             <table class="table">
                                 <thead>
                                     <tr>
+                                        <th style="width: 140px;">日付</th>
                                         <th style="width: 160px;">項目</th>
                                         <th>金額</th>
                                         <th>備考</th>
@@ -777,6 +783,7 @@
                             <table class="table">
                                 <thead>
                                     <tr>
+                                        <th style="width: 140px;">日付</th>
                                         <th style="width: 160px;">項目</th>
                                         <th>金額</th>
                                         <th>備考</th>
@@ -806,6 +813,7 @@
                                 <thead>
                                     <tr>
                                         <th>タスク名</th>
+                                        <th style="width: 140px;">日付</th>
                                         <th style="width: 150px;">工賃実績</th>
                                     </tr>
                                 </thead>
@@ -823,6 +831,7 @@
                             <table class="table">
                                 <thead>
                                     <tr>
+                                        <th style="width: 140px;">日付</th>
                                         <th style="width: 120px;">種別</th>
                                         <th>費用名</th>
                                         <th>金額</th>
