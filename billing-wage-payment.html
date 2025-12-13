@@ -175,134 +175,69 @@
                 <div class="card" style="margin-bottom: var(--spacing-stack-md);">
                     <div class="card-header"
                         style="display: flex; justify-content: space-between; align-items: center;">
-                        <span style="font-weight: bold;">工賃原資管理</span>
+                        <span style="font-weight: bold;">工賃支払・原資内訳</span>
                         <div class="form-group"
                             style="margin: 0; display: flex; align-items: center; gap: var(--spacing-2);">
                             <label class="form-label" style="margin: 0;">対象月</label>
-                            <input type="month" class="input-field" value="2023-10" style="width: auto;">
+                            <input type="month" class="input-field" value="2023-10" style="width: auto;"
+                                onchange="renderFundingSummary()">
                         </div>
                     </div>
                     <div class="card-body">
-                        <!-- Funding Management Grid -->
-                        <div
-                            style="display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: var(--spacing-4); align-items: end; margin-bottom: var(--spacing-4);">
+                        <div style="display: flex; gap: var(--spacing-6);">
 
-                            <!-- Source 1: Production Income -->
-                            <div class="form-group" style="margin: 0;">
-                                <label class="form-label">当月工賃原資 (売上配分)</label>
-                                <div class="input-group">
-                                    <input type="number" id="input-source-income" class="input-field" value="100000"
-                                        style="text-align: right;" onchange="calculateFundingBalance()">
-                                    <span class="input-suffix">円</span>
-                                </div>
-                            </div>
-
-                            <div style="padding-bottom: 8px; font-weight: bold; color: var(--color-text-secondary);">+
-                            </div>
-
-                            <!-- Source 2: Reserve Drawdown -->
-                            <div class="form-group" style="margin: 0;">
-                                <label class="form-label">積立金繰入</label>
-                                <div class="input-group">
-                                    <input type="number" id="input-reserve-drawdown" class="input-field" value="45200"
-                                        style="text-align: right;" onchange="calculateFundingBalance()">
-                                    <span class="input-suffix">円</span>
-                                </div>
-                                <button class="btn btn-xs btn-secondary" style="margin-top: 4px;"
-                                    onclick="autofillDeficit()">不足分を充当</button>
-                            </div>
-
-                            <div style="padding-bottom: 8px; font-weight: bold; color: var(--color-text-secondary);">=
-                            </div>
-
-                            <!-- Total Funds -->
-                            <div style="text-align: right;">
-                                <label class="form-label">工賃支払可能額</label>
-                                <div style="font-size: var(--font-size-xl); font-weight: bold;" id="val-total-funds">¥
-                                    145,200</div>
-                            </div>
-                        </div>
-
-                        <hr
-                            style="border: 0; border-top: 1px dashed var(--color-border-default); margin: var(--spacing-4) 0;">
-
-                        <!-- Balance Reconciliation -->
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div style="display: flex; gap: var(--spacing-6); align-items: center;">
-                                <div>
-                                    <div class="form-label">工賃支払総額 (必要額)</div>
-                                    <div style="font-size: var(--font-size-xl); font-weight: bold;"
-                                        id="val-total-wages">¥ 145,200</div>
-                                </div>
-                                <div
-                                    style="font-size: var(--font-size-lg); color: var(--color-text-secondary); font-weight: bold;">
-                                    vs</div>
-                                <div>
-                                    <div class="form-label">差引収支 (繰越)</div>
-                                    <div style="font-size: var(--font-size-xl); font-weight: bold;" id="val-balance">¥ 0
+                            <!-- Funding Breakdown (Left) -->
+                            <div style="flex: 1;">
+                                <div class="summary-section">
+                                    <div class="summary-row">
+                                        <div class="summary-label">生産活動収益</div>
+                                        <div class="summary-value text-neutral" id="val-source-income">¥ 0</div>
+                                    </div>
+                                    <div class="summary-row">
+                                        <div class="summary-label">工賃積立金からの充当額</div>
+                                        <div class="summary-value text-neutral" id="val-drawdown">¥ 0</div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Reference Info (Deductions/Net) -->
+                            <!-- Payment Total (Right) -->
                             <div
-                                style="padding-left: var(--spacing-6); border-left: 1px solid var(--color-border-default); display: flex; gap: var(--spacing-6);">
-                                <div>
-                                    <div class="form-label">控除総額</div>
-                                    <div
-                                        style="font-size: var(--font-size-lg); font-weight: bold; color: var(--color-error);">
-                                        ¥ 12,500</div>
-                                </div>
-                                <div>
-                                    <div class="form-label">差引支給総額</div>
-                                    <div
-                                        style="font-size: var(--font-size-lg); font-weight: bold; color: var(--color-primary);">
-                                        ¥ 132,700</div>
+                                style="flex: 1; border-left: 1px solid var(--color-border-default); padding-left: var(--spacing-6);">
+                                <div class="summary-section">
+                                    <div class="summary-row">
+                                        <div class="summary-label">支給総額</div>
+                                        <div class="summary-value text-primary" id="val-total-wages"
+                                            style="font-size: var(--font-size-xl); font-weight: bold;">¥ 145,200</div>
+                                    </div>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
 
                 <script>
-                    function calculateFundingBalance() {
-                        const sourceIncome = parseInt(document.getElementById('input-source-income').value) || 0;
-                        const drawdown = parseInt(document.getElementById('input-reserve-drawdown').value) || 0;
+                    function renderFundingSummary() {
+                        // 1. Define Values (Mocked from Actuals Data)
+                        const totalWages = 145200; // Requirement
+                        const sourceIncome = 100000; // Available from Production
+
+                        // 2. Auto-Calculate Deficit / Drawdown
+                        let deficit = totalWages - sourceIncome;
+                        if (deficit < 0) deficit = 0; // Surplus (Future: Add to savings?)
+
+                        const drawdown = deficit;
                         const totalFunds = sourceIncome + drawdown;
 
-                        // Mock Total Wages (In real app, calculate from list)
-                        const totalWages = 145200;
-
-                        const balance = totalFunds - totalWages;
-
-                        // Update DOM
-                        document.getElementById('val-total-funds').textContent = '¥ ' + totalFunds.toLocaleString();
-
-                        const balanceEl = document.getElementById('val-balance');
-                        balanceEl.textContent = (balance > 0 ? '+' : '') + '¥ ' + balance.toLocaleString();
-
-                        if (balance < 0) {
-                            balanceEl.style.color = 'var(--color-error)';
-                        } else if (balance > 0) {
-                            balanceEl.style.color = 'var(--color-primary)';
-                        } else {
-                            balanceEl.style.color = 'var(--color-text-primary)';
-                        }
+                        // 3. Render
+                        document.getElementById('val-total-wages').textContent = '¥ ' + totalWages.toLocaleString();
+                        document.getElementById('val-source-income').textContent = '¥ ' + sourceIncome.toLocaleString();
+                        document.getElementById('val-drawdown').textContent = '¥ ' + drawdown.toLocaleString();
+                        document.getElementById('val-total-funds').textContent = '¥ ' + totalFunds.toLocaleString(); // Added Total Funds
                     }
 
-                    function autofillDeficit() {
-                        const sourceIncome = parseInt(document.getElementById('input-source-income').value) || 0;
-                        const totalWages = 145200; // Mock
-                        let deficit = totalWages - sourceIncome;
-                        if (deficit < 0) deficit = 0;
-
-                        document.getElementById('input-reserve-drawdown').value = deficit;
-                        calculateFundingBalance();
-                    }
-
-                    // Initial Calc
-                    // document.addEventListener('DOMContentLoaded', calculateFundingBalance); // Already moved to inline script or call it here
-                    calculateFundingBalance();
+                    // Initial Render
+                    document.addEventListener('DOMContentLoaded', renderFundingSummary);
                 </script>
 
 
