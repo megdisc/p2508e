@@ -173,145 +173,229 @@
                 </div>
 
                 <div class="card" style="margin-bottom: var(--spacing-stack-md);">
-                    <div class="card-body" style="display: flex; gap: var(--spacing-4); align-items: center;">
-                        <div class="form-group" style="margin: 0;">
-                            <label class="form-label">対象月</label>
-                            <input type="month" class="input-field" value="2023-10">
+                    <div class="card-header"
+                        style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: bold;">工賃原資管理</span>
+                        <div class="form-group"
+                            style="margin: 0; display: flex; align-items: center; gap: var(--spacing-2);">
+                            <label class="form-label" style="margin: 0;">対象月</label>
+                            <input type="month" class="input-field" value="2023-10" style="width: auto;">
                         </div>
-                        <div style="margin-left: auto; display: flex; gap: var(--spacing-6);">
-                            <div style="text-align: right;">
-                                <div style="font-size: var(--font-size-sm); color: var(--color-base-quaternary);">工賃総額
+                    </div>
+                    <div class="card-body">
+                        <!-- Funding Management Grid -->
+                        <div
+                            style="display: grid; grid-template-columns: 1fr auto 1fr auto 1fr; gap: var(--spacing-4); align-items: end; margin-bottom: var(--spacing-4);">
+
+                            <!-- Source 1: Production Income -->
+                            <div class="form-group" style="margin: 0;">
+                                <label class="form-label">当月工賃原資 (売上配分)</label>
+                                <div class="input-group">
+                                    <input type="number" id="input-source-income" class="input-field" value="100000"
+                                        style="text-align: right;" onchange="calculateFundingBalance()">
+                                    <span class="input-suffix">円</span>
                                 </div>
-                                <div style="font-size: var(--font-size-xl); font-weight: var(--font-weight-bold);">¥
+                            </div>
+
+                            <div style="padding-bottom: 8px; font-weight: bold; color: var(--color-text-secondary);">+
+                            </div>
+
+                            <!-- Source 2: Reserve Drawdown -->
+                            <div class="form-group" style="margin: 0;">
+                                <label class="form-label">積立金繰入</label>
+                                <div class="input-group">
+                                    <input type="number" id="input-reserve-drawdown" class="input-field" value="45200"
+                                        style="text-align: right;" onchange="calculateFundingBalance()">
+                                    <span class="input-suffix">円</span>
+                                </div>
+                                <button class="btn btn-xs btn-secondary" style="margin-top: 4px;"
+                                    onclick="autofillDeficit()">不足分を充当</button>
+                            </div>
+
+                            <div style="padding-bottom: 8px; font-weight: bold; color: var(--color-text-secondary);">=
+                            </div>
+
+                            <!-- Total Funds -->
+                            <div style="text-align: right;">
+                                <label class="form-label">工賃支払可能額</label>
+                                <div style="font-size: var(--font-size-xl); font-weight: bold;" id="val-total-funds">¥
                                     145,200</div>
                             </div>
-                            <div style="text-align: right;">
-                                <div style="font-size: var(--font-size-sm); color: var(--color-base-quaternary);">控除総額
+                        </div>
+
+                        <hr
+                            style="border: 0; border-top: 1px dashed var(--color-border-default); margin: var(--spacing-4) 0;">
+
+                        <!-- Balance Reconciliation -->
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; gap: var(--spacing-6); align-items: center;">
+                                <div>
+                                    <div class="form-label">工賃支払総額 (必要額)</div>
+                                    <div style="font-size: var(--font-size-xl); font-weight: bold;"
+                                        id="val-total-wages">¥ 145,200</div>
                                 </div>
                                 <div
-                                    style="font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); color: var(--color-error);">
-                                    ¥ 12,500</div>
+                                    style="font-size: var(--font-size-lg); color: var(--color-text-secondary); font-weight: bold;">
+                                    vs</div>
+                                <div>
+                                    <div class="form-label">差引収支 (繰越)</div>
+                                    <div style="font-size: var(--font-size-xl); font-weight: bold;" id="val-balance">¥ 0
+                                    </div>
+                                </div>
                             </div>
-                            <div style="text-align: right;">
-                                <div style="font-size: var(--font-size-sm); color: var(--color-base-quaternary);">差引支給額
+
+                            <!-- Reference Info (Deductions/Net) -->
+                            <div
+                                style="padding-left: var(--spacing-6); border-left: 1px solid var(--color-border-default); display: flex; gap: var(--spacing-6);">
+                                <div>
+                                    <div class="form-label">控除総額</div>
+                                    <div
+                                        style="font-size: var(--font-size-lg); font-weight: bold; color: var(--color-error);">
+                                        ¥ 12,500</div>
                                 </div>
-                                <div
-                                    style="font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); color: var(--color-primary);">
-                                    ¥ 132,700</div>
+                                <div>
+                                    <div class="form-label">差引支給総額</div>
+                                    <div
+                                        style="font-size: var(--font-size-lg); font-weight: bold; color: var(--color-primary);">
+                                        ¥ 132,700</div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="card">
-                    <div class="card-header">
-                        支給一覧
-                    </div>
-                    <div class="card-body">
-                        <div class="table-container">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>氏名</th>
-                                        <th>工賃</th>
-                                        <th>控除</th>
-                                        <th>支給額</th>
-                                        <th>ステータス</th>
-                                        <th>操作</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            <div style="font-weight: var(--font-weight-bold);">山田 太郎</div>
-                                            <div
-                                                style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
-                                                やまだ たろう</div>
-                                        </td>
-                                        <td>
-                                            <div>¥ 45,000</div>
-                                            <div
-                                                style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
-                                                基本: 40,000 / 調整: 5,000</div>
-                                        </td>
-                                        <td>
-                                            <div style="color: var(--color-error);">- ¥ 5,000</div>
-                                            <div
-                                                style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
-                                                昼食: 5,000</div>
-                                        </td>
-                                        <td>
-                                            <div
-                                                style="font-weight: var(--font-weight-bold); color: var(--color-primary);">
-                                                ¥ 40,000</div>
-                                        </td>
-                                        <td><span class="badge badge-warning">未払</span></td>
-                                        <td>
-                                            <button class="btn btn-sm btn-neutral">詳細</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div style="font-weight: var(--font-weight-bold);">鈴木 花子</div>
-                                            <div
-                                                style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
-                                                すずき はなこ</div>
-                                        </td>
-                                        <td>
-                                            <div>¥ 38,000</div>
-                                            <div
-                                                style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
-                                                基本: 38,000</div>
-                                        </td>
-                                        <td>
-                                            <div style="color: var(--color-error);">- ¥ 2,500</div>
-                                            <div
-                                                style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
-                                                昼食: 2,500</div>
-                                        </td>
-                                        <td>
-                                            <div
-                                                style="font-weight: var(--font-weight-bold); color: var(--color-primary);">
-                                                ¥ 35,500</div>
-                                        </td>
-                                        <td><span class="badge badge-success">支払済</span></td>
-                                        <td>
-                                            <button class="btn btn-sm btn-neutral">詳細</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div style="font-weight: var(--font-weight-bold);">高橋 一郎</div>
-                                            <div
-                                                style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
-                                                たかはし いちろう</div>
-                                        </td>
-                                        <td>
-                                            <div>¥ 62,200</div>
-                                            <div
-                                                style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
-                                                基本: 60,000 / 調整: 2,200</div>
-                                        </td>
-                                        <td>
-                                            <div style="color: var(--color-error);">- ¥ 5,000</div>
-                                            <div
-                                                style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
-                                                昼食: 5,000</div>
-                                        </td>
-                                        <td>
-                                            <div
-                                                style="font-weight: var(--font-weight-bold); color: var(--color-primary);">
-                                                ¥ 57,200</div>
-                                        </td>
-                                        <td><span class="badge badge-warning">未払</span></td>
-                                        <td>
-                                            <button class="btn btn-sm btn-neutral">詳細</button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                <script>
+                    function calculateFundingBalance() {
+                        const sourceIncome = parseInt(document.getElementById('input-source-income').value) || 0;
+                        const drawdown = parseInt(document.getElementById('input-reserve-drawdown').value) || 0;
+                        const totalFunds = sourceIncome + drawdown;
+
+                        // Mock Total Wages (In real app, calculate from list)
+                        const totalWages = 145200;
+
+                        const balance = totalFunds - totalWages;
+
+                        // Update DOM
+                        document.getElementById('val-total-funds').textContent = '¥ ' + totalFunds.toLocaleString();
+
+                        const balanceEl = document.getElementById('val-balance');
+                        balanceEl.textContent = (balance > 0 ? '+' : '') + '¥ ' + balance.toLocaleString();
+
+                        if (balance < 0) {
+                            balanceEl.style.color = 'var(--color-error)';
+                        } else if (balance > 0) {
+                            balanceEl.style.color = 'var(--color-primary)';
+                        } else {
+                            balanceEl.style.color = 'var(--color-text-primary)';
+                        }
+                    }
+
+                    function autofillDeficit() {
+                        const sourceIncome = parseInt(document.getElementById('input-source-income').value) || 0;
+                        const totalWages = 145200; // Mock
+                        let deficit = totalWages - sourceIncome;
+                        if (deficit < 0) deficit = 0;
+
+                        document.getElementById('input-reserve-drawdown').value = deficit;
+                        calculateFundingBalance();
+                    }
+
+                    // Initial Calc
+                    // document.addEventListener('DOMContentLoaded', calculateFundingBalance); // Already moved to inline script or call it here
+                    calculateFundingBalance();
+                </script>
+
+
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>氏名</th>
+                                <th>工賃</th>
+                                <th>控除</th>
+                                <th>支給額</th>
+                                <th>ステータス</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div style="font-weight: var(--font-weight-bold);">山田 太郎</div>
+                                    <div style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
+                                        やまだ たろう</div>
+                                </td>
+                                <td>
+                                    <div>¥ 45,000</div>
+                                    <div style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
+                                        基本: 40,000 / 調整: 5,000</div>
+                                </td>
+                                <td>
+                                    <div style="color: var(--color-error);">- ¥ 5,000</div>
+                                    <div style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
+                                        昼食: 5,000</div>
+                                </td>
+                                <td>
+                                    <div style="font-weight: var(--font-weight-bold); color: var(--color-primary);">
+                                        ¥ 40,000</div>
+                                </td>
+                                <td><span class="badge badge-warning">未払</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-neutral">詳細</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div style="font-weight: var(--font-weight-bold);">鈴木 花子</div>
+                                    <div style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
+                                        すずき はなこ</div>
+                                </td>
+                                <td>
+                                    <div>¥ 38,000</div>
+                                    <div style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
+                                        基本: 38,000</div>
+                                </td>
+                                <td>
+                                    <div style="color: var(--color-error);">- ¥ 2,500</div>
+                                    <div style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
+                                        昼食: 2,500</div>
+                                </td>
+                                <td>
+                                    <div style="font-weight: var(--font-weight-bold); color: var(--color-primary);">
+                                        ¥ 35,500</div>
+                                </td>
+                                <td><span class="badge badge-success">支払済</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-neutral">詳細</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div style="font-weight: var(--font-weight-bold);">高橋 一郎</div>
+                                    <div style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
+                                        たかはし いちろう</div>
+                                </td>
+                                <td>
+                                    <div>¥ 62,200</div>
+                                    <div style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
+                                        基本: 60,000 / 調整: 2,200</div>
+                                </td>
+                                <td>
+                                    <div style="color: var(--color-error);">- ¥ 5,000</div>
+                                    <div style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
+                                        昼食: 5,000</div>
+                                </td>
+                                <td>
+                                    <div style="font-weight: var(--font-weight-bold); color: var(--color-primary);">
+                                        ¥ 57,200</div>
+                                </td>
+                                <td><span class="badge badge-warning">未払</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-neutral">詳細</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
 
             </div>
