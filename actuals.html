@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>Compath - 収入・費用実績</title>
+    <title>Compath - 収入・経費実績</title>
 
     <link rel="stylesheet" href="globals.css">
     <link rel="stylesheet" href="ui.css">
@@ -54,27 +54,9 @@
         .text-neutral {
             color: var(--color-text-primary);
         }
-
-        /* Refactored Utility Classes */
-
-
-        .profit-summary-box {
-            background-color: var(--color-base-secondary);
-            padding: var(--spacing-3);
-            border-radius: var(--radius-card);
-            margin-bottom: var(--spacing-4);
-        }
-
-        .list-group-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: var(--spacing-1);
-            font-size: var(--font-size-sm);
-        }
     </style>
 
     <script>
-        // Mock Data (Mirrors projects.html with added financial data)
         // Mock Data (Mirrors projects.html with added financial data)
         const projects = [
             {
@@ -86,18 +68,15 @@
                 partner: '株式会社 福岡工芸',
                 period: '2025.10.01 - 2025.10.31',
                 revenue: 300000,
-                revenueItems: [
-                    { name: '売上', amount: 300000, date: '2025-10-31', note: '3,000通 @100円' }
-                ],
                 tasks: [
-                    { name: '封入作業', total: 30000, date: '2025-10-15' },
-                    { name: '検品作業', total: 15000, date: '2025-10-20' },
-                    { name: '梱包・発送', total: 5000, date: '2025-10-25' }
+                    { name: '封入作業', total: 30000 },
+                    { name: '検品作業', total: 15000 },
+                    { name: '梱包・発送', total: 5000 }
                 ],
                 expenses: [
-                    { name: '封筒・資材代', type: '材料費', amount: 20000, date: '2025-10-01' },
-                    { name: '配送業者委託費', type: '外注費', amount: 15000, date: '2025-10-25' },
-                    { name: '事業所積立金', type: '積立金', amount: 10000, date: '2025-10-31' }
+                    { name: '封筒・資材代', amount: 20000 },
+                    { name: '配送業者委託費', amount: 15000 },
+                    { name: '事業所積立金', amount: 10000 }
                 ]
             },
             {
@@ -109,19 +88,15 @@
                 partner: '自主事業',
                 period: '2025.10.01 - 継続中',
                 revenue: 450000,
-                revenueItems: [
-                    { name: '売上', amount: 450000, date: '2025-10-31', note: '店舗・外販合計' }
-                ],
                 tasks: [
-                    { name: '生地作り', total: 24000, date: '2025-10-10' },
-                    { name: '成形・焼成', total: 48000, date: '2025-10-11' },
-                    { name: '販売接客', total: 60000, date: '2025-10-12' }
+                    { name: '生地作り', total: 24000 },
+                    { name: '成形・焼成', total: 48000 },
+                    { name: '販売接客', total: 60000 }
                 ],
                 expenses: [
-                    { name: '小麦粉・材料費', type: '材料費', amount: 80000, date: '2025-10-01' },
-                    { name: '光熱費按分', type: 'その他', amount: 15000, date: '2025-10-31' },
-                    { name: '包装資材', type: '材料費', amount: 5000, date: '2025-10-05' },
-                    { name: '事業所積立金', type: '積立金', amount: 22500, date: '2025-10-31' }
+                    { name: '小麦粉・材料費', amount: 80000 },
+                    { name: '光熱費按分', amount: 15000 },
+                    { name: '包装資材', amount: 5000 }
                 ]
             },
             {
@@ -133,13 +108,8 @@
                 partner: '天神オフィスサプライ',
                 period: '2025.11.01 - 継続中',
                 revenue: 200000,
-                revenueItems: [
-                    { name: '売上', amount: 200000, date: '2025-11-30', note: '月額委託料' }
-                ],
                 tasks: [],
-                expenses: [
-                    { name: '事業所積立金', type: '積立金', amount: 10000, date: '2025-11-30' }
-                ]
+                expenses: []
             },
             {
                 id: 'p4',
@@ -150,16 +120,13 @@
                 partner: '自主事業',
                 period: '2025.11.10 - 2025.11.10',
                 revenue: 50000,
-                revenueItems: [
-                    { name: '売上', amount: 50000, date: '2025-11-10', note: '当日売上' }
-                ],
                 tasks: [
-                    { name: '接客販売', total: 10000, date: '2025-11-10' },
-                    { name: '搬入出', total: 5000, date: '2025-11-10' }
+                    { name: '接客販売', total: 10000 },
+                    { name: '搬入出', total: 5000 }
                 ],
                 expenses: [
-                    { name: '出店料', type: 'その他', amount: 5000, date: '2025-11-01' },
-                    { name: '事業所積立金', type: '積立金', amount: 2500, date: '2025-11-10' }
+                    { name: '出店料', amount: 5000 },
+                    { name: '事業所積立金', amount: 2500 }
                 ]
             },
             {
@@ -188,6 +155,56 @@
             }
         ];
 
+        // Mock members data for wage calculation
+        const members = [
+            { id: 'm1', name: '利用者A', wageType: 'hourly', baseRate: 950 },
+            { id: 'm2', name: '利用者B', wageType: 'hourly', baseRate: 980 },
+            { id: 'm3', name: '利用者C', wageType: 'fixed', baseRate: 0 } // Fixed wage members don't have hourly rate
+        ];
+
+        function updateEditTask(index, field, value) {
+            // Auto-fill unit price if member changes
+            if (field === 'memberId') {
+                const member = members.find(m => m.id === value);
+                if (member && member.wageType === 'hourly') {
+                    tempEditData.tasks[index].unitPrice = member.baseRate;
+                } else {
+                    tempEditData.tasks[index].unitPrice = 0; // Reset if not hourly or no member
+                }
+            }
+
+            // Update field
+            if (field === 'hours' || field === 'unitPrice' || field === 'incentive') {
+                value = parseInt(value) || 0;
+            }
+            tempEditData.tasks[index][field] = value;
+
+            // Auto-calc total
+            if (field === 'hours' || field === 'unitPrice' || field === 'memberId' || field === 'incentive') {
+                const hours = parseInt(tempEditData.tasks[index].hours) || 0;
+                const price = parseInt(tempEditData.tasks[index].unitPrice) || 0;
+                const incentive = parseInt(tempEditData.tasks[index].incentive) || 0;
+
+                const basic = hours * price;
+                tempEditData.tasks[index].total = basic + incentive;
+            }
+
+            renderEditTabs();
+        }
+
+        function addTaskItem() {
+            if (!tempEditData.tasks) tempEditData.tasks = [];
+            tempEditData.tasks.push({
+                date: currentTargetMonth + '-01',
+                memberId: '',
+                name: '',
+                hours: 0,
+                unitPrice: 0,
+                incentive: 0,
+                total: 0
+            });
+            renderEditTabs();
+        }
         function formatCurrency(num) {
             return new Intl.NumberFormat('ja-JP').format(num);
         }
@@ -226,19 +243,19 @@
                 const profitSign = profit > 0 ? '+' : '';
 
                 card.innerHTML = `
-                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
-                        <div>
-                            <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">
-                                ${project.name}
+                    <div class="card-header">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div style="margin-bottom: var(--spacing-2);">
+                                <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">
+                                    ${project.name}
+                                </div>
+                                <div style="display: flex; gap: var(--spacing-2); flex-wrap: wrap;">
+                                    ${getStatusBadge(project.status)}
+                                    <span class="badge badge-neutral">${typeLabel}</span>
+                                    <span class="badge badge-neutral">${sourceLabel}${partnerLabel}</span>
+                                </div>
                             </div>
-                            <div style="display: flex; gap: var(--spacing-2); flex-wrap: wrap;">
-                                ${getStatusBadge(project.status)}
-                                <span class="badge badge-neutral">${typeLabel}</span>
-                                <span class="badge badge-neutral">${sourceLabel}${partnerLabel}</span>
-                            </div>
-                        </div>
-                        <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
-                            <button class="btn btn-icon btn-icon-success" title="修正" onclick="openEditModal('${project.id}')">
+                            <button class="btn btn-icon-sm btn-icon-neutral" onclick="openEditModal('${project.id}')">
                                 <span class="material-symbols-outlined">edit</span>
                             </button>
                         </div>
@@ -254,18 +271,13 @@
                                 <div class="summary-value text-neutral">${formatCurrency(project.revenue)}円</div>
                             </div>
                             <div class="summary-row">
-                                <div class="summary-label">支出計 (費用+工賃)</div>
+                                <div class="summary-label">支出計 (経費+工賃)</div>
                                 <div class="summary-value text-neutral">-${formatCurrency(totalCost)}円</div>
                             </div>
                             <div style="border-top: 1px solid var(--color-border-default); margin-top: var(--spacing-2); padding-top: var(--spacing-2); display: flex; justify-content: space-between; align-items: flex-end;">
                                 <div class="summary-label" style="font-weight: bold;">収支差額</div>
                                 <div class="summary-value ${profitClass}">${profitSign}${formatCurrency(profit)}円</div>
                             </div>
-                        </div>
-                        <div style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
-                            <button class="btn btn-neutral" onclick="openDetailsModal('${project.id}')">
-                                詳細
-                            </button>
                         </div>
                     </div>
                 `;
@@ -289,22 +301,34 @@
 
         // --- Edit Modal Logic ---
         let currentEditingProjectId = null;
-        let tempEditData = null; // Temporary storage for editing
+        let tempEditData = {}; // Temporary data for modal editing
+        let currentTargetMonth = ''; // For filtering tasks by month
 
         function openEditModal(projectId) {
             currentEditingProjectId = projectId;
             const project = projects.find(p => p.id === projectId);
             if (!project) return;
 
-            document.getElementById('modal-project-name').textContent = project.name;
-
-            // Deep copy to temp data
+            // Deep copy project data to tempEditData to allow cancellation
             tempEditData = JSON.parse(JSON.stringify(project));
 
+            document.getElementById('modal-project-name').textContent = project.name;
+            // document.getElementById('edit-revenue').value = project.revenue; // This is now handled by renderEditTabs for the 'income' tab
+
             // Initialize arrays if missing
-            if (!tempEditData.revenueItems) tempEditData.revenueItems = [];
+            if (!tempEditData.revenueItems) tempEditData.revenueItems = [{ name: '収入実績', amount: tempEditData.revenue || 0 }]; // Convert single revenue to item
             if (!tempEditData.expenses) tempEditData.expenses = [];
-            // Tasks (Labor) are assumed to exist or empty array
+            if (!tempEditData.tasks) tempEditData.tasks = []; // Tasks (Labor) are assumed to exist or empty array
+
+            // Initialize Pot Data if missing (Mocking persistence for this session)
+            if (tempEditData.potBudget === undefined) tempEditData.potBudget = 100000; // Default mock budget
+            if (tempEditData.potProgress === undefined) tempEditData.potProgress = 0;
+            if (tempEditData.potDeduction === undefined) tempEditData.potDeduction = 0;
+
+            // Set default month (current month or last active month)
+            const today = new Date();
+            currentTargetMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+            document.getElementById('edit-target-month').value = currentTargetMonth;
 
             switchEditTab('income'); // Default tab
             renderEditTabs();
@@ -315,270 +339,225 @@
         function closeEditModal() {
             document.getElementById('modal-edit-actuals').style.display = 'none';
             currentEditingProjectId = null;
-            tempEditData = null;
+            tempEditData = {}; // Clear temporary data
+            currentTargetMonth = '';
         }
 
         function switchEditTab(tabName) {
-            // Remove active
-            document.querySelectorAll('.tab-link').forEach(el => el.classList.remove('is-active'));
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('is-active'));
+            document.querySelectorAll('.modal-tab-content').forEach(tab => {
+                tab.style.display = 'none';
+            });
+            document.querySelectorAll('.modal-tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
 
-            // Add active
-            const link = document.getElementById(`tab-link-${tabName}`);
-            const content = document.getElementById(`tab-content-${tabName}`);
-            if (link) link.classList.add('is-active');
-            if (content) content.classList.add('is-active');
+            document.getElementById(`tab-content-${tabName}`).style.display = 'block';
+            document.getElementById(`tab-button-${tabName}`).classList.add('active');
+            renderEditTabs(); // Re-render content for the active tab
+        }
+
+        function isInMonth(dateString) {
+            if (!dateString || !currentTargetMonth) return true; // Show all if no date or month filter
+            return dateString.startsWith(currentTargetMonth);
         }
 
         function renderEditTabs() {
-            if (!tempEditData) return;
-
-            // 1. Income Tab
-            const incomeList = document.getElementById('edit-income-list');
-            incomeList.innerHTML = '';
-            let totalIncome = 0;
-
-            tempEditData.revenueItems.forEach((item, index) => {
-                totalIncome += parseInt(item.amount || 0);
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><input type="date" class="input-field" value="${item.date || ''}" onchange="updateEditItem('revenueItems', ${index}, 'date', this.value)"></td>
-                    <td>
-                        <select class="input-field" onchange="updateEditItem('revenueItems', ${index}, 'name', this.value)">
-                            <option value="売上" ${item.name === '売上' ? 'selected' : ''}>売上</option>
-                            <option value="助成金" ${item.name === '助成金' ? 'selected' : ''}>助成金</option>
-                            <option value="その他収入" ${item.name === 'その他収入' ? 'selected' : ''}>その他収入</option>
-                        </select>
-                    </td>
-                    <td><input type="number" class="input-field" value="${item.amount}" onchange="updateEditItem('revenueItems', ${index}, 'amount', this.value)" style="text-align: right;"></td>
-                    <td><input type="text" class="input-field" value="${item.note || ''}" onchange="updateEditItem('revenueItems', ${index}, 'note', this.value)"></td>
-                    <td style="text-align: center;">
-                        <button class="btn btn-icon btn-icon-error" style="width: 24px; height: 24px; font-size: 14px;" onclick="removeEditItem('revenueItems', ${index})">
-                            <span class="material-symbols-outlined" style="font-size: 14px;">close</span>
-                        </button>
-                    </td>
-                `;
-                incomeList.appendChild(tr);
-            });
-            document.getElementById('edit-summary-income').textContent = formatCurrency(totalIncome);
-
-            // 2. Savings Tab
-            const savingsList = document.getElementById('edit-savings-list');
-            savingsList.innerHTML = '';
-            let totalSavings = 0;
-
-            // Filter for savings in expenses array
-            const savingsIndices = [];
-            tempEditData.expenses.forEach((item, realIndex) => {
-                if (item.type === '積立金') {
-                    savingsIndices.push(realIndex);
-                    totalSavings += parseInt(item.amount || 0);
-
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td><input type="date" class="input-field" value="${item.date || ''}" onchange="updateEditItem('expenses', ${realIndex}, 'date', this.value)"></td>
-                        <td>
-                            <select class="input-field" onchange="updateEditItem('expenses', ${realIndex}, 'name', this.value)">
-                                <option value="工賃積立金" ${item.name === '工賃積立金' ? 'selected' : ''}>工賃積立金</option>
-                                <option value="その他の積立金" ${item.name === 'その他の積立金' ? 'selected' : ''}>その他の積立金</option>
-                            </select>
-                        </td>
-                        <td><input type="number" class="input-field" value="${item.amount}" onchange="updateEditItem('expenses', ${realIndex}, 'amount', this.value)" style="text-align: right;"></td>
-                        <td><input type="text" class="input-field" value="${item.note || ''}" onchange="updateEditItem('expenses', ${realIndex}, 'note', this.value)"></td>
-                        <td style="text-align: center;">
-                            <button class="btn btn-icon btn-icon-error" style="width: 24px; height: 24px; font-size: 14px;" onclick="removeEditItem('expenses', ${realIndex})">
-                                <span class="material-symbols-outlined" style="font-size: 14px;">close</span>
-                            </button>
-                        </td>
+            // 1. Income (Revenue)
+            const revenueList = document.getElementById('revenue-list');
+            revenueList.innerHTML = '';
+            let totalRevenue = 0;
+            if (tempEditData.revenueItems) {
+                tempEditData.revenueItems.forEach((item, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'form-group-row revenue-row';
+                    div.style.marginBottom = 'var(--spacing-2)';
+                    div.style.display = 'flex';
+                    div.style.gap = 'var(--spacing-2)';
+                    div.style.alignItems = 'center';
+                    div.innerHTML = `
+                        <input type="text" class="input-field revenue-name" value="${item.name}" placeholder="収入名" onchange="updateEditRevenue(${index}, 'name', this.value)" style="flex: 2;">
+                        <input type="number" class="input-field revenue-amount" value="${item.amount}" placeholder="金額" onchange="updateEditRevenue(${index}, 'amount', this.value)" style="flex: 1; text-align: right;">
+                        <button class="btn btn-icon-sm btn-icon-error" onclick="removeEditRevenue(${index})"><span class="material-symbols-outlined">delete</span></button>
                     `;
-                    savingsList.appendChild(tr);
-                }
-            });
-            document.getElementById('edit-summary-savings').textContent = formatCurrency(totalSavings);
+                    revenueList.appendChild(div);
+                    totalRevenue += parseInt(item.amount) || 0;
+                });
+            }
+            document.getElementById('total-revenue-display').textContent = formatCurrency(totalRevenue) + '円';
 
-            // 3. Cost Tab
-            // 3a. Labor
+            // 2. Expenses
+            const expenseList = document.getElementById('expense-list');
+            expenseList.innerHTML = '';
+            let totalExpenses = 0;
+            if (tempEditData.expenses) {
+                tempEditData.expenses.forEach((expense, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'form-group-row expense-row';
+                    div.style.marginBottom = 'var(--spacing-2)';
+                    div.style.display = 'flex';
+                    div.style.gap = 'var(--spacing-2)';
+                    div.style.alignItems = 'center';
+                    div.innerHTML = `
+                        <input type="text" class="input-field expense-name" value="${expense.name}" placeholder="経費名" onchange="updateEditExpense(${index}, 'name', this.value)" style="flex: 2;">
+                        <input type="number" class="input-field expense-amount" value="${expense.amount}" placeholder="金額" onchange="updateEditExpense(${index}, 'amount', this.value)" style="flex: 1; text-align: right;">
+                        <button class="btn btn-icon-sm btn-icon-error" onclick="removeEditExpense(${index})"><span class="material-symbols-outlined">delete</span></button>
+                    `;
+                    expenseList.appendChild(div);
+                    totalExpenses += parseInt(expense.amount) || 0;
+                });
+            }
+            document.getElementById('total-expenses-display').textContent = formatCurrency(totalExpenses) + '円';
+
+            // 3a. Labor (Tasks)
             const laborList = document.getElementById('edit-labor-list');
             laborList.innerHTML = '';
             let totalLabor = 0;
 
-            if (tempEditData.tasks) {
-                tempEditData.tasks.forEach((task, index) => {
-                    const amount = parseInt(task.total || 0); // Using 'total' as the editable field for Actuals
-                    totalLabor += amount;
+            // Render Pot Inputs
+            const potBudgetInput = document.getElementById('input-pot-budget');
+            const potProgressInput = document.getElementById('input-pot-progress');
+            const potDeductionInput = document.getElementById('input-pot-deduction');
 
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td>${task.name}</td>
-                        <td><input type="date" class="input-field" value="${task.date || ''}" onchange="updateEditTask( ${index}, 'date', this.value)"></td>
-                        <td><input type="number" class="input-field" value="${amount}" onchange="updateEditTask( ${index}, 'total', this.value)" style="text-align: right;"></td>
-                    `;
-                    laborList.appendChild(tr);
-                });
+            if (potBudgetInput) {
+                potBudgetInput.value = tempEditData.potBudget || 0;
+                potProgressInput.value = tempEditData.potProgress || 0;
+                potDeductionInput.value = tempEditData.potDeduction || 0;
+                calculateIncentivePot(); // Update display
             }
 
-            // 3b. Other Expenses
-            const otherCostList = document.getElementById('edit-other-cost-list');
-            otherCostList.innerHTML = '';
-            let totalOtherCost = 0;
+            if (tempEditData.tasks) {
+                tempEditData.tasks.forEach((task, index) => {
+                    if (!isInMonth(task.date)) return; // Filter
 
-            tempEditData.expenses.forEach((item, realIndex) => {
-                if (item.type !== '積立金') {
-                    totalOtherCost += parseInt(item.amount || 0);
+                    const amount = parseInt(task.total || 0);
+                    totalLabor += amount;
+
+                    const basicScale = parseInt(task.hours) || 0;
+                    const incentive = parseInt(task.incentive) || 0;
+                    const basicWage = (parseInt(task.hours) || 0) * (parseInt(task.unitPrice) || 0); // Recalculate basic wage for display
 
                     const tr = document.createElement('tr');
+
+                    // Member Options
+                    let memberOptions = '<option value="">(未選択)</option>';
+                    members.forEach(m => {
+                        const selected = (task.memberId === m.id) ? 'selected' : '';
+                        memberOptions += `<option value="${m.id}" ${selected}>${m.name}</option>`;
+                    });
+
+                    // Hourly Rate Display
+                    const unitPrice = task.unitPrice || 0;
+
                     tr.innerHTML = `
-                        <td><input type="date" class="input-field" value="${item.date || ''}" onchange="updateEditItem('expenses', ${realIndex}, 'date', this.value)"></td>
-                         <td>
-                            <select class="input-field" onchange="updateEditItem('expenses', ${realIndex}, 'type', this.value)">
-                                <option value="材料費" ${item.type === '材料費' ? 'selected' : ''}>材料費</option>
-                                <option value="外注費" ${item.type === '外注費' ? 'selected' : ''}>外注費</option>
-                                <option value="その他" ${item.type === 'その他' ? 'selected' : ''}>その他</option>
+                        <td><input type="date" class="input-field" value="${task.date || currentTargetMonth + '-01'}" onchange="updateEditTask(${index}, 'date', this.value)" style="font-size: 11px;"></td>
+                        <td>
+                            <select class="input-field" onchange="updateEditTask(${index}, 'memberId', this.value)" style="font-size: 11px;">
+                                ${memberOptions}
                             </select>
                         </td>
-                        <td><input type="text" class="input-field" value="${item.name}" onchange="updateEditItem('expenses', ${realIndex}, 'name', this.value)"></td>
-                        <td><input type="number" class="input-field" value="${item.amount}" onchange="updateEditItem('expenses', ${realIndex}, 'amount', this.value)" style="text-align: right;"></td>
-                        <td><input type="text" class="input-field" value="${item.note || ''}" onchange="updateEditItem('expenses', ${realIndex}, 'note', this.value)"></td>
+                        <td><input type="text" class="input-field" value="${task.name || ''}" placeholder="作業内容" onchange="updateEditTask(${index}, 'name', this.value)" style="font-size: 11px;"></td>
+                        <td>
+                             <input type="number" class="input-field" value="${task.hours || 0}" placeholder="h" style="text-align: right;" onchange="updateEditTask(${index}, 'hours', this.value)">
+                        </td>
+                        <td>
+                             <input type="number" class="input-field" value="${unitPrice}" readonly style="text-align: right; background-color: var(--color-base-secondary); color: var(--color-text-secondary); cursor: not-allowed;">
+                        </td>
+                        <td>
+                             <input type="text" class="input-field" value="${formatCurrency(basicWage)}" readonly style="text-align: right; background-color: var(--color-base-secondary); font-weight: bold;">
+                        </td>
+                        <td>
+                             <input type="number" class="input-field" value="${incentive}" placeholder="0" style="text-align: right; color: var(--color-semantic-success-main); font-weight: bold;" onchange="updateEditTask(${index}, 'incentive', this.value)">
+                        </td>
+                        <td><input type="text" class="input-field" value="${formatCurrency(amount)}" readonly style="text-align: right; background-color: var(--color-base-secondary); font-weight: bold;"></td>
                         <td style="text-align: center;">
-                            <button class="btn btn-icon btn-icon-error" style="width: 24px; height: 24px; font-size: 14px;" onclick="removeEditItem('expenses', ${realIndex})">
+                             <button class="btn btn-icon btn-icon-error" style="width: 24px; height: 24px; font-size: 14px;" onclick="removeEditTask(${index})">
                                 <span class="material-symbols-outlined" style="font-size: 14px;">close</span>
                             </button>
                         </td>
                     `;
-                    otherCostList.appendChild(tr);
-                }
-            });
-
-            document.getElementById('edit-summary-cost').textContent = formatCurrency(totalLabor + totalOtherCost);
+                    laborList.appendChild(tr);
+                });
+            }
+            document.getElementById('total-labor-display').textContent = formatCurrency(totalLabor) + '円';
         }
 
-        // --- Helpers ---
-
-        function updateEditItem(arrayName, index, field, value) {
+        function updateEditRevenue(index, field, value) {
             if (field === 'amount') value = parseInt(value) || 0;
-            tempEditData[arrayName][index][field] = value;
+            tempEditData.revenueItems[index][field] = value;
             renderEditTabs();
         }
 
-        function removeEditItem(arrayName, index) {
-            tempEditData[arrayName].splice(index, 1);
+        function addRevenueRow() {
+            if (!tempEditData.revenueItems) tempEditData.revenueItems = [];
+            tempEditData.revenueItems.push({ name: '', amount: 0 });
             renderEditTabs();
         }
 
-        function updateEditTask(index, field, value) {
-            if (field === 'total') value = parseInt(value) || 0;
-            tempEditData.tasks[index][field] = value;
+        function removeEditRevenue(index) {
+            tempEditData.revenueItems.splice(index, 1);
             renderEditTabs();
         }
 
-        function addRevenueItem() {
-            tempEditData.revenueItems.push({ name: '売上', amount: 0, note: '', date: '' });
+        function updateEditExpense(index, field, value) {
+            if (field === 'amount') value = parseInt(value) || 0;
+            tempEditData.expenses[index][field] = value;
             renderEditTabs();
         }
 
-        function addSavingsItem() {
-            tempEditData.expenses.push({ name: '工賃積立金', type: '積立金', amount: 0, note: '', date: '' });
+        function addExpenseRow() {
+            if (!tempEditData.expenses) tempEditData.expenses = [];
+            tempEditData.expenses.push({ name: '', amount: 0 });
             renderEditTabs();
         }
 
-        function addOtherCostItem() {
-            tempEditData.expenses.push({ name: '', type: '材料費', amount: 0, note: '', date: '' });
+        function removeEditExpense(index) {
+            tempEditData.expenses.splice(index, 1);
             renderEditTabs();
         }
+
+        function removeEditTask(index) {
+            tempEditData.tasks.splice(index, 1);
+            renderEditTabs();
+        }
+
+        function calculateIncentivePot() {
+            const budget = parseInt(document.getElementById('input-pot-budget').value) || 0;
+            const progress = parseInt(document.getElementById('input-pot-progress').value) || 0;
+            const deduction = parseInt(document.getElementById('input-pot-deduction').value) || 0;
+
+            const pot = Math.floor((budget * progress / 100) - deduction);
+            const finalPot = pot > 0 ? pot : 0;
+
+            document.getElementById('val-pot-total').textContent = formatCurrency(finalPot) + ' 円';
+
+            // Store in temp data
+            tempEditData.potBudget = budget;
+            tempEditData.potProgress = progress;
+            tempEditData.potDeduction = deduction;
+        }
+
+        function changeEditMonth(month) {
+            currentTargetMonth = month;
+            renderEditTabs();
+        }
+
 
         function saveActuals() {
-            if (!currentEditingProjectId || !tempEditData) return;
+            if (!currentEditingProjectId) return;
+            const project = projects.find(p => p.id === currentEditingProjectId);
+            if (!project) return;
 
-            const projectIndex = projects.findIndex(p => p.id === currentEditingProjectId);
-            if (projectIndex === -1) return;
-
-            // Recalculate total revenue
-            const totalRevenue = tempEditData.revenueItems.reduce((sum, item) => sum + (parseInt(item.amount) || 0), 0);
-            tempEditData.revenue = totalRevenue;
-
-            // Update project data
-            projects[projectIndex] = JSON.parse(JSON.stringify(tempEditData));
+            // Update project with tempEditData
+            project.revenue = tempEditData.revenueItems.reduce((sum, item) => sum + (parseInt(item.amount) || 0), 0);
+            project.revenueItems = tempEditData.revenueItems; // Persist breakdown
+            project.expenses = tempEditData.expenses;
+            project.tasks = tempEditData.tasks; // Save tasks as well
+            project.potBudget = tempEditData.potBudget;
+            project.potProgress = tempEditData.potProgress;
+            project.potDeduction = tempEditData.potDeduction;
 
             renderProjects();
             closeEditModal();
-        }
-
-        // --- Details Modal Logic ---
-        function openDetailsModal(projectId) {
-            const project = projects.find(p => p.id === projectId);
-            if (!project) return;
-
-            document.getElementById('modal-details-title').textContent = project.name;
-
-            // Basic Info
-            let statusBadge = getStatusBadge(project.status);
-            document.getElementById('details-status').innerHTML = statusBadge;
-            document.getElementById('details-period').textContent = project.period;
-
-            // Financials
-            const totalExpenses = project.expenses.reduce((sum, item) => sum + item.amount, 0);
-            const totalLabor = project.tasks.reduce((sum, item) => sum + item.total, 0);
-            const totalCost = totalExpenses + totalLabor;
-            const profit = project.revenue - totalCost;
-
-            document.getElementById('details-revenue').textContent = formatCurrency(project.revenue) + '円';
-            document.getElementById('details-expenses-total').textContent = formatCurrency(totalExpenses) + '円';
-            document.getElementById('details-labor-total').textContent = formatCurrency(totalLabor) + '円';
-
-            const profitEl = document.getElementById('details-profit');
-            profitEl.textContent = (profit > 0 ? '+' : '') + formatCurrency(profit) + '円';
-
-            if (profit >= 0) {
-                profitEl.classList.remove('text-error');
-                profitEl.classList.add('text-success');
-            } else {
-                profitEl.classList.remove('text-success');
-                profitEl.classList.add('text-error');
-            }
-
-            // Expense List
-            const expenseList = document.getElementById('details-expense-list');
-            expenseList.innerHTML = '';
-            if (project.expenses.length > 0) {
-                const table = document.createElement('table');
-                table.className = 'table';
-                table.innerHTML = `<thead><tr><th>費用名</th><th style="text-align: right;">金額</th></tr></thead><tbody id="details-expense-tbody"></tbody>`;
-                const tbody = table.querySelector('tbody');
-
-                project.expenses.forEach(item => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `<td>${item.name}</td><td style="text-align: right;">${formatCurrency(item.amount)}円</td>`;
-                    tbody.appendChild(tr);
-                });
-                expenseList.appendChild(table);
-            } else {
-                expenseList.textContent = 'なし';
-            }
-
-            // Task List
-            const taskList = document.getElementById('details-task-list');
-            taskList.innerHTML = '';
-            if (project.tasks.length > 0) {
-                const table = document.createElement('table');
-                table.className = 'table';
-                table.innerHTML = `<thead><tr><th>タスク名</th><th style="text-align: right;">工賃</th></tr></thead><tbody id="details-task-tbody"></tbody>`;
-                const tbody = table.querySelector('tbody');
-
-                project.tasks.forEach(item => {
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `<td>${item.name}</td><td style="text-align: right;">${formatCurrency(item.total)}円</td>`;
-                    tbody.appendChild(tr);
-                });
-                taskList.appendChild(table);
-            } else {
-                taskList.textContent = 'なし';
-            }
-
-            document.getElementById('modal-details-actuals').style.display = 'flex';
-        }
-
-        function closeDetailsModal() {
-            document.getElementById('modal-details-actuals').style.display = 'none';
         }
     </script>
 </head>
@@ -607,14 +586,13 @@
                     </ul>
                 </details>
                 <details class="nav-accordion">
-                    <summary>職員・利用者情報</summary>
+                    <summary>関係者情報</summary>
                     <ul>
                         <li><a href="staff.html">職員情報</a></li>
                         <li><a href="members.html">利用者情報</a></li>
+                        <li><a href="partners.html">取引先情報</a></li>
                     </ul>
                 </details>
-
-                <a href="partners.html" class="nav-link">取引先情報</a>
                 <details class="nav-accordion">
                     <summary>スキル情報</summary>
                     <ul>
@@ -639,7 +617,7 @@
                     <ul>
                         <li><a href="projects.html">案件情報</a></li>
                         <li><a href="schedule.html">進捗状況</a></li>
-                        <li><a href="actuals.html" class="active">収入・費用実績</a></li>
+                        <li><a href="actuals.html" class="active">収入・経費実績</a></li>
                     </ul>
                 </details>
                 <details class="nav-accordion">
@@ -677,7 +655,7 @@
 
                 <div
                     style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
-                    <h1 style="margin: 0;">収入・費用実績</h1>
+                    <h1 style="margin: 0;">収入・経費実績</h1>
                 </div>
 
                 <div
@@ -731,187 +709,141 @@
     </div>
 
     <!-- Edit Modal -->
-    <!-- Edit Modal -->
     <div id="modal-edit-actuals" class="modal-backdrop" style="display: none;">
-        <div class="modal-content modal-lg">
+        <div class="modal-content modal-md" style="max-width: 900px;">
             <div class="modal-header">
-                <span id="modal-project-name">案件名</span>
+                <div style="display: flex; align-items: center; gap: var(--spacing-4);">
+                    <span id="modal-project-name" style="font-weight: bold; font-size: var(--font-size-lg);">案件名</span>
+                    <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                        <span style="font-size: var(--font-size-sm); color: var(--color-text-secondary);">対象月:</span>
+                        <input type="month" id="edit-target-month" class="input-field"
+                            style="width: auto; padding: 4px 8px;" onchange="changeEditMonth(this.value)">
+                    </div>
+                </div>
                 <button class="btn-close" onclick="closeEditModal()"><span
                         class="material-symbols-outlined">close</span></button>
             </div>
-            <div class="modal-body">
 
+            <div class="modal-body" style="padding: 0;">
                 <!-- Tabs -->
-                <div class="tabs-nav">
-                    <div class="tab-link is-active" id="tab-link-income" onclick="switchEditTab('income')">収入</div>
-                    <div class="tab-link" id="tab-link-savings" onclick="switchEditTab('savings')">積立金</div>
-                    <div class="tab-link" id="tab-link-cost" onclick="switchEditTab('cost')">費用</div>
+                <div class="modal-tabs"
+                    style="display: flex; border-bottom: 1px solid var(--color-border-default); background-color: var(--color-base-secondary);">
+                    <button id="tab-button-income" class="modal-tab-button active" onclick="switchEditTab('income')"
+                        style="flex: 1; padding: var(--spacing-3); border: none; background: none; cursor: pointer; border-bottom: 2px solid var(--color-primary-main); font-weight: bold; color: var(--color-primary-main);">収入
+                        (売上)</button>
+                    <button id="tab-button-cost" class="modal-tab-button" onclick="switchEditTab('cost')"
+                        style="flex: 1; padding: var(--spacing-3); border: none; background: none; cursor: pointer; border-bottom: 2px solid transparent; color: var(--color-text-secondary);">支出
+                        (費用・工賃)</button>
                 </div>
 
-                <!-- Tab Content: Income -->
-                <div id="tab-content-income" class="tab-content is-active">
-                    <div class="form-group">
-                        <label class="form-label">収入明細</label>
-                        <div class="table-container" style="margin-bottom: var(--spacing-2);">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th style="width: 140px;">日付</th>
-                                        <th style="width: 160px;">項目</th>
-                                        <th>金額</th>
-                                        <th>備考</th>
-                                        <th style="width: 50px;"></th>
-                                    </tr>
-                                </thead>
-                                <tbody id="edit-income-list">
-                                    <!-- JS Rendered -->
-                                </tbody>
-                            </table>
+                <div style="padding: var(--spacing-4); max-height: 60vh; overflow-y: auto;">
+
+                    <!-- Tab Content: Income -->
+                    <div id="tab-content-income" class="modal-tab-content">
+                        <div class="form-group">
+                            <label class="form-label">収入明細</label>
+                            <div id="revenue-list">
+                                <!-- JS Rendered -->
+                            </div>
+                            <button class="btn btn-secondary btn-sm" onclick="addRevenueRow()">+ 収入を追加</button>
                         </div>
-                        <button class="btn btn-secondary btn-sm" onclick="addRevenueItem()">+ 収入を追加</button>
+                        <div class="summary-row"
+                            style="margin-top: var(--spacing-4); padding-top: var(--spacing-2); border-top: 1px dashed var(--color-border-default);">
+                            <div class="summary-label">収入合計</div>
+                            <div class="summary-value" id="total-revenue-display">0円</div>
+                        </div>
                     </div>
-                    <div style="text-align: right; margin-top: var(--spacing-2); font-weight: bold;">
-                        合計: <span id="edit-summary-income">0</span>円
+
+                    <!-- Tab Content: Cost -->
+                    <div id="tab-content-cost" class="modal-tab-content" style="display: none;">
+
+                        <!-- Incentive Pot Calculation -->
+                        <div class="profit-summary-box"
+                            style="margin-bottom: var(--spacing-4); background-color: var(--color-base-tertiary-transparent); padding: var(--spacing-3); border-radius: var(--radius-md);">
+                            <div
+                                style="font-weight: bold; margin-bottom: var(--spacing-2); color: var(--color-text-primary); font-size: var(--font-size-sm);">
+                                インセンティブ原資の試算 (当月)</div>
+                            <div style="display: flex; gap: var(--spacing-2); flex-wrap: wrap; align-items: center;">
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label class="form-label" style="font-size: 10px;">基準予算</label>
+                                    <input type="number" id="input-pot-budget" class="input-field"
+                                        style="width: 90px; text-align: right;" placeholder="0"
+                                        onchange="calculateIncentivePot()">
+                                </div>
+                                <div>×</div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label class="form-label" style="font-size: 10px;">進捗(%)</label>
+                                    <input type="number" id="input-pot-progress" class="input-field"
+                                        style="width: 60px; text-align: right;" placeholder="0"
+                                        onchange="calculateIncentivePot()">
+                                </div>
+                                <div>-</div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label class="form-label" style="font-size: 10px;">控除</label>
+                                    <input type="number" id="input-pot-deduction" class="input-field"
+                                        style="width: 80px; text-align: right;" placeholder="0"
+                                        onchange="calculateIncentivePot()">
+                                </div>
+                                <div>=</div>
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label class="form-label" style="font-size: 10px;">分配可能額</label>
+                                    <div style="font-size: 14px; font-weight: bold; padding: 4px 0;" id="val-pot-total">
+                                        0 円</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Labor Costs -->
+                        <div class="form-group">
+                            <label class="form-label">工賃明細 (基本工賃 + 加算)</label>
+                            <div class="table-container" style="margin-bottom: var(--spacing-2);">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 120px;">日付</th>
+                                            <th style="width: 120px;">利用者</th>
+                                            <th>作業内容</th>
+                                            <th style="width: 60px;">h</th>
+                                            <th style="width: 70px;">単価</th>
+                                            <th style="width: 80px;">基本</th>
+                                            <th style="width: 80px; color: var(--color-semantic-success-main);">+ 加算
+                                            </th>
+                                            <th style="width: 80px;">計</th>
+                                            <th style="width: 40px;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="edit-labor-list">
+                                        <!-- JS Rendered -->
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <button class="btn btn-secondary btn-sm" onclick="addTaskItem()">+ 作業を追加</button>
+                                <div style="font-weight: bold;">工賃計: <span id="total-labor-display">0円</span></div>
+                            </div>
+                        </div>
+
+                        <hr style="margin: var(--spacing-4) 0; border: 0; border-top: var(--border-subtle);">
+
+                        <!-- Other Expenses -->
+                        <div class="form-group">
+                            <label class="form-label">その他費用 (材料費・外注費など)</label>
+                            <div id="expense-list">
+                                <!-- JS Rendered -->
+                            </div>
+                            <button class="btn btn-secondary btn-sm" onclick="addExpenseRow()">+ 経費を追加</button>
+                        </div>
+                        <div class="summary-row"
+                            style="margin-top: var(--spacing-4); padding-top: var(--spacing-2); border-top: 1px dashed var(--color-border-default);">
+                            <div class="summary-label">その他費用合計</div>
+                            <div class="summary-value" id="total-expenses-display">0円</div>
+                        </div>
                     </div>
                 </div>
-
-                <!-- Tab Content: Savings -->
-                <div id="tab-content-savings" class="tab-content">
-                    <div class="form-group">
-                        <label class="form-label">積立金設定</label>
-                        <div class="table-container" style="margin-bottom: var(--spacing-2);">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th style="width: 140px;">日付</th>
-                                        <th style="width: 160px;">項目</th>
-                                        <th>金額</th>
-                                        <th>備考</th>
-                                        <th style="width: 50px;"></th>
-                                    </tr>
-                                </thead>
-                                <tbody id="edit-savings-list">
-                                    <!-- JS Rendered -->
-                                </tbody>
-                            </table>
-                        </div>
-                        <button class="btn btn-secondary btn-sm" onclick="addSavingsItem()">+ 積立金を追加</button>
-                    </div>
-                    <div style="text-align: right; margin-top: var(--spacing-2); font-weight: bold;">
-                        合計: <span id="edit-summary-savings">0</span>円
-                    </div>
-                </div>
-
-                <!-- Tab Content: Cost (Expenses + Labor) -->
-                <div id="tab-content-cost" class="tab-content">
-
-                    <!-- Labor Costs -->
-                    <div class="form-group">
-                        <label class="form-label">工賃 (タスク別実績)</label>
-                        <div class="table-container" style="margin-bottom: var(--spacing-4);">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>タスク名</th>
-                                        <th style="width: 140px;">日付</th>
-                                        <th style="width: 150px;">工賃実績</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="edit-labor-list">
-                                    <!-- JS Rendered -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-
-                    <!-- Other Expenses -->
-                    <div class="form-group">
-                        <label class="form-label">その他費用 (材料費・外注費など)</label>
-                        <div class="table-container" style="margin-bottom: var(--spacing-2);">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th style="width: 140px;">日付</th>
-                                        <th style="width: 120px;">種別</th>
-                                        <th>費用名</th>
-                                        <th>金額</th>
-                                        <th>備考</th>
-                                        <th style="width: 50px;"></th>
-                                    </tr>
-                                </thead>
-                                <tbody id="edit-other-cost-list">
-                                    <!-- JS Rendered -->
-                                </tbody>
-                            </table>
-                        </div>
-                        <div style="margin-bottom: var(--spacing-2);">
-                            <button class="btn btn-secondary btn-sm" onclick="addOtherCostItem()">+ 費用を追加</button>
-                        </div>
-                    </div>
-
-                    <div style="text-align: right; margin-top: var(--spacing-2); font-weight: bold;">
-                        費用合計 (工賃+その他): <span id="edit-summary-cost">0</span>円
-                    </div>
-                </div>
-
             </div>
             <div class="modal-footer">
                 <button class="btn btn-neutral" onclick="closeEditModal()">キャンセル</button>
                 <button class="btn btn-primary" onclick="saveActuals()">保存</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Details Modal -->
-    <div id="modal-details-actuals" class="modal-backdrop" style="display: none;">
-        <div class="modal-content modal-sm">
-            <div class="modal-header">
-                <span id="modal-details-title">案件詳細</span>
-                <button class="btn-close" onclick="closeDetailsModal()"><span
-                        class="material-symbols-outlined">close</span></button>
-            </div>
-            <div class="modal-body">
-                <div style="margin-bottom: var(--spacing-4);">
-                    <div style="display: flex; gap: var(--spacing-2); margin-bottom: var(--spacing-2);">
-                        <span id="details-status"></span>
-                    </div>
-                    <div style="font-size: var(--font-size-sm); color: var(--color-base-quaternary);">
-                        期間: <span id="details-period"></span>
-                    </div>
-                </div>
-
-                <div class="profit-summary-box">
-                    <div class="summary-row">
-                        <div class="summary-label">収入実績</div>
-                        <div class="summary-value text-neutral" id="details-revenue">0円</div>
-                    </div>
-                    <div class="summary-row">
-                        <div class="summary-label">経費計</div>
-                        <div class="summary-value text-neutral" id="details-expenses-total">0円</div>
-                    </div>
-                    <div class="summary-row">
-                        <div class="summary-label">工賃計</div>
-                        <div class="summary-value text-neutral" id="details-labor-total">0円</div>
-                    </div>
-                    <div
-                        style="border-top: 1px solid var(--palette-translucent-0002); margin-top: var(--spacing-2); padding-top: var(--spacing-2); display: flex; justify-content: space-between; align-items: flex-end;">
-                        <div class="summary-label" style="font-weight: bold;">収支差額</div>
-                        <div class="summary-value" id="details-profit">0円</div>
-                    </div>
-                </div>
-
-                <div style="margin-bottom: var(--spacing-4);">
-                    <h5 style="margin-bottom: var(--spacing-2); font-size: var(--font-size-sm);">経費内訳</h5>
-                    <div id="details-expense-list" class="table-container is-standalone"></div>
-                </div>
-
-                <div style="margin-bottom: var(--spacing-4);">
-                    <h5 style="margin-bottom: var(--spacing-2); font-size: var(--font-size-sm);">工賃内訳</h5>
-                    <div id="details-task-list" class="table-container is-standalone"></div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-neutral" onclick="closeDetailsModal()">閉じる</button>
             </div>
         </div>
     </div>
