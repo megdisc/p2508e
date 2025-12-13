@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Compath - 生産活動収支・一元管理</title>
+
+    <link rel="stylesheet" href="globals.css">
+    <link rel="stylesheet" href="ui.css">
+
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+</head>
+
+<body>
+
+    <div class="page-wrapper">
+
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div style="width: 100%; text-align: center;">
+                    <div style="margin-bottom: var(--spacing-stack-xs);">Compath</div>
+                    <select class="input-field">
+                        <option value="tenjin">こんぱす天神</option>
+                        <option value="hakata">こんぱす博多</option>
+                    </select>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-link">トップ</a>
+                <details class="nav-accordion">
+                    <summary>施設情報</summary>
+                    <ul>
+                        <li><a href="corporation.html">法人情報</a></li>
+                        <li><a href="office.html">事業所情報</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>職員・利用者情報</summary>
+                    <ul>
+                        <li><a href="staff.html">職員情報</a></li>
+                        <li><a href="members.html">利用者情報</a></li>
+                    </ul>
+                </details>
+
+                <a href="partners.html" class="nav-link">取引先情報</a>
+
+                <details class="nav-accordion">
+                    <summary>スキル情報</summary>
+                    <ul>
+                        <li><a href="skills-settings.html">スキル設定</a></li>
+                        <li><a href="skills-evaluation.html">スキル評価</a></li>
+                    </ul>
+                </details>
+
+                <details class="nav-accordion">
+                    <summary>工賃・控除情報</summary>
+                    <ul>
+                        <li><a href="wages-settings.html">工賃設定</a></li>
+                        <li><a href="deductions-settings.html">控除設定</a></li>
+                        <li><a href="wages-evaluation.html">工賃レベル評価</a></li>
+                    </ul>
+                </details>
+
+                <a href="savings-settings.html" class="nav-link">積立金設定</a>
+
+                <a href="attendance.html" class="nav-link">出欠状況</a>
+
+                <details class="nav-accordion">
+                    <summary>生産活動</summary>
+                    <ul>
+                        <li><a href="projects.html">案件情報</a></li>
+                        <li><a href="schedule.html">進捗状況</a></li>
+                        <li><a href="actuals.html">収入・経費実績</a></li>
+                    </ul>
+                </details>
+
+                <details class="nav-accordion">
+                    <summary>福祉事業活動</summary>
+                    <ul>
+                        <li><a href="support-plans.html">個別支援計画</a></li>
+                    </ul>
+                </details>
+
+                <details class="nav-accordion" open>
+                    <summary>請求・支払</summary>
+                    <ul>
+                        <li><a href="billing-national-health.html">国保連請求</a></li>
+                        <li><a href="billing-wage-payment.html">工賃支払・控除請求</a></li>
+                        <!-- New Link ONLY in this file -->
+                        <li><a href="billing-production-activity.html" class="active">生産活動収支一元管理</a></li>
+                    </ul>
+                </details>
+
+                <details class="nav-accordion">
+                    <summary>分析</summary>
+                    <ul>
+                        <li><a href="analytics-production.html">生産活動収支分析</a></li>
+                        <li><a href="analytics-wages.html">平均工賃分析</a></li>
+                        <li><a href="analytics-savings.html">積立金分析</a></li>
+                    </ul>
+                </details>
+
+                <a href="account.html" class="nav-link">ユーザーアカウント</a>
+
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <span class="user-name">田中 健司</span>
+                    <a href="#">ログアウト</a>
+                </div>
+            </div>
+
+        </aside>
+
+        <main class="main-content">
+
+            <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
+
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
+                    <h1 style="margin: 0;">生産活動収支・一元管理</h1>
+                    <div style="display: flex; gap: var(--spacing-2);">
+                        <button class="btn btn-secondary">
+                            <span class="material-symbols-outlined">file_download</span>
+                            CSV出力
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Dashboard Summary -->
+                <div class="card" style="margin-bottom: var(--spacing-stack-md);">
+                    <div class="card-header"
+                        style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: bold;">当月収支サマリー</span>
+                        <div class="form-group"
+                            style="margin: 0; display: flex; align-items: center; gap: var(--spacing-2);">
+                            <label class="form-label" style="margin: 0;">対象月</label>
+                            <input type="month" class="input-field" value="2023-10" style="width: auto;">
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div style="display: flex; gap: var(--spacing-6);">
+
+                            <!-- Income -->
+                            <div style="flex: 1;">
+                                <div class="summary-section">
+                                    <div class="summary-row">
+                                        <div class="summary-label">生産活動収益 (工賃原資)</div>
+                                        <div class="summary-value text-success">¥ 300,000</div>
+                                    </div>
+                                    <div
+                                        style="font-size: var(--font-size-xs); color: var(--color-text-secondary); text-align: right;">
+                                        案件売上 + 不用品売却益等
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Expense -->
+                            <div
+                                style="flex: 1; border-left: 1px solid var(--color-border-default); padding-left: var(--spacing-6);">
+                                <div class="summary-section">
+                                    <div class="summary-row">
+                                        <div class="summary-label">生産活動費用</div>
+                                        <div class="summary-value text-error">▲ ¥ 120,000</div>
+                                    </div>
+                                    <div
+                                        style="font-size: var(--font-size-xs); color: var(--color-text-secondary); text-align: right;">
+                                        材料費 + 外注費 + 販管費
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Balance / Wage Fund -->
+                            <div
+                                style="flex: 1; border-left: 1px solid var(--color-border-default); padding-left: var(--spacing-6);">
+                                <div class="summary-section">
+                                    <div class="summary-row">
+                                        <div class="summary-label">差引（工賃原資）</div>
+                                        <div class="summary-value text-primary">¥ 180,000</div>
+                                    </div>
+                                    <div
+                                        style="font-size: var(--font-size-xs); color: var(--color-text-secondary); text-align: right;">
+                                        収益 - 費用
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Wage Payment -->
+                            <div
+                                style="flex: 1; border-left: 1px solid var(--color-border-default); padding-left: var(--spacing-6);">
+                                <div class="summary-section">
+                                    <div class="summary-row">
+                                        <div class="summary-label">工賃支給総額</div>
+                                        <div class="summary-value">▲ ¥ 132,700</div>
+                                    </div>
+                                    <div
+                                        style="font-size: var(--font-size-xs); color: var(--color-text-secondary); text-align: right;">
+                                        対象 3名
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Final Carryover -->
+                            <div
+                                style="flex: 1; border-left: 1px solid var(--color-border-default); padding-left: var(--spacing-6); background-color: var(--color-base-secondary); margin: -16px -16px -16px 0; padding: 16px;">
+                                <div class="summary-section" style="margin-top: 0; border-top: none;">
+                                    <div class="summary-row">
+                                        <div class="summary-label" style="font-weight: bold;">当月繰越金</div>
+                                        <div class="summary-value text-primary" style="font-size: var(--font-size-xl);">
+                                            ¥ 47,300</div>
+                                    </div>
+                                    <div
+                                        style="margin-top: var(--spacing-2); text-align: right; font-size: var(--font-size-xs); color: var(--color-text-secondary);">
+                                        次月積立金へ
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Transaction List (Combined) -->
+                <div class="card" style="margin-bottom: var(--spacing-stack-md);">
+                    <div class="card-header">
+                        <span style="font-weight: bold;">収支明細一覧 (会計)</span>
+                    </div>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>日付</th>
+                                    <th>区分</th>
+                                    <th>科目</th>
+                                    <th>取引先 / 相手方</th>
+                                    <th>摘要</th>
+                                    <th style="text-align: right;">金額</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>2023-10-05</td>
+                                    <td><span class="badge badge-success">収入</span></td>
+                                    <td>売上高</td>
+                                    <td>株式会社 福岡工芸</td>
+                                    <td>10月分 DM封入作業</td>
+                                    <td style="text-align: right;">150,000</td>
+                                </tr>
+                                <tr>
+                                    <td>2023-10-10</td>
+                                    <td><span class="badge badge-error">支出</span></td>
+                                    <td>仕入高</td>
+                                    <td>資材屋サン</td>
+                                    <td>パン生地用小麦粉</td>
+                                    <td style="text-align: right;">▲ 30,000</td>
+                                </tr>
+                                <tr>
+                                    <td>2023-10-12</td>
+                                    <td><span class="badge badge-error">支出</span></td>
+                                    <td>消耗品費</td>
+                                    <td>ホームセンター</td>
+                                    <td>清掃用具一式</td>
+                                    <td style="text-align: right;">▲ 5,000</td>
+                                </tr>
+                                <tr>
+                                    <td>2023-10-20</td>
+                                    <td><span class="badge badge-success">収入</span></td>
+                                    <td>売上高</td>
+                                    <td>自主事業</td>
+                                    <td>パン販売売上 (10/1-10/20)</td>
+                                    <td style="text-align: right;">120,000</td>
+                                </tr>
+                                <tr>
+                                    <td>2023-10-25</td>
+                                    <td><span class="badge badge-success">収入</span></td>
+                                    <td>雑収入</td>
+                                    <td>自治体補助金</td>
+                                    <td>販路拡大補助金</td>
+                                    <td style="text-align: right;">30,000</td>
+                                </tr>
+                                <tr>
+                                    <td>2023-10-31</td>
+                                    <td><span class="badge badge-error">支出</span></td>
+                                    <td>外注費</td>
+                                    <td>配送サービス</td>
+                                    <td>商品配送代行</td>
+                                    <td style="text-align: right;">▲ 85,000</td>
+                                </tr>
+                            </tbody>
+                            <tfoot style="background-color: var(--color-base-secondary); font-weight: bold;">
+                                <tr>
+                                    <td colspan="5" style="text-align: right;">工賃原資 合計</td>
+                                    <td style="text-align: right;">180,000</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Wage Payment List -->
+                <div class="card">
+                    <div class="card-header"
+                        style="display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-weight: bold;">工賃支給明細 (支払)</span>
+                        <div style="font-size: var(--font-size-sm);">
+                            <span style="color: var(--color-text-secondary);">支給日: </span>
+                            <span style="font-weight: bold;">2023-11-15 (予定)</span>
+                        </div>
+                    </div>
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>氏名</th>
+                                    <th>工賃</th>
+                                    <th>控除</th>
+                                    <th>支給額</th>
+                                    <th>ステータス</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div style="font-weight: var(--font-weight-bold);">山田 太郎</div>
+                                        <div
+                                            style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
+                                            やまだ たろう</div>
+                                    </td>
+                                    <td>
+                                        <div>¥ 45,000</div>
+                                        <div
+                                            style="font-size: var(--font-size-xs); color: var(--color-text-secondary);">
+                                            (基本: 40,000 / 調整: 5,000)</div>
+                                    </td>
+                                    <td>
+                                        <div style="color: var(--color-error);">¥ 5,000</div>
+                                        <div
+                                            style="font-size: var(--font-size-xs); color: var(--color-text-secondary);">
+                                            (昼食: 5,000)</div>
+                                    </td>
+                                    <td style="font-weight: bold;">¥ 40,000</td>
+                                    <td><span class="badge badge-success">確定済</span></td>
+                                    <td>
+                                        <button class="btn btn-icon btn-neutral" title="明細書発行">
+                                            <span class="material-symbols-outlined">receipt_long</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div style="font-weight: var(--font-weight-bold);">佐藤 花子</div>
+                                        <div
+                                            style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
+                                            さとう はなこ</div>
+                                    </td>
+                                    <td>
+                                        <div>¥ 38,000</div>
+                                        <div
+                                            style="font-size: var(--font-size-xs); color: var(--color-text-secondary);">
+                                            (基本: 35,000 / 調整: 3,000)</div>
+                                    </td>
+                                    <td>
+                                        <div style="color: var(--color-error);">¥ 2,500</div>
+                                        <div
+                                            style="font-size: var(--font-size-xs); color: var(--color-text-secondary);">
+                                            (旅行積立: 2,500)</div>
+                                    </td>
+                                    <td style="font-weight: bold;">¥ 35,500</td>
+                                    <td><span class="badge badge-warning">未確定</span></td>
+                                    <td>
+                                        <button class="btn btn-icon btn-neutral" title="明細書発行">
+                                            <span class="material-symbols-outlined">receipt_long</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div style="font-weight: var(--font-weight-bold);">鈴木 一郎</div>
+                                        <div
+                                            style="font-size: var(--font-size-xs); color: var(--color-base-quaternary);">
+                                            すずき いちろう</div>
+                                    </td>
+                                    <td>
+                                        <div>¥ 62,200</div>
+                                        <div
+                                            style="font-size: var(--font-size-xs); color: var(--color-text-secondary);">
+                                            (基本: 55,000 / 調整: 7,200)</div>
+                                    </td>
+                                    <td>
+                                        <div style="color: var(--color-error);">¥ 5,000</div>
+                                        <div
+                                            style="font-size: var(--font-size-xs); color: var(--color-text-secondary);">
+                                            (昼食: 5,000)</div>
+                                    </td>
+                                    <td style="font-weight: bold;">¥ 57,200</td>
+                                    <td><span class="badge badge-success">確定済</span></td>
+                                    <td>
+                                        <button class="btn btn-icon btn-neutral" title="明細書発行">
+                                            <span class="material-symbols-outlined">receipt_long</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot style="background-color: var(--color-base-secondary); font-weight: bold;">
+                                <tr>
+                                    <td colspan="3" style="text-align: right;">支給総額 (手取額)</td>
+                                    <td style="font-size: var(--font-size-lg);">¥ 132,700</td>
+                                    <td colspan="2"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+</body>
+
+</html>
