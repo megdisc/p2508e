@@ -289,27 +289,37 @@
                             <table class="matrix-table" id="production-matrix">
                                 <!-- JS will populate this -->
                                 <thead>
-                                    <tr>
-                                        <th class="sticky-col">案件 / 月度</th>
-                                        <!-- Apr to Mar -->
-                                        <th>4月</th>
-                                        <th>5月</th>
-                                        <th>6月</th>
-                                        <th>7月</th>
-                                        <th>8月</th>
-                                        <th>9月</th>
-                                        <th>10月</th>
-                                        <th>11月</th>
-                                        <th>12月</th>
-                                        <th>1月</th>
-                                        <th>2月</th>
-                                        <th>3月</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <!-- Rows per Project -->
-                                </tbody>
-                            </table>
+                                    <!-- Legend -->
+                                    <div
+                                        style="display: flex; gap: var(--spacing-4); margin-bottom: var(--spacing-stack-sm); font-size: var(--font-size-xs); color: var(--color-text-secondary);">
+                                        <div style="display: flex; align-items: center; gap: 4px;">
+                                            <span class="material-symbols-outlined"
+                                                style="font-size: 16px;">receipt_long</span> 請求:
+                                            <span style="color: var(--color-base-quaternary);">未</span>/
+                                            <span style="color: var(--color-semantic-primary-main);">済</span>/
+                                            <span style="color: var(--color-semantic-success-main);">入金</span>
+                                        </div>
+                                        <div style="display: flex; align-items: center; gap: 4px;">
+                                            <span class="material-symbols-outlined"
+                                                style="font-size: 16px;">local_shipping</span> 外注払:
+                                            <span style="color: var(--color-base-quaternary);">未</span>/
+                                            <span style="color: var(--color-semantic-success-main);">済</span>
+                                        </div>
+                                        <div style="display: flex; align-items: center; gap: 4px;">
+                                            <span class="material-symbols-outlined"
+                                                style="font-size: 16px;">payments</span> 工賃払:
+                                            <span style="color: var(--color-base-quaternary);">未</span>/
+                                            <span style="color: var(--color-semantic-warning-main);">申請中</span>/
+                                            <span style="color: var(--color-semantic-success-main);">済</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="matrix-table-container">
+                                        <table class="matrix-table" id="production-matrix">
+                                            <!-- JS Injected -->
+                                        </table>
+                                    </div>
+
                         </div>
                     </div>
                 </div>
@@ -351,217 +361,185 @@
     </div>
 
     <script>
-        function formatCurrency(num) {
-            return new Intl.NumberFormat('ja-JP').format(num);
-        }
-
-        // Mock Data (Source of Truth: Same as actuals.html)
-        // In a real app, this would be fetched from an API
+        // Mock Data (Derived from actuals.html structure)
         const projects = [
-            {
-                id: 'p1', name: 'DM封入作業', type: 'external', partner: '株式会社 福岡工芸',
-                revenueItems: [
-                    { name: '封入・検品代', amount: 300000, date: '2025-12-31' },
-                    { name: '10月分売上', amount: 280000, date: '2025-10-31' }
-                ],
-                expenses: [
-                    { name: '封筒・資材代', amount: 20000, date: '2025-12-01', type: '材料費' },
-                    { name: '10月材料', amount: 15000, date: '2025-10-05', type: '材料費' }
-                ],
-                tasks: [ // Labor
-                    { name: '封入作業', total: 50000, date: '2025-12-05' },
-                    { name: '10月作業', total: 45000, date: '2025-10-15' }
-                ]
-            },
-            {
-                id: 'p2', name: '自主製品（パン）', type: 'internal', partner: '自主事業',
-                revenueItems: [
-                    { name: '10月売上', amount: 450000, date: '2025-10-31' },
-                    { name: '11月売上', amount: 460000, date: '2025-11-30' },
-                    { name: '12月売上', amount: 480000, date: '2025-12-31' }
-                ],
-                expenses: [
-                    { name: '10月材料', amount: 120000, date: '2025-10-01', type: '材料費' },
-                    { name: '11月材料', amount: 130000, date: '2025-11-01', type: '材料費' },
-                    { name: '12月材料', amount: 125000, date: '2025-12-01', type: '材料費' }
-                ],
-                tasks: [
-                    { name: '10月工賃', total: 150000, date: '2025-10-31' },
-                    { name: '11月工賃', total: 160000, date: '2025-11-30' },
-                    { name: '12月工賃', total: 155000, date: '2025-12-31' }
-                ]
-            },
-            {
-                id: 'p3', name: '施設外就労（清掃）', type: 'external', partner: '天神オフィスサプライ',
-                revenueItems: [
-                    { name: '10月委託費', amount: 200000, date: '2025-10-31' },
-                    { name: '11月委託費', amount: 200000, date: '2025-11-30' },
-                    { name: '12月委託費', amount: 200000, date: '2025-12-31' }
-                ],
-                expenses: [
-                    { name: '10月交通費', amount: 10000, date: '2025-10-31', type: 'その他' }
-                ],
-                tasks: [
-                    { name: '10月作業', total: 80000, date: '2025-10-31' },
-                    { name: '11月作業', total: 80000, date: '2025-11-30' },
-                    { name: '12月作業', total: 80000, date: '2025-12-31' }
-                ]
-            }
+            { id: 'p1', name: 'DM封入作業', type: 'external', partner: '株式会社 福岡工芸', startDate: '2025-10-01' },
+            { id: 'p2', name: '自主製品（パン）', type: 'in_house', partner: '自主事業', startDate: '2025-04-01' },
+            { id: 'p3', name: '施設外就労（清掃）', type: 'external', partner: '天神オフィスサプライ', startDate: '2025-06-01' }
         ];
 
-        // Fiscal Year Config
-        const fiscalYear = 2025;
-        const months = [4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3];
+        // Mock Transactions (Date format YYYY-MM-DD)
+        const revenueItems = [
+            { projectId: 'p1', date: '2025-10-31', amount: 150000, billingStatus: 'paid' },
+            { projectId: 'p1', date: '2025-11-30', amount: 120000, billingStatus: 'billed' },
+            { projectId: 'p2', date: '2025-04-30', amount: 50000, billingStatus: 'paid' }, // Apr is now arguably just normal month 4
+            { projectId: 'p2', date: '2025-05-31', amount: 55000, billingStatus: 'paid' },
+            { projectId: 'p3', date: '2025-06-30', amount: 200000, billingStatus: 'paid' },
+            { projectId: 'p3', date: '2025-07-31', amount: 200000, billingStatus: 'paid' },
+        ];
 
-        function getMonthFromDate(dateStr) {
-            const d = new Date(dateStr);
-            return { year: d.getFullYear(), month: d.getMonth() + 1 };
+        const expenseItems = [
+            { projectId: 'p1', date: '2025-10-05', amount: 5000, type: 'material', paymentStatus: 'paid' },
+            { projectId: 'p3', date: '2025-06-10', amount: 10000, type: 'outsourcing', paymentStatus: 'unpaid' }
+        ];
+
+        const taskItems = [
+            { projectId: 'p1', date: '2025-10-31', wageTotal: 80000, wageStatus: 'paid' },
+            { projectId: 'p2', date: '2025-04-30', wageTotal: 20000, wageStatus: 'paid' }
+        ];
+
+
+        const currentYear = 2025; // Target Fiscal Year
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' }).format(amount);
         }
 
+        // Get Months List (Jan - Dec)
+        function getMonthList(year) {
+            const months = [];
+            for (let i = 1; i <= 12; i++) {
+                // Determine actual year based on Jan start.
+                // Assuming "Fiscal Year 2025" means Jan 2025 - Dec 2025
+                months.push({ year: year, month: i, label: `${i}月` });
+            }
+            return months;
+        }
+
+        // Generate Matrix Data
         function generateMatrixData() {
-            return projects.map(proj => {
-                const monthlyData = {};
+            const months = getMonthList(currentYear);
+            const data = [];
 
-                // Init Months
+            projects.forEach(project => {
+                const row = {
+                    project: project,
+                    cells: [] // 12 cells
+                };
+
                 months.forEach(m => {
-                    monthlyData[m] = { rev: 0, exp: 0, labor: 0, billed: false, paid: false };
+                    const mKey = `${m.year}-${String(m.month).padStart(2, '0')}`;
+
+                    // Filter Items for this project and month
+                    // Note: This matches "2025-01" etc.
+                    const revs = revenueItems.filter(r => r.projectId === project.id && r.date.startsWith(mKey));
+                    const exps = expenseItems.filter(e => e.projectId === project.id && e.date.startsWith(mKey));
+                    const labs = taskItems.filter(t => t.projectId === project.id && t.date.startsWith(mKey));
+
+                    const totalRev = revs.reduce((sum, item) => sum + item.amount, 0);
+                    const totalExp = exps.reduce((sum, item) => sum + item.amount, 0);
+                    const totalBalance = totalRev - totalExp;
+                    const hasActivity = (totalRev > 0 || totalExp > 0 || labs.length > 0);
+
+                    // Determine Statuses (Simplified logic for mock)
+                    // Billing: If revenue exists, check first item's status, else 'none'
+                    const billStatus = revs.length > 0 ? (revs[0].billingStatus || 'unbilled') : 'none';
+
+                    // Outsourcing: If outsourcing expense exists
+                    const outItem = exps.find(e => e.type === 'outsourcing');
+                    const outStatus = outItem ? (outItem.paymentStatus || 'unpaid') : 'none';
+
+                    // Wages: If labor tasks exist
+                    const wageStatus = labs.length > 0 ? (labs[0].wageStatus || 'unpaid') : 'none';
+
+                    row.cells.push({
+                        month: m.month, // 1-12
+                        revenue: totalRev,
+                        expense: totalExp,
+                        balance: totalBalance,
+                        hasActivity: hasActivity,
+                        billStatus: billStatus,
+                        outStatus: outStatus,
+                        wageStatus: wageStatus
+                    });
                 });
-
-                // Aggregate Revenue
-                if (proj.revenueItems) {
-                    proj.revenueItems.forEach(item => {
-                        const { month } = getMonthFromDate(item.date);
-                        if (monthlyData[month]) monthlyData[month].rev += item.amount;
-                    });
-                }
-
-                // Aggregate Expenses
-                if (proj.expenses) {
-                    proj.expenses.forEach(item => {
-                        const { month } = getMonthFromDate(item.date);
-                        // Exclude Reserves from Expenses in this view? Usually "Balance" = Rev - Cost.
-                        // Reserves are usually taken FROM the balance or treated as a cost.
-                        // For "Production Balance", let's treat Reserves as a form of profit/saving, so NOT an expense here?
-                        // Or if we want "Wage Fund", then Non-Labor Expenses must be subtracted.
-                        if (monthlyData[month]) monthlyData[month].exp += item.amount;
-                    });
-                }
-
-                // Aggregate Labor
-                if (proj.tasks) {
-                    proj.tasks.forEach(item => {
-                        const { month } = getMonthFromDate(item.date);
-                        if (monthlyData[month]) monthlyData[month].labor += item.total;
-                    });
-                }
-
-                // Simulate Status (In real app, fetch from state)
-                months.forEach(m => {
-                    const d = monthlyData[m];
-                    if (d.rev > 0) d.billed = true; // Mock: If revenue exists, assume billed
-                    if (d.exp > 0) d.paid = true;   // Mock: If expense exists, assume paid
-                });
-
-                return { ...proj, monthly: monthlyData };
+                data.push(row);
             });
+            return data;
         }
 
         function renderMatrix() {
-            const matrixData = generateMatrixData();
-            const tbody = document.querySelector('#production-matrix tbody');
-            tbody.innerHTML = '';
+            const container = document.getElementById('production-matrix');
+            const data = generateMatrixData();
+            const months = getMonthList(currentYear);
 
-            // Grand Totals for Footer
-            let totalRev = 0;
-            let totalExp = 0; // Non-labor
-            let totalLabor = 0;
-
-            matrixData.forEach(project => {
-                const tr = document.createElement('tr');
-
-                // Header Col
-                const th = document.createElement('th');
-                th.className = 'sticky-col';
-                th.innerHTML = `
-                    <div style="font-weight: bold; text-align: left;">${project.name}</div>
-                    <div style="font-size: 0.8em; color: var(--color-text-tertiary); font-weight: normal; text-align: left;">
-                        ${project.type === 'external' ? '受託' : '自主'} | ${project.partner}
-                    </div>
-                `;
-                tr.appendChild(th);
-
-                // Data Cols
-                months.forEach(m => {
-                    const td = document.createElement('td');
-                    const data = project.monthly[m];
-
-                    // Add to Grand Totals (Simplified: All visible months)
-                    // In reality, this might filter by "Current Month" or accumulate YTD
-                    // For the footer "Period Total", let's sum everything in view.
-                    totalRev += data.rev;
-                    totalExp += data.exp;
-                    totalLabor += data.labor;
-
-                    const hasData = data.rev > 0 || data.exp > 0 || data.labor > 0;
-
-                    if (!hasData) {
-                        td.style.backgroundColor = 'var(--color-bg-subtle)';
-                        td.innerHTML = '-';
-                    } else {
-                        const balance = data.rev - data.exp - data.labor;
-                        const balClass = balance >= 0 ? 'positive' : 'negative';
-
-                        td.innerHTML = `
-                            <div class="matrix-cell">
-                                <div><span class="matrix-row-label">収:</span><span class="val-revenue">${formatCurrency(data.rev)}</span></div>
-                                <div><span class="matrix-row-label">費:</span><span class="val-expense">${formatCurrency(data.exp + data.labor)}</span></div>
-                                <div style="border-top: 1px solid var(--color-border-subtle); padding-top: 2px;">
-                                    <span class="val-balance ${balClass}">${formatCurrency(balance)}</span>
-                                </div>
-                                <div class="status-indicators">
-                                    <span class="material-symbols-outlined status-icon ${data.billed ? 'active' : 'pending'}" title="請求/回収">
-                                        ${project.type === 'external' ? 'receipt_long' : 'storefront'}
-                                    </span>
-                                    <span class="material-symbols-outlined status-icon ${data.paid ? 'active' : 'pending'}" title="支払完了">
-                                        payments
-                                    </span>
-                                </div>
-                            </div>
-                        `;
-                    }
-                    tr.appendChild(td);
-                });
-                tbody.appendChild(tr);
+            // Header
+            let html = '<thead><tr><th class="sticky-col" style="min-width: 250px; z-index: 60;">案件名</th>';
+            months.forEach(m => {
+                html += `<th>${m.label}</th>`;
             });
+            html += '</tr></thead>';
 
-            // Update Footer
-            updateFooter(totalRev, totalExp, totalLabor);
+            // Body
+            html += '<tbody>';
+            data.forEach(row => {
+                html += `<tr>`;
+                // Sticky Project Name
+                html += `<td class="sticky-col" style="z-index: 50;">
+                            <div style="font-weight: bold; margin-bottom: 2px;">${row.project.name}</div>
+                            <div style="font-size: 0.85em; color: var(--color-text-secondary);">${row.project.partner}</div>
+                         </td>`;
+
+                // Cells
+                row.cells.forEach(cell => {
+                    if (!cell.hasActivity && cell.wageStatus === 'none') {
+                        html += `<td style="background-color: var(--color-bg-subtle);"></td>`;
+                    } else {
+                        // Status Icon Helper
+                        const getBillColor = (s) => s === 'paid' ? 'var(--color-semantic-success-main)' : (s === 'billed' ? 'var(--color-semantic-primary-main)' : 'var(--color-base-quaternary)');
+                        const getOutColor = (s) => s === 'paid' ? 'var(--color-semantic-success-main)' : 'var(--color-base-quaternary)';
+                        const getWageColor = (s) => s === 'paid' ? 'var(--color-semantic-success-main)' : (s === 'pending' ? 'var(--color-semantic-warning-main)' : 'var(--color-base-quaternary)');
+
+                        const billIcon = cell.billStatus !== 'none'
+                            ? `<span class="material-symbols-outlined" style="font-size: 16px; color: ${getBillColor(cell.billStatus)};" title="請求: ${cell.billStatus}">receipt_long</span>` : '<span style="display:inline-block; width:16px;"></span>';
+
+                        const outIcon = cell.outStatus !== 'none'
+                            ? `<span class="material-symbols-outlined" style="font-size: 16px; color: ${getOutColor(cell.outStatus)};" title="外注払: ${cell.outStatus}">local_shipping</span>` : '<span style="display:inline-block; width:16px;"></span>';
+
+                        const wageIcon = cell.wageStatus !== 'none'
+                            ? `<span class="material-symbols-outlined" style="font-size: 16px; color: ${getWageColor(cell.wageStatus)};" title="工賃: ${cell.wageStatus}">payments</span>` : '<span style="display:inline-block; width:16px;"></span>';
+
+
+                        html += `<td>
+                                    <div style="display: flex; justify-content: flex-end; gap: 4px; margin-bottom: 4px;">
+                                        ${billIcon} ${outIcon} ${wageIcon}
+                                    </div>
+                                    <div style="color: var(--color-semantic-primary-main); font-size: 0.9em;">+${cell.revenue.toLocaleString()}</div>
+                                    <div style="color: var(--color-semantic-error-main); font-size: 0.9em;">-${cell.expense.toLocaleString()}</div>
+                                    <div style="font-weight: bold; border-top: 1px dotted #ccc; margin-top: 2px;">${cell.balance.toLocaleString()}</div>
+                                 </td>`;
+                    }
+                });
+                html += `</tr>`;
+            });
+            html += '</tbody>';
+
+            container.innerHTML = html;
+            updateFooter(data);
         }
 
-        function updateFooter(rev, exp, labor) {
-            // Note: exp here includes non-labor expenses. Labor is separate.
-            // Wage Fund = Revenue - Non-Labor Expenses
-            // Balance logic:
-            // Fund = Rev - Exp (Material/Outsourcing)
-            // Actual Wage Paid = labor
-            // Surplus = Fund - Labor
+        function updateFooter(data) {
+            let totalRev = 0;
+            let totalExp = 0;
+            let totalWagePaid = 2100000; // Mock total labor cost
 
-            const fund = rev - exp;
-            const surplus = fund - labor;
+            data.forEach(row => {
+                row.cells.forEach(c => {
+                    totalRev += c.revenue;
+                    totalExp += c.expense;
+                });
+            });
 
-            document.querySelector('.val-revenue').textContent = '¥ ' + formatCurrency(rev);
-            document.querySelector('.val-expense').textContent = '¥ ' + formatCurrency(exp);
+            const totalFund = totalRev - totalExp;
+            const surplus = totalFund - totalWagePaid;
 
-            const balEl = document.querySelector('.val-balance');
-            balEl.textContent = '¥ ' + formatCurrency(fund);
-            balEl.className = `value val-balance ${fund >= 0 ? 'positive' : 'negative'}`;
-
-            // Wage Paid (Actual Labor Cost)
-            document.querySelectorAll('.summary-item .value')[3].textContent = '¥ ' + formatCurrency(labor);
+            document.querySelector('.val-revenue').textContent = formatCurrency(totalRev);
+            document.querySelector('.val-expense').textContent = formatCurrency(totalExp);
+            document.querySelector('.val-balance').textContent = formatCurrency(totalFund);
 
             // Surplus
             const surEl = document.querySelectorAll('.summary-item .value')[4];
-            surEl.textContent = (surplus >= 0 ? '+ ' : '') + '¥ ' + formatCurrency(surplus);
+            surEl.textContent = (surplus >= 0 ? '+ ' : '') + formatCurrency(surplus);
             surEl.className = `value ${surplus >= 0 ? 'text-success' : 'text-error'}`;
         }
 
