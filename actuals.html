@@ -360,7 +360,7 @@
                         </div>
 
                         <div style="margin-top: var(--spacing-4); text-align: center;">
-                            <button class="btn btn-outline-neutral btn-sm" style="width: 100%;" onclick="alert('月別詳細画面へ遷移します（未実装）')">
+                            <button class="btn btn-neutral btn-sm" style="width: 100%;" onclick="alert('月別詳細画面へ遷移します（未実装）')">
                                 月別詳細
                             </button>
                         </div>
@@ -473,7 +473,7 @@
                         <input type="date" class="input-field revenue-date" value="${item.date || ''}" onchange="updateEditRevenue(${index}, 'date', this.value)" style="flex: 0 0 110px;">
                         <input type="text" class="input-field revenue-name" value="${item.name}" placeholder="収入名" onchange="updateEditRevenue(${index}, 'name', this.value)" style="flex: 2;">
                         <input type="number" class="input-field revenue-amount" value="${item.amount}" placeholder="金額" onchange="updateEditRevenue(${index}, 'amount', this.value)" style="flex: 1; text-align: right;">
-                        <button class="btn btn-icon-sm btn-icon-error" onclick="removeEditRevenue(${index})"><span class="material-symbols-outlined">delete</span></button>
+                        <button class="btn btn-icon btn-icon-error" style="width: 32px; height: 32px;" onclick="removeEditRevenue(${index})"><span class="material-symbols-outlined">delete</span></button>
                     `;
                     revenueList.appendChild(div);
                     totalRevenue += parseInt(item.amount) || 0;
@@ -499,7 +499,7 @@
                          <input type="date" class="input-field expense-date" value="${expense.date || ''}" onchange="updateEditExpense(${index}, 'date', this.value)" style="flex: 0 0 110px;">
                         <input type="text" class="input-field expense-name" value="${expense.name}" placeholder="経費名" onchange="updateEditExpense(${index}, 'name', this.value)" style="flex: 2;">
                         <input type="number" class="input-field expense-amount" value="${expense.amount}" placeholder="金額" onchange="updateEditExpense(${index}, 'amount', this.value)" style="flex: 1; text-align: right;">
-                        <button class="btn btn-icon-sm btn-icon-error" onclick="removeEditExpense(${index})"><span class="material-symbols-outlined">delete</span></button>
+                        <button class="btn btn-icon btn-icon-error" style="width: 32px; height: 32px;" onclick="removeEditExpense(${index})"><span class="material-symbols-outlined">delete</span></button>
                     `;
                     expenseList.appendChild(div);
                     totalExpenses += parseInt(expense.amount) || 0;
@@ -813,7 +813,8 @@
 
     <!-- Edit Modal -->
     <div id="modal-edit-actuals" class="modal-backdrop" style="display: none;">
-        <div class="modal-content modal-md" style="max-width: 900px;">
+        <div class="modal-content modal-md"
+            style="display: flex; flex-direction: column; max-width: 900px; max-height: 90vh;">
             <div class="modal-header">
                 <div style="display: flex; align-items: center; gap: var(--spacing-4);">
                     <span id="modal-project-name" style="font-weight: bold; font-size: var(--font-size-lg);">案件名</span>
@@ -827,7 +828,7 @@
                         class="material-symbols-outlined">close</span></button>
             </div>
 
-            <div class="modal-body" style="padding: 0;">
+            <div class="modal-body" style="padding: 0; overflow-y: auto;">
                 <!-- Tabs -->
                 <div class="modal-tabs"
                     style="display: flex; border-bottom: 1px solid var(--color-border-default); background-color: var(--color-base-secondary);">
@@ -839,7 +840,7 @@
                         (費用・工賃)</button>
                 </div>
 
-                <div style="padding: var(--spacing-4); max-height: 60vh; overflow-y: auto;">
+                <div style="padding: var(--spacing-4);">
 
                     <!-- Tab Content: Income -->
                     <div id="tab-content-income" class="modal-tab-content">
@@ -848,7 +849,10 @@
                             <div id="revenue-list">
                                 <!-- JS Rendered -->
                             </div>
-                            <button class="btn btn-secondary btn-sm" onclick="addRevenueRow()">+ 収入を追加</button>
+                            <button class="btn btn-neutral btn-sm" onclick="addRevenueRow()">
+                                <span class="material-symbols-outlined"
+                                    style="font-size: 16px; vertical-align: bottom;">add</span> 収入を追加
+                            </button>
                         </div>
                         <div class="summary-row"
                             style="margin-top: var(--spacing-4); padding-top: var(--spacing-2); border-top: 1px dashed var(--color-border-default);">
@@ -921,7 +925,10 @@
                                 </table>
                             </div>
                             <div style="display: flex; justify-content: space-between; align-items: center;">
-                                <button class="btn btn-secondary btn-sm" onclick="addTaskItem()">+ 作業を追加</button>
+                                <button class="btn btn-neutral btn-sm" onclick="addTaskItem()">
+                                    <span class="material-symbols-outlined"
+                                        style="font-size: 16px; vertical-align: bottom;">add</span> 作業を追加
+                                </button>
                                 <div style="font-weight: bold;">工賃計: <span id="total-labor-display">0円</span></div>
                             </div>
                         </div>
@@ -934,7 +941,10 @@
                             <div id="expense-list">
                                 <!-- JS Rendered -->
                             </div>
-                            <button class="btn btn-secondary btn-sm" onclick="addExpenseRow()">+ 経費を追加</button>
+                            <button class="btn btn-neutral btn-sm" onclick="addExpenseRow()">
+                                <span class="material-symbols-outlined"
+                                    style="font-size: 16px; vertical-align: bottom;">add</span> 経費を追加
+                            </button>
                         </div>
                         <div class="summary-row"
                             style="margin-top: var(--spacing-4); padding-top: var(--spacing-2); border-top: 1px dashed var(--color-border-default);">
