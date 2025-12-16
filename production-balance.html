@@ -132,33 +132,51 @@
             /* Pending */
         }
 
-        /* Summary Footer Board */
-        .summary-board {
-            position: sticky;
-            bottom: 0;
-            background-color: var(--color-base-primary);
-            border-top: 2px solid var(--color-border-default);
-            padding: var(--spacing-4);
-            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
+        /* Badge Styles for Matrix */
+        .badge-xs {
+            padding: 1px 4px;
+            font-size: 0.65em;
+            border-radius: 3px;
+            font-weight: normal;
+            line-height: 1.2;
+            white-space: nowrap;
+        }
+
+        .matrix-table th,
+        .matrix-table td {
+            min-width: 180px;
+            /* Widen columns further for stack layout */
+            vertical-align: top;
+        }
+
+        /* Inner Stack Layout */
+        .cell-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 0.85em;
+        }
+
+        .stack-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            z-index: 50;
+            border-bottom: 1px dashed var(--color-border-subtle);
+            padding-bottom: 2px;
         }
 
-        .summary-item {
-            text-align: center;
+        .stack-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-top: 2px;
+            padding-top: 2px;
+            border-top: 1px solid var(--color-border-default);
         }
 
-        .summary-item label {
-            display: block;
-            font-size: var(--font-size-xs);
-            color: var(--color-text-secondary);
-        }
-
-        .summary-item .value {
-            font-size: var(--font-size-xl);
-            font-weight: bold;
+        .row-label {
+            font-size: 0.8em;
+            color: var(--color-text-tertiary);
+            margin-right: 4px;
         }
     </style>
 </head>
@@ -253,108 +271,100 @@
         </aside>
 
         <main class="main-content">
+            <div class="container" style="padding-top: 24px; padding-bottom: 100px;"> <!-- Padding for sticky footer -->
 
-            <div class="container" style="padding-top: 32px; padding-bottom: 120px;">
+                <h1 style="margin: 0 0 var(--spacing-stack-md) 0;">生産活動収支状況</h1>
 
-                <div
-                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
-                    <h1 style="margin: 0;">生産活動収支状況</h1>
+                <div class="card" style="padding: 0; overflow: hidden; display: flex; flex-direction: column;">
 
-                    <div style="display: flex; gap: var(--spacing-3); align-items: center;">
-                        <!-- Year Selector -->
+                    <div
+                        style="padding: var(--spacing-4); border-bottom: 1px solid var(--color-border-default); background-color: var(--color-base-secondary);">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="font-weight: bold; font-size: var(--font-size-lg);">
+                                2025年度 (2025年1月 - 2025年12月)
+                            </div>
+                            <div style="display: flex; gap: var(--spacing-2);">
+                                <button class="btn btn-neutral btn-sm">
+                                    <span class="material-symbols-outlined"
+                                        style="font-size: 16px; margin-right: 4px;">calendar_today</span>
+                                    年度選択
+                                </button>
+                                <button class="btn btn-neutral btn-sm">
+                                    <span class="material-symbols-outlined"
+                                        style="font-size: 16px; margin-right: 4px;">download</span>
+                                    CSV出力
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="padding: var(--spacing-4); overflow-x: auto;">
+
+                        <!-- Legend -->
                         <div
-                            style="display: flex; align-items: center; background: white; border: 1px solid var(--color-border-default); border-radius: var(--radius-md); padding: 4px;">
-                            <button class="btn btn-icon-sm btn-icon-neutral"><span
-                                    class="material-symbols-outlined">chevron_left</span></button>
-                            <span style="padding: 0 12px; font-weight: bold;">2025年度</span>
-                            <button class="btn btn-icon-sm btn-icon-neutral"><span
-                                    class="material-symbols-outlined">chevron_right</span></button>
+                            style="display: flex; flex-wrap: wrap; gap: var(--spacing-6); margin-bottom: var(--spacing-stack-sm); font-size: var(--font-size-xs); color: var(--color-text-secondary);">
+                            <!-- Billing -->
+                            <div style="display: flex; align-items: center; gap: 4px;">
+                                <span style="font-weight: bold;">[収入]</span>
+                                <span class="badge badge-neutral badge-xs">請求:未</span>
+                                <span class="badge badge-primary badge-xs">請求:済</span>
+                                <span class="badge badge-success badge-xs">請求:完</span> (入金済)
+                                <span style="color: var(--color-text-tertiary);">請求:不要</span>
+                            </div>
+                            <!-- Outsourcing -->
+                            <div style="display: flex; align-items: center; gap: 4px;">
+                                <span style="font-weight: bold;">[外注]</span>
+                                <span class="badge badge-neutral badge-xs">外注:未</span> (未払)
+                                <span class="badge badge-success badge-xs">外注:済</span> (払済)
+                                <span style="color: var(--color-text-tertiary);">外注:なし</span>
+                            </div>
+                            <!-- Wages -->
+                            <div style="display: flex; align-items: center; gap: 4px;">
+                                <span style="font-weight: bold;">[工賃]</span>
+                                <span class="badge badge-neutral badge-xs">工賃:未</span> (未払)
+                                <span class="badge badge-warning badge-xs">工賃:申</span> (申請中)
+                                <span class="badge badge-success badge-xs">工賃:済</span> (払済)
+                            </div>
                         </div>
 
-                        <button class="btn btn-neutral">
-                            <span class="material-symbols-outlined">print</span>
-                            印刷
-                        </button>
-                        <button class="btn btn-neutral">
-                            <span class="material-symbols-outlined">download</span>
-                            CSV
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Matrix View -->
-                <div class="card" style="margin-bottom: var(--spacing-stack-md);">
-                    <div class="card-body" style="padding: 0;">
                         <div class="matrix-table-container">
                             <table class="matrix-table" id="production-matrix">
-                                <!-- JS will populate this -->
-                                <thead>
-                                    <!-- Legend -->
-                                    <div
-                                        style="display: flex; gap: var(--spacing-4); margin-bottom: var(--spacing-stack-sm); font-size: var(--font-size-xs); color: var(--color-text-secondary);">
-                                        <div style="display: flex; align-items: center; gap: 4px;">
-                                            <span class="material-symbols-outlined"
-                                                style="font-size: 16px;">receipt_long</span> 請求:
-                                            <span style="color: var(--color-base-quaternary);">未</span>/
-                                            <span style="color: var(--color-semantic-primary-main);">済</span>/
-                                            <span style="color: var(--color-semantic-success-main);">入金</span>
-                                        </div>
-                                        <div style="display: flex; align-items: center; gap: 4px;">
-                                            <span class="material-symbols-outlined"
-                                                style="font-size: 16px;">local_shipping</span> 外注払:
-                                            <span style="color: var(--color-base-quaternary);">未</span>/
-                                            <span style="color: var(--color-semantic-success-main);">済</span>
-                                        </div>
-                                        <div style="display: flex; align-items: center; gap: 4px;">
-                                            <span class="material-symbols-outlined"
-                                                style="font-size: 16px;">payments</span> 工賃払:
-                                            <span style="color: var(--color-base-quaternary);">未</span>/
-                                            <span style="color: var(--color-semantic-warning-main);">申請中</span>/
-                                            <span style="color: var(--color-semantic-success-main);">済</span>
-                                        </div>
-                                    </div>
-
-                                    <div class="matrix-table-container">
-                                        <table class="matrix-table" id="production-matrix">
-                                            <!-- JS Injected -->
-                                        </table>
-                                    </div>
-
+                                <!-- JS Injected -->
+                            </table>
                         </div>
+
                     </div>
                 </div>
 
-            </div>
-
-            <!-- Sticky Summary Footer -->
-            <div class="summary-board">
-                <div class="summary-item">
-                    <label>期間合計 収入</label>
-                    <div class="value val-revenue">¥ 3,500,000</div>
+                <!-- Sticky Summary Footer -->
+                <div class="summary-board">
+                    <div class="summary-item">
+                        <label>期間合計 収入</label>
+                        <div class="value val-revenue">¥ 3,500,000</div>
+                    </div>
+                    <div class="summary-item">
+                        <label>期間合計 費用 (除:工賃)</label>
+                        <div class="value val-expense">¥ 1,200,000</div>
+                    </div>
+                    <div style="height: 40px; border-left: 1px solid var(--color-border-default);"></div>
+                    <div class="summary-item">
+                        <label>工賃原資 (A-B)</label>
+                        <div class="value val-balance positive">¥ 2,300,000</div>
+                    </div>
+                    <div class="summary-item">
+                        <label>工賃支給実績</label>
+                        <div class="value">¥ 2,100,000</div>
+                    </div>
+                    <div class="summary-item">
+                        <label>残余 (積立へ)</label>
+                        <div class="value text-success">+ ¥ 200,000</div>
+                    </div>
+                    <div class="summary-item" style="margin-left: var(--spacing-4);">
+                        <button class="btn btn-primary">
+                            工賃支給明細へ
+                        </button>
+                    </div>
                 </div>
-                <div class="summary-item">
-                    <label>期間合計 費用 (除:工賃)</label>
-                    <div class="value val-expense">¥ 1,200,000</div>
-                </div>
-                <div style="height: 40px; border-left: 1px solid var(--color-border-default);"></div>
-                <div class="summary-item">
-                    <label>工賃原資 (A-B)</label>
-                    <div class="value val-balance positive">¥ 2,300,000</div>
-                </div>
-                <div class="summary-item">
-                    <label>工賃支給実績</label>
-                    <div class="value">¥ 2,100,000</div>
-                </div>
-                <div class="summary-item">
-                    <label>残余 (積立へ)</label>
-                    <div class="value text-success">+ ¥ 200,000</div>
-                </div>
-                <div class="summary-item" style="margin-left: var(--spacing-4);">
-                    <button class="btn btn-primary">
-                        工賃支給明細へ
-                    </button>
-                </div>
-            </div>
 
         </main>
 
@@ -368,11 +378,11 @@
             { id: 'p3', name: '施設外就労（清掃）', type: 'external', partner: '天神オフィスサプライ', startDate: '2025-06-01' }
         ];
 
-        // Mock Transactions (Date format YYYY-MM-DD)
+        // Mock Transactions (Updated for variety)
         const revenueItems = [
             { projectId: 'p1', date: '2025-10-31', amount: 150000, billingStatus: 'paid' },
             { projectId: 'p1', date: '2025-11-30', amount: 120000, billingStatus: 'billed' },
-            { projectId: 'p2', date: '2025-04-30', amount: 50000, billingStatus: 'paid' }, // Apr is now arguably just normal month 4
+            { projectId: 'p2', date: '2025-04-30', amount: 50000, billingStatus: 'paid' },
             { projectId: 'p2', date: '2025-05-31', amount: 55000, billingStatus: 'paid' },
             { projectId: 'p3', date: '2025-06-30', amount: 200000, billingStatus: 'paid' },
             { projectId: 'p3', date: '2025-07-31', amount: 200000, billingStatus: 'paid' },
@@ -385,11 +395,12 @@
 
         const taskItems = [
             { projectId: 'p1', date: '2025-10-31', wageTotal: 80000, wageStatus: 'paid' },
+            { projectId: 'p1', date: '2025-11-30', wageTotal: 60000, wageStatus: 'pending' },
             { projectId: 'p2', date: '2025-04-30', wageTotal: 20000, wageStatus: 'paid' }
         ];
 
 
-        const currentYear = 2025; // Target Fiscal Year
+        const currentYear = 2025;
 
         function formatCurrency(amount) {
             return new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' }).format(amount);
@@ -414,7 +425,7 @@
             projects.forEach(project => {
                 const row = {
                     project: project,
-                    cells: [] // 12 cells
+                    cells: []
                 };
 
                 months.forEach(m => {
@@ -427,25 +438,54 @@
                     const labs = taskItems.filter(t => t.projectId === project.id && t.date.startsWith(mKey));
 
                     const totalRev = revs.reduce((sum, item) => sum + item.amount, 0);
-                    const totalExp = exps.reduce((sum, item) => sum + item.amount, 0);
-                    const totalBalance = totalRev - totalExp;
-                    const hasActivity = (totalRev > 0 || totalExp > 0 || labs.length > 0);
 
-                    // Determine Statuses (Simplified logic for mock)
-                    // Billing: If revenue exists, check first item's status, else 'none'
-                    const billStatus = revs.length > 0 ? (revs[0].billingStatus || 'unbilled') : 'none';
+                    // Split Expenses
+                    const outsourcingExps = exps.filter(e => e.type === 'outsourcing');
+                    const otherExps = exps.filter(e => e.type !== 'outsourcing');
 
-                    // Outsourcing: If outsourcing expense exists
-                    const outItem = exps.find(e => e.type === 'outsourcing');
-                    const outStatus = outItem ? (outItem.paymentStatus || 'unpaid') : 'none';
+                    const totalOutsourcing = outsourcingExps.reduce((sum, item) => sum + item.amount, 0);
+                    const totalOtherExp = otherExps.reduce((sum, item) => sum + item.amount, 0);
+                    const totalExp = totalOutsourcing + totalOtherExp;
 
-                    // Wages: If labor tasks exist
-                    const wageStatus = labs.length > 0 ? (labs[0].wageStatus || 'unpaid') : 'none';
+                    const totalLabor = labs.reduce((sum, item) => sum + item.wageTotal, 0);
+
+                    const totalBalance = totalRev - totalExp; // Fund Balance (Labor not subtracted here usually, or is it? Let's keep Fund Balance)
+
+                    const hasActivity = (totalRev > 0 || totalExp > 0 || totalLabor > 0);
+
+                    // --- Status Determination ---
+
+                    // Billing
+                    // If no revenue but has activity (e.g. only expense), effectively "unbilled" or NA? 
+                    // Let's say if Rev > 0, we check status. If Rev=0, status is 'none' (or 'not_required')
+                    let billStatus = 'none';
+                    if (totalRev > 0) {
+                        billStatus = revs[0].billingStatus || 'unbilled';
+                    } else if (hasActivity && project.type === 'external') {
+                        // If external project active but no revenue, arguably 'unbilled'
+                        billStatus = 'unbilled';
+                    }
+
+                    // Outsourcing
+                    // If outsourcing cost > 0, check status.
+                    let outStatus = 'none';
+                    if (totalOutsourcing > 0) {
+                        const outItem = outsourcingExps[0];
+                        outStatus = outItem ? (outItem.paymentStatus || 'unpaid') : 'unpaid';
+                    }
+
+                    // Wage
+                    let wageStatus = 'none';
+                    if (totalLabor > 0) {
+                        wageStatus = labs[0].wageStatus || 'unpaid';
+                    }
 
                     row.cells.push({
                         month: m.month, // 1-12
                         revenue: totalRev,
-                        expense: totalExp,
+                        outsourcing: totalOutsourcing,
+                        otherExp: totalOtherExp,
+                        labor: totalLabor,
                         balance: totalBalance,
                         hasActivity: hasActivity,
                         billStatus: billStatus,
@@ -482,32 +522,72 @@
 
                 // Cells
                 row.cells.forEach(cell => {
-                    if (!cell.hasActivity && cell.wageStatus === 'none') {
+                    if (!cell.hasActivity) {
                         html += `<td style="background-color: var(--color-bg-subtle);"></td>`;
                     } else {
-                        // Status Icon Helper
-                        const getBillColor = (s) => s === 'paid' ? 'var(--color-semantic-success-main)' : (s === 'billed' ? 'var(--color-semantic-primary-main)' : 'var(--color-base-quaternary)');
-                        const getOutColor = (s) => s === 'paid' ? 'var(--color-semantic-success-main)' : 'var(--color-base-quaternary)';
-                        const getWageColor = (s) => s === 'paid' ? 'var(--color-semantic-success-main)' : (s === 'pending' ? 'var(--color-semantic-warning-main)' : 'var(--color-base-quaternary)');
+                        // --- Badge Generation ---
+                        // Billing
+                        let billBadgeHTML = '<span style="color:var(--color-text-tertiary); font-size:0.7em;">-</span>';
+                        if (cell.billStatus !== 'none') {
+                            const label = cell.billStatus === 'paid' ? '請求:完' : (cell.billStatus === 'billed' ? '請求:済' : '請求:未');
+                            const cls = cell.billStatus === 'paid' ? 'badge-success' : (cell.billStatus === 'billed' ? 'badge-primary' : 'badge-neutral');
+                            billBadgeHTML = `<span class="badge ${cls} badge-xs">${label}</span>`;
+                        }
 
-                        const billIcon = cell.billStatus !== 'none'
-                            ? `<span class="material-symbols-outlined" style="font-size: 16px; color: ${getBillColor(cell.billStatus)};" title="請求: ${cell.billStatus}">receipt_long</span>` : '<span style="display:inline-block; width:16px;"></span>';
+                        // Outsourcing
+                        let outBadgeHTML = '<span style="color:var(--color-text-tertiary); font-size:0.7em;">-</span>'; // Default None
+                        if (cell.outStatus !== 'none') {
+                            const label = cell.outStatus === 'paid' ? '外注:済' : '外注:未';
+                            const cls = cell.outStatus === 'paid' ? 'badge-success' : 'badge-neutral';
+                            outBadgeHTML = `<span class="badge ${cls} badge-xs">${label}</span>`;
+                        } else if (cell.outsourcing === 0) {
+                            outBadgeHTML = '<span style="color:var(--color-text-tertiary); font-size:0.7em;">外注:なし</span>';
+                        }
 
-                        const outIcon = cell.outStatus !== 'none'
-                            ? `<span class="material-symbols-outlined" style="font-size: 16px; color: ${getOutColor(cell.outStatus)};" title="外注払: ${cell.outStatus}">local_shipping</span>` : '<span style="display:inline-block; width:16px;"></span>';
+                        // Labor
+                        let wageBadgeHTML = '<span style="color:var(--color-text-tertiary); font-size:0.7em;">-</span>';
+                        if (cell.wageStatus !== 'none') {
+                            const labels = { paid: '工賃:済', pending: '工賃:申', unpaid: '工賃:未' };
+                            const clss = { paid: 'badge-success', pending: 'badge-warning', unpaid: 'badge-neutral' };
+                            wageBadgeHTML = `<span class="badge ${clss[cell.wageStatus] || 'badge-neutral'} badge-xs">${labels[cell.wageStatus] || '未'}</span>`;
+                        } else if (cell.labor === 0) {
+                            wageBadgeHTML = '<span style="color:var(--color-text-tertiary); font-size:0.7em;">工賃:なし</span>';
+                        }
 
-                        const wageIcon = cell.wageStatus !== 'none'
-                            ? `<span class="material-symbols-outlined" style="font-size: 16px; color: ${getWageColor(cell.wageStatus)};" title="工賃: ${cell.wageStatus}">payments</span>` : '<span style="display:inline-block; width:16px;"></span>';
+                        // --- Cell HTML Construction ---
+                        html += `<td><div class="cell-stack">`;
 
+                        // 1. Revenue
+                        html += `<div class="stack-row">
+                                    <span style="color: var(--color-semantic-primary-main); font-weight:500;">+${cell.revenue.toLocaleString()}</span>
+                                    ${billBadgeHTML}
+                                 </div>`;
 
-                        html += `<td>
-                                    <div style="display: flex; justify-content: flex-end; gap: 4px; margin-bottom: 4px;">
-                                        ${billIcon} ${outIcon} ${wageIcon}
-                                    </div>
-                                    <div style="color: var(--color-semantic-primary-main); font-size: 0.9em;">+${cell.revenue.toLocaleString()}</div>
-                                    <div style="color: var(--color-semantic-error-main); font-size: 0.9em;">-${cell.expense.toLocaleString()}</div>
-                                    <div style="font-weight: bold; border-top: 1px dotted #ccc; margin-top: 2px;">${cell.balance.toLocaleString()}</div>
-                                 </td>`;
+                        // 2. Outsourcing (Only if > 0 or explicit?) 
+                        // User wants to know "Type" so let's show separate row for Outsourcing if relevant or always?
+                        // "請求、入金と支払の「未/済/不要」、その請求と支払が工賃、外注加工費、などの種別が分かるようにせよ"
+                        // Implies we should list them.
+                        html += `<div class="stack-row">
+                                    <span style="font-size:0.9em;">-${cell.outsourcing.toLocaleString()}</span>
+                                    ${outBadgeHTML}
+                                 </div>`;
+
+                        // 3. Labor
+                        html += `<div class="stack-row">
+                                    <span style="font-size:0.9em;">(${cell.labor.toLocaleString()})</span>
+                                    ${wageBadgeHTML}
+                                 </div>`;
+
+                        // 4. Balance (Rev - Exp) Exp includes Outsourcing + Material(Other)
+                        // Note: Other Expenses are hidden in detail but subtracted.
+                        // Let's show "Other Exp" row? Or just lumped in Balance.
+                        // Balance row
+                        html += `<div class="stack-row" style="background-color: rgba(0,0,0,0.02);">
+                                    <span style="font-weight:bold; margin-right:auto;">残高</span>
+                                    <span class="val-balance ${cell.balance >= 0 ? 'positive' : 'negative'}">${cell.balance.toLocaleString()}</span>
+                                 </div>`;
+
+                        html += `</div></td>`;
                     }
                 });
                 html += `</tr>`;
