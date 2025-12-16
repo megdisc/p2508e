@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Compath - 生産活動収支状況</title>
+
+    <link rel="stylesheet" href="globals.css">
+    <link rel="stylesheet" href="ui.css">
+
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+    <style>
+        /* Matrix Table Styles */
+        .matrix-table-container {
+            overflow: auto;
+            /* Allow both scroll */
+            max-height: 80vh;
+            /* Limit height to trigger vertical scroll if needed */
+            border: 1px solid var(--color-border-default);
+            border-radius: var(--radius-md);
+        }
+
+        .matrix-table {
+            width: 100%;
+            border-collapse: separate;
+            /* Required for sticky borders to render well */
+            border-spacing: 0;
+            font-size: var(--font-size-sm);
+            white-space: nowrap;
+        }
+
+        .matrix-table th,
+        .matrix-table td {
+            border-bottom: 1px solid var(--color-table-border);
+            border-right: 1px solid var(--color-table-border);
+            padding: var(--spacing-2);
+            text-align: right;
+            min-width: 100px;
+            background-color: #fff;
+            /* Ensure generic cells have bg */
+        }
+
+        /* Sticky Column (Left) */
+        .matrix-table th.sticky-col,
+        .matrix-table td.sticky-col {
+            position: sticky;
+            left: 0;
+            z-index: 10;
+            text-align: left;
+            min-width: 200px;
+            border-right: 2px solid var(--color-border-default);
+            /* Stronger separator */
+        }
+
+        /* Sticky Header (Top) */
+        .matrix-table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: var(--color-base-secondary);
+            border-bottom: 2px solid var(--color-border-default);
+        }
+
+        /* Top-Left Corner (Intersection) */
+        .matrix-table thead th.sticky-col {
+            z-index: 30;
+            /* Highest priority */
+            background-color: var(--color-base-secondary);
+        }
+
+        /* Value Colors */
+        .val-revenue {
+            color: var(--color-semantic-primary-main);
+        }
+
+        .val-expense {
+            color: var(--color-semantic-error-main);
+        }
+
+        .val-balance {
+            font-weight: bold;
+        }
+
+        .val-balance.positive {
+            color: var(--color-semantic-success-main);
+        }
+
+        .val-balance.negative {
+            color: var(--color-semantic-error-main);
+        }
+
+        /* Cell Layout */
+        .matrix-cell {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .matrix-row-label {
+            font-size: 0.75em;
+            color: var(--color-text-tertiary);
+            margin-right: 4px;
+        }
+
+        /* Status Icons inside cell */
+        .status-indicators {
+            display: flex;
+            justify-content: flex-end;
+            gap: 4px;
+            margin-top: 4px;
+            padding-top: 4px;
+            border-top: 1px dashed var(--color-border-subtle);
+        }
+
+        .status-icon {
+            font-size: 1.1em;
+            color: var(--color-text-tertiary);
+            cursor: pointer;
+        }
+
+        .status-icon.active {
+            color: var(--color-semantic-success-main);
+            /* Paid/Billed */
+        }
+
+        .status-icon.pending {
+            color: var(--color-semantic-warning-main);
+            /* Pending */
+        }
+
+        /* Summary Footer Board */
+        .summary-board {
+            position: sticky;
+            bottom: 0;
+            background-color: var(--color-base-primary);
+            border-top: 2px solid var(--color-border-default);
+            padding: var(--spacing-4);
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 30;
+        }
+
+        .summary-item {
+            text-align: center;
+        }
+
+        .summary-item label {
+            display: block;
+            font-size: var(--font-size-xs);
+            color: var(--color-text-secondary);
+        }
+
+        .summary-item .value {
+            font-size: var(--font-size-xl);
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="page-wrapper">
+
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div style="width: 100%; text-align: center;">
+                    <div style="margin-bottom: var(--spacing-stack-xs);">Compath</div>
+                    <select class="input-field">
+                        <option value="tenjin">こんぱす天神</option>
+                        <option value="hakata">こんぱす博多</option>
+                    </select>
+                </div>
+            </div>
+            <!-- Navigation -->
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-link">トップ</a>
+                <details class="nav-accordion">
+                    <summary>施設情報</summary>
+                    <ul>
+                        <li><a href="corporation.html">法人情報</a></li>
+                        <li><a href="office.html">事業所情報</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>職員・利用者情報</summary>
+                    <ul>
+                        <li><a href="staff.html">職員情報</a></li>
+                        <li><a href="members.html">利用者情報</a></li>
+                    </ul>
+                </details>
+
+                <a href="partners.html" class="nav-link">取引先情報</a>
+                <details class="nav-accordion">
+                    <summary>スキル情報</summary>
+                    <ul>
+                        <li><a href="skills-settings.html">スキル設定</a></li>
+                        <li><a href="skills-evaluation.html">スキル評価</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>工賃・控除情報</summary>
+                    <ul>
+                        <li><a href="wages-settings.html">工賃設定</a></li>
+                        <li><a href="deductions-settings.html">控除設定</a></li>
+                        <li><a href="wages-evaluation.html">工賃レベル評価</a></li>
+                    </ul>
+                </details>
+
+                <a href="savings-settings.html" class="nav-link">積立金設定</a>
+
+                <a href="attendance.html" class="nav-link">出欠状況</a>
+                <details class="nav-accordion" open>
+                    <summary>生産活動</summary>
+                    <ul>
+                        <li><a href="projects.html">案件情報</a></li>
+                        <li><a href="schedule.html">進捗状況</a></li>
+                        <!-- <li style="text-decoration: line-through; color: #999;">収入・経費実績 (Old)</li> -->
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>福祉事業活動</summary>
+                    <ul>
+                        <li><a href="support-plans.html">個別支援計画</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>請求・支払</summary>
+                    <ul>
+                        <li><a href="billing-national-health.html">国保連請求</a></li>
+                        <li><a href="production-balance.html" class="active">生産活動収支状況</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>分析</summary>
+                    <ul>
+                        <li><a href="analytics-production.html">生産活動収支分析</a></li>
+                        <li><a href="analytics-wages.html">平均工賃分析</a></li>
+
+                        <li><a href="analytics-savings.html">積立金分析</a></li>
+                    </ul>
+                </details>
+                <a href="account.html" class="nav-link">ユーザーアカウント</a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info"><span class="user-name">田中 健司</span><a href="#">ログアウト</a></div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+
+            <div class="container" style="padding-top: 32px; padding-bottom: 120px;">
+
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
+                    <h1 style="margin: 0;">生産活動収支状況</h1>
+
+                    <div style="display: flex; gap: var(--spacing-3); align-items: center;">
+                        <!-- Year Selector -->
+                        <div
+                            style="display: flex; align-items: center; background: white; border: 1px solid var(--color-border-default); border-radius: var(--radius-md); padding: 4px;">
+                            <button class="btn btn-icon-sm btn-icon-neutral"><span
+                                    class="material-symbols-outlined">chevron_left</span></button>
+                            <span style="padding: 0 12px; font-weight: bold;">2025年度</span>
+                            <button class="btn btn-icon-sm btn-icon-neutral"><span
+                                    class="material-symbols-outlined">chevron_right</span></button>
+                        </div>
+
+                        <button class="btn btn-neutral">
+                            <span class="material-symbols-outlined">print</span>
+                            印刷
+                        </button>
+                        <button class="btn btn-neutral">
+                            <span class="material-symbols-outlined">download</span>
+                            CSV
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Matrix View -->
+                <div class="card" style="margin-bottom: var(--spacing-stack-md);">
+                    <div class="card-body" style="padding: 0;">
+                        <div class="matrix-table-container">
+                            <table class="matrix-table" id="production-matrix">
+                                <!-- JS will populate this -->
+                                <thead>
+                                    <tr>
+                                        <th class="sticky-col">案件 / 月度</th>
+                                        <!-- Apr to Mar -->
+                                        <th>4月</th>
+                                        <th>5月</th>
+                                        <th>6月</th>
+                                        <th>7月</th>
+                                        <th>8月</th>
+                                        <th>9月</th>
+                                        <th>10月</th>
+                                        <th>11月</th>
+                                        <th>12月</th>
+                                        <th>1月</th>
+                                        <th>2月</th>
+                                        <th>3月</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Rows per Project -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+
+        <!-- Sticky Summary Footer -->
+        <div class="summary-board">
+            <div class="summary-item">
+                <label>期間合計 収入</label>
+                <div class="value val-revenue">¥ 3,500,000</div>
+            </div>
+            <div class="summary-item">
+                <label>期間合計 費用 (除:工賃)</label>
+                <div class="value val-expense">¥ 1,200,000</div>
+            </div>
+            <div style="height: 40px; border-left: 1px solid var(--color-border-default);"></div>
+            <div class="summary-item">
+                <label>工賃原資 (A-B)</label>
+                <div class="value val-balance positive">¥ 2,300,000</div>
+            </div>
+            <div class="summary-item">
+                <label>工賃支給実績</label>
+                <div class="value">¥ 2,100,000</div>
+            </div>
+            <div class="summary-item">
+                <label>残余 (積立へ)</label>
+                <div class="value text-success">+ ¥ 200,000</div>
+            </div>
+            <div class="summary-item" style="margin-left: var(--spacing-4);">
+                <button class="btn btn-primary">
+                    工賃支給明細へ
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function formatCurrency(num) {
+            return new Intl.NumberFormat('ja-JP').format(num);
+        }
+
+        // Mock Data (Source of Truth: Same as actuals.html)
+        // In a real app, this would be fetched from an API
+        const projects = [
+            {
+                id: 'p1', name: 'DM封入作業', type: 'external', partner: '株式会社 福岡工芸',
+                revenueItems: [
+                    { name: '封入・検品代', amount: 300000, date: '2025-12-31' },
+                    { name: '10月分売上', amount: 280000, date: '2025-10-31' }
+                ],
+                expenses: [
+                    { name: '封筒・資材代', amount: 20000, date: '2025-12-01', type: '材料費' },
+                    { name: '10月材料', amount: 15000, date: '2025-10-05', type: '材料費' }
+                ],
+                tasks: [ // Labor
+                    { name: '封入作業', total: 50000, date: '2025-12-05' },
+                    { name: '10月作業', total: 45000, date: '2025-10-15' }
+                ]
+            },
+            {
+                id: 'p2', name: '自主製品（パン）', type: 'internal', partner: '自主事業',
+                revenueItems: [
+                    { name: '10月売上', amount: 450000, date: '2025-10-31' },
+                    { name: '11月売上', amount: 460000, date: '2025-11-30' },
+                    { name: '12月売上', amount: 480000, date: '2025-12-31' }
+                ],
+                expenses: [
+                    { name: '10月材料', amount: 120000, date: '2025-10-01', type: '材料費' },
+                    { name: '11月材料', amount: 130000, date: '2025-11-01', type: '材料費' },
+                    { name: '12月材料', amount: 125000, date: '2025-12-01', type: '材料費' }
+                ],
+                tasks: [
+                    { name: '10月工賃', total: 150000, date: '2025-10-31' },
+                    { name: '11月工賃', total: 160000, date: '2025-11-30' },
+                    { name: '12月工賃', total: 155000, date: '2025-12-31' }
+                ]
+            },
+            {
+                id: 'p3', name: '施設外就労（清掃）', type: 'external', partner: '天神オフィスサプライ',
+                revenueItems: [
+                    { name: '10月委託費', amount: 200000, date: '2025-10-31' },
+                    { name: '11月委託費', amount: 200000, date: '2025-11-30' },
+                    { name: '12月委託費', amount: 200000, date: '2025-12-31' }
+                ],
+                expenses: [
+                    { name: '10月交通費', amount: 10000, date: '2025-10-31', type: 'その他' }
+                ],
+                tasks: [
+                    { name: '10月作業', total: 80000, date: '2025-10-31' },
+                    { name: '11月作業', total: 80000, date: '2025-11-30' },
+                    { name: '12月作業', total: 80000, date: '2025-12-31' }
+                ]
+            }
+        ];
+
+        // Fiscal Year Config
+        const fiscalYear = 2025;
+        const months = [4, 5, 6, 7, 8, 9, 10, 11, 12, 1, 2, 3];
+
+        function getMonthFromDate(dateStr) {
+            const d = new Date(dateStr);
+            return { year: d.getFullYear(), month: d.getMonth() + 1 };
+        }
+
+        function generateMatrixData() {
+            return projects.map(proj => {
+                const monthlyData = {};
+
+                // Init Months
+                months.forEach(m => {
+                    monthlyData[m] = { rev: 0, exp: 0, labor: 0, billed: false, paid: false };
+                });
+
+                // Aggregate Revenue
+                if (proj.revenueItems) {
+                    proj.revenueItems.forEach(item => {
+                        const { month } = getMonthFromDate(item.date);
+                        if (monthlyData[month]) monthlyData[month].rev += item.amount;
+                    });
+                }
+
+                // Aggregate Expenses
+                if (proj.expenses) {
+                    proj.expenses.forEach(item => {
+                        const { month } = getMonthFromDate(item.date);
+                        // Exclude Reserves from Expenses in this view? Usually "Balance" = Rev - Cost.
+                        // Reserves are usually taken FROM the balance or treated as a cost.
+                        // For "Production Balance", let's treat Reserves as a form of profit/saving, so NOT an expense here?
+                        // Or if we want "Wage Fund", then Non-Labor Expenses must be subtracted.
+                        if (monthlyData[month]) monthlyData[month].exp += item.amount;
+                    });
+                }
+
+                // Aggregate Labor
+                if (proj.tasks) {
+                    proj.tasks.forEach(item => {
+                        const { month } = getMonthFromDate(item.date);
+                        if (monthlyData[month]) monthlyData[month].labor += item.total;
+                    });
+                }
+
+                // Simulate Status (In real app, fetch from state)
+                months.forEach(m => {
+                    const d = monthlyData[m];
+                    if (d.rev > 0) d.billed = true; // Mock: If revenue exists, assume billed
+                    if (d.exp > 0) d.paid = true;   // Mock: If expense exists, assume paid
+                });
+
+                return { ...proj, monthly: monthlyData };
+            });
+        }
+
+        function renderMatrix() {
+            const matrixData = generateMatrixData();
+            const tbody = document.querySelector('#production-matrix tbody');
+            tbody.innerHTML = '';
+
+            // Grand Totals for Footer
+            let totalRev = 0;
+            let totalExp = 0; // Non-labor
+            let totalLabor = 0;
+
+            matrixData.forEach(project => {
+                const tr = document.createElement('tr');
+
+                // Header Col
+                const th = document.createElement('th');
+                th.className = 'sticky-col';
+                th.innerHTML = `
+                    <div style="font-weight: bold; text-align: left;">${project.name}</div>
+                    <div style="font-size: 0.8em; color: var(--color-text-tertiary); font-weight: normal; text-align: left;">
+                        ${project.type === 'external' ? '受託' : '自主'} | ${project.partner}
+                    </div>
+                `;
+                tr.appendChild(th);
+
+                // Data Cols
+                months.forEach(m => {
+                    const td = document.createElement('td');
+                    const data = project.monthly[m];
+
+                    // Add to Grand Totals (Simplified: All visible months)
+                    // In reality, this might filter by "Current Month" or accumulate YTD
+                    // For the footer "Period Total", let's sum everything in view.
+                    totalRev += data.rev;
+                    totalExp += data.exp;
+                    totalLabor += data.labor;
+
+                    const hasData = data.rev > 0 || data.exp > 0 || data.labor > 0;
+
+                    if (!hasData) {
+                        td.style.backgroundColor = 'var(--color-bg-subtle)';
+                        td.innerHTML = '-';
+                    } else {
+                        const balance = data.rev - data.exp - data.labor;
+                        const balClass = balance >= 0 ? 'positive' : 'negative';
+
+                        td.innerHTML = `
+                            <div class="matrix-cell">
+                                <div><span class="matrix-row-label">収:</span><span class="val-revenue">${formatCurrency(data.rev)}</span></div>
+                                <div><span class="matrix-row-label">費:</span><span class="val-expense">${formatCurrency(data.exp + data.labor)}</span></div>
+                                <div style="border-top: 1px solid var(--color-border-subtle); padding-top: 2px;">
+                                    <span class="val-balance ${balClass}">${formatCurrency(balance)}</span>
+                                </div>
+                                <div class="status-indicators">
+                                    <span class="material-symbols-outlined status-icon ${data.billed ? 'active' : 'pending'}" title="請求/回収">
+                                        ${project.type === 'external' ? 'receipt_long' : 'storefront'}
+                                    </span>
+                                    <span class="material-symbols-outlined status-icon ${data.paid ? 'active' : 'pending'}" title="支払完了">
+                                        payments
+                                    </span>
+                                </div>
+                            </div>
+                        `;
+                    }
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+
+            // Update Footer
+            updateFooter(totalRev, totalExp, totalLabor);
+        }
+
+        function updateFooter(rev, exp, labor) {
+            // Note: exp here includes non-labor expenses. Labor is separate.
+            // Wage Fund = Revenue - Non-Labor Expenses
+            // Balance logic:
+            // Fund = Rev - Exp (Material/Outsourcing)
+            // Actual Wage Paid = labor
+            // Surplus = Fund - Labor
+
+            const fund = rev - exp;
+            const surplus = fund - labor;
+
+            document.querySelector('.val-revenue').textContent = '¥ ' + formatCurrency(rev);
+            document.querySelector('.val-expense').textContent = '¥ ' + formatCurrency(exp);
+
+            const balEl = document.querySelector('.val-balance');
+            balEl.textContent = '¥ ' + formatCurrency(fund);
+            balEl.className = `value val-balance ${fund >= 0 ? 'positive' : 'negative'}`;
+
+            // Wage Paid (Actual Labor Cost)
+            document.querySelectorAll('.summary-item .value')[3].textContent = '¥ ' + formatCurrency(labor);
+
+            // Surplus
+            const surEl = document.querySelectorAll('.summary-item .value')[4];
+            surEl.textContent = (surplus >= 0 ? '+ ' : '') + '¥ ' + formatCurrency(surplus);
+            surEl.className = `value ${surplus >= 0 ? 'text-success' : 'text-error'}`;
+        }
+
+        document.addEventListener('DOMContentLoaded', renderMatrix);
+    </script>
+
+</body>
+
+</html>
