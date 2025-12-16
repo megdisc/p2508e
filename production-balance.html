@@ -143,7 +143,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            z-index: 30;
+            z-index: 50;
         }
 
         .summary-item {
@@ -316,37 +316,37 @@
 
             </div>
 
-        </main>
+            <!-- Sticky Summary Footer -->
+            <div class="summary-board">
+                <div class="summary-item">
+                    <label>期間合計 収入</label>
+                    <div class="value val-revenue">¥ 3,500,000</div>
+                </div>
+                <div class="summary-item">
+                    <label>期間合計 費用 (除:工賃)</label>
+                    <div class="value val-expense">¥ 1,200,000</div>
+                </div>
+                <div style="height: 40px; border-left: 1px solid var(--color-border-default);"></div>
+                <div class="summary-item">
+                    <label>工賃原資 (A-B)</label>
+                    <div class="value val-balance positive">¥ 2,300,000</div>
+                </div>
+                <div class="summary-item">
+                    <label>工賃支給実績</label>
+                    <div class="value">¥ 2,100,000</div>
+                </div>
+                <div class="summary-item">
+                    <label>残余 (積立へ)</label>
+                    <div class="value text-success">+ ¥ 200,000</div>
+                </div>
+                <div class="summary-item" style="margin-left: var(--spacing-4);">
+                    <button class="btn btn-primary">
+                        工賃支給明細へ
+                    </button>
+                </div>
+            </div>
 
-        <!-- Sticky Summary Footer -->
-        <div class="summary-board">
-            <div class="summary-item">
-                <label>期間合計 収入</label>
-                <div class="value val-revenue">¥ 3,500,000</div>
-            </div>
-            <div class="summary-item">
-                <label>期間合計 費用 (除:工賃)</label>
-                <div class="value val-expense">¥ 1,200,000</div>
-            </div>
-            <div style="height: 40px; border-left: 1px solid var(--color-border-default);"></div>
-            <div class="summary-item">
-                <label>工賃原資 (A-B)</label>
-                <div class="value val-balance positive">¥ 2,300,000</div>
-            </div>
-            <div class="summary-item">
-                <label>工賃支給実績</label>
-                <div class="value">¥ 2,100,000</div>
-            </div>
-            <div class="summary-item">
-                <label>残余 (積立へ)</label>
-                <div class="value text-success">+ ¥ 200,000</div>
-            </div>
-            <div class="summary-item" style="margin-left: var(--spacing-4);">
-                <button class="btn btn-primary">
-                    工賃支給明細へ
-                </button>
-            </div>
-        </div>
+        </main>
 
     </div>
 
