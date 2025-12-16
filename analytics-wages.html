@@ -184,8 +184,9 @@
                     <ul>
                         <li><a href="analytics-production.html">生産活動収支分析</a></li>
                         <li><a href="analytics-wages.html">平均工賃分析</a></li>
-                    
-                        <li><a href="analytics-savings.html">積立金分析</a></li></ul>
+
+                        <li><a href="analytics-savings.html">積立金分析</a></li>
+                    </ul>
                 </details>
 
                 <a href="account.html" class="nav-link">ユーザーアカウント</a>
@@ -470,36 +471,72 @@
                             return Math.round(avg);
                         });
 
+                        // 累計平均等の追加計算 (Monthly Mode Only)
+                        let cumulativeAverageWages = [];
+                        if (currentMode === 'monthly') {
+                            let cumulativeTotalWages = 0;
+                            let cumulativeUserCount = 0;
+
+                            cumulativeAverageWages = sourceData.total_wages.map((total, i) => {
+                                cumulativeTotalWages += total;
+                                cumulativeUserCount += sourceData.paid_user_count[i];
+
+                                const avg = cumulativeUserCount > 0 ? cumulativeTotalWages / cumulativeUserCount : 0;
+                                return Math.round(avg);
+                            });
+                        }
+
                         const colorPrimary = getCssVar('--color-semantic-primary-main') || '#007BFF';
+                        const colorSecondary = getCssVar('--color-semantic-secondary-main') || '#FF9F40'; // Secondary color for cumulative
                         const colorText = getCssVar('--color-base-quaternary') || '#666666';
                         const colorGrid = getCssVar('--color-base-quinary') || '#CCCCCC';
 
                         // Y軸の最小値・最大値を計算（表示範囲を調整するため）
-                        const minWage = Math.min(...averageWages);
-                        const maxWage = Math.max(...averageWages);
+                        const allValues = [...averageWages, ...cumulativeAverageWages];
+                        const minWage = Math.min(...allValues);
+                        const maxWage = Math.max(...allValues);
+
                         // マージンを持たせる（最小値は少し下、最大値は少し上）
-                        // データの振れ幅が小さい場合も見やすくするため、データ範囲の10%程度のマージンを設定
                         const range = maxWage - minWage;
-                        const margin = range * 0.1 || 1000; // rangeが0の場合は1000円のマージン
+                        const margin = range * 0.1 || 1000;
 
                         // 最小値が0を下回らないように調整
                         const yMin = Math.max(0, Math.floor((minWage - margin) / 100) * 100);
                         const yMax = Math.ceil((maxWage + margin) / 100) * 100;
 
+                        const datasets = [
+                            {
+                                type: 'line',
+                                label: '単月平均工賃', // Changed label for clarity
+                                data: averageWages,
+                                backgroundColor: hexToRgba(colorPrimary, 0.2),
+                                borderColor: colorPrimary,
+                                borderWidth: 2,
+                                fill: true,
+                                tension: 0,
+                                order: 2
+                            }
+                        ];
+
+                        if (currentMode === 'monthly') {
+                            datasets.push({
+                                type: 'line',
+                                label: '年度累計平均',
+                                data: cumulativeAverageWages,
+                                borderColor: colorSecondary,
+                                borderWidth: 2,
+                                borderDash: [5, 5],
+                                fill: false,
+                                pointStyle: 'circle',
+                                pointRadius: 4,
+                                tension: 0,
+                                order: 1
+                            });
+                        }
+
                         const chartData = {
                             labels: sourceData.labels,
-                            datasets: [
-                                {
-                                    type: 'line', // 折れ線グラフに変更
-                                    label: '平均工賃',
-                                    data: averageWages,
-                                    backgroundColor: hexToRgba(colorPrimary, 0.2),
-                                    borderColor: colorPrimary,
-                                    borderWidth: 2,
-                                    fill: true,
-                                    tension: 0 // 直線にする
-                                }
-                            ]
+                            datasets: datasets
                         };
 
                         if (chartInstance) {
@@ -521,10 +558,17 @@
                                         display: false,
                                     },
                                     legend: {
-                                        display: false
+                                        display: true, // Enable legend
+                                        position: 'bottom',
+                                        labels: {
+                                            font: {
+                                                family: getCssVar('--font-family-base')
+                                            },
+                                            color: colorText
+                                        }
                                     },
                                     tooltip: {
-                                        enabled: false, // Disable default tooltip
+                                        enabled: false,
                                         external: externalTooltipHandler
                                     }
                                 },
@@ -542,7 +586,7 @@
                                         }
                                     },
                                     y: {
-                                        beginAtZero: false, // 0始まりにしない
+                                        beginAtZero: false,
                                         min: yMin,
                                         max: yMax,
                                         ticks: {
@@ -581,6 +625,12 @@
                         html += '<thead><tr>';
                         html += '<th style="text-align: left; min-width: 100px; position: sticky; left: 0; background-color: var(--color-base-secondary); z-index: 10;">期間</th>';
                         html += '<th style="text-align: right; min-width: 120px; background-color: var(--color-base-secondary); font-weight: bold;">平均工賃</th>';
+
+                        // Add Cumulative Average Column for Monthly Mode
+                        if (currentMode === 'monthly') {
+                            html += '<th style="text-align: right; min-width: 120px; background-color: var(--color-base-secondary); color: var(--color-semantic-secondary-main);">年度累計平均</th>';
+                        }
+
                         html += '<th style="text-align: right; min-width: 120px;">工賃総額</th>';
                         html += '<th style="text-align: right; min-width: 120px;">平均利用者数/日</th>';
                         html += '<th style="text-align: right; min-width: 120px;">延利用者数</th>';
@@ -589,6 +639,9 @@
 
                         // Body
                         html += '<tbody>';
+
+                        let cumulativeTotalWages = 0;
+                        let cumulativeUserCount = 0;
 
                         sourceData.labels.forEach((label, i) => {
                             const totalWages = sourceData.total_wages[i];
@@ -602,11 +655,24 @@
                             }
                             averageWage = Math.round(averageWage);
 
+                            let cumulativeAverageStr = '-';
+                            if (currentMode === 'monthly') {
+                                cumulativeTotalWages += totalWages;
+                                cumulativeUserCount += paidUserCount;
+                                const cumAvg = cumulativeUserCount > 0 ? cumulativeTotalWages / cumulativeUserCount : 0;
+                                cumulativeAverageStr = formatter.format(Math.round(cumAvg)) + '円';
+                            }
+
                             const averageUsersPerDay = openDays > 0 ? (totalUsersAttendance / openDays).toFixed(1) : 0;
 
                             html += '<tr>';
                             html += `<td style="text-align: left; position: sticky; left: 0; background-color: var(--color-base-primary); font-weight: bold;">${label}</td>`;
                             html += `<td style="text-align: right; font-weight: bold; background-color: var(--color-base-secondary);">${formatter.format(averageWage)}円</td>`;
+
+                            if (currentMode === 'monthly') {
+                                html += `<td style="text-align: right; color: var(--color-semantic-secondary-main); font-weight: bold;">${cumulativeAverageStr}</td>`;
+                            }
+
                             html += `<td style="text-align: right;">${formatter.format(totalWages)}円</td>`;
                             html += `<td style="text-align: right;">${averageUsersPerDay}名</td>`;
                             html += `<td style="text-align: right;">${totalUsersAttendance}名</td>`;

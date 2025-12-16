@@ -66,17 +66,19 @@
                 type: 'single',
                 source: 'external',
                 partner: '株式会社 福岡工芸',
-                period: '2025.10.01 - 2025.10.31',
-                revenue: 300000,
+                period: '2025.12.01 - 2025.12.31',
+                revenueItems: [
+                    { name: '封入・検品代', amount: 300000, date: '2025-12-31' }
+                ],
                 tasks: [
-                    { name: '封入作業', total: 30000 },
-                    { name: '検品作業', total: 15000 },
-                    { name: '梱包・発送', total: 5000 }
+                    { name: '封入作業', total: 30000, date: '2025-12-05' },
+                    { name: '検品作業', total: 15000, date: '2025-12-15' },
+                    { name: '梱包・発送', total: 5000, date: '2025-12-20' }
                 ],
                 expenses: [
-                    { name: '封筒・資材代', amount: 20000 },
-                    { name: '配送業者委託費', amount: 15000 },
-                    { name: '事業所積立金', amount: 10000 }
+                    { name: '封筒・資材代', amount: 20000, date: '2025-12-01', type: '材料費' },
+                    { name: '配送業者委託費', amount: 15000, date: '2025-12-25', type: '外注費' },
+                    { name: '事業所積立金', amount: 10000, date: '2025-12-31', type: '積立金' }
                 ]
             },
             {
@@ -87,16 +89,22 @@
                 source: 'in_house',
                 partner: '自主事業',
                 period: '2025.10.01 - 継続中',
-                revenue: 450000,
+                revenueItems: [
+                    { name: '11月売上', amount: 450000, date: '2025-11-30' },
+                    { name: '12月売上', amount: 480000, date: '2025-12-30' }
+                ],
                 tasks: [
-                    { name: '生地作り', total: 24000 },
-                    { name: '成形・焼成', total: 48000 },
-                    { name: '販売接客', total: 60000 }
+                    { name: '生地作り', total: 24000, date: '2025-11-05' },
+                    { name: '成形・焼成', total: 48000, date: '2025-11-10' },
+                    { name: '販売接客', total: 60000, date: '2025-12-25' },
+                    { name: '生地作り', total: 25000, date: '2025-12-05' }
                 ],
                 expenses: [
-                    { name: '小麦粉・材料費', amount: 80000 },
-                    { name: '光熱費按分', amount: 15000 },
-                    { name: '包装資材', amount: 5000 }
+                    { name: '小麦粉・材料費', amount: 80000, date: '2025-11-01', type: '材料費' },
+                    { name: '光熱費按分', amount: 15000, date: '2025-11-30', type: '光熱費' },
+                    { name: '包装資材', amount: 5000, date: '2025-12-15', type: '材料費' },
+                    { name: '材料費', amount: 85000, date: '2025-12-01', type: '材料費' },
+                    { name: '事業所積立金', amount: 20000, date: '2025-12-31', type: '積立金' }
                 ]
             },
             {
@@ -106,8 +114,8 @@
                 type: 'continuous',
                 source: 'external',
                 partner: '天神オフィスサプライ',
-                period: '2025.11.01 - 継続中',
-                revenue: 200000,
+                period: '2025.12.01 - 継続中',
+                revenueItems: [],
                 tasks: [],
                 expenses: []
             },
@@ -118,15 +126,17 @@
                 type: 'single',
                 source: 'in_house',
                 partner: '自主事業',
-                period: '2025.11.10 - 2025.11.10',
-                revenue: 50000,
+                period: '2025.12.10 - 2025.12.10',
+                revenueItems: [
+                    { name: 'バザー売上', amount: 50000, date: '2025-12-10' }
+                ],
                 tasks: [
-                    { name: '接客販売', total: 10000 },
-                    { name: '搬入出', total: 5000 }
+                    { name: '接客販売', total: 10000, date: '2025-12-10' },
+                    { name: '搬入出', total: 5000, date: '2025-12-10' }
                 ],
                 expenses: [
-                    { name: '出店料', amount: 5000 },
-                    { name: '事業所積立金', amount: 2500 }
+                    { name: '出店料', amount: 5000, date: '2025-12-10', type: 'その他' },
+                    { name: '事業所積立金', amount: 2500, date: '2025-12-10', type: '積立金' }
                 ]
             },
             {
@@ -137,7 +147,7 @@
                 source: 'in_house',
                 partner: '自主事業',
                 period: '2025.04.01 - 2025.04.01',
-                revenue: 0,
+                revenueItems: [],
                 tasks: [],
                 expenses: []
             },
@@ -149,7 +159,7 @@
                 source: 'in_house',
                 partner: '自主事業',
                 period: '未定',
-                revenue: 0,
+                revenueItems: [],
                 tasks: [],
                 expenses: []
             }
@@ -220,16 +230,75 @@
             }
         }
 
+        // State
+        // Remove global mode switching logic as it is per-card/fixed view now.
+        // We still need a "Target Month" to define what "This Month" is.
+        // Default to 2025-12 based on mock data update.
+        let globalTargetMonth = '2025-12';
+
         function renderProjects() {
             const grid = document.getElementById('project-grid');
             grid.innerHTML = '';
 
             projects.forEach(project => {
-                // Calculate Financials
-                const totalExpenses = project.expenses.reduce((sum, item) => sum + item.amount, 0);
-                const totalLabor = project.tasks.reduce((sum, item) => sum + item.total, 0);
-                const totalCost = totalExpenses + totalLabor;
-                const profit = project.revenue - totalCost;
+                // Initialize Totals
+                let monthlyRevenue = 0;
+                let monthlyReserves = 0;
+                let monthlyExpenses = 0; // Excludes reserves, Includes Labor
+                let monthlyLabor = 0;
+
+                let cumulativeRevenue = 0;
+                let cumulativeReserves = 0;
+                let cumulativeExpenses = 0;
+                let cumulativeLabor = 0;
+
+                // 1. Revenue
+                if (project.revenueItems) {
+                    project.revenueItems.forEach(item => {
+                        const amount = item.amount || 0;
+                        cumulativeRevenue += amount;
+                        if (item.date && item.date.startsWith(globalTargetMonth)) {
+                            monthlyRevenue += amount;
+                        }
+                    });
+                }
+
+                // 2. Expenses & Reserves
+                if (project.expenses) {
+                    project.expenses.forEach(item => {
+                        const amount = item.amount || 0;
+                        if (item.type === '積立金' || item.name.includes('積立金')) {
+                            cumulativeReserves += amount;
+                            if (item.date && item.date.startsWith(globalTargetMonth)) {
+                                monthlyReserves += amount;
+                            }
+                        } else {
+                            cumulativeExpenses += amount;
+                            if (item.date && item.date.startsWith(globalTargetMonth)) {
+                                monthlyExpenses += amount;
+                            }
+                        }
+                    });
+                }
+
+                // 3. Labor (Tasks) -> Part of Expenses
+                if (project.tasks) {
+                    project.tasks.forEach(item => {
+                        const amount = item.total || 0;
+                        cumulativeLabor += amount;
+                        if (item.date && item.date.startsWith(globalTargetMonth)) {
+                            monthlyLabor += amount;
+                        }
+                    });
+                }
+
+                // Total Expenses (Expenses + Labor) - Reserves are SEPARATE
+                const totalMonthlyExpenses = monthlyExpenses + monthlyLabor;
+                const totalCumulativeExpenses = cumulativeExpenses + cumulativeLabor;
+
+                // Profit (Balance) = Revenue - Reserves - Expenses
+                const monthlyProfit = monthlyRevenue - monthlyReserves - totalMonthlyExpenses;
+                const cumulativeProfit = cumulativeRevenue - cumulativeReserves - totalCumulativeExpenses;
 
                 // Create Card
                 const card = document.createElement('div');
@@ -239,8 +308,14 @@
                 const sourceLabel = project.source === 'external' ? '受託' : '自主事業';
                 const partnerLabel = project.source === 'external' ? `｜${project.partner}` : '';
 
-                const profitClass = profit >= 0 ? 'text-success' : 'text-error';
-                const profitSign = profit > 0 ? '+' : '';
+                const profitClass = monthlyProfit >= 0 ? 'text-success' : 'text-error';
+                const profitSign = monthlyProfit > 0 ? '+' : '';
+
+                // Formatting Helper
+                const fmt = (val) => formatCurrency(val) + '円';
+                const combine = (monthly, cumulative) => {
+                    return `${fmt(monthly)} <span style="font-size: 0.85em; color: var(--color-text-tertiary); font-weight: normal;">(累計: ${fmt(cumulative)})</span>`;
+                };
 
                 card.innerHTML = `
                     <div class="card-header">
@@ -267,17 +342,27 @@
                         
                         <div class="summary-section">
                             <div class="summary-row">
-                                <div class="summary-label">収入実績</div>
-                                <div class="summary-value text-neutral">${formatCurrency(project.revenue)}円</div>
+                                <div class="summary-label">収入</div>
+                                <div class="summary-value text-neutral" style="font-size: 1rem;">${combine(monthlyRevenue, cumulativeRevenue)}</div>
+                            </div>
+                             <div class="summary-row">
+                                <div class="summary-label">積立金</div>
+                                <div class="summary-value text-neutral" style="font-size: 1rem;">${combine(monthlyReserves, cumulativeReserves)}</div>
                             </div>
                             <div class="summary-row">
-                                <div class="summary-label">支出計 (経費+工賃)</div>
-                                <div class="summary-value text-neutral">-${formatCurrency(totalCost)}円</div>
+                                <div class="summary-label">費用計 (経費+工賃)</div>
+                                <div class="summary-value text-neutral" style="font-size: 1rem;">${combine(totalMonthlyExpenses, totalCumulativeExpenses)}</div>
                             </div>
                             <div style="border-top: 1px solid var(--color-border-default); margin-top: var(--spacing-2); padding-top: var(--spacing-2); display: flex; justify-content: space-between; align-items: flex-end;">
                                 <div class="summary-label" style="font-weight: bold;">収支差額</div>
-                                <div class="summary-value ${profitClass}">${profitSign}${formatCurrency(profit)}円</div>
+                                <div class="summary-value ${profitClass}" style="font-size: 1.1rem;">${profitSign}${combine(monthlyProfit, cumulativeProfit)}</div>
                             </div>
+                        </div>
+
+                        <div style="margin-top: var(--spacing-4); text-align: center;">
+                            <button class="btn btn-outline-neutral btn-sm" style="width: 100%;" onclick="alert('月別詳細画面へ遷移します（未実装）')">
+                                月別詳細
+                            </button>
                         </div>
                     </div>
                 `;
@@ -286,6 +371,8 @@
         }
 
         document.addEventListener("DOMContentLoaded", () => {
+            // initGlobalTargetMonth(); // Removed as fixed variable is used
+
             // Sidebar Active State
             const currentFile = window.location.pathname.split("/").pop();
             document.querySelectorAll(".sidebar-nav a").forEach(link => {
@@ -313,21 +400,24 @@
             tempEditData = JSON.parse(JSON.stringify(project));
 
             document.getElementById('modal-project-name').textContent = project.name;
-            // document.getElementById('edit-revenue').value = project.revenue; // This is now handled by renderEditTabs for the 'income' tab
 
             // Initialize arrays if missing
-            if (!tempEditData.revenueItems) tempEditData.revenueItems = [{ name: '収入実績', amount: tempEditData.revenue || 0 }]; // Convert single revenue to item
+            if (!tempEditData.revenueItems) tempEditData.revenueItems = [];
             if (!tempEditData.expenses) tempEditData.expenses = [];
-            if (!tempEditData.tasks) tempEditData.tasks = []; // Tasks (Labor) are assumed to exist or empty array
+            if (!tempEditData.tasks) tempEditData.tasks = [];
 
             // Initialize Pot Data if missing (Mocking persistence for this session)
-            if (tempEditData.potBudget === undefined) tempEditData.potBudget = 100000; // Default mock budget
+            if (tempEditData.potBudget === undefined) tempEditData.potBudget = 100000;
             if (tempEditData.potProgress === undefined) tempEditData.potProgress = 0;
             if (tempEditData.potDeduction === undefined) tempEditData.potDeduction = 0;
 
-            // Set default month (current month or last active month)
-            const today = new Date();
-            currentTargetMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+            // Set default month in modal to match global one
+            if (globalTargetMonth) {
+                currentTargetMonth = globalTargetMonth;
+            } else {
+                const today = new Date();
+                currentTargetMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+            }
             document.getElementById('edit-target-month').value = currentTargetMonth;
 
             switchEditTab('income'); // Default tab
@@ -368,6 +458,11 @@
             let totalRevenue = 0;
             if (tempEditData.revenueItems) {
                 tempEditData.revenueItems.forEach((item, index) => {
+                    // Filter by modal target month (optional in editing? usually we edit specific month)
+                    // Let's show all for editing but highlight current month? 
+                    // Or follow the same pattern: filter by target month
+                    if (!isInMonth(item.date)) return;
+
                     const div = document.createElement('div');
                     div.className = 'form-group-row revenue-row';
                     div.style.marginBottom = 'var(--spacing-2)';
@@ -375,6 +470,7 @@
                     div.style.gap = 'var(--spacing-2)';
                     div.style.alignItems = 'center';
                     div.innerHTML = `
+                        <input type="date" class="input-field revenue-date" value="${item.date || ''}" onchange="updateEditRevenue(${index}, 'date', this.value)" style="flex: 0 0 110px;">
                         <input type="text" class="input-field revenue-name" value="${item.name}" placeholder="収入名" onchange="updateEditRevenue(${index}, 'name', this.value)" style="flex: 2;">
                         <input type="number" class="input-field revenue-amount" value="${item.amount}" placeholder="金額" onchange="updateEditRevenue(${index}, 'amount', this.value)" style="flex: 1; text-align: right;">
                         <button class="btn btn-icon-sm btn-icon-error" onclick="removeEditRevenue(${index})"><span class="material-symbols-outlined">delete</span></button>
@@ -391,6 +487,8 @@
             let totalExpenses = 0;
             if (tempEditData.expenses) {
                 tempEditData.expenses.forEach((expense, index) => {
+                    if (!isInMonth(expense.date)) return;
+
                     const div = document.createElement('div');
                     div.className = 'form-group-row expense-row';
                     div.style.marginBottom = 'var(--spacing-2)';
@@ -398,6 +496,7 @@
                     div.style.gap = 'var(--spacing-2)';
                     div.style.alignItems = 'center';
                     div.innerHTML = `
+                         <input type="date" class="input-field expense-date" value="${expense.date || ''}" onchange="updateEditExpense(${index}, 'date', this.value)" style="flex: 0 0 110px;">
                         <input type="text" class="input-field expense-name" value="${expense.name}" placeholder="経費名" onchange="updateEditExpense(${index}, 'name', this.value)" style="flex: 2;">
                         <input type="number" class="input-field expense-amount" value="${expense.amount}" placeholder="金額" onchange="updateEditExpense(${index}, 'amount', this.value)" style="flex: 1; text-align: right;">
                         <button class="btn btn-icon-sm btn-icon-error" onclick="removeEditExpense(${index})"><span class="material-symbols-outlined">delete</span></button>
@@ -489,7 +588,7 @@
 
         function addRevenueRow() {
             if (!tempEditData.revenueItems) tempEditData.revenueItems = [];
-            tempEditData.revenueItems.push({ name: '', amount: 0 });
+            tempEditData.revenueItems.push({ name: '', amount: 0, date: currentTargetMonth + '-01' });
             renderEditTabs();
         }
 
@@ -506,7 +605,7 @@
 
         function addExpenseRow() {
             if (!tempEditData.expenses) tempEditData.expenses = [];
-            tempEditData.expenses.push({ name: '', amount: 0 });
+            tempEditData.expenses.push({ name: '', amount: 0, date: currentTargetMonth + '-01' });
             renderEditTabs();
         }
 
@@ -548,10 +647,12 @@
             if (!project) return;
 
             // Update project with tempEditData
-            project.revenue = tempEditData.revenueItems.reduce((sum, item) => sum + (parseInt(item.amount) || 0), 0);
-            project.revenueItems = tempEditData.revenueItems; // Persist breakdown
+            // Calculate total revenue for simple property if needed, but we rely on revenueItems now
+            // project.revenue = tempEditData.revenueItems.reduce((sum, item) => sum + (parseInt(item.amount) || 0), 0);
+
+            project.revenueItems = tempEditData.revenueItems;
             project.expenses = tempEditData.expenses;
-            project.tasks = tempEditData.tasks; // Save tasks as well
+            project.tasks = tempEditData.tasks;
             project.potBudget = tempEditData.potBudget;
             project.potProgress = tempEditData.potProgress;
             project.potDeduction = tempEditData.potDeduction;
