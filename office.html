@@ -92,7 +92,7 @@
                         <li><a href="office.html">事業所情報</a></li>
                     </ul>
                 </details>
-        <details class="nav-accordion">
+                <details class="nav-accordion">
                     <summary>職員・利用者情報</summary>
                     <ul>
                         <li><a href="staff.html">職員情報</a></li>
@@ -102,7 +102,7 @@
 
                 <a href="partners.html" class="nav-link">取引先情報</a>
 
-        <details class="nav-accordion">
+                <details class="nav-accordion">
                     <summary>スキル情報</summary>
                     <ul>
                         <li><a href="skills-settings.html">スキル設定</a></li>
@@ -110,7 +110,7 @@
                     </ul>
                 </details>
 
-        <details class="nav-accordion">
+                <details class="nav-accordion">
                     <summary>工賃・控除情報</summary>
                     <ul>
                         <li><a href="wages-settings.html">工賃設定</a></li>
@@ -123,22 +123,22 @@
 
                 <a href="attendance.html" class="nav-link">出欠状況</a>
 
-        <details class="nav-accordion">
-                <summary>生産活動</summary>
-                <ul>
+                <details class="nav-accordion">
+                    <summary>生産活動</summary>
+                    <ul>
                         <li><a href="projects.html">案件情報</a></li>
                         <li><a href="schedule.html">進捗状況</a></li>
                     </ul>
                 </details>
 
-        <details class="nav-accordion">
+                <details class="nav-accordion">
                     <summary>福祉事業活動</summary>
                     <ul>
                         <li><a href="support-plans.html">個別支援計画</a></li>
                     </ul>
                 </details>
 
-        <details class="nav-accordion">
+                <details class="nav-accordion">
                     <summary>請求・支払</summary>
                     <ul>
                         <li><a href="billing-national-health.html">国保連請求</a></li>
@@ -146,13 +146,14 @@
                     </ul>
                 </details>
 
-        <details class="nav-accordion">
+                <details class="nav-accordion">
                     <summary>分析</summary>
                     <ul>
                         <li><a href="analytics-production.html">生産活動収支分析</a></li>
                         <li><a href="analytics-wages.html">平均工賃分析</a></li>
-                    
-                        <li><a href="analytics-savings.html">積立金分析</a></li></ul>
+
+                        <li><a href="analytics-savings.html">積立金分析</a></li>
+                    </ul>
                 </details>
 
                 <a href="account.html" class="nav-link">ユーザーアカウント</a>
@@ -211,6 +212,14 @@
                                 <dd>管理者 一郎</dd>
                             </div>
                             <div>
+                                <dt>サービス管理責任者</dt>
+                                <dd>サビ管 花子</dd>
+                            </div>
+                            <div>
+                                <dt>利用定員</dt>
+                                <dd>20名</dd>
+                            </div>
+                            <div>
                                 <dt>住所</dt>
                                 <dd>〒810-0001<br>福岡県福岡市中央区天神1-2-3<br>天神ビル 5F</dd>
                             </div>
@@ -262,6 +271,14 @@
                             <div>
                                 <dt>管理者名</dt>
                                 <dd>管理者 二郎</dd>
+                            </div>
+                            <div>
+                                <dt>サービス管理責任者</dt>
+                                <dd>サビ管 次郎</dd>
+                            </div>
+                            <div>
+                                <dt>利用定員</dt>
+                                <dd>20名</dd>
                             </div>
                             <div>
                                 <dt>住所</dt>
@@ -330,6 +347,24 @@
                                         <p
                                             style="font-size: var(--font-size-xs); color: var(--color-base-quaternary); margin-top: var(--spacing-1);">
                                             ※管理者は職員情報より設定してください</p>
+                                    </div>
+
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label class="form-label" for="office-svc-manager">サービス管理責任者</label>
+                                        <input type="text" id="office-svc-manager" class="input-field" value="サビ管 花子"
+                                            disabled>
+                                        <p
+                                            style="font-size: var(--font-size-xs); color: var(--color-base-quaternary); margin-top: var(--spacing-1);">
+                                            ※サビ管は職員情報より設定してください</p>
+                                    </div>
+
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label class="form-label" for="office-capacity">利用定員</label>
+                                        <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                            <input type="number" id="office-capacity" class="input-field" value="20"
+                                                placeholder="20">
+                                            <span>名</span>
+                                        </div>
                                     </div>
                                 </div>
 

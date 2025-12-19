@@ -77,7 +77,7 @@
                         <li><a href="office.html">事業所情報</a></li>
                     </ul>
                 </details>
-        <details class="nav-accordion">
+                <details class="nav-accordion">
                     <summary>職員・利用者情報</summary>
                     <ul>
                         <li><a href="staff.html">職員情報</a></li>
@@ -87,7 +87,7 @@
 
                 <a href="partners.html" class="nav-link">取引先情報</a>
 
-        <details class="nav-accordion">
+                <details class="nav-accordion">
                     <summary>スキル情報</summary>
                     <ul>
                         <li><a href="skills-settings.html">スキル設定</a></li>
@@ -95,7 +95,7 @@
                     </ul>
                 </details>
 
-        <details class="nav-accordion">
+                <details class="nav-accordion">
                     <summary>工賃・控除情報</summary>
                     <ul>
                         <li><a href="wages-settings.html">工賃設定</a></li>
@@ -108,7 +108,7 @@
 
                 <a href="attendance.html" class="nav-link">出欠状況</a>
 
-        <details class="nav-accordion">
+                <details class="nav-accordion">
                     <summary>生産活動</summary>
                     <ul>
                         <li><a href="projects.html">案件情報</a></li>
@@ -116,14 +116,14 @@
                     </ul>
                 </details>
 
-        <details class="nav-accordion">
+                <details class="nav-accordion">
                     <summary>福祉事業活動</summary>
                     <ul>
                         <li><a href="support-plans.html">個別支援計画</a></li>
                     </ul>
                 </details>
 
-        <details class="nav-accordion">
+                <details class="nav-accordion">
                     <summary>請求・支払</summary>
                     <ul>
                         <li><a href="billing-national-health.html">国保連請求</a></li>
@@ -131,13 +131,14 @@
                     </ul>
                 </details>
 
-        <details class="nav-accordion">
+                <details class="nav-accordion">
                     <summary>分析</summary>
                     <ul>
                         <li><a href="analytics-production.html">生産活動収支分析</a></li>
                         <li><a href="analytics-wages.html">平均工賃分析</a></li>
-                    
-                        <li><a href="analytics-savings.html">積立金分析</a></li></ul>
+
+                        <li><a href="analytics-savings.html">積立金分析</a></li>
+                    </ul>
                 </details>
 
                 <a href="account.html" class="nav-link">ユーザーアカウント</a>
@@ -182,6 +183,26 @@
                             <div>
                                 <dt>法人番号</dt>
                                 <dd>1234567890123</dd>
+                            </div>
+                            <div>
+                                <dt>法人種別</dt>
+                                <dd>株式会社</dd>
+                            </div>
+                            <div>
+                                <dt>設立年月日</dt>
+                                <dd>2020年4月1日</dd>
+                            </div>
+                            <div>
+                                <dt>インボイス番号</dt>
+                                <dd>T1234567890123</dd>
+                            </div>
+                            <div>
+                                <dt>消費税課税方式</dt>
+                                <dd>免税事業者</dd>
+                            </div>
+                            <div>
+                                <dt>適用会計基準</dt>
+                                <dd>就労支援事業会計処理基準</dd>
                             </div>
                             <div>
                                 <dt>決算期</dt>
@@ -232,6 +253,37 @@
                                 <label class="form-label" for="corp-number">法人番号</label>
                                 <input type="number" id="corp-number" class="input-field" value="1234567890123"
                                     placeholder="13桁の半角数字">
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label class="form-label" for="corp-type">法人種別</label>
+                                <select id="corp-type" class="input-field">
+                                    <option value="kk" selected>株式会社</option>
+                                    <option value="npo">NPO法人</option>
+                                    <option value="swc">社会福祉法人</option>
+                                    <option value="assoc">一般社団法人</option>
+                                    <option value="other">その他</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label class="form-label">設立年月日</label>
+                                <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                    <select id="corp-est-year" class="input-field">
+                                        <option value="2020" selected>2020年</option>
+                                        <option value="2021">2021年</option>
+                                        <option value="2022">2022年</option>
+                                        <!-- More years as needed -->
+                                    </select>
+                                    <select id="corp-est-month" class="input-field">
+                                        <option value="4" selected>4月</option>
+                                        <!-- other months -->
+                                    </select>
+                                    <select id="corp-est-day" class="input-field">
+                                        <option value="1" selected>1日</option>
+                                        <!-- other days -->
+                                    </select>
+                                </div>
                             </div>
 
                             <div class="form-group" style="margin-bottom: 0;">
@@ -344,6 +396,39 @@
                                     <input type="text" id="corp-fax2" class="input-field" value="123">
                                     <span>-</span>
                                     <input type="text" id="corp-fax3" class="input-field" value="4568">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div
+                            style="margin-top: var(--spacing-6); padding-top: var(--spacing-4); border-top: 1px solid var(--color-border-divider);">
+                            <h3
+                                style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-4);">
+                                会計・税務情報</h3>
+
+                            <div
+                                style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4);">
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label class="form-label" for="corp-invoice">インボイス番号</label>
+                                    <input type="text" id="corp-invoice" class="input-field" value="T1234567890123"
+                                        placeholder="T + 13桁の数字">
+                                </div>
+
+                                <div class="form-group" style="margin-bottom: 0;">
+                                    <label class="form-label" for="corp-tax-method">消費税課税方式</label>
+                                    <select id="corp-tax-method" class="input-field">
+                                        <option value="exempt" selected>免税事業者</option>
+                                        <option value="simple">簡易課税</option>
+                                        <option value="standard">本則課税</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-group" style="margin-bottom: 0; grid-column: 1 / -1;">
+                                    <label class="form-label" for="corp-accounting">適用会計基準</label>
+                                    <select id="corp-accounting" class="input-field">
+                                        <option value="support" selected>就労支援事業会計処理基準</option>
+                                        <option value="social_welfare">社会福祉法人会計基準</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
