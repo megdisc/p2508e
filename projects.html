@@ -148,6 +148,11 @@
                     { name: '配送業者委託費', type: '外注費', amount: 15000, note: 'ヤマト運輸' },
                     { name: '事業所積立金', type: '積立金', amount: 10000, note: '規定により5%' }
                 ],
+                contract: {
+                    billingTiming: 'current_month_end',
+                    billingFrequency: 'monthly',
+                    paymentTiming: 'next_month_25'
+                },
                 startDate: '2025-10-01',
                 endDate: '2025-10-31',
                 isCancelled: false,
@@ -172,7 +177,8 @@
                     { name: '材料費', type: '材料費', amount: 30000, note: '小麦粉、バター等' },
                     { name: '包装資材', type: '材料費', amount: 5000, note: '袋、シール' },
                     { name: '事業所積立金', type: '積立金', amount: 5000, note: '売上の5%' }
-                ]
+                ],
+                contract: { billingDate: '', paymentDate: '' }
             },
             'project-3': {
                 id: 'project-3',
@@ -191,7 +197,12 @@
                     { name: '清掃用具', type: '材料費', amount: 5000, note: '洗剤、モップ' },
                     { name: '交通費', type: 'その他', amount: 10000, note: '移動費' },
                     { name: '事業所積立金', type: '積立金', amount: 10000, note: '売上の5%' }
-                ]
+                ],
+                contract: {
+                    billingTiming: 'next_month_10',
+                    billingFrequency: 'monthly',
+                    paymentTiming: 'next_next_month_end'
+                }
             },
             'project-4': {
                 id: 'project-4',
@@ -210,7 +221,8 @@
                 expenses: [
                     { name: '出店料', type: 'その他', amount: 5000, note: '' },
                     { name: '事業所積立金', type: '積立金', amount: 2500, note: '売上の5%' }
-                ]
+                ],
+                contract: { billingDate: '', paymentDate: '' }
             },
             'project-5': {
                 id: 'project-5',
@@ -221,7 +233,8 @@
                 revenue: 0,
                 revenueItems: [],
                 tasks: [],
-                expenses: []
+                expenses: [],
+                contract: { billingDate: '', paymentDate: '' }
             },
             'project-6': {
                 id: 'project-6',
@@ -231,7 +244,8 @@
                 partner: '無し',
                 revenue: 0,
                 tasks: [],
-                expenses: []
+                expenses: [],
+                contract: { billingDate: '', paymentDate: '' }
             }
         };
 
@@ -293,6 +307,7 @@
                 switchTab('basic'); // Reset to basic tab
                 renderTaskEditor();
                 renderBudgetEditor();
+                renderPartnerEditor();
             }
         }
 
@@ -309,6 +324,138 @@
             // Add active class to selected
             document.getElementById(`tab-btn-${tabName}`).classList.add('is-active');
             document.getElementById(`tab-${tabName}`).classList.add('is-active');
+        }
+
+        // --- Partner Editor Logic ---
+        function renderPartnerEditor() {
+            const container = document.getElementById('partner-editor-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            const isContinuous = tempProjectData.type === 'continuous';
+            // Default contract obj if missing
+            if (!tempProjectData.contract) tempProjectData.contract = {};
+            const c = tempProjectData.contract;
+
+            let html = '';
+
+            if (isContinuous) {
+                // Continuous: Billing Timing (Select), Frequency (Select), Payment Timing (Select)
+                html = `
+                    <div class="form-group">
+                        <label class="form-label">請求タイミング</label>
+                        <select class="input-field" onchange="updateContractField('billingTiming', this.value)">
+                            <option value="">選択してください</option>
+                            <option value="current_month_end" ${c.billingTiming === 'current_month_end' ? 'selected' : ''}>当月末</option>
+                            <option value="next_month_10" ${c.billingTiming === 'next_month_10' ? 'selected' : ''}>翌月10日</option>
+                            <option value="next_month_15" ${c.billingTiming === 'next_month_15' ? 'selected' : ''}>翌月15日</option>
+                            <option value="next_month_20" ${c.billingTiming === 'next_month_20' ? 'selected' : ''}>翌月20日</option>
+                            <option value="next_month_25" ${c.billingTiming === 'next_month_25' ? 'selected' : ''}>翌月25日</option>
+                            <option value="next_month_end" ${c.billingTiming === 'next_month_end' ? 'selected' : ''}>翌月末</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">請求サイクル</label>
+                        <select class="input-field" onchange="updateContractField('billingFrequency', this.value)">
+                            <option value="monthly" ${c.billingFrequency === 'monthly' ? 'selected' : ''}>毎月</option>
+                            <option value="other" ${c.billingFrequency === 'other' ? 'selected' : ''}>その他</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">入金タイミング</label>
+                        <select class="input-field" onchange="updateContractField('paymentTiming', this.value)">
+                            <option value="">選択してください</option>
+                            <option value="next_month_10" ${c.paymentTiming === 'next_month_10' ? 'selected' : ''}>翌月10日</option>
+                            <option value="next_month_15" ${c.paymentTiming === 'next_month_15' ? 'selected' : ''}>翌月15日</option>
+                            <option value="next_month_20" ${c.paymentTiming === 'next_month_20' ? 'selected' : ''}>翌月20日</option>
+                            <option value="next_month_25" ${c.paymentTiming === 'next_month_25' ? 'selected' : ''}>翌月25日</option>
+                            <option value="next_month_end" ${c.paymentTiming === 'next_month_end' ? 'selected' : ''}>翌月末</option>
+                            <option value="next_next_month_5" ${c.paymentTiming === 'next_next_month_5' ? 'selected' : ''}>翌々月5日</option>
+                            <option value="next_next_month_10" ${c.paymentTiming === 'next_next_month_10' ? 'selected' : ''}>翌々月10日</option>
+                            <option value="next_next_month_15" ${c.paymentTiming === 'next_next_month_15' ? 'selected' : ''}>翌々月15日</option>
+                            <option value="next_next_month_20" ${c.paymentTiming === 'next_next_month_20' ? 'selected' : ''}>翌々月20日</option>
+                            <option value="next_next_month_25" ${c.paymentTiming === 'next_next_month_25' ? 'selected' : ''}>翌々月25日</option>
+                            <option value="next_next_month_end" ${c.paymentTiming === 'next_next_month_end' ? 'selected' : ''}>翌々月末</option>
+                        </select>
+                    </div>
+                `;
+            } else {
+                // Single: Billing Date (Date), Payment Date (Date)
+                html = `
+                    <div class="form-group">
+                        <label class="form-label">請求日</label>
+                        <input type="date" class="input-field" value="${c.billingDate || ''}" onchange="updateContractField('billingDate', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">入金予定日</label>
+                        <input type="date" class="input-field" value="${c.paymentDate || ''}" onchange="updateContractField('paymentDate', this.value)">
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function updateContractField(field, value) {
+            if (!tempProjectData.contract) tempProjectData.contract = {};
+            tempProjectData.contract[field] = value;
+        }
+
+        // --- Partner View Logic ---
+        function showPartnerViewModal(projectId) {
+            const project = projectsData[projectId];
+            if (!project) return;
+
+            document.getElementById('view-partner-project-name').textContent = project.name;
+            document.getElementById('view-partner-name').textContent = project.partner || '設定なし';
+
+            // Logic for 'Customer' vs 'Subcontractor' (assuming partnerType is used, or inferring from somewhere else?)
+            // The previous implementation used project.partnerType. But wait, I didn't verify if I added partnerType back to the data.
+            // Let's check the data initialization.
+            // Actually, in the revert, partnerType initialization was removed.
+            // For now, let's default to "Customer" if not specified, or checks logic.
+            // The user wanted to REMOVE the partner type selector from the Edit Modal, so maybe we don't need to distinguish visually here,
+            // or we just default it.
+            // Let's stick to simple extraction.
+
+            // Wait, the previous code had:
+            /*
+            document.getElementById('view-partner-rel').innerHTML = project.partnerType === 'subcontractor'
+                ? '<span class="badge badge-neutral">外注先</span>'
+                : '<span class="badge badge-primary">顧客</span>';
+            */
+            // Since I haven't restored partnerType to the data explicitly in my previous step (I only restored 'contract'), 
+            // and the user reverted the "Basic Info" changes which included the partnerType selector...
+            // I should probably just show "Customer" or "Partner" generically, or check if I should restore partnerType to data too?
+            // The user said "I modified projects.html... reverted to before Contract Info modifications... Set up Contract Info button."
+            // The "Contract Info" feature usually implies showing the contract details.
+            // Let's assume partnerType is 'client' (Customer) by default for now as I didn't see a request to keep the 'Subcontractor' distinction logic which was part of the reverted changes.
+
+            document.getElementById('view-partner-rel').innerHTML = '<span class="badge badge-primary">顧客</span>';
+
+            document.getElementById('view-partner-type').textContent = project.type === 'continuous' ? '継続' : '単発';
+
+            // Format Billing/Payment
+            let billingText = '-';
+            let paymentText = '-';
+            const c = project.contract || {};
+
+            if (project.type === 'continuous') {
+                if (c.billingTiming) {
+                    // Start simple
+                    billingText = c.billingTiming;
+                    if (c.billingFrequency) billingText += ` (${c.billingFrequency})`;
+                }
+                if (c.paymentTiming) paymentText = c.paymentTiming;
+            } else {
+                if (c.billingDate) billingText = c.billingDate;
+                if (c.paymentDate) paymentText = c.paymentDate;
+            }
+
+            document.getElementById('view-partner-billing').textContent = billingText;
+            document.getElementById('view-partner-payment').textContent = paymentText;
+
+            showModal('modal-partner-view');
         }
 
         // --- View Modal Logic ---
@@ -915,6 +1062,9 @@
                 projectsData[currentEditingProjectId].endDate = tempProjectData.endDate;
                 projectsData[currentEditingProjectId].isCancelled = tempProjectData.isCancelled;
 
+                // Save Contract Info
+                projectsData[currentEditingProjectId].contract = JSON.parse(JSON.stringify(tempProjectData.contract || {}));
+
                 // Recalculate status
                 projectsData[currentEditingProjectId].status = calculateProjectStatus(projectsData[currentEditingProjectId]);
 
@@ -1144,6 +1294,8 @@
                                 style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
                                 <button class="btn btn-neutral" onclick="showTaskViewModal('project-1')">タスク</button>
                                 <button class="btn btn-neutral" onclick="showBudgetViewModal('project-1')">予算</button>
+                                <button class="btn btn-neutral"
+                                    onclick="showPartnerViewModal('project-1')">契約情報</button>
                             </div>
                         </div>
                     </div>
@@ -1190,6 +1342,8 @@
                                 style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
                                 <button class="btn btn-neutral" onclick="showTaskViewModal('project-3')">タスク</button>
                                 <button class="btn btn-neutral" onclick="showBudgetViewModal('project-3')">予算</button>
+                                <button class="btn btn-neutral"
+                                    onclick="showPartnerViewModal('project-3')">契約情報</button>
                             </div>
                         </div>
                     </div>
@@ -1236,6 +1390,8 @@
                                 style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
                                 <button class="btn btn-neutral" onclick="showTaskViewModal('project-4')">タスク</button>
                                 <button class="btn btn-neutral" onclick="showBudgetViewModal('project-4')">予算</button>
+                                <button class="btn btn-neutral" onclick="showPartnerViewModal('project-4')"
+                                    disabled>契約情報</button>
                             </div>
                         </div>
                     </div>
@@ -1282,6 +1438,8 @@
                                 style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
                                 <button class="btn btn-neutral" onclick="showTaskViewModal('project-2')">タスク</button>
                                 <button class="btn btn-neutral" onclick="showBudgetViewModal('project-2')">予算</button>
+                                <button class="btn btn-neutral" onclick="showPartnerViewModal('project-2')"
+                                    disabled>契約情報</button>
                             </div>
                         </div>
                     </div>
@@ -1328,6 +1486,8 @@
                                 style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
                                 <button class="btn btn-neutral" onclick="showTaskViewModal('project-5')">タスク</button>
                                 <button class="btn btn-neutral" onclick="showBudgetViewModal('project-5')">予算</button>
+                                <button class="btn btn-neutral" onclick="showPartnerViewModal('project-5')"
+                                    disabled>契約情報</button>
                             </div>
                         </div>
                     </div>
@@ -1374,6 +1534,8 @@
                                 style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
                                 <button class="btn btn-neutral" onclick="showTaskViewModal('project-6')">タスク</button>
                                 <button class="btn btn-neutral" onclick="showBudgetViewModal('project-6')">予算</button>
+                                <button class="btn btn-neutral" onclick="showPartnerViewModal('project-6')"
+                                    disabled>契約情報</button>
                             </div>
                         </div>
                     </div>
@@ -1395,6 +1557,7 @@
                     <a class="tab-link is-active" id="tab-btn-basic" onclick="switchTab('basic')">基本情報</a>
                     <a class="tab-link" id="tab-btn-tasks" onclick="switchTab('tasks')">タスク</a>
                     <a class="tab-link" id="tab-btn-budget" onclick="switchTab('budget')">予算</a>
+                    <a class="tab-link" id="tab-btn-partner" onclick="switchTab('partner')">契約情報</a>
                 </nav>
 
                 <div class="modal-body">
@@ -1619,6 +1782,13 @@
                         </div>
                     </div>
 
+                    <!-- Partner Tab -->
+                    <div id="tab-partner" class="tab-content">
+                        <div id="partner-editor-container">
+                            <!-- JS Injected -->
+                        </div>
+                    </div>
+
                     <!-- Budget Balance Alert (Moved to bottom) -->
                     <div id="budget-balance-alert" class="alert"
                         style="display: none; margin-top: var(--spacing-stack-md);">
@@ -1781,6 +1951,42 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-neutral" onclick="hideModal('modal-budget-view')">閉じる</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Partner Contract Modal -->
+    <div class="modal-backdrop" id="modal-partner-view" style="display: none;">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                契約情報: <span id="view-partner-project-name"></span>
+            </div>
+            <div class="modal-body">
+                <dl class="data-list">
+                    <div>
+                        <dt>取引先名</dt>
+                        <dd id="view-partner-name">-</dd>
+                    </div>
+                    <div>
+                        <dt>取引区分</dt>
+                        <dd id="view-partner-rel">-</dd>
+                    </div>
+                    <div>
+                        <dt>案件タイプ</dt>
+                        <dd id="view-partner-type">-</dd>
+                    </div>
+                    <div>
+                        <dt>請求タイミング</dt>
+                        <dd id="view-partner-billing">-</dd>
+                    </div>
+                    <div>
+                        <dt>入金タイミング</dt>
+                        <dd id="view-partner-payment">-</dd>
+                    </div>
+                </dl>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-neutral" onclick="hideModal('modal-partner-view')">閉じる</button>
             </div>
         </div>
     </div>
