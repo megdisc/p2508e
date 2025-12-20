@@ -59,6 +59,7 @@
         function switchView(viewName) {
             document.getElementById('view-basic').style.display = 'none';
             document.getElementById('view-allowance').style.display = 'none';
+            document.getElementById('view-schedule').style.display = 'none';
 
             // 追加ボタンの表示切り替え
             document.getElementById('btn-add-basic').style.display = 'none';
@@ -70,6 +71,8 @@
             } else if (viewName === 'allowance') {
                 document.getElementById('view-allowance').style.display = 'block';
                 document.getElementById('btn-add-allowance').style.display = 'inline-flex';
+            } else if (viewName === 'schedule') {
+                document.getElementById('view-schedule').style.display = 'block';
             }
         }
 
@@ -134,6 +137,11 @@
             updateAttendanceUnit();
             showModal('modal-edit-allowance');
         }
+
+        // 支給スケジュールモーダルを開く
+        function openScheduleModal() {
+            showModal('modal-edit-schedule');
+        }
     </script>
 </head>
 
@@ -153,14 +161,14 @@
             </div>
             <nav class="sidebar-nav">
                 <a href="index.html" class="nav-link">トップ</a>
-        <details class="nav-accordion">
+                <details class="nav-accordion">
                     <summary>施設情報</summary>
                     <ul>
                         <li><a href="corporation.html">法人情報</a></li>
                         <li><a href="office.html">事業所情報</a></li>
                     </ul>
                 </details>
-        <details class="nav-accordion">
+                <details class="nav-accordion">
                     <summary>職員・利用者情報</summary>
                     <ul>
                         <li><a href="staff.html">職員情報</a></li>
@@ -169,7 +177,7 @@
                 </details>
 
                 <a href="partners.html" class="nav-link">取引先情報</a>
-        <details class="nav-accordion">
+                <details class="nav-accordion">
                     <summary>スキル情報</summary>
                     <ul>
                         <li><a href="skills-settings.html">スキル設定</a></li>
@@ -189,33 +197,34 @@
                 <a href="savings-settings.html" class="nav-link">積立金設定</a>
 
                 <a href="attendance.html" class="nav-link">出欠状況</a>
-        <details class="nav-accordion">
-                <summary>生産活動</summary>
-                <ul>
+                <details class="nav-accordion">
+                    <summary>生産活動</summary>
+                    <ul>
                         <li><a href="projects.html">案件情報</a></li>
                         <li><a href="schedule.html">進捗状況</a></li>
                     </ul>
                 </details>
-        <details class="nav-accordion">
+                <details class="nav-accordion">
                     <summary>福祉事業活動</summary>
                     <ul>
                         <li><a href="support-plans.html">個別支援計画</a></li>
                     </ul>
                 </details>
-        <details class="nav-accordion">
+                <details class="nav-accordion">
                     <summary>請求・支払</summary>
                     <ul>
                         <li><a href="billing-national-health.html">国保連請求</a></li>
                         <li><a href="production-balance.html">生産活動収支状況</a></li>
                     </ul>
                 </details>
-        <details class="nav-accordion">
+                <details class="nav-accordion">
                     <summary>分析</summary>
                     <ul>
                         <li><a href="analytics-production.html">生産活動収支分析</a></li>
                         <li><a href="analytics-wages.html">平均工賃分析</a></li>
-                    
-                        <li><a href="analytics-savings.html">積立金分析</a></li></ul>
+
+                        <li><a href="analytics-savings.html">積立金分析</a></li>
+                    </ul>
                 </details>
                 <a href="account.html" class="nav-link">ユーザーアカウント</a>
             </nav>
@@ -253,6 +262,9 @@
                         <input type="radio" id="view-mode-allowance" name="view-mode"
                             onchange="switchView('allowance')">
                         <label for="view-mode-allowance">加算手当</label>
+
+                        <input type="radio" id="view-mode-schedule" name="view-mode" onchange="switchView('schedule')">
+                        <label for="view-mode-schedule">支給日設定</label>
                     </div>
                 </div>
 
@@ -412,9 +424,49 @@
                     </div>
                 </div>
 
+                <div id="view-schedule" style="display: none;">
+                    <div class="card">
+                        <div class="card-header"
+                            style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <h3 style="margin: 0;">支給スケジュールの設定</h3>
+                                <p
+                                    style="color: var(--color-base-tertiary); font-size: var(--font-size-sm); margin-top: var(--spacing-1);">
+                                    工賃の計算期間と支払日を管理します。
+                                </p>
+                            </div>
+                            <div
+                                style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
+                                <button class="btn btn-icon btn-icon-success" title="修正" onclick="openScheduleModal()">
+                                    <span class="material-symbols-outlined">edit</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <dl class="data-list">
+                                <div>
+                                    <dt>締め日</dt>
+                                    <dd>毎月 <strong>末日</strong></dd>
+                                </div>
+                                <div>
+                                    <dt>支給日</dt>
+                                    <dd>翌月 <strong>15日</strong></dd>
+                                </div>
+                                <div>
+                                    <dt>休日の扱い</dt>
+                                    <dd>前倒しで支払う</dd>
+                                </div>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
         </main>
+
+
 
         <div class="modal-backdrop" id="modal-edit-basic" style="display: none;">
             <div class="modal-content" style="max-width: 500px;">
@@ -553,6 +605,131 @@
                     <button class="btn btn-neutral" onclick="hideModal('modal-edit-allowance')">キャンセル</button>
                     <button class="btn btn-primary"
                         onclick="hideModal('modal-edit-allowance'); alert('保存しました');">保存する</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-backdrop" id="modal-edit-schedule" style="display: none;">
+            <div class="modal-content" style="max-width: 500px;">
+                <div class="modal-header">
+                    支給スケジュールの編集
+                </div>
+                <div class="modal-body">
+                    <p
+                        style="color: var(--color-base-tertiary); font-size: var(--font-size-sm); margin-bottom: var(--spacing-stack-md);">
+                        工賃計算書や支払管理画面の日付表示に反映されます。
+                    </p>
+                    <div class="form-group">
+                        <label class="form-label">締め日設定</label>
+                        <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                            <span>毎月</span>
+                            <select class="input-field" style="width: auto;">
+                                <option value="99" selected>末日</option>
+                                <option value="1">1日</option>
+                                <option value="2">2日</option>
+                                <option value="3">3日</option>
+                                <option value="4">4日</option>
+                                <option value="5">5日</option>
+                                <option value="6">6日</option>
+                                <option value="7">7日</option>
+                                <option value="8">8日</option>
+                                <option value="9">9日</option>
+                                <option value="10">10日</option>
+                                <option value="11">11日</option>
+                                <option value="12">12日</option>
+                                <option value="13">13日</option>
+                                <option value="14">14日</option>
+                                <option value="15">15日</option>
+                                <option value="16">16日</option>
+                                <option value="17">17日</option>
+                                <option value="18">18日</option>
+                                <option value="19">19日</option>
+                                <option value="20">20日</option>
+                                <option value="21">21日</option>
+                                <option value="22">22日</option>
+                                <option value="23">23日</option>
+                                <option value="24">24日</option>
+                                <option value="25">25日</option>
+                                <option value="26">26日</option>
+                                <option value="27">27日</option>
+                                <option value="28">28日</option>
+                                <option value="29">29日</option>
+                                <option value="30">30日</option>
+                                <option value="31">31日</option>
+                            </select>
+                            <span>を締め日とする</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">支給日設定</label>
+                        <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                            <span>締め日の</span>
+                            <select class="input-field" style="width: auto;">
+                                <option value="0">当月</option>
+                                <option value="1" selected>翌月</option>
+                                <option value="2">翌々月</option>
+                            </select>
+                            <select class="input-field" style="width: auto;">
+                                <option value="1">1日</option>
+                                <option value="2">2日</option>
+                                <option value="3">3日</option>
+                                <option value="4">4日</option>
+                                <option value="5">5日</option>
+                                <option value="6">6日</option>
+                                <option value="7">7日</option>
+                                <option value="8">8日</option>
+                                <option value="9">9日</option>
+                                <option value="10">10日</option>
+                                <option value="11">11日</option>
+                                <option value="12">12日</option>
+                                <option value="13">13日</option>
+                                <option value="14">14日</option>
+                                <option value="15" selected>15日</option>
+                                <option value="16">16日</option>
+                                <option value="17">17日</option>
+                                <option value="18">18日</option>
+                                <option value="19">19日</option>
+                                <option value="20">20日</option>
+                                <option value="21">21日</option>
+                                <option value="22">22日</option>
+                                <option value="23">23日</option>
+                                <option value="24">24日</option>
+                                <option value="25">25日</option>
+                                <option value="26">26日</option>
+                                <option value="27">27日</option>
+                                <option value="28">28日</option>
+                                <option value="29">29日</option>
+                                <option value="30">30日</option>
+                                <option value="31">31日</option>
+                                <option value="99">末日</option>
+                            </select>
+                            <span>に支払う</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">休日の扱い</label>
+                        <div
+                            style="font-size: var(--font-size-sm); color: var(--color-base-tertiary); margin-bottom: var(--spacing-2);">
+                            支払日が土日祝日や閉所日の場合の対応を選択してください。
+                        </div>
+                        <div style="display: flex; gap: var(--spacing-4);">
+                            <div style="display: flex; align-items: center; gap: var(--spacing-1);">
+                                <input type="radio" id="holiday-before" name="holiday-handling" value="before" checked>
+                                <label for="holiday-before">前倒しで支払う</label>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: var(--spacing-1);">
+                                <input type="radio" id="holiday-after" name="holiday-handling" value="after">
+                                <label for="holiday-after">後ろ倒しで支払う</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-neutral" onclick="hideModal('modal-edit-schedule')">キャンセル</button>
+                    <button class="btn btn-primary"
+                        onclick="hideModal('modal-edit-schedule'); alert('保存しました');">保存する</button>
                 </div>
             </div>
         </div>
