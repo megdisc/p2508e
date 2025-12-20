@@ -319,16 +319,36 @@
         }
 
         // Helper for timing formatting (View)
-        // month: 0=Current, 1=Next, 2=NextNext
-        // day: 1-31, 99=End
-        const formatTiming = (month, day) => {
-            if (month === undefined || day === undefined || month === '' || day === '') return '-';
-            const mStr = parseInt(month) === 0 ? '当月' :
-                parseInt(month) === 1 ? '翌月' :
-                    parseInt(month) === 2 ? '翌々月' :
-                        parseInt(month) === 3 ? '3ヶ月後' : 'その他';
-            const dStr = parseInt(day) === 99 ? '末日' : `${day}日`;
-            return `${mStr} ${dStr}`;
+        const formatTiming = (setting, context) => {
+            if (!setting) return '-';
+            // Legacy support (string)
+            if (typeof setting === 'string') return setting;
+
+            if (setting.mode === 'absolute') {
+                return setting.date || '-';
+            } else if (setting.mode === 'relative') {
+                const f = setting.frequency === 'bimonthly' ? '隔月' : setting.frequency === 'monthly' ? '毎月' : '';
+                const m = parseInt(setting.month) === 0 ? '当月' :
+                    parseInt(setting.month) === 1 ? '翌月' :
+                        parseInt(setting.month) === 2 ? '翌々月' :
+                            parseInt(setting.month) === 3 ? '3ヶ月後' : 'その他';
+                const d = parseInt(setting.day) === 99 ? '末日' : `${setting.day}日`;
+
+                // Construct string like "納品翌月 10日" or "毎月 10日"
+                if (f) {
+                    return `${f} ${d}`; // Continuous usually just "Monthly 25th"
+                } else {
+                    // Single Relative: "Basis + Month + Day"
+                    // Context label provided by caller? simpler to just say "Relative Month Day"
+                    // The user requested: "Delivery Month...", "Billing Month..."
+                    // I will rely on the implicit context or just show "Context + X month + Y day"
+                    // For Cleanliness: "翌月 10日" is usually sufficient if the header says "Payment Timing".
+                    // But strictly speaking: "納品翌月 10日" is better.
+                    // I will add a prefix if context is provided
+                    return `${context ? context : ''}${m} ${d}`;
+                }
+            }
+            return '-';
         };
 
         // --- Partner View Logic (Refactored) ---
@@ -339,7 +359,7 @@
             document.getElementById('view-partner-project-name').textContent = project.name;
 
             // --- Customer Section ---
-            const hasCustomer = project.partner && project.partner !== '無し' && project.partner !== 'none';
+            const hasCustomer = project.source !== 'internal' && project.partner && project.partner !== '無し' && project.partner !== 'none';
             document.getElementById('view-partner-name').textContent = hasCustomer ? project.partner : '自主事業 (顧客なし)';
 
             // Format Billing/Payment
@@ -347,23 +367,12 @@
             let paymentText = '-';
             const c = project.contract || {};
 
-            if (project.type === 'continuous') {
-                if (c.billingMonth !== undefined && c.billingDay !== undefined) {
-                    billingText = formatTiming(c.billingMonth, c.billingDay);
-                } else if (c.billingTiming) {
-                    // Fallback for legacy data
-                    billingText = c.billingTiming;
-                }
-
-                if (c.paymentMonth !== undefined && c.paymentDay !== undefined) {
-                    paymentText = formatTiming(c.paymentMonth, c.paymentDay);
-                } else if (c.paymentTiming) {
-                    paymentText = c.paymentTiming;
-                }
-
+            if (project.source === 'internal') {
+                billingText = '(無し)';
+                paymentText = '(無し)';
             } else {
-                if (c.billingDate) billingText = c.billingDate;
-                if (c.paymentDate) paymentText = c.paymentDate;
+                billingText = formatTiming(c.clientBilling, '納品');
+                paymentText = formatTiming(c.clientPayment, '請求');
             }
 
             document.getElementById('view-partner-billing').textContent = billingText;
@@ -380,16 +389,24 @@
                 subSection.style.display = 'block';
                 subs.forEach(sub => {
                     const tr = document.createElement('tr');
-                    let pText = '-';
-                    if (project.type === 'continuous') {
-                        pText = formatTiming(sub.paymentMonth, sub.paymentDay);
-                    } else {
-                        pText = sub.paymentDate || '-';
-                    }
+
+                    // Sub Billing (Receipt) & Payment
+                    // Previous view only showed Payment. I should probably show both if I can, but table header is "Payment Timing".
+                    // I will append billing info or just show Payment as before?
+                    // The View Modal HTML (line 2079) only has "支払いタイミング".
+                    // I should probably update the table header to "請求・支払タイミング" or just show Payment.
+                    // Given the constraint, I'll show Payment Timing mainly, or combine.
+                    // "請求: ... / 支払: ..." 
+
+                    const billT = formatTiming(sub.billing, '受領');
+                    const payT = formatTiming(sub.payment, '請求');
 
                     tr.innerHTML = `
                         <td>${sub.name}</td>
-                        <td>${pText}</td>
+                        <td>
+                            <div style="font-size: 0.85em; color: var(--color-text-secondary);">受領: ${billT}</div>
+                            <div>支払: ${payT}</div>
+                        </td>
                     `;
                     subBody.appendChild(tr);
                 });
@@ -418,6 +435,8 @@
             container.innerHTML = '';
 
             const isContinuous = tempProjectData.type === 'continuous';
+            const isInternal = tempProjectData.source === 'internal';
+
             // Default contract obj if missing
             if (!tempProjectData.contract) tempProjectData.contract = {};
             const c = tempProjectData.contract;
@@ -425,70 +444,110 @@
             // Default subcontractors if missing
             if (!tempProjectData.subcontractors) tempProjectData.subcontractors = [];
 
-            // Helper for Timing Selectors
-            const renderTimingSelectors = (label, monthVal, dayVal, onMonthChange, onDayChange) => {
-                let html = `<div class="form-group"><label class="form-label">${label}</label><div style="display: flex; align-items: center; gap: var(--spacing-2);">`;
+            // Helper to render a timing config block
+            // config: { mode: 'absolute'|'relative', date: '', month: 0, day: 0, frequency: '' }
+            // options: { label, basisLabel, allowFrequency, showModeToggle }
+            const renderTimingConfigurator = (config, path, options) => {
+                if (!config) config = { mode: 'relative', month: '1', day: '99' }; // default
 
-                // Month Select
-                html += `<select class="input-field" style="width: auto;" onchange="${onMonthChange}">`;
-                const months = [
-                    { v: '0', l: '当月' }, { v: '1', l: '翌月' }, { v: '2', l: '翌々月' }, { v: '3', l: '3ヶ月後' }
-                ];
-                html += months.map(m => `<option value="${m.v}" ${String(monthVal) === m.v ? 'selected' : ''}>${m.l}</option>`).join('');
-                html += `</select>`;
+                // Allow defaulting mode based on project type if strictly oneway?
+                // Single: Allow Absolute/Relative. Continuous: Relative only (Monthly...).
+                // Re-reading requirements:
+                // Single/External Client Billing: Absolute OR Relative.
+                // Continuous/External Client Billing: Monthly/Bi-monthly (Frequency).
 
-                // Day Select
-                html += `<select class="input-field" style="width: auto;" onchange="${onDayChange}">`;
-                // 1-31
-                for (let i = 1; i <= 31; i++) {
-                    html += `<option value="${i}" ${String(dayVal) === String(i) ? 'selected' : ''}>${i}日</option>`;
+                const mode = config.mode || (isContinuous ? 'relative' : 'absolute');
+
+                let html = `<div class="form-group" style="padding: var(--spacing-3); background: var(--color-bg-base); border-radius: var(--radius-sm);">`;
+                html += `<label class="form-label" style="font-weight: bold; margin-bottom: var(--spacing-2);">${options.label}</label>`;
+
+                // Mode Toggle (Only for Single)
+                if (!isContinuous && options.showModeToggle) {
+                    html += `
+                    <div style="display: flex; gap: var(--spacing-3); margin-bottom: var(--spacing-2); font-size: var(--font-size-sm);">
+                        <label><input type="radio" name="mode_${path}" value="absolute" ${mode === 'absolute' ? 'checked' : ''} 
+                            onchange="updateContractTiming('${path}', 'mode', 'absolute')"> 日付指定 (絶対)</label>
+                        <label><input type="radio" name="mode_${path}" value="relative" ${mode === 'relative' ? 'checked' : ''} 
+                            onchange="updateContractTiming('${path}', 'mode', 'relative')"> ルール指定 (相対)</label>
+                    </div>`;
                 }
-                // End of Month
-                html += `<option value="99" ${String(dayVal) === '99' ? 'selected' : ''}>末日</option>`;
-                html += `</select>`;
 
-                html += `<span>に実施</span></div></div>`;
+                if (mode === 'absolute' && !isContinuous) {
+                    // Absolute Date Input
+                    html += `<input type="date" class="input-field" value="${config.date || ''}" 
+                        onchange="updateContractTiming('${path}', 'date', this.value)">`;
+                } else {
+                    // Relative / Frequency
+                    html += `<div style="display: flex; align-items: center; gap: var(--spacing-2); flex-wrap: wrap;">`;
+
+                    if (isContinuous) {
+                        // Frequency Select
+                        html += `<select class="input-field" style="width: auto;" 
+                            onchange="updateContractTiming('${path}', 'frequency', this.value)">
+                            <option value="monthly" ${config.frequency === 'monthly' ? 'selected' : ''}>毎月</option>
+                            <option value="bimonthly" ${config.frequency === 'bimonthly' ? 'selected' : ''}>隔月</option>
+                         </select>`;
+                        html += `<span>の</span>`;
+                    } else {
+                        // Basis Label (e.g. "納品") + Month Offset
+                        if (options.basisLabel) {
+                            html += `<span class="badge badge-neutral">${options.basisLabel}</span> <span>の</span>`;
+                        }
+                        // Month Select
+                        html += `<select class="input-field" style="width: auto;" 
+                            onchange="updateContractTiming('${path}', 'month', this.value)">`;
+                        const months = [{ v: '0', l: '当月' }, { v: '1', l: '翌月' }, { v: '2', l: '翌々月' }, { v: '3', l: '3ヶ月後' }];
+                        html += months.map(m => `<option value="${m.v}" ${String(config.month) === m.v ? 'selected' : ''}>${m.l}</option>`).join('');
+                        html += `</select>`;
+                    }
+
+                    // Day Select
+                    html += `<select class="input-field" style="width: auto;" 
+                        onchange="updateContractTiming('${path}', 'day', this.value)">`;
+                    for (let i = 1; i <= 31; i++) html += `<option value="${i}" ${String(config.day) === String(i) ? 'selected' : ''}>${i}日</option>`;
+                    html += `<option value="99" ${String(config.day) === '99' ? 'selected' : ''}>末日</option>`;
+                    html += `</select>`;
+
+                    if (isContinuous) {
+                        html += `<span>(払い/請求)</span>`; // context specific suffix?
+                    } else {
+                        html += `<span>に実施</span>`;
+                    }
+                    html += `</div>`;
+                }
+                html += `</div>`;
                 return html;
             };
 
             let html = '';
 
             // --- Customer Section ---
-            html += `<div style="margin-bottom: var(--spacing-stack-lg);">
-                <div style="font-weight: bold; border-bottom: 2px solid var(--color-border-default); margin-bottom: var(--spacing-3); padding-bottom: var(--spacing-1);">
-                    顧客: ${tempProjectData.partner || '(設定なし)'}
-                </div>`;
+            if (!isInternal) {
+                html += `<div style="margin-bottom: var(--spacing-stack-lg);">
+                    <div style="font-weight: bold; border-bottom: 2px solid var(--color-border-default); margin-bottom: var(--spacing-3); padding-bottom: var(--spacing-1);">
+                        顧客: ${tempProjectData.partner || '(設定なし)'}
+                    </div>`;
 
-            if (isContinuous) {
-                // Billing
-                html += renderTimingSelectors(
-                    '請求タイミング (顧客への請求)',
-                    c.billingMonth !== undefined ? c.billingMonth : '1', // Default Next Month
-                    c.billingDay !== undefined ? c.billingDay : '10',    // Default 10th
-                    "updateContractField('billingMonth', this.value)",
-                    "updateContractField('billingDay', this.value)"
-                );
-                // Payment
-                html += renderTimingSelectors(
-                    '入金タイミング (顧客からの入金)',
-                    c.paymentMonth !== undefined ? c.paymentMonth : '2', // Default Next Next Month
-                    c.paymentDay !== undefined ? c.paymentDay : '99',    // Default End
-                    "updateContractField('paymentMonth', this.value)",
-                    "updateContractField('paymentDay', this.value)"
-                );
+                // Client Billing
+                html += renderTimingConfigurator(c.clientBilling, 'contract.clientBilling', {
+                    label: '顧客への請求',
+                    basisLabel: '納品(完了)',
+                    showModeToggle: true
+                });
+
+                // Client Payment
+                html += renderTimingConfigurator(c.clientPayment, 'contract.clientPayment', {
+                    label: '顧客からの入金',
+                    basisLabel: '請求',
+                    showModeToggle: true
+                });
+
+                html += `</div>`;
             } else {
-                html += `
-                    <div class="form-group">
-                        <label class="form-label">請求日 (顧客への請求)</label>
-                        <input type="date" class="input-field" value="${c.billingDate || ''}" onchange="updateContractField('billingDate', this.value)">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">入金予定日 (顧客からの入金)</label>
-                        <input type="date" class="input-field" value="${c.paymentDate || ''}" onchange="updateContractField('paymentDate', this.value)">
-                    </div>
-                `;
+                html += `<div style="margin-bottom: var(--spacing-stack-lg); font-style: italic; color: var(--color-text-tertiary);">
+                    自主事業のため顧客設定はありません。
+                </div>`;
             }
-            html += `</div>`;
 
             // --- Subcontractor Section ---
             html += `<div style="margin-bottom: var(--spacing-stack-md);">
@@ -501,11 +560,6 @@
                 html += `<div style="color: var(--color-text-tertiary); padding: var(--spacing-2);">外注先は登録されていません。</div>`;
             } else {
                 tempProjectData.subcontractors.forEach((sub, index) => {
-                    const subBillingMonth = sub.billingMonth !== undefined ? sub.billingMonth : '1';
-                    const subBillingDay = sub.billingDay !== undefined ? sub.billingDay : '99';
-                    const subPaymentMonth = sub.paymentMonth !== undefined ? sub.paymentMonth : '2';
-                    const subPaymentDay = sub.paymentDay !== undefined ? sub.paymentDay : '25';
-
                     html += `
                         <div class="card" style="margin-bottom: var(--spacing-3); padding: var(--spacing-3); background-color: var(--color-bg-subtle);">
                             <div style="display: flex; justify-content: space-between; margin-bottom: var(--spacing-2);">
@@ -518,33 +572,19 @@
                             </div>
                     `;
 
-                    if (isContinuous) {
-                        html += renderTimingSelectors(
-                            '請求タイミング (外注先からの請求受領)',
-                            subBillingMonth,
-                            subBillingDay,
-                            `updateSubcontractor(${index}, 'billingMonth', this.value)`,
-                            `updateSubcontractor(${index}, 'billingDay', this.value)`
-                        );
-                        html += renderTimingSelectors(
-                            '支払いタイミング (外注先への支払い)',
-                            subPaymentMonth,
-                            subPaymentDay,
-                            `updateSubcontractor(${index}, 'paymentMonth', this.value)`,
-                            `updateSubcontractor(${index}, 'paymentDay', this.value)`
-                        );
-                    } else {
-                        html += `
-                            <div class="form-group">
-                                <label class="form-label" style="font-size: 0.85em;">請求日 (外注先からの請求受領)</label>
-                                <input type="date" class="input-field" value="${sub.billingDate || ''}" onchange="updateSubcontractor(${index}, 'billingDate', this.value)">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" style="font-size: 0.85em;">支払予定日 (外注先への支払い)</label>
-                                <input type="date" class="input-field" value="${sub.paymentDate || ''}" onchange="updateSubcontractor(${index}, 'paymentDate', this.value)">
-                            </div>
-                        `;
-                    }
+                    // Sub Billing (Receipt)
+                    html += renderTimingConfigurator(sub.billing, `subcontractors.${index}.billing`, {
+                        label: '外注先からの請求受領',
+                        basisLabel: '成果物受領',
+                        showModeToggle: true
+                    });
+
+                    // Sub Payment
+                    html += renderTimingConfigurator(sub.payment, `subcontractors.${index}.payment`, {
+                        label: '外注先への支払い',
+                        basisLabel: '請求受領',
+                        showModeToggle: true
+                    });
 
                     html += `</div>`;
                 });
@@ -554,27 +594,51 @@
             container.innerHTML = html;
         }
 
-        function updateContractField(field, value) {
-            if (!tempProjectData.contract) tempProjectData.contract = {};
-            tempProjectData.contract[field] = value;
-        }
+        // Generic Timing Update Handler
+        function updateContractTiming(path, field, value) {
+            // path example: 'contract.clientBilling' or 'subcontractors.0.billing'
+            const parts = path.split('.');
+            let target = tempProjectData;
+            for (let i = 0; i < parts.length; i++) {
+                const part = parts[i];
+                if (!target[part]) {
+                    // Check if next part is number -> array, else object
+                    // But here we assume structure exists or we create it
+                    // 'subcontractors' exists. '0' exists. 'billing' might not.
+                    if (i === parts.length - 1) {
+                        // This shouldn't happen as we modifying a field inside the leaf object
+                    } else {
+                        // Create object if missing
+                        if (!target[part]) target[part] = {};
+                        target = target[part];
+                    }
+                } else {
+                    target = target[part];
+                }
+            }
+            // Wait, the loop above goes nicely into 'contract' -> 'clientBilling' (which might be udefined)
+            // Let's rewrite strictly.
 
-        // Subcontractor Helpers
-        function addSubcontractor() {
-            if (!tempProjectData.subcontractors) tempProjectData.subcontractors = [];
-            tempProjectData.subcontractors.push({ name: '', billingTiming: '', paymentTiming: '' });
-            renderPartnerEditor();
-        }
+            // Resolve target object
+            let obj = tempProjectData;
+            if (path.startsWith('contract')) {
+                if (!tempProjectData.contract) tempProjectData.contract = {};
+                const subKey = parts[1]; // clientBilling
+                if (!tempProjectData.contract[subKey]) tempProjectData.contract[subKey] = { mode: 'relative', month: '1', day: '99', frequency: 'monthly' };
+                obj = tempProjectData.contract[subKey];
+            } else if (path.startsWith('subcontractors')) {
+                const idx = parseInt(parts[1]);
+                const subKey = parts[2]; // billing
+                if (!tempProjectData.subcontractors[idx][subKey]) tempProjectData.subcontractors[idx][subKey] = { mode: 'relative', month: '1', day: '99', frequency: 'monthly' };
+                obj = tempProjectData.subcontractors[idx][subKey];
+            }
 
-        function removeSubcontractor(index) {
-            if (confirm('この外注先を削除しますか？')) {
-                tempProjectData.subcontractors.splice(index, 1);
+            obj[field] = value;
+
+            // Re-render to update UI (e.g. toggle absolute/relative inputs)
+            if (field === 'mode') {
                 renderPartnerEditor();
             }
-        }
-
-        function updateSubcontractor(index, field, value) {
-            tempProjectData.subcontractors[index][field] = value;
         }
 
         // --- Partner View Logic ---
@@ -1274,7 +1338,7 @@
             const partnerSelect = document.getElementById('input-partner');
             const noneOption = partnerSelect.querySelector('option[value="none"]');
 
-            if (sourceType === 'in_house') {
+            if (sourceType === 'internal') {
                 // In-house: Select "None" and disable
                 noneOption.style.display = 'block';
                 partnerSelect.value = 'none';
@@ -1765,9 +1829,9 @@
                             <div class="form-group">
                                 <label class="form-label">自主・受託種別</label>
                                 <select class="input-field" id="input-source-type"
-                                    onchange="updateProjectField('source', this.value); togglePartnerSelect();">
+                                    onchange="updateProjectField('source', this.value); togglePartnerSelect(); renderPartnerEditor();">
                                     <option value="external">受託</option>
-                                    <option value="in_house">自主</option>
+                                    <option value="internal">自主</option>
                                 </select>
                             </div>
                             <div class="form-group">
