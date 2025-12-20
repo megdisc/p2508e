@@ -471,17 +471,33 @@
 
                 const mode = config.mode || (isContinuous ? 'relative' : 'absolute');
 
-                let html = `<div class="form-group" style="padding: var(--spacing-3); background: var(--color-bg-base); border-radius: var(--radius-sm);">`;
-                html += `<label class="form-label" style="font-weight: bold; margin-bottom: var(--spacing-2);">${options.label}</label>`;
+                // Using standard form layout. Not using card here to avoid too much nesting visual noise, 
+                // but if requested, I can wrap. "Box" style is fine.
+                // Replaced inline style with a simple class-less div or utility if available. 
+                // Since there is no "box" utility, I'll keep the subtle background but use standard spacing vars cleanly.
+                // Or better: use a transparent container inside the card.
+
+                let html = `<div class="form-group">`;
+                html += `<label class="form-label">${options.label}</label>`;
 
                 // Mode Toggle (Only for Single)
                 if (!isContinuous && options.showModeToggle) {
+                    const idAbs = `mode_${path.replace(/\./g, '_')}_abs`;
+                    const idRel = `mode_${path.replace(/\./g, '_')}_rel`;
                     html += `
-                    <div style="display: flex; gap: var(--spacing-3); margin-bottom: var(--spacing-2); font-size: var(--font-size-sm);">
-                        <label><input type="radio" name="mode_${path}" value="absolute" ${mode === 'absolute' ? 'checked' : ''} 
-                            onchange="updateContractTiming('${path}', 'mode', 'absolute')"> 日付指定 (絶対)</label>
-                        <label><input type="radio" name="mode_${path}" value="relative" ${mode === 'relative' ? 'checked' : ''} 
-                            onchange="updateContractTiming('${path}', 'mode', 'relative')"> ルール指定 (相対)</label>
+                    <div style="display: flex; gap: var(--spacing-4); margin-bottom: var(--spacing-2);">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="mode_${path}" id="${idAbs}" value="absolute" 
+                                ${mode === 'absolute' ? 'checked' : ''} 
+                                onchange="updateContractTiming('${path}', 'mode', 'absolute')">
+                            <label class="form-check-label" for="${idAbs}">日付指定 (絶対)</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="mode_${path}" id="${idRel}" value="relative" 
+                                ${mode === 'relative' ? 'checked' : ''} 
+                                onchange="updateContractTiming('${path}', 'mode', 'relative')">
+                            <label class="form-check-label" for="${idRel}">ルール指定 (相対)</label>
+                        </div>
                     </div>`;
                 }
 
@@ -502,7 +518,7 @@
                          </select>`;
                         html += `<span>の</span>`;
                     } else {
-                        // Basis Label (e.g. "納品") + Month Offset
+                        // Basis Label + Month Offset
                         if (options.basisLabel) {
                             html += `<span class="badge badge-neutral">${options.basisLabel}</span> <span>の</span>`;
                         }
@@ -535,16 +551,14 @@
             let html = '';
 
             // --- Customer Section ---
-            // Unifying style: Use Card style similar to Subcontractor
-            const cardStyle = "margin-bottom: var(--spacing-3); padding: var(--spacing-3); background-color: var(--color-bg-subtle); border-radius: var(--radius-card); border: 1px solid var(--color-border-default);";
-
             if (!isInternal) {
                 html += `<div style="margin-bottom: var(--spacing-stack-md);">
                     <div style="font-weight: bold; margin-bottom: var(--spacing-2);">顧客</div>
-                    <div class="card" style="${cardStyle}">
-                        <div style="font-weight: bold; border-bottom: 2px solid var(--color-border-default); margin-bottom: var(--spacing-3); padding-bottom: var(--spacing-1);">
+                    <div class="card">
+                        <div class="card-header">
                             ${tempProjectData.partner || '(設定なし)'}
-                        </div>`;
+                        </div>
+                        <div class="card-body">`;
 
                 // Client Billing
                 html += renderTimingConfigurator(c.clientBilling, 'contract.clientBilling', {
@@ -553,8 +567,6 @@
                     showModeToggle: true
                 });
 
-                html += `<div style="height: var(--spacing-4);"></div>`; // Spacer
-
                 // Client Payment
                 html += renderTimingConfigurator(c.clientPayment, 'contract.clientPayment', {
                     label: '顧客からの入金',
@@ -562,7 +574,7 @@
                     showModeToggle: true
                 });
 
-                html += `</div></div>`;
+                html += `</div></div></div>`;
             } else {
                 html += `<div style="margin-bottom: var(--spacing-stack-lg); font-style: italic; color: var(--color-text-tertiary);">
                     自主事業のため顧客設定はありません。
@@ -581,10 +593,10 @@
             } else {
                 tempProjectData.subcontractors.forEach((sub, index) => {
                     html += `
-                        <div class="card" style="${cardStyle}">
-                            <div style="display: flex; justify-content: space-between; margin-bottom: var(--spacing-2);">
-                                <!-- Changed from Input to Select -->
-                                <select class="input-field" style="font-weight: bold; width: 70%;"
+                        <div class="card" style="margin-bottom: var(--spacing-stack-md);">
+                            <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
+                                <!-- Dropdown for Partner Name -->
+                                <select class="input-field" style="font-weight: bold; width: auto; min-width: 200px;"
                                     onchange="updateSubcontractor(${index}, 'name', this.value)">
                                     ${renderPartnerOptions(sub.name)}
                                 </select>
@@ -592,6 +604,7 @@
                                     <span class="material-symbols-outlined">delete</span>
                                 </button>
                             </div>
+                            <div class="card-body">
                     `;
 
                     // Sub Billing (Receipt)
@@ -601,8 +614,6 @@
                         showModeToggle: true
                     });
 
-                    html += `<div style="height: var(--spacing-4);"></div>`; // Spacer
-
                     // Sub Payment
                     html += renderTimingConfigurator(sub.payment, `subcontractors.${index}.payment`, {
                         label: '外注先への支払い',
@@ -610,7 +621,7 @@
                         showModeToggle: true
                     });
 
-                    html += `</div>`;
+                    html += `</div></div>`;
                 });
             }
             html += `</div>`;
