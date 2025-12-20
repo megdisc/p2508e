@@ -355,31 +355,20 @@
 
             // --- Subcontractor Section ---
             const subSection = document.getElementById('view-subcontractor-section');
-            const subList = document.getElementById('view-subcontractor-list');
-            subList.innerHTML = '';
+            const subBody = document.getElementById('view-subcontractor-tbody');
+            subBody.innerHTML = '';
 
             let subs = project.subcontractors || [];
 
             if (subs.length > 0) {
                 subSection.style.display = 'block';
                 subs.forEach(sub => {
-                    const dl = document.createElement('dl');
-                    dl.className = 'data-list';
-                    dl.style.marginBottom = 'var(--spacing-3)';
-                    dl.style.borderBottom = '1px dashed var(--color-border-subtle)';
-                    dl.style.paddingBottom = 'var(--spacing-2)';
-
-                    dl.innerHTML = `
-                        <div>
-                            <dt>外注先名</dt>
-                            <dd>${sub.name}</dd>
-                        </div>
-                        <div>
-                            <dt>支払いタイミング</dt>
-                            <dd>${sub.paymentTiming || '-'}</dd>
-                        </div>
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${sub.name}</td>
+                        <td>${sub.paymentTiming || '-'}</td>
                     `;
-                    subList.appendChild(dl);
+                    subBody.appendChild(tr);
                 });
             } else {
                 subSection.style.display = 'none';
@@ -2041,24 +2030,26 @@
                         style="font-weight: bold; border-bottom: 2px solid var(--color-border-default); margin-bottom: var(--spacing-2); padding-bottom: var(--spacing-1);">
                         顧客 (<span id="view-partner-rel"></span>)
                     </div>
-                    <dl class="data-list">
-                        <div>
-                            <dt>取引先名</dt>
-                            <dd id="view-partner-name">-</dd>
-                        </div>
-                        <div>
-                            <dt>案件タイプ</dt>
-                            <dd id="view-partner-type">-</dd>
-                        </div>
-                        <div>
-                            <dt>請求タイミング</dt>
-                            <dd id="view-partner-billing">-</dd>
-                        </div>
-                        <div>
-                            <dt>入金タイミング</dt>
-                            <dd id="view-partner-payment">-</dd>
-                        </div>
-                    </dl>
+                    <table class="table" style="width: 100%;">
+                        <tbody>
+                            <tr>
+                                <th style="width: 30%; background-color: var(--color-bg-subtle);">取引先名</th>
+                                <td id="view-partner-name">-</td>
+                            </tr>
+                            <tr>
+                                <th style="background-color: var(--color-bg-subtle);">案件タイプ</th>
+                                <td id="view-partner-type">-</td>
+                            </tr>
+                            <tr>
+                                <th style="background-color: var(--color-bg-subtle);">請求タイミング</th>
+                                <td id="view-partner-billing">-</td>
+                            </tr>
+                            <tr>
+                                <th style="background-color: var(--color-bg-subtle);">入金タイミング</th>
+                                <td id="view-partner-payment">-</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
 
                 <!-- Subcontractor Section -->
@@ -2067,9 +2058,17 @@
                         style="font-weight: bold; border-bottom: 2px solid var(--color-border-default); margin-bottom: var(--spacing-2); padding-bottom: var(--spacing-1);">
                         外注先
                     </div>
-                    <div id="view-subcontractor-list">
-                        <!-- JS Injected: Name + Payment Timing -->
-                    </div>
+                    <table class="table" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th style="background-color: var(--color-bg-subtle);">外注先名</th>
+                                <th style="background-color: var(--color-bg-subtle);">支払いタイミング</th>
+                            </tr>
+                        </thead>
+                        <tbody id="view-subcontractor-tbody">
+                            <!-- JS Injected -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <div class="modal-footer">
