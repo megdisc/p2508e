@@ -153,6 +153,9 @@
                     billingFrequency: 'monthly',
                     paymentTiming: 'next_month_25'
                 },
+                subcontractors: [
+                    { name: 'ヤマト運輸', paymentTiming: 'next_month_end' }
+                ],
                 startDate: '2025-10-01',
                 endDate: '2025-10-31',
                 isCancelled: false,
@@ -313,6 +316,76 @@
 
         function hideModal(id) {
             document.getElementById(id).style.display = 'none';
+        }
+
+        // --- Partner View Logic (Refactored) ---
+        function showPartnerViewModalNew(projectId) {
+            const project = projectsData[projectId];
+            if (!project) return;
+
+            document.getElementById('view-partner-project-name').textContent = project.name;
+
+            // --- Customer Section ---
+            const hasCustomer = project.partner && project.partner !== '無し' && project.partner !== 'none';
+            document.getElementById('view-partner-name').textContent = hasCustomer ? project.partner : '自主事業 (顧客なし)';
+            document.getElementById('view-partner-rel').innerHTML = hasCustomer
+                ? '<span class="badge badge-primary">顧客</span>'
+                : '<span class="badge badge-neutral">設定なし</span>';
+
+            document.getElementById('view-partner-type').textContent = project.type === 'continuous' ? '継続' : '単発';
+
+            // Format Billing/Payment
+            let billingText = '-';
+            let paymentText = '-';
+            const c = project.contract || {};
+
+            if (project.type === 'continuous') {
+                if (c.billingTiming) {
+                    billingText = c.billingTiming;
+                    if (c.billingFrequency) billingText += ` (${c.billingFrequency})`;
+                }
+                if (c.paymentTiming) paymentText = c.paymentTiming;
+            } else {
+                if (c.billingDate) billingText = c.billingDate;
+                if (c.paymentDate) paymentText = c.paymentDate;
+            }
+
+            document.getElementById('view-partner-billing').textContent = billingText;
+            document.getElementById('view-partner-payment').textContent = paymentText;
+
+            // --- Subcontractor Section ---
+            const subSection = document.getElementById('view-subcontractor-section');
+            const subList = document.getElementById('view-subcontractor-list');
+            subList.innerHTML = '';
+
+            let subs = project.subcontractors || [];
+
+            if (subs.length > 0) {
+                subSection.style.display = 'block';
+                subs.forEach(sub => {
+                    const dl = document.createElement('dl');
+                    dl.className = 'data-list';
+                    dl.style.marginBottom = 'var(--spacing-3)';
+                    dl.style.borderBottom = '1px dashed var(--color-border-subtle)';
+                    dl.style.paddingBottom = 'var(--spacing-2)';
+
+                    dl.innerHTML = `
+                        <div>
+                            <dt>外注先名</dt>
+                            <dd>${sub.name}</dd>
+                        </div>
+                        <div>
+                            <dt>支払いタイミング</dt>
+                            <dd>${sub.paymentTiming || '-'}</dd>
+                        </div>
+                    `;
+                    subList.appendChild(dl);
+                });
+            } else {
+                subSection.style.display = 'none';
+            }
+
+            showModal('modal-partner-view');
         }
 
         // --- Tab Logic ---
@@ -1295,7 +1368,7 @@
                                 <button class="btn btn-neutral" onclick="showTaskViewModal('project-1')">タスク</button>
                                 <button class="btn btn-neutral" onclick="showBudgetViewModal('project-1')">予算</button>
                                 <button class="btn btn-neutral"
-                                    onclick="showPartnerViewModal('project-1')">契約情報</button>
+                                    onclick="showPartnerViewModalNew('project-1')">契約情報</button>
                             </div>
                         </div>
                     </div>
@@ -1343,7 +1416,7 @@
                                 <button class="btn btn-neutral" onclick="showTaskViewModal('project-3')">タスク</button>
                                 <button class="btn btn-neutral" onclick="showBudgetViewModal('project-3')">予算</button>
                                 <button class="btn btn-neutral"
-                                    onclick="showPartnerViewModal('project-3')">契約情報</button>
+                                    onclick="showPartnerViewModalNew('project-3')">契約情報</button>
                             </div>
                         </div>
                     </div>
@@ -1390,7 +1463,7 @@
                                 style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
                                 <button class="btn btn-neutral" onclick="showTaskViewModal('project-4')">タスク</button>
                                 <button class="btn btn-neutral" onclick="showBudgetViewModal('project-4')">予算</button>
-                                <button class="btn btn-neutral" onclick="showPartnerViewModal('project-4')"
+                                <button class="btn btn-neutral" onclick="showPartnerViewModalNew('project-4')"
                                     disabled>契約情報</button>
                             </div>
                         </div>
@@ -1438,7 +1511,7 @@
                                 style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
                                 <button class="btn btn-neutral" onclick="showTaskViewModal('project-2')">タスク</button>
                                 <button class="btn btn-neutral" onclick="showBudgetViewModal('project-2')">予算</button>
-                                <button class="btn btn-neutral" onclick="showPartnerViewModal('project-2')"
+                                <button class="btn btn-neutral" onclick="showPartnerViewModalNew('project-2')"
                                     disabled>契約情報</button>
                             </div>
                         </div>
@@ -1486,7 +1559,7 @@
                                 style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
                                 <button class="btn btn-neutral" onclick="showTaskViewModal('project-5')">タスク</button>
                                 <button class="btn btn-neutral" onclick="showBudgetViewModal('project-5')">予算</button>
-                                <button class="btn btn-neutral" onclick="showPartnerViewModal('project-5')"
+                                <button class="btn btn-neutral" onclick="showPartnerViewModalNew('project-5')"
                                     disabled>契約情報</button>
                             </div>
                         </div>
@@ -1534,7 +1607,7 @@
                                 style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
                                 <button class="btn btn-neutral" onclick="showTaskViewModal('project-6')">タスク</button>
                                 <button class="btn btn-neutral" onclick="showBudgetViewModal('project-6')">予算</button>
-                                <button class="btn btn-neutral" onclick="showPartnerViewModal('project-6')"
+                                <button class="btn btn-neutral" onclick="showPartnerViewModalNew('project-6')"
                                     disabled>契約情報</button>
                             </div>
                         </div>
@@ -1962,28 +2035,42 @@
                 契約情報: <span id="view-partner-project-name"></span>
             </div>
             <div class="modal-body">
-                <dl class="data-list">
-                    <div>
-                        <dt>取引先名</dt>
-                        <dd id="view-partner-name">-</dd>
+                <!-- Customer Section -->
+                <div style="margin-bottom: var(--spacing-stack-md);">
+                    <div
+                        style="font-weight: bold; border-bottom: 2px solid var(--color-border-default); margin-bottom: var(--spacing-2); padding-bottom: var(--spacing-1);">
+                        顧客 (<span id="view-partner-rel"></span>)
                     </div>
-                    <div>
-                        <dt>取引区分</dt>
-                        <dd id="view-partner-rel">-</dd>
+                    <dl class="data-list">
+                        <div>
+                            <dt>取引先名</dt>
+                            <dd id="view-partner-name">-</dd>
+                        </div>
+                        <div>
+                            <dt>案件タイプ</dt>
+                            <dd id="view-partner-type">-</dd>
+                        </div>
+                        <div>
+                            <dt>請求タイミング</dt>
+                            <dd id="view-partner-billing">-</dd>
+                        </div>
+                        <div>
+                            <dt>入金タイミング</dt>
+                            <dd id="view-partner-payment">-</dd>
+                        </div>
+                    </dl>
+                </div>
+
+                <!-- Subcontractor Section -->
+                <div id="view-subcontractor-section" style="display: none;">
+                    <div
+                        style="font-weight: bold; border-bottom: 2px solid var(--color-border-default); margin-bottom: var(--spacing-2); padding-bottom: var(--spacing-1);">
+                        外注先
                     </div>
-                    <div>
-                        <dt>案件タイプ</dt>
-                        <dd id="view-partner-type">-</dd>
+                    <div id="view-subcontractor-list">
+                        <!-- JS Injected: Name + Payment Timing -->
                     </div>
-                    <div>
-                        <dt>請求タイミング</dt>
-                        <dd id="view-partner-billing">-</dd>
-                    </div>
-                    <div>
-                        <dt>入金タイミング</dt>
-                        <dd id="view-partner-payment">-</dd>
-                    </div>
-                </dl>
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-neutral" onclick="hideModal('modal-partner-view')">閉じる</button>
