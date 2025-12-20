@@ -1124,6 +1124,7 @@
                 switchTab('basic'); // Reset to basic tab
                 renderTaskEditor();
                 renderBudgetEditor();
+                renderPartnerEditor();
             }
         }
 
@@ -1140,6 +1141,11 @@
                 projectsData[currentEditingProjectId].startDate = tempProjectData.startDate;
                 projectsData[currentEditingProjectId].endDate = tempProjectData.endDate;
                 projectsData[currentEditingProjectId].isCancelled = tempProjectData.isCancelled;
+
+                // Save Budget Info
+                projectsData[currentEditingProjectId].expenses = JSON.parse(JSON.stringify(tempProjectData.expenses || []));
+                projectsData[currentEditingProjectId].revenueItems = JSON.parse(JSON.stringify(tempProjectData.revenueItems || []));
+                projectsData[currentEditingProjectId].revenue = tempProjectData.revenue || 0;
 
                 // Save Contract Info
                 projectsData[currentEditingProjectId].contract = JSON.parse(JSON.stringify(tempProjectData.contract || {}));
