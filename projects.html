@@ -154,7 +154,7 @@
                     paymentTiming: 'next_month_25'
                 },
                 subcontractors: [
-                    { name: 'ヤマト運輸', paymentTiming: 'next_month_end' }
+                    { name: 'ヤマト運輸', paymentTiming: 'next_month_end', billingTiming: 'next_month_20' }
                 ],
                 startDate: '2025-10-01',
                 endDate: '2025-10-31',
@@ -332,7 +332,7 @@
                 ? '<span class="badge badge-primary">顧客</span>'
                 : '<span class="badge badge-neutral">設定なし</span>';
 
-            document.getElementById('view-partner-type').textContent = project.type === 'continuous' ? '継続' : '単発';
+
 
             // Format Billing/Payment
             let billingText = '-';
@@ -2024,6 +2024,7 @@
                 契約情報: <span id="view-partner-project-name"></span>
             </div>
             <div class="modal-body">
+
                 <!-- Customer Section -->
                 <div style="margin-bottom: var(--spacing-stack-md);">
                     <div
@@ -2031,21 +2032,17 @@
                         顧客 (<span id="view-partner-rel"></span>)
                     </div>
                     <table class="table" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th style="background-color: var(--color-bg-subtle);">顧客名</th>
+                                <th style="background-color: var(--color-bg-subtle);">請求タイミング</th>
+                                <th style="background-color: var(--color-bg-subtle);">入金タイミング</th>
+                            </tr>
+                        </thead>
                         <tbody>
                             <tr>
-                                <th style="width: 30%; background-color: var(--color-bg-subtle);">取引先名</th>
                                 <td id="view-partner-name">-</td>
-                            </tr>
-                            <tr>
-                                <th style="background-color: var(--color-bg-subtle);">案件タイプ</th>
-                                <td id="view-partner-type">-</td>
-                            </tr>
-                            <tr>
-                                <th style="background-color: var(--color-bg-subtle);">請求タイミング</th>
                                 <td id="view-partner-billing">-</td>
-                            </tr>
-                            <tr>
-                                <th style="background-color: var(--color-bg-subtle);">入金タイミング</th>
                                 <td id="view-partner-payment">-</td>
                             </tr>
                         </tbody>
@@ -2070,12 +2067,11 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-neutral" onclick="hideModal('modal-partner-view')">閉じる</button>
+                <div class="modal-footer">
+                    <button class="btn btn-neutral" onclick="hideModal('modal-partner-view')">閉じる</button>
+                </div>
             </div>
         </div>
-    </div>
 
 </body>
 
