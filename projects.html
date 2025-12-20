@@ -328,11 +328,28 @@
             // --- Customer Section ---
             const hasCustomer = project.partner && project.partner !== '無し' && project.partner !== 'none';
             document.getElementById('view-partner-name').textContent = hasCustomer ? project.partner : '自主事業 (顧客なし)';
-            document.getElementById('view-partner-rel').innerHTML = hasCustomer
-                ? '<span class="badge badge-primary">顧客</span>'
-                : '<span class="badge badge-neutral">設定なし</span>';
 
 
+            // Helper for translation
+            const translateTiming = (code) => {
+                const map = {
+                    'current_month_end': '当月末',
+                    'next_month_10': '翌月10日',
+                    'next_month_15': '翌月15日',
+                    'next_month_20': '翌月20日',
+                    'next_month_25': '翌月25日',
+                    'next_month_end': '翌月末',
+                    'next_next_month_5': '翌々月5日',
+                    'next_next_month_10': '翌々月10日',
+                    'next_next_month_15': '翌々月15日',
+                    'next_next_month_20': '翌々月20日',
+                    'next_next_month_25': '翌々月25日',
+                    'next_next_month_end': '翌々月末',
+                    'monthly': '毎月',
+                    'other': 'その他'
+                };
+                return map[code] || code || '-';
+            };
 
             // Format Billing/Payment
             let billingText = '-';
@@ -341,12 +358,12 @@
 
             if (project.type === 'continuous') {
                 if (c.billingTiming) {
-                    billingText = c.billingTiming;
-                    if (c.billingFrequency) billingText += ` (${c.billingFrequency})`;
+                    billingText = translateTiming(c.billingTiming);
+                    if (c.billingFrequency) billingText += ` (${translateTiming(c.billingFrequency)})`;
                 }
-                if (c.paymentTiming) paymentText = c.paymentTiming;
+                if (c.paymentTiming) paymentText = translateTiming(c.paymentTiming);
             } else {
-                if (c.billingDate) billingText = c.billingDate;
+                if (c.billingDate) billingText = c.billingDate; // Dates remain as strings
                 if (c.paymentDate) paymentText = c.paymentDate;
             }
 
@@ -366,7 +383,7 @@
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
                         <td>${sub.name}</td>
-                        <td>${sub.paymentTiming || '-'}</td>
+                        <td>${translateTiming(sub.paymentTiming)}</td>
                     `;
                     subBody.appendChild(tr);
                 });
@@ -2029,7 +2046,7 @@
                 <div style="margin-bottom: var(--spacing-stack-md);">
                     <div
                         style="font-weight: bold; border-bottom: 2px solid var(--color-border-default); margin-bottom: var(--spacing-2); padding-bottom: var(--spacing-1);">
-                        顧客 (<span id="view-partner-rel"></span>)
+                        顧客
                     </div>
                     <table class="table" style="width: 100%;">
                         <thead>
