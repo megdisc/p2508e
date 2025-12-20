@@ -428,6 +428,25 @@
             document.getElementById(`tab-${tabName}`).classList.add('is-active');
         }
 
+        // Mock Partners Data
+        const availablePartners = [
+            '株式会社 福岡工芸',
+            '天神オフィスサプライ',
+            '博多ロジスティクス',
+            '大濠デザイン事務所',
+            'ヤマト運輸',
+            '佐川急便'
+        ];
+
+        // Helper to render partner options
+        function renderPartnerOptions(selectedValue) {
+            let html = '<option value="">選択してください</option>';
+            availablePartners.forEach(p => {
+                html += `<option value="${p}" ${p === selectedValue ? 'selected' : ''}>${p}</option>`;
+            });
+            return html;
+        }
+
         // --- Partner Editor Logic ---
         function renderPartnerEditor() {
             const container = document.getElementById('partner-editor-container');
@@ -449,12 +468,6 @@
             // options: { label, basisLabel, allowFrequency, showModeToggle }
             const renderTimingConfigurator = (config, path, options) => {
                 if (!config) config = { mode: 'relative', month: '1', day: '99' }; // default
-
-                // Allow defaulting mode based on project type if strictly oneway?
-                // Single: Allow Absolute/Relative. Continuous: Relative only (Monthly...).
-                // Re-reading requirements:
-                // Single/External Client Billing: Absolute OR Relative.
-                // Continuous/External Client Billing: Monthly/Bi-monthly (Frequency).
 
                 const mode = config.mode || (isContinuous ? 'relative' : 'absolute');
 
@@ -509,7 +522,7 @@
                     html += `</select>`;
 
                     if (isContinuous) {
-                        html += `<span>(払い/請求)</span>`; // context specific suffix?
+                        html += `<span>(払い/請求)</span>`;
                     } else {
                         html += `<span>に実施</span>`;
                     }
@@ -522,11 +535,16 @@
             let html = '';
 
             // --- Customer Section ---
+            // Unifying style: Use Card style similar to Subcontractor
+            const cardStyle = "margin-bottom: var(--spacing-3); padding: var(--spacing-3); background-color: var(--color-bg-subtle); border-radius: var(--radius-card); border: 1px solid var(--color-border-default);";
+
             if (!isInternal) {
-                html += `<div style="margin-bottom: var(--spacing-stack-lg);">
-                    <div style="font-weight: bold; border-bottom: 2px solid var(--color-border-default); margin-bottom: var(--spacing-3); padding-bottom: var(--spacing-1);">
-                        顧客: ${tempProjectData.partner || '(設定なし)'}
-                    </div>`;
+                html += `<div style="margin-bottom: var(--spacing-stack-md);">
+                    <div style="font-weight: bold; margin-bottom: var(--spacing-2);">顧客</div>
+                    <div class="card" style="${cardStyle}">
+                        <div style="font-weight: bold; border-bottom: 2px solid var(--color-border-default); margin-bottom: var(--spacing-3); padding-bottom: var(--spacing-1);">
+                            ${tempProjectData.partner || '(設定なし)'}
+                        </div>`;
 
                 // Client Billing
                 html += renderTimingConfigurator(c.clientBilling, 'contract.clientBilling', {
@@ -535,6 +553,8 @@
                     showModeToggle: true
                 });
 
+                html += `<div style="height: var(--spacing-4);"></div>`; // Spacer
+
                 // Client Payment
                 html += renderTimingConfigurator(c.clientPayment, 'contract.clientPayment', {
                     label: '顧客からの入金',
@@ -542,7 +562,7 @@
                     showModeToggle: true
                 });
 
-                html += `</div>`;
+                html += `</div></div>`;
             } else {
                 html += `<div style="margin-bottom: var(--spacing-stack-lg); font-style: italic; color: var(--color-text-tertiary);">
                     自主事業のため顧客設定はありません。
@@ -551,7 +571,7 @@
 
             // --- Subcontractor Section ---
             html += `<div style="margin-bottom: var(--spacing-stack-md);">
-                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--color-border-default); margin-bottom: var(--spacing-3); padding-bottom: var(--spacing-1);">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-2);">
                     <span style="font-weight: bold;">外注先</span>
                     <button class="btn btn-sm btn-neutral" onclick="addSubcontractor()">＋ 追加</button>
                 </div>`;
@@ -561,11 +581,13 @@
             } else {
                 tempProjectData.subcontractors.forEach((sub, index) => {
                     html += `
-                        <div class="card" style="margin-bottom: var(--spacing-3); padding: var(--spacing-3); background-color: var(--color-bg-subtle);">
+                        <div class="card" style="${cardStyle}">
                             <div style="display: flex; justify-content: space-between; margin-bottom: var(--spacing-2);">
-                                <input type="text" class="input-field" placeholder="外注先名" value="${sub.name || ''}" 
-                                    style="font-weight: bold; width: 70%;"
+                                <!-- Changed from Input to Select -->
+                                <select class="input-field" style="font-weight: bold; width: 70%;"
                                     onchange="updateSubcontractor(${index}, 'name', this.value)">
+                                    ${renderPartnerOptions(sub.name)}
+                                </select>
                                 <button class="btn btn-icon btn-icon-error" onclick="removeSubcontractor(${index})">
                                     <span class="material-symbols-outlined">delete</span>
                                 </button>
@@ -578,6 +600,8 @@
                         basisLabel: '成果物受領',
                         showModeToggle: true
                     });
+
+                    html += `<div style="height: var(--spacing-4);"></div>`; // Spacer
 
                     // Sub Payment
                     html += renderTimingConfigurator(sub.payment, `subcontractors.${index}.payment`, {
@@ -1276,6 +1300,15 @@
                 document.getElementById('input-project-name').value = tempProjectData.name || '';
                 document.getElementById('input-project-type').value = tempProjectData.type || 'single';
                 document.getElementById('input-source-type').value = tempProjectData.source || 'external';
+
+                // Populate Partner Options from availablePartners
+                const partnerSelect = document.getElementById('input-partner');
+                let partnerOpts = '<option value="none" style="display: none;">無し</option>';
+                availablePartners.forEach(p => {
+                    partnerOpts += `<option value="${p}">${p}</option>`;
+                });
+                partnerSelect.innerHTML = partnerOpts;
+
                 document.getElementById('input-partner').value = tempProjectData.partner || '';
                 document.getElementById('input-start-date').value = tempProjectData.startDate || '';
                 document.getElementById('input-end-date').value = tempProjectData.endDate || '';
