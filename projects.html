@@ -130,7 +130,8 @@
                         skills: [{ name: '手先作業', level: 2 }, { name: '集中力', level: 3 }],
                         unitPrice: 10,
                         quantity: 3000,
-                        total: 30000
+                        total: 30000,
+                        progress: 50
                     },
                     {
                         id: 2,
@@ -138,14 +139,19 @@
                         skills: [{ name: '目視確認', level: 3 }],
                         unitPrice: 5,
                         quantity: 3000,
-                        total: 15000
+                        total: 15000,
+                        progress: 20
                     }
                 ],
                 expenses: [
                     { name: '封筒・資材代', type: '材料費', amount: 20000, note: '立替払済' },
                     { name: '配送業者委託費', type: '外注費', amount: 15000, note: 'ヤマト運輸' },
                     { name: '事業所積立金', type: '積立金', amount: 10000, note: '規定により5%' }
-                ]
+                ],
+                startDate: '2025-10-01',
+                endDate: '2025-10-31',
+                isCancelled: false,
+                status: 'in_progress'
             },
             'project-2': {
                 id: 'project-2',
@@ -159,8 +165,8 @@
                     { name: 'パン売上（外販）', amount: 50000, note: '' }
                 ],
                 tasks: [
-                    { id: 1, name: 'パン製造', skills: [{ name: '体力', level: 2 }], unitPrice: 50, quantity: 1000, total: 50000 },
-                    { id: 2, name: '販売', skills: [{ name: '接客', level: 2 }], unitPrice: 30, quantity: 1000, total: 30000 }
+                    { id: 1, name: 'パン製造', skills: [{ name: '体力', level: 2 }], unitPrice: 50, quantity: 1000, total: 50000, progress: 10 },
+                    { id: 2, name: '販売', skills: [{ name: '接客', level: 2 }], unitPrice: 30, quantity: 1000, total: 30000, progress: 5 }
                 ],
                 expenses: [
                     { name: '材料費', type: '材料費', amount: 30000, note: '小麦粉、バター等' },
@@ -179,7 +185,7 @@
                     { name: '清掃委託料', amount: 200000, note: '月額固定' }
                 ],
                 tasks: [
-                    { id: 1, name: '清掃作業', skills: [{ name: '体力', level: 3 }], amount: 80000, total: 80000 }
+                    { id: 1, name: '清掃作業', skills: [{ name: '体力', level: 3 }], amount: 80000, total: 80000, progress: 0 }
                 ],
                 expenses: [
                     { name: '清掃用具', type: '材料費', amount: 5000, note: '洗剤、モップ' },
@@ -198,8 +204,8 @@
                     { name: 'バザー売上', amount: 50000, note: '' }
                 ],
                 tasks: [
-                    { id: 1, name: '接客販売', skills: [{ name: '接客', level: 2 }], unitPrice: 1000, quantity: 10, total: 10000 },
-                    { id: 2, name: '搬入出', skills: [{ name: '体力', level: 2 }], unitPrice: 1000, quantity: 5, total: 5000 }
+                    { id: 1, name: '接客販売', skills: [{ name: '接客', level: 2 }], unitPrice: 1000, quantity: 10, total: 10000, progress: 100 },
+                    { id: 2, name: '搬入出', skills: [{ name: '体力', level: 2 }], unitPrice: 1000, quantity: 5, total: 5000, progress: 100 }
                 ],
                 expenses: [
                     { name: '出店料', type: 'その他', amount: 5000, note: '' },
@@ -228,6 +234,37 @@
                 expenses: []
             }
         };
+
+        // Initialize missing fields for other projects
+        Object.values(projectsData).forEach(p => {
+            if (!p.startDate) p.startDate = '2025-10-01';
+            if (!p.endDate) p.endDate = '2025-10-31';
+            if (p.isCancelled === undefined) p.isCancelled = false;
+            // Ensure status is calculated
+        });
+
+        function calculateProjectStatus(project) {
+            if (project.isCancelled) return 'cancelled';
+
+            if (!project.tasks || project.tasks.length === 0) return 'not-started';
+
+            const allZero = project.tasks.every(t => (t.progress || 0) === 0);
+            const allHundred = project.tasks.every(t => (t.progress || 0) === 100);
+
+            if (allZero) return 'not-started';
+            if (allHundred) return 'completed';
+            return 'in-progress';
+        }
+
+        function getStatusBadge(status) {
+            switch (status) {
+                case 'not-started': return '<span class="badge badge-neutral">未着手</span>';
+                case 'in-progress': return '<span class="badge badge-primary">進行中</span>';
+                case 'completed': return '<span class="badge badge-success">完了</span>';
+                case 'cancelled': return '<span class="badge badge-error">中止</span>';
+                default: return '<span class="badge badge-neutral">不明</span>';
+            }
+        }
 
         let currentEditingProjectId = null;
         let tempProjectData = null; // Temporary storage for editing
@@ -323,9 +360,10 @@
             const thead = document.createElement('thead');
             thead.innerHTML = `
                 <tr>
-                    <th style="width: 30%;">タスク名</th>
+                    <th style="width: 25%;">タスク名</th>
+                    <th style="width: 15%;">進捗 (%)</th>
                     <th>必要スキル</th>
-                    <th style="width: 80px; text-align: center;">操作</th>
+                    <th style="width: 60px; text-align: center;">操作</th>
                 </tr>
             `;
             table.appendChild(thead);
@@ -376,7 +414,13 @@
 
                     tr.innerHTML = `
                         <td style="vertical-align: top;">
-                            <input type="text" class="input-field" value="${task.name}" onchange="updateTaskName(${taskIndex}, this.value)" placeholder="タスク名">
+                            <input type="text" class="input-field" value="${task.name}" onchange="updateTaskField(${taskIndex}, 'name', this.value)" placeholder="タスク名">
+                        </td>
+                        <td style="vertical-align: top;">
+                            <div style="display: flex; align-items: center; gap: var(--spacing-1);">
+                                <input type="number" class="input-field" value="${task.progress || 0}" min="0" max="100" style="text-align: right;" onchange="updateTaskField(${taskIndex}, 'progress', this.value)">
+                                <span>%</span>
+                            </div>
                         </td>
                         <td style="vertical-align: top;">
                             ${skillsHtml}
@@ -400,6 +444,7 @@
             tempProjectData.tasks.push({
                 id: Date.now(),
                 name: '新規タスク',
+                progress: 0,
                 skills: []
             });
             renderTaskEditor();
@@ -412,9 +457,15 @@
             }
         }
 
-        function updateTaskName(index, value) {
-            tempProjectData.tasks[index].name = value;
+        function updateTaskField(index, field, value) {
+            if (field === 'progress') {
+                value = Math.min(100, Math.max(0, parseInt(value) || 0));
+            }
+            tempProjectData.tasks[index][field] = value;
         }
+
+        // Deprecated helper replaced by generic one
+        // function updateTaskName(index, value) { ... }
 
         function addSkill(taskIndex) {
             tempProjectData.tasks[taskIndex].skills.push({ name: '', level: 1 });
@@ -430,11 +481,7 @@
             tempProjectData.tasks[taskIndex].skills[skillIndex][field] = value;
         }
 
-        function saveProjectTasks() {
-            if (currentEditingProjectId) {
-                projectsData[currentEditingProjectId] = JSON.parse(JSON.stringify(tempProjectData));
-            }
-        }
+
 
         // --- Budget Logic ---
         // --- Budget Logic ---
@@ -843,6 +890,9 @@
                 document.getElementById('input-project-type').value = tempProjectData.type || 'single';
                 document.getElementById('input-source-type').value = tempProjectData.source || 'external';
                 document.getElementById('input-partner').value = tempProjectData.partner || '';
+                document.getElementById('input-start-date').value = tempProjectData.startDate || '';
+                document.getElementById('input-end-date').value = tempProjectData.endDate || '';
+                document.getElementById('input-is-cancelled').checked = tempProjectData.isCancelled || false;
 
                 togglePartnerSelect();
                 switchTab('basic'); // Reset to basic tab
@@ -851,6 +901,32 @@
             }
         }
 
+        function saveProjectTasks() {
+            if (currentEditingProjectId) {
+                // Update tasks
+                projectsData[currentEditingProjectId].tasks = JSON.parse(JSON.stringify(tempProjectData.tasks));
+
+                // Update fields
+                projectsData[currentEditingProjectId].name = tempProjectData.name;
+                projectsData[currentEditingProjectId].type = tempProjectData.type;
+                projectsData[currentEditingProjectId].source = tempProjectData.source;
+                projectsData[currentEditingProjectId].partner = tempProjectData.partner;
+                projectsData[currentEditingProjectId].startDate = tempProjectData.startDate;
+                projectsData[currentEditingProjectId].endDate = tempProjectData.endDate;
+                projectsData[currentEditingProjectId].isCancelled = tempProjectData.isCancelled;
+
+                // Recalculate status
+                projectsData[currentEditingProjectId].status = calculateProjectStatus(projectsData[currentEditingProjectId]);
+
+                // In a real app, we would re-render the card. 
+                // For this prototype, we'll just alert.
+                alert('保存しました。ステータス: ' + projectsData[currentEditingProjectId].status);
+                hideModal('modal-project-settings');
+                // Reload to show updates? Or simple JS update? 
+                // For now, let's reload to be safe since we modified global state and cards are static.
+                // location.reload(); // Actually let's not reload to avoid losing ephemeral state if any.
+            }
+        }
         function updateProjectField(field, value) {
             if (tempProjectData) {
                 tempProjectData[field] = value;
@@ -901,14 +977,14 @@
             </div>
             <nav class="sidebar-nav">
                 <a href="index.html" class="nav-link">トップ</a>
-        <details class="nav-accordion">
+                <details class="nav-accordion">
                     <summary>施設情報</summary>
                     <ul>
                         <li><a href="corporation.html">法人情報</a></li>
                         <li><a href="office.html">事業所情報</a></li>
                     </ul>
                 </details>
-        <details class="nav-accordion">
+                <details class="nav-accordion">
                     <summary>職員・利用者情報</summary>
                     <ul>
                         <li><a href="staff.html">職員情報</a></li>
@@ -917,14 +993,14 @@
                 </details>
 
                 <a href="partners.html" class="nav-link">取引先情報</a>
-        <details class="nav-accordion">
+                <details class="nav-accordion">
                     <summary>スキル情報</summary>
                     <ul>
                         <li><a href="skills-settings.html">スキル設定</a></li>
                         <li><a href="skills-evaluation.html">スキル評価</a></li>
                     </ul>
                 </details>
-        <details class="nav-accordion">
+                <details class="nav-accordion">
                     <summary>工賃・控除情報</summary>
                     <ul>
                         <li><a href="wages-settings.html">工賃設定</a></li>
@@ -943,20 +1019,20 @@
                         <li><a href="schedule.html">進捗状況</a></li>
                     </ul>
                 </details>
-        <details class="nav-accordion">
+                <details class="nav-accordion">
                     <summary>福祉事業活動</summary>
                     <ul>
                         <li><a href="support-plans.html">個別支援計画</a></li>
                     </ul>
                 </details>
-        <details class="nav-accordion">
+                <details class="nav-accordion">
                     <summary>請求・支払</summary>
                     <ul>
                         <li><a href="billing-national-health.html">国保連請求</a></li>
                         <li><a href="production-balance.html">生産活動収支状況</a></li>
                     </ul>
                 </details>
-        <details class="nav-accordion">
+                <details class="nav-accordion">
                     <summary>分析</summary>
                     <ul>
                         <li><a href="analytics-production.html">生産活動収支分析</a></li>
@@ -1358,29 +1434,33 @@
                                 </select>
                             </div>
                         </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4);">
-                            <div class="form-group">
-                                <label class="form-label">開始日</label>
-                                <input type="date" class="input-field" value="2025-10-01">
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label">納期</label>
-                                <input type="date" class="input-field" value="2025-10-31">
+                        <div class="form-group">
+                            <label class="form-label">期間</label>
+                            <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                <input type="date" class="input-field" value="2025-10-01" id="input-start-date"
+                                    onchange="updateProjectField('startDate', this.value)">
+                                <span>〜</span>
+                                <input type="date" class="input-field" value="2025-10-31" id="input-end-date"
+                                    onchange="updateProjectField('endDate', this.value)">
                             </div>
                         </div>
+                        <!-- Duplicate Period removed -->
                         <div class="form-group">
                             <label class="form-label">概要</label>
                             <textarea class="input-field" rows="4">3,000通のDM封入作業。封入物: チラシA, チラシB, 返信ハガキ。</textarea>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">進捗状況</label>
-                            <select class="input-field">
-                                <option value="in_progress" selected>進行中</option>
-                                <option value="completed">完了</option>
-                                <option value="not-started">未着手</option>
-                                <option value="cancelled">中止</option>
-                            </select>
+                            <div
+                                style="background-color: var(--color-base-secondary); padding: var(--spacing-3); border-radius: var(--radius-base); display: flex; align-items: center; gap: var(--spacing-2); border: 1px solid var(--color-border-default);">
+                                <input type="checkbox" id="input-is-cancelled"
+                                    onchange="updateProjectField('isCancelled', this.checked)">
+                                <label for="input-is-cancelled"
+                                    style="font-weight: bold; color: var(--color-semantic-error-text);">この案件を中止する</label>
+                                <span
+                                    style="font-size: var(--font-size-xs); color: var(--color-base-tertiary); margin-left: auto;">※チェックするとステータスが「中止」になります</span>
+                            </div>
                         </div>
+
                     </div>
 
                     <!-- Task Definition Tab -->
