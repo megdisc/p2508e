@@ -319,6 +319,48 @@
             color: #fff;
             font-weight: bold;
         }
+
+        /* Event View Styles */
+        .event-marker {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            font-size: 12px;
+            color: #fff;
+            margin: 0 2px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .event-client {
+            background-color: var(--color-semantic-primary-main);
+        }
+
+        .event-subcontractor {
+            background-color: var(--color-semantic-warning-main);
+        }
+
+        .event-user {
+            background-color: var(--color-semantic-success-main);
+        }
+
+        .event-status-done {
+            opacity: 0.5;
+        }
+
+        .event-status-pending {
+            border: 2px solid #fff;
+            box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .event-icon {
+            font-family: 'Material Symbols Outlined';
+            font-size: 14px;
+            font-style: normal;
+        }
     </style>
 
     <script>
@@ -345,6 +387,31 @@
             { id: 'client1', name: '○○市役所' },
             { id: 'client2', name: '△△商事' }
         ];
+
+        // Projects Data from projects.html (Mock)
+        const projectsData = {
+            'project-1': {
+                id: 'project-1',
+                name: 'DM封入作業',
+                contract: { billingTiming: { mode: 'relative', month: '0', day: '99' }, clientPayment: { mode: 'relative', month: '1', day: '25' } },
+                subcontractors: [
+                    { name: 'ヤマト運輸', billing: { mode: 'relative', month: '1', day: '20' }, payment: { mode: 'relative', month: '1', day: '99' } }
+                ],
+                incentive: { payment: { mode: 'relative', month: '1', day: '15' } }
+            },
+            'project-3': {
+                id: 'project-3',
+                name: '施設外就労（清掃）',
+                contract: { billingTiming: { mode: 'relative', month: '1', day: '10' }, clientPayment: { mode: 'relative', month: '2', day: '99' } },
+                incentive: { payment: { mode: 'relative', month: '1', day: '25' } }
+            },
+            'project-2': {
+                id: 'project-2',
+                name: '自主製品（パン）製造・販売',
+                contract: {},
+                incentive: { payment: { mode: 'relative', month: '0', day: '99' } }
+            }
+        };
 
         // Task to Skill mapping (Task Name -> Skill ID)
         const taskSkills = {
@@ -628,11 +695,15 @@
         function switchView(viewName) {
             document.getElementById('view-project').style.display = 'none';
             document.getElementById('view-member').style.display = 'none';
+            document.getElementById('view-event').style.display = 'none';
 
             if (viewName === 'project') {
                 document.getElementById('view-project').style.display = 'block';
             } else if (viewName === 'member') {
                 document.getElementById('view-member').style.display = 'block';
+            } else if (viewName === 'event') {
+                document.getElementById('view-event').style.display = 'block';
+                renderEventView();
             }
         }
 
@@ -751,7 +822,159 @@
                     }
                 });
             });
+
+            // Initialize Headers for Event View (same as Project View initially)
+            // But we might need to regenerate if we support month switching
         });
+
+        // Event View Logic
+        function renderEventView() {
+            const tableHead = document.getElementById('event-table-header');
+            const tableBody = document.getElementById('event-table-body');
+            const currentDateInput = document.getElementById('schedule-date').value; // "YYYY-MM"
+            const [yearStr, monthStr] = currentDateInput.split('-');
+            const year = parseInt(yearStr);
+            const month = parseInt(monthStr); // 1-12
+
+            const daysInMonth = new Date(year, month, 0).getDate();
+
+            // 1. Render Header
+            let headerHtml = '<th class="col-fixed" style="z-index: 30;">案件</th>';
+            const weekDays = ['日', '月', '火', '水', '木', '金', '土'];
+
+            for (let d = 1; d <= daysInMonth; d++) {
+                const date = new Date(year, month - 1, d);
+                const dayOfWeek = weekDays[date.getDay()];
+                const isSat = date.getDay() === 6;
+                const isSun = date.getDay() === 0;
+                const bgColor = isSat ? 'var(--palette-CEF)' : isSun ? 'var(--palette-FDD)' : '';
+                headerHtml += `<th style="background-color: ${bgColor};">${d}<br><span style="font-size: 0.6rem;">${dayOfWeek}</span></th>`;
+            }
+            tableHead.innerHTML = headerHtml;
+
+            // 2. Render Body
+            tableBody.innerHTML = '';
+
+            Object.values(projectsData).forEach(project => {
+                const tr = document.createElement('tr');
+
+                // Fixed Column
+                tr.innerHTML = `<td class="col-fixed"><div class="info-cell"><div class="cell-text">${project.name}</div></div></td>`;
+
+                // Date Cells
+                let cellsHtml = '';
+                for (let d = 1; d <= daysInMonth; d++) {
+                    const date = new Date(year, month - 1, d);
+                    const isSat = date.getDay() === 6;
+                    const isSun = date.getDay() === 0;
+                    // const bgColor = isSat ? '#f0f8ff' : isSun ? '#fff0f0' : ''; // Use simpler logic or inherit? 
+                    // Scheduler table default doesn't color body cells by default, but maybe we want to match?
+                    // Let's keep it simple for now.
+
+                    // Check events
+                    const events = getEventsForDate(project, year, month, d);
+                    let cellContent = '';
+                    if (events.length > 0) {
+                        cellContent = '<div style="display: flex; gap: 2px;">';
+                        events.forEach(evt => {
+                            let icon = '';
+                            if (evt.type === 'delivery') icon = 'local_shipping';
+                            if (evt.type === 'billing') icon = 'receipt_long';
+                            if (evt.type === 'payment') icon = 'payments'; // or attach_money
+
+                            const statusClass = evt.isDone ? 'event-status-done' : 'event-status-pending';
+                            const title = `${evt.label} (${evt.isDone ? '済' : '未'})`;
+
+                            cellContent += `<div class="event-marker ${evt.class} ${statusClass}" title="${title}"><span class="event-icon material-symbols-outlined">${icon}</span></div>`;
+                        });
+                        cellContent += '</div>';
+                    }
+
+                    cellsHtml += `<td>${cellContent}</td>`;
+                }
+                tr.innerHTML += cellsHtml;
+                tableBody.appendChild(tr);
+            });
+        }
+
+        function getEventsForDate(project, year, month, d) {
+            const events = [];
+            const currentDt = new Date(year, month - 1, d);
+
+            // Helper to parsing timing config
+            const checkTiming = (config, type, label, cssClass) => {
+                if (!config || !config.mode) return;
+
+                let targetDate = null;
+                if (config.mode === 'absolute') {
+                    if (config.date) targetDate = new Date(config.date);
+                } else if (config.mode === 'relative') {
+                    // Logic: Relative to what?
+                    // User request: "Display specific event date based on contract settings"
+                    // "Month" 0=Current, 1=Next... 
+                    // For a "Continuous" project, we assume the event happens EVERY month based on the rule.
+                    // e.g. "Next Month 25th" -> For the displayed month (Nov), does it match?
+
+                    // We are displaying "November 2025" (view month).
+                    // If the rule is "Next Month 25th" (Month=1, Day=25), it means the event happens on the 25th of a month, 
+                    // corresponding to a base activity of the PREVIOUS month? 
+                    // Or simply: "Payment is on 25th".
+
+                    // Simplification: Continuous projects repeat these events every target month.
+                    // If config.day is 99 (End), it's the last day.
+
+                    const day = parseInt(config.day);
+                    let matchDay = day;
+                    if (day === 99) {
+                        matchDay = new Date(year, month, 0).getDate();
+                    }
+
+                    if (d === matchDay) {
+                        targetDate = currentDt; // It matches today
+                    }
+                }
+
+                if (targetDate) {
+                    // Mock Status: If date is before today (let's say today is Nov 10 for demo), it's done.
+                    const mockToday = new Date(2025, 10, 10); // Nov 10
+                    const isDone = targetDate < mockToday;
+
+                    events.push({ type, label, class: cssClass, isDone });
+                }
+            };
+
+            // 1. Client Events
+            if (project.contract) {
+                // Delivery (Mock: usually depends on task completion, but let's assume 'End of Month' for continuous if not set)
+                // If not defined, skip.
+                checkTiming(project.contract.billingTiming, 'billing', '顧客請求', 'event-client'); // Wait, billingTiming is usually Billing
+                checkTiming(project.contract.clientPayment, 'payment', '顧客入金', 'event-client');
+
+                // Implicit Delivery? Let's add a mock delivery event for End of Month if not specified? 
+                // Creating a fake config for Delivery if needed. 
+                // For now, only show configured items + explicit request items.
+                // Request: "Deliver to Client", "Bill to Client", "Payment from Client"
+                // My data only has billingTiming and clientPayment. I'll map billingTiming to "Billing". 
+                // I will add a mock "Delivery" for end of previous month's work? 
+                // Let's stick to what we have in data.
+            }
+
+            // 2. Subcontractor Events
+            if (project.subcontractors) {
+                project.subcontractors.forEach(sub => {
+                    checkTiming(sub.billing, 'billing', `外注請求(${sub.name})`, 'event-subcontractor'); // Recv Bill
+                    checkTiming(sub.payment, 'payment', `外注支払(${sub.name})`, 'event-subcontractor');
+                    // Delivery from Sub?
+                });
+            }
+
+            // 3. User Incentive
+            if (project.incentive) {
+                checkTiming(project.incentive.payment, 'payment', '利用者支払', 'event-user');
+            }
+
+            return events;
+        }
     </script>
 </head>
 
@@ -771,14 +994,14 @@
             </div>
             <nav class="sidebar-nav">
                 <a href="index.html" class="nav-link">トップ</a>
-        <details class="nav-accordion">
+                <details class="nav-accordion">
                     <summary>施設情報</summary>
                     <ul>
                         <li><a href="corporation.html">法人情報</a></li>
                         <li><a href="office.html">事業所情報</a></li>
                     </ul>
                 </details>
-        <details class="nav-accordion">
+                <details class="nav-accordion">
                     <summary>職員・利用者情報</summary>
                     <ul>
                         <li><a href="staff.html">職員情報</a></li>
@@ -787,14 +1010,14 @@
                 </details>
 
                 <a href="partners.html" class="nav-link">取引先情報</a>
-        <details class="nav-accordion">
+                <details class="nav-accordion">
                     <summary>スキル情報</summary>
                     <ul>
                         <li><a href="skills-settings.html">スキル設定</a></li>
                         <li><a href="skills-evaluation.html">スキル評価</a></li>
                     </ul>
                 </details>
-        <details class="nav-accordion">
+                <details class="nav-accordion">
                     <summary>工賃・控除情報</summary>
                     <ul>
                         <li><a href="wages-settings.html">工賃設定</a></li>
@@ -813,20 +1036,20 @@
                         <li><a href="schedule.html" class="active">進捗状況</a></li>
                     </ul>
                 </details>
-        <details class="nav-accordion">
+                <details class="nav-accordion">
                     <summary>福祉事業活動</summary>
                     <ul>
                         <li><a href="support-plans.html">個別支援計画</a></li>
                     </ul>
                 </details>
-        <details class="nav-accordion">
+                <details class="nav-accordion">
                     <summary>請求・支払</summary>
                     <ul>
                         <li><a href="billing-national-health.html">国保連請求</a></li>
                         <li><a href="production-balance.html">生産活動収支状況</a></li>
                     </ul>
                 </details>
-        <details class="nav-accordion">
+                <details class="nav-accordion">
                     <summary>分析</summary>
                     <ul>
                         <li><a href="analytics-production.html">生産活動収支分析</a></li>
@@ -861,6 +1084,9 @@
 
                         <input type="radio" id="view-mode-member" name="view-mode" onchange="switchView('member')">
                         <label for="view-mode-member">担当者別日程</label>
+
+                        <input type="radio" id="view-mode-event" name="view-mode" onchange="switchView('event')">
+                        <label for="view-mode-event">イベント</label>
                     </div>
 
                     <div style="display: flex; align-items: center; gap: var(--spacing-2);">
@@ -1226,6 +1452,19 @@
                                 <td class="col-fixed" style="height: 4rem;"></td>
                                 <td colspan="31"></td>
                             </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="view-event" class="scheduler-container" style="display: none;">
+                    <table class="scheduler-table" id="event-table">
+                        <thead>
+                            <tr id="event-table-header">
+                                <!-- Generated by JS -->
+                            </tr>
+                        </thead>
+                        <tbody id="event-table-body">
+                            <!-- Generated by JS -->
                         </tbody>
                     </table>
                 </div>
