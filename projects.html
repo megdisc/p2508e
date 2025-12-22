@@ -626,6 +626,26 @@
             }
             html += `</div>`;
 
+            // --- User (Incentive) Section ---
+            html += `<div style="margin-bottom: var(--spacing-stack-md);">
+                <div style="font-weight: bold; margin-bottom: var(--spacing-2);">利用者</div>
+                <div class="card">
+                    <div class="card-body">`;
+
+            // Ensure incentive object exists in tempProjectData for rendering
+            if (!tempProjectData.incentive) tempProjectData.incentive = {};
+            const incentive = tempProjectData.incentive;
+
+            // Incentive Payment
+            html += renderTimingConfigurator(incentive.payment, 'incentive.payment', {
+                label: 'インセンティブ支払い',
+                basisLabel: '締め日',
+                showModeToggle: true
+            });
+
+            html += `</div></div></div>`;
+
+
             container.innerHTML = html;
         }
 
@@ -666,6 +686,11 @@
                 const subKey = parts[2]; // billing
                 if (!tempProjectData.subcontractors[idx][subKey]) tempProjectData.subcontractors[idx][subKey] = { mode: 'relative', month: '1', day: '99', frequency: 'monthly' };
                 obj = tempProjectData.subcontractors[idx][subKey];
+            } else if (path.startsWith('incentive')) {
+                if (!tempProjectData.incentive) tempProjectData.incentive = {};
+                const subKey = parts[1]; // payment
+                if (!tempProjectData.incentive[subKey]) tempProjectData.incentive[subKey] = { mode: 'relative', month: '1', day: '25', frequency: 'monthly' };
+                obj = tempProjectData.incentive[subKey];
             }
 
             obj[field] = value;
@@ -1355,6 +1380,7 @@
                 // Save Contract Info
                 projectsData[currentEditingProjectId].contract = JSON.parse(JSON.stringify(tempProjectData.contract || {}));
                 projectsData[currentEditingProjectId].subcontractors = JSON.parse(JSON.stringify(tempProjectData.subcontractors || []));
+                projectsData[currentEditingProjectId].incentive = JSON.parse(JSON.stringify(tempProjectData.incentive || {}));
 
                 // Recalculate status
                 projectsData[currentEditingProjectId].status = calculateProjectStatus(projectsData[currentEditingProjectId]);
