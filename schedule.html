@@ -395,6 +395,8 @@
                 id: 'project-1',
                 name: 'DM封入作業',
                 status: 'in-progress',
+                term: 'continuous', // or 'spot'
+                category: 'contract', // or 'self'
                 contract: { billingTiming: { mode: 'relative', month: '0', day: '99' }, clientPayment: { mode: 'relative', month: '1', day: '25' } },
                 subcontractors: [
                     { name: 'ヤマト運輸', billing: { mode: 'relative', month: '1', day: '20' }, payment: { mode: 'relative', month: '1', day: '99' } }
@@ -410,6 +412,8 @@
                 id: 'project-3',
                 name: '施設外就労（清掃）',
                 status: 'in-progress',
+                term: 'continuous',
+                category: 'contract',
                 contract: { billingTiming: { mode: 'relative', month: '1', day: '10' }, clientPayment: { mode: 'relative', month: '2', day: '99' } },
                 incentive: { payment: { mode: 'relative', month: '1', day: '25' } },
                 tasks: [
@@ -422,6 +426,8 @@
                 id: 'project-2',
                 name: '自主製品（パン）製造・販売',
                 status: 'in-progress',
+                term: 'continuous',
+                category: 'self',
                 contract: {},
                 incentive: { payment: { mode: 'relative', month: '0', day: '99' } },
                 tasks: [
@@ -434,6 +440,8 @@
                 id: 'project-4',
                 name: '名刺データ入力',
                 status: 'completed',
+                term: 'spot',
+                category: 'contract',
                 contract: { billingTiming: { mode: 'relative', month: '0', day: '99' }, clientPayment: { mode: 'relative', month: '1', day: '30' } },
                 incentive: { payment: { mode: 'relative', month: '1', day: '10' } },
                 tasks: [
@@ -445,6 +453,8 @@
                 id: 'project-5',
                 name: 'Webサイト制作',
                 status: 'pending',
+                term: 'spot',
+                category: 'contract',
                 contract: { billingTiming: { mode: 'absolute', date: '2025-11-30' } },
                 incentive: {},
                 tasks: [
@@ -456,6 +466,8 @@
                 id: 'project-6',
                 name: '軽作業（シール貼り）',
                 status: 'not-started',
+                term: 'spot',
+                category: 'contract',
                 contract: {},
                 incentive: { payment: { mode: 'relative', month: '1', day: '15' } },
                 tasks: [
@@ -466,6 +478,8 @@
                 id: 'project-7',
                 name: 'イベント運営補助',
                 status: 'in-progress',
+                term: 'spot',
+                category: 'contract',
                 contract: { billingTiming: { mode: 'relative', month: '0', day: '15' } },
                 incentive: { payment: { mode: 'relative', month: '0', day: '25' } },
                 tasks: [
@@ -927,11 +941,35 @@
                 const trProject = document.createElement('tr');
                 trProject.classList.add('multi-row-top');
 
-                // Fixed Column: Project Name
-                trProject.innerHTML = `<td class="col-fixed" rowspan="${rowSpan}" style="vertical-align: top; padding-top: 8px;">
-                    <div class="info-cell" style="align-items: flex-start;">
-                        <div style="font-weight: bold;">${project.name}</div>
-                        <div><span class="badge ${project.status === 'in-progress' ? 'badge-primary' : 'badge-neutral'} badge-sm">${project.status === 'in-progress' ? '進行中' : '未着手'}</span></div>
+                // Determine Badge Strings and Classes
+                const statusText = project.status === 'in-progress' ? '進行中' :
+                    project.status === 'completed' ? '完了' :
+                        project.status === 'pending' ? '保留' :
+                            project.status === 'not-started' ? '未着手' : '-';
+                const statusBadgeClass = project.status === 'in-progress' ? 'badge-primary' :
+                    project.status === 'completed' ? 'badge-success' :
+                        project.status === 'pending' ? 'badge-warning' : 'badge-neutral';
+
+                const termText = project.term === 'continuous' ? '継続' : '単発';
+                const termBadgeClass = 'badge-neutral'; // Or potentially different style if needed
+
+                const categoryText = project.category === 'self' ? '自主' : '受託';
+                const categoryBadgeClass = project.category === 'self' ? 'badge-outline' : 'badge-neutral';
+
+                // Fixed Column Layout
+                // Row 1: Name + Edit Button
+                // Row 2: Status + Term + Category Badges
+                trProject.innerHTML = `<td class="col-fixed" rowspan="${rowSpan}" style="vertical-align: top; padding: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
+                        <div class="cell-text" style="white-space: normal; line-height: 1.4; font-weight: bold; margin-right: 4px;">${project.name}</div>
+                        <button class="btn btn-icon-sm btn-neutral" onclick="showModal('modal-edit-project', 'edit', '${project.id}')" title="案件編集">
+                            <span class="material-symbols-outlined" style="font-size: 1rem;">edit</span>
+                        </button>
+                    </div>
+                    <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                        <span class="badge ${statusBadgeClass} badge-sm">${statusText}</span>
+                        <span class="badge ${termBadgeClass} badge-sm">${termText}</span>
+                        <span class="badge ${categoryBadgeClass} badge-sm">${categoryText}</span>
                     </div>
                 </td>`;
 
