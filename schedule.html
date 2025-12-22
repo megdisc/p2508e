@@ -807,33 +807,47 @@
 
             // Show Modal
             const modal = document.getElementById('modal-event-actual');
-            modal.style.display = 'flex';
+            showModal('modal-event-actual');
 
             // Set Title
             document.getElementById('modal-event-title').textContent = `${project.name} - ${label}`;
 
             // Reset Fields
+            const actualInput = document.getElementById('event-actual-date');
             document.getElementById('event-scheduled-date').value = scheduledDateStr;
-            document.getElementById('event-actual-date').value = actualDateStr || scheduledDateStr; // Default to scheduled if no actual
+            actualInput.value = actualDateStr || ''; // Empty if no actual
 
-            // Check status
-            // If actualDateStr exists, it's likely done, or check explicitly if we pass status
-            const isDone = !!actualDateStr; // precise logic can be improved if we pass isDone status
-            document.getElementById('event-status-check').checked = isDone;
+            // Bind Clear Button
+            const clearBtn = document.getElementById('btn-clear-event');
+            clearBtn.onclick = () => {
+                actualInput.value = '';
+            };
 
             // Bind Save Button
             const saveBtn = document.getElementById('btn-save-event');
             saveBtn.onclick = () => {
-                // Mock Save
-                // In a real app, we would update projectsData[projectId].actuals
-                const newActualDate = document.getElementById('event-actual-date').value;
-                const isChecked = document.getElementById('event-status-check').checked;
+                const newActualDate = actualInput.value;
+                const actualKey = `${type}_${label}_${scheduledDateStr}`;
 
-                alert(`実績を保存しました。\n予定日: ${scheduledDateStr}\n実績日: ${newActualDate}\n完了: ${isChecked}`);
+                if (!project.actuals) project.actuals = {};
+
+                if (newActualDate) {
+                    // Update or Add Actual
+                    project.actuals[actualKey] = { date: newActualDate, isDone: true };
+                } else {
+                    // Remove Actual (Clear)
+                    if (project.actuals[actualKey]) {
+                        delete project.actuals[actualKey];
+                    }
+                }
+
                 hideModal('modal-event-actual');
-                // Re-render if state changed (would need to update mock data first)
-                // projectsData[projectId].actuals[`${type}_${label}_${scheduledDateStr}`] = { date: newActualDate, isDone: isChecked };
                 renderProjectView();
+
+                // Also update the Unified Editor List if it's open (re-render events tab)
+                if (window.getComputedStyle(document.getElementById('modal-schedule-edit')).display !== 'none' && currentEditingScheduleProjectId === projectId) {
+                    renderScheduleEventsList(project);
+                }
             };
         }
 
@@ -1836,18 +1850,18 @@
                 <div class="form-group">
                     <label class="form-label">実績日</label>
                     <input type="date" id="event-actual-date" class="input-field">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">ステータス</label>
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <input type="checkbox" id="event-status-check" class="form-check-input">
-                        <label for="event-status-check" class="form-check-label">完了済み</label>
+                    <div style="font-size: 0.85em; color: var(--color-text-tertiary); margin-top: 4px;">
+                        ※実績日を入力すると「完了」扱いになります。
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-neutral" onclick="hideModal('modal-event-actual')">キャンセル</button>
-                <button class="btn btn-primary" id="btn-save-event">保存</button>
+            <div class="modal-footer" style="justify-content: space-between;">
+                <button class="btn btn-neutral" id="btn-clear-event"
+                    style="color: var(--color-semantic-error-main);">未実施に戻す</button>
+                <div>
+                    <button class="btn btn-neutral" onclick="hideModal('modal-event-actual')">キャンセル</button>
+                    <button class="btn btn-primary" id="btn-save-event">保存</button>
+                </div>
             </div>
         </div>
     </div>
