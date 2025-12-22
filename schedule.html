@@ -389,27 +389,89 @@
         ];
 
         // Projects Data from projects.html (Mock)
+        // Projects Data from projects.html (Mock)
         const projectsData = {
             'project-1': {
                 id: 'project-1',
                 name: 'DM封入作業',
+                status: 'in-progress',
                 contract: { billingTiming: { mode: 'relative', month: '0', day: '99' }, clientPayment: { mode: 'relative', month: '1', day: '25' } },
                 subcontractors: [
                     { name: 'ヤマト運輸', billing: { mode: 'relative', month: '1', day: '20' }, payment: { mode: 'relative', month: '1', day: '99' } }
                 ],
-                incentive: { payment: { mode: 'relative', month: '1', day: '15' } }
+                incentive: { payment: { mode: 'relative', month: '1', day: '15' } },
+                tasks: [
+                    { name: '封入', startDay: 4, days: 5, progress: 100, status: 'completed' },
+                    { name: '検品', startDay: 7, days: 4, progress: 60, status: 'in-progress' },
+                    { name: '発送', startDay: 11, days: 1, progress: 0, status: 'not-started' }
+                ]
             },
             'project-3': {
                 id: 'project-3',
                 name: '施設外就労（清掃）',
+                status: 'in-progress',
                 contract: { billingTiming: { mode: 'relative', month: '1', day: '10' }, clientPayment: { mode: 'relative', month: '2', day: '99' } },
-                incentive: { payment: { mode: 'relative', month: '1', day: '25' } }
+                incentive: { payment: { mode: 'relative', month: '1', day: '25' } },
+                tasks: [
+                    { name: '清掃作業', startDay: 10, days: 1, progress: 100, status: 'completed' },
+                    { name: '清掃作業', startDay: 17, days: 1, progress: 0, status: 'not-started' },
+                    { name: '清掃作業', startDay: 24, days: 1, progress: 0, status: 'not-started' }
+                ]
             },
             'project-2': {
                 id: 'project-2',
                 name: '自主製品（パン）製造・販売',
+                status: 'in-progress',
                 contract: {},
-                incentive: { payment: { mode: 'relative', month: '0', day: '99' } }
+                incentive: { payment: { mode: 'relative', month: '0', day: '99' } },
+                tasks: [
+                    { name: '仕込み', startDay: 2, days: 20, progress: 80, status: 'in-progress' },
+                    { name: '焼成', startDay: 2, days: 20, progress: 75, status: 'in-progress' },
+                    { name: '販売', startDay: 5, days: 25, progress: 50, status: 'in-progress' }
+                ]
+            },
+            'project-4': {
+                id: 'project-4',
+                name: '名刺データ入力',
+                status: 'completed',
+                contract: { billingTiming: { mode: 'relative', month: '0', day: '99' }, clientPayment: { mode: 'relative', month: '1', day: '30' } },
+                incentive: { payment: { mode: 'relative', month: '1', day: '10' } },
+                tasks: [
+                    { name: '入力', startDay: 1, days: 3, progress: 100, status: 'completed' },
+                    { name: '校正', startDay: 4, days: 2, progress: 100, status: 'completed' }
+                ]
+            },
+            'project-5': {
+                id: 'project-5',
+                name: 'Webサイト制作',
+                status: 'pending',
+                contract: { billingTiming: { mode: 'absolute', date: '2025-11-30' } },
+                incentive: {},
+                tasks: [
+                    { name: 'デザイン', startDay: 15, days: 10, progress: 20, status: 'pending' },
+                    { name: 'コーディング', startDay: 20, days: 10, progress: 0, status: 'not-started' }
+                ]
+            },
+            'project-6': {
+                id: 'project-6',
+                name: '軽作業（シール貼り）',
+                status: 'not-started',
+                contract: {},
+                incentive: { payment: { mode: 'relative', month: '1', day: '15' } },
+                tasks: [
+                    { name: 'シール貼り', startDay: 20, days: 5, progress: 0, status: 'not-started' }
+                ]
+            },
+            'project-7': {
+                id: 'project-7',
+                name: 'イベント運営補助',
+                status: 'in-progress',
+                contract: { billingTiming: { mode: 'relative', month: '0', day: '15' } },
+                incentive: { payment: { mode: 'relative', month: '0', day: '25' } },
+                tasks: [
+                    { name: '当日運営', startDay: 13, days: 2, progress: 50, status: 'in-progress' },
+                    { name: '片付け', startDay: 15, days: 1, progress: 0, status: 'not-started' }
+                ]
             }
         };
 
@@ -695,15 +757,12 @@
         function switchView(viewName) {
             document.getElementById('view-project').style.display = 'none';
             document.getElementById('view-member').style.display = 'none';
-            document.getElementById('view-event').style.display = 'none';
 
             if (viewName === 'project') {
                 document.getElementById('view-project').style.display = 'block';
+                renderProjectView();
             } else if (viewName === 'member') {
                 document.getElementById('view-member').style.display = 'block';
-            } else if (viewName === 'event') {
-                document.getElementById('view-event').style.display = 'block';
-                renderEventView();
             }
         }
 
@@ -729,117 +788,120 @@
                 }
             });
 
-            // Gantt chart tooltip logic
+            // Gantt chart tooltip logic (Event Delegation)
             const tooltip = document.createElement('div');
             tooltip.className = 'gantt-tooltip';
             document.body.appendChild(tooltip);
 
-            const bars = document.querySelectorAll('.gantt-bar');
-            bars.forEach(bar => {
-                bar.addEventListener('mouseenter', (e) => {
-                    // 1. Suppress default browser tooltip
-                    const originalTitle = bar.getAttribute('title');
-                    if (originalTitle) {
-                        bar.setAttribute('data-original-title', originalTitle);
-                        bar.removeAttribute('title');
+            // Use event delegation on body or scheduler container
+            document.body.addEventListener('mouseover', (e) => {
+                const bar = e.target.closest('.gantt-bar');
+                if (!bar) return;
+
+                // 1. Suppress default browser tooltip
+                const originalTitle = bar.getAttribute('title');
+                if (originalTitle) {
+                    bar.setAttribute('data-original-title', originalTitle);
+                    bar.removeAttribute('title');
+                }
+
+                // 2. Extract task name
+                const onclickAttr = bar.getAttribute('onclick');
+                let taskName = '';
+                if (onclickAttr) {
+                    const match = onclickAttr.match(/,\s*'([^']+)'\s*\)/);
+                    if (match) {
+                        taskName = match[1];
                     }
+                }
 
-                    // 2. Extract task name
-                    // Format: showModal('modal-edit-task', null, 'Task Name')
-                    const onclickAttr = bar.getAttribute('onclick');
-                    let taskName = '';
-                    if (onclickAttr) {
-                        const match = onclickAttr.match(/,\s*'([^']+)'\s*\)/);
-                        if (match) {
-                            taskName = match[1];
-                        }
+                if (!taskName) {
+                    taskName = originalTitle || '';
+                    if (taskName.includes(':')) {
+                        // taskName = taskName.split(':')[0].trim(); 
                     }
+                }
 
-                    if (!taskName) {
-                        // Fallback to stored title or attribute
-                        taskName = originalTitle || '';
-                        if (taskName.includes(':')) {
-                            // taskName = taskName.split(':')[0].trim(); 
-                        }
-                    }
+                // Fallback for demo: if task name contains project name prefix, extract real task name
+                // e.g. "DM封入作業: 封入" -> key matches taskDetailsMap?
+                // The taskDetailsMap keys are exact strings.
 
-                    const details = taskDetailsMap[taskName];
+                const details = taskDetailsMap[taskName];
 
-                    if (details) {
-                        let html = `<div class="gantt-tooltip-title">${details.name}</div>`;
-                        if (details.assignments && details.assignments.length > 0) {
-                            details.assignments.forEach(assign => {
-                                // Parse period to simplified format (e.g., "2025/08/04 - ..." -> "4日～8日")
-                                let periodDisplay = assign.period;
-                                const dates = assign.period.split(' - ');
-                                if (dates.length > 0) {
-                                    const parseDay = (dateStr) => {
-                                        const parts = dateStr.split('/');
-                                        return parts.length === 3 ? parseInt(parts[2], 10) : '';
-                                    };
-
-                                    if (dates.length === 2) {
-                                        periodDisplay = `${parseDay(dates[0])}日～${parseDay(dates[1])}日`;
-                                    } else {
-                                        periodDisplay = `${parseDay(dates[0])}日`;
-                                    }
+                if (details) {
+                    let html = `<div class="gantt-tooltip-title">${details.name}</div>`;
+                    if (details.assignments && details.assignments.length > 0) {
+                        details.assignments.forEach(assign => {
+                            let periodDisplay = assign.period;
+                            const dates = assign.period.split(' - ');
+                            if (dates.length > 0) {
+                                const parseDay = (dateStr) => {
+                                    const parts = dateStr.split('/');
+                                    return parts.length === 3 ? parseInt(parts[2], 10) : '';
+                                };
+                                if (dates.length === 2) {
+                                    periodDisplay = `${parseDay(dates[0])}日～${parseDay(dates[1])}日`;
+                                } else {
+                                    periodDisplay = `${parseDay(dates[0])}日`;
                                 }
-
-                                html += `
-                                    <div style="margin-bottom: 4px; white-space: nowrap;">
-                                        <span style="font-weight: bold; margin-right: 8px;">${periodDisplay}</span>
-                                        <span style="margin-right: 8px;">${assign.assignee}</span>
-                                        <span>${assign.progress}%</span>
-                                    </div>
-                                `;
-                            });
-                        } else {
-                            html += '<div style="color: #ccc;">詳細情報なし</div>';
-                        }
-                        tooltip.innerHTML = html;
-                        tooltip.style.display = 'block';
-
-                        // Initial position (Above cursor)
-                        tooltip.style.left = (e.pageX + 10) + 'px';
-                        tooltip.style.top = (e.pageY - 10) + 'px';
+                            }
+                            html += `
+                                <div style="margin-bottom: 4px; white-space: nowrap;">
+                                    <span style="font-weight: bold; margin-right: 8px;">${periodDisplay}</span>
+                                    <span style="margin-right: 8px;">${assign.assignee}</span>
+                                    <span>${assign.progress}%</span>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        html += '<div style="color: #ccc;">詳細情報なし</div>';
                     }
-                });
-
-                bar.addEventListener('mousemove', (e) => {
-                    // Update position (Above cursor)
+                    tooltip.innerHTML = html;
+                    tooltip.style.display = 'block';
                     tooltip.style.left = (e.pageX + 10) + 'px';
                     tooltip.style.top = (e.pageY - 10) + 'px';
-                });
+                }
+            });
 
-                bar.addEventListener('mouseleave', () => {
+            document.body.addEventListener('mousemove', (e) => {
+                const bar = e.target.closest('.gantt-bar');
+                if (bar && tooltip.style.display === 'block') {
+                    tooltip.style.left = (e.pageX + 10) + 'px';
+                    tooltip.style.top = (e.pageY - 10) + 'px';
+                }
+            });
+
+            document.body.addEventListener('mouseout', (e) => {
+                const bar = e.target.closest('.gantt-bar');
+                if (bar) {
                     tooltip.style.display = 'none';
-
                     // Restore default tooltip title
                     const originalTitle = bar.getAttribute('data-original-title');
                     if (originalTitle) {
                         bar.setAttribute('title', originalTitle);
                         bar.removeAttribute('data-original-title');
                     }
-                });
+                }
             });
 
-            // Initialize Headers for Event View (same as Project View initially)
-            // But we might need to regenerate if we support month switching
+            // Initial Render
+            renderProjectView();
         });
 
-        // Event View Logic
-        function renderEventView() {
-            const tableHead = document.getElementById('event-table-header');
-            const tableBody = document.getElementById('event-table-body');
-            const currentDateInput = document.getElementById('schedule-date').value; // "YYYY-MM"
+        // Unified Project View Logic (Gantt + Events)
+        function renderProjectView() {
+            const container = document.getElementById('view-project');
+            const tableHead = container.querySelector('thead');
+            const tableBody = container.querySelector('tbody');
+            const currentDateInput = document.getElementById('schedule-date').value;
             const [yearStr, monthStr] = currentDateInput.split('-');
             const year = parseInt(yearStr);
-            const month = parseInt(monthStr); // 1-12
+            const month = parseInt(monthStr);
 
             const daysInMonth = new Date(year, month, 0).getDate();
 
             // 1. Render Header
-            let headerHtml = '<th class="col-fixed" style="z-index: 30;">案件</th>';
+            let headerHtml = '<tr><th class="col-fixed" style="z-index: 30;">案件 / タスク</th>';
             const weekDays = ['日', '月', '火', '水', '木', '金', '土'];
 
             for (let d = 1; d <= daysInMonth; d++) {
@@ -848,52 +910,95 @@
                 const isSat = date.getDay() === 6;
                 const isSun = date.getDay() === 0;
                 const bgColor = isSat ? 'var(--palette-CEF)' : isSun ? 'var(--palette-FDD)' : '';
-                headerHtml += `<th style="background-color: ${bgColor};">${d}<br><span style="font-size: 0.6rem;">${dayOfWeek}</span></th>`;
+                headerHtml += `<th style="background-color: ${bgColor}; width: 2.5rem; min-width: 2.5rem;">${d}<br><span style="font-size: 0.6rem;">${dayOfWeek}</span></th>`;
             }
+            headerHtml += '</tr>';
             tableHead.innerHTML = headerHtml;
 
             // 2. Render Body
             tableBody.innerHTML = '';
 
             Object.values(projectsData).forEach(project => {
-                const tr = document.createElement('tr');
+                // Calculate RowSpan: 1 (Main Project Row) + Number of Tasks
+                const taskCount = project.tasks ? project.tasks.length : 0;
+                const rowSpan = 1 + taskCount;
 
-                // Fixed Column
-                tr.innerHTML = `<td class="col-fixed"><div class="info-cell"><div class="cell-text">${project.name}</div></div></td>`;
+                // --- Main Project Row (Events) ---
+                const trProject = document.createElement('tr');
+                trProject.classList.add('multi-row-top');
 
-                // Date Cells
-                let cellsHtml = '';
+                // Fixed Column: Project Name
+                trProject.innerHTML = `<td class="col-fixed" rowspan="${rowSpan}" style="vertical-align: top; padding-top: 8px;">
+                    <div class="info-cell" style="align-items: flex-start;">
+                        <div style="font-weight: bold;">${project.name}</div>
+                        <div><span class="badge ${project.status === 'in-progress' ? 'badge-primary' : 'badge-neutral'} badge-sm">${project.status === 'in-progress' ? '進行中' : '未着手'}</span></div>
+                    </div>
+                </td>`;
+
+                // Date Cells for Project Row (Event Markers)
                 for (let d = 1; d <= daysInMonth; d++) {
-                    const date = new Date(year, month - 1, d);
-                    const isSat = date.getDay() === 6;
-                    const isSun = date.getDay() === 0;
-                    // const bgColor = isSat ? '#f0f8ff' : isSun ? '#fff0f0' : ''; // Use simpler logic or inherit? 
-                    // Scheduler table default doesn't color body cells by default, but maybe we want to match?
-                    // Let's keep it simple for now.
-
-                    // Check events
-                    const events = getEventsForDate(project, year, month, d);
+                    const dateEvents = getEventsForDate(project, year, month, d);
                     let cellContent = '';
-                    if (events.length > 0) {
-                        cellContent = '<div style="display: flex; gap: 2px;">';
-                        events.forEach(evt => {
+                    if (dateEvents.length > 0) {
+                        cellContent = '<div style="display: flex; gap: 2px; flex-wrap: wrap; justify-content: center;">';
+                        dateEvents.forEach(evt => {
                             let icon = '';
                             if (evt.type === 'delivery') icon = 'local_shipping';
-                            if (evt.type === 'billing') icon = 'receipt_long';
-                            if (evt.type === 'payment') icon = 'payments'; // or attach_money
+                            else if (evt.type === 'billing') icon = 'receipt_long';
+                            else if (evt.type === 'payment') icon = 'payments';
 
                             const statusClass = evt.isDone ? 'event-status-done' : 'event-status-pending';
                             const title = `${evt.label} (${evt.isDone ? '済' : '未'})`;
 
-                            cellContent += `<div class="event-marker ${evt.class} ${statusClass}" title="${title}"><span class="event-icon material-symbols-outlined">${icon}</span></div>`;
+                            cellContent += `<div class="event-marker ${evt.class} ${statusClass}" title="${title}">`;
+                            if (icon) cellContent += `<span class="event-icon material-symbols-outlined">${icon}</span>`;
+                            cellContent += `</div>`;
                         });
                         cellContent += '</div>';
                     }
-
-                    cellsHtml += `<td>${cellContent}</td>`;
+                    trProject.innerHTML += `<td style="vertical-align: top; height: 3rem; padding: 2px;">${cellContent}</td>`;
                 }
-                tr.innerHTML += cellsHtml;
-                tableBody.appendChild(tr);
+                tableBody.appendChild(trProject);
+
+                // --- Task Rows (Gantt Bars) ---
+                if (project.tasks) {
+                    project.tasks.forEach((task, index) => {
+                        const trTask = document.createElement('tr');
+                        if (index === project.tasks.length - 1) {
+                            trTask.classList.add('multi-row-bottom');
+                        }
+
+                        let currentDay = 1;
+                        while (currentDay <= daysInMonth) {
+                            if (currentDay === task.startDay) {
+                                let duration = task.days;
+                                if (currentDay + duration - 1 > daysInMonth) {
+                                    duration = daysInMonth - currentDay + 1;
+                                }
+
+                                const statusClass = task.status === 'completed' ? 'bar-status-completed' :
+                                    task.status === 'in-progress' ? 'bar-status-in-progress' : 'bar-status-not-started';
+
+                                const barHtml = `<div class="gantt-bar ${statusClass}" 
+                                    onclick="showModal('modal-edit-task', null, '${project.name}: ${task.name}')" 
+                                    title="${project.name}: ${task.name} (進捗: ${task.progress}%)">
+                                    ${task.name}
+                                </div>`;
+
+                                const td = document.createElement('td');
+                                td.colSpan = duration;
+                                td.innerHTML = barHtml;
+                                trTask.appendChild(td);
+
+                                currentDay += duration;
+                            } else {
+                                trTask.innerHTML += `<td></td>`;
+                                currentDay++;
+                            }
+                        }
+                        tableBody.appendChild(trTask);
+                    });
+                }
             });
         }
 
@@ -901,78 +1006,39 @@
             const events = [];
             const currentDt = new Date(year, month - 1, d);
 
-            // Helper to parsing timing config
             const checkTiming = (config, type, label, cssClass) => {
                 if (!config || !config.mode) return;
-
                 let targetDate = null;
-                if (config.mode === 'absolute') {
-                    if (config.date) targetDate = new Date(config.date);
+                if (config.mode === 'absolute' && config.date) {
+                    targetDate = new Date(config.date);
                 } else if (config.mode === 'relative') {
-                    // Logic: Relative to what?
-                    // User request: "Display specific event date based on contract settings"
-                    // "Month" 0=Current, 1=Next... 
-                    // For a "Continuous" project, we assume the event happens EVERY month based on the rule.
-                    // e.g. "Next Month 25th" -> For the displayed month (Nov), does it match?
-
-                    // We are displaying "November 2025" (view month).
-                    // If the rule is "Next Month 25th" (Month=1, Day=25), it means the event happens on the 25th of a month, 
-                    // corresponding to a base activity of the PREVIOUS month? 
-                    // Or simply: "Payment is on 25th".
-
-                    // Simplification: Continuous projects repeat these events every target month.
-                    // If config.day is 99 (End), it's the last day.
-
                     const day = parseInt(config.day);
                     let matchDay = day;
-                    if (day === 99) {
-                        matchDay = new Date(year, month, 0).getDate();
-                    }
+                    if (day === 99) matchDay = new Date(year, month, 0).getDate();
 
-                    if (d === matchDay) {
-                        targetDate = currentDt; // It matches today
-                    }
+                    if (d === matchDay) targetDate = currentDt;
                 }
 
                 if (targetDate) {
-                    // Mock Status: If date is before today (let's say today is Nov 10 for demo), it's done.
-                    const mockToday = new Date(2025, 10, 10); // Nov 10
+                    const mockToday = new Date(2025, 10, 10);
                     const isDone = targetDate < mockToday;
-
                     events.push({ type, label, class: cssClass, isDone });
                 }
             };
 
-            // 1. Client Events
             if (project.contract) {
-                // Delivery (Mock: usually depends on task completion, but let's assume 'End of Month' for continuous if not set)
-                // If not defined, skip.
-                checkTiming(project.contract.billingTiming, 'billing', '顧客請求', 'event-client'); // Wait, billingTiming is usually Billing
+                checkTiming(project.contract.billingTiming, 'billing', '顧客請求', 'event-client');
                 checkTiming(project.contract.clientPayment, 'payment', '顧客入金', 'event-client');
-
-                // Implicit Delivery? Let's add a mock delivery event for End of Month if not specified? 
-                // Creating a fake config for Delivery if needed. 
-                // For now, only show configured items + explicit request items.
-                // Request: "Deliver to Client", "Bill to Client", "Payment from Client"
-                // My data only has billingTiming and clientPayment. I'll map billingTiming to "Billing". 
-                // I will add a mock "Delivery" for end of previous month's work? 
-                // Let's stick to what we have in data.
             }
-
-            // 2. Subcontractor Events
             if (project.subcontractors) {
                 project.subcontractors.forEach(sub => {
-                    checkTiming(sub.billing, 'billing', `外注請求(${sub.name})`, 'event-subcontractor'); // Recv Bill
+                    checkTiming(sub.billing, 'billing', `外注請求(${sub.name})`, 'event-subcontractor');
                     checkTiming(sub.payment, 'payment', `外注支払(${sub.name})`, 'event-subcontractor');
-                    // Delivery from Sub?
                 });
             }
-
-            // 3. User Incentive
             if (project.incentive) {
                 checkTiming(project.incentive.payment, 'payment', '利用者支払', 'event-user');
             }
-
             return events;
         }
     </script>
@@ -1084,9 +1150,6 @@
 
                         <input type="radio" id="view-mode-member" name="view-mode" onchange="switchView('member')">
                         <label for="view-mode-member">担当者別日程</label>
-
-                        <input type="radio" id="view-mode-event" name="view-mode" onchange="switchView('event')">
-                        <label for="view-mode-event">イベント</label>
                     </div>
 
                     <div style="display: flex; align-items: center; gap: var(--spacing-2);">
@@ -1141,155 +1204,10 @@
                 <div id="view-project" class="scheduler-container">
                     <table class="scheduler-table">
                         <thead>
-                            <tr>
-                                <th class="col-fixed" style="z-index: 30;">案件</th>
-                                <th>1<br><span style="font-size: 0.6rem;">金</span></th>
-                                <th style="background-color: var(--palette-CEF);">2<br><span
-                                        style="font-size: 0.6rem;">土</span></th>
-                                <th style="background-color: var(--palette-FDD);">3<br><span
-                                        style="font-size: 0.6rem;">日</span></th>
-                                <th>4<br><span style="font-size: 0.6rem;">月</span></th>
-                                <th>5<br><span style="font-size: 0.6rem;">火</span></th>
-                                <th>6<br><span style="font-size: 0.6rem;">水</span></th>
-                                <th>7<br><span style="font-size: 0.6rem;">木</span></th>
-                                <th>8<br><span style="font-size: 0.6rem;">金</span></th>
-                                <th style="background-color: var(--palette-CEF);">9<br><span
-                                        style="font-size: 0.6rem;">土</span></th>
-                                <th style="background-color: var(--palette-FDD);">10<br><span
-                                        style="font-size: 0.6rem;">日</span></th>
-                                <th>11<br><span style="font-size: 0.6rem;">月</span></th>
-                                <th>12<br><span style="font-size: 0.6rem;">火</span></th>
-                                <th>13<br><span style="font-size: 0.6rem;">水</span></th>
-                                <th>14<br><span style="font-size: 0.6rem;">木</span></th>
-                                <th>15<br><span style="font-size: 0.6rem;">金</span></th>
-                                <th style="background-color: var(--palette-CEF);">16<br><span
-                                        style="font-size: 0.6rem;">土</span></th>
-                                <th style="background-color: var(--palette-FDD);">17<br><span
-                                        style="font-size: 0.6rem;">日</span></th>
-                                <th>18<br><span style="font-size: 0.6rem;">月</span></th>
-                                <th>19<br><span style="font-size: 0.6rem;">火</span></th>
-                                <th>20<br><span style="font-size: 0.6rem;">水</span></th>
-                                <th>21<br><span style="font-size: 0.6rem;">木</span></th>
-                                <th>22<br><span style="font-size: 0.6rem;">金</span></th>
-                                <th style="background-color: var(--palette-CEF);">23<br><span
-                                        style="font-size: 0.6rem;">土</span></th>
-                                <th style="background-color: var(--palette-FDD);">24<br><span
-                                        style="font-size: 0.6rem;">日</span></th>
-                                <th>25<br><span style="font-size: 0.6rem;">月</span></th>
-                                <th>26<br><span style="font-size: 0.6rem;">火</span></th>
-                                <th>27<br><span style="font-size: 0.6rem;">水</span></th>
-                                <th>28<br><span style="font-size: 0.6rem;">木</span></th>
-                                <th>29<br><span style="font-size: 0.6rem;">金</span></th>
-                                <th style="background-color: var(--palette-CEF);">30<br><span
-                                        style="font-size: 0.6rem;">土</span></th>
-                                <th style="background-color: var(--palette-FDD);">31<br><span
-                                        style="font-size: 0.6rem;">日</span></th>
-                            </tr>
+                            <!-- Generated by JS -->
                         </thead>
                         <tbody>
-                            <tr class="multi-row-top">
-                                <td class="col-fixed" rowspan="2">
-                                    <div class="info-cell">
-                                        <div class="cell-text">DM封入作業</div>
-                                        <div><span class="badge badge-primary badge-sm">進行中</span></div>
-                                    </div>
-                                </td>
-                                <td colspan="3"></td>
-                                <td colspan="5">
-                                    <div class="gantt-bar bar-status-in-progress"
-                                        onclick="showModal('modal-edit-task', null, 'DM封入作業: 封入')" title="封入 100%">
-                                        封入 100%
-                                    </div>
-                                </td>
-                                <td colspan="23"></td>
-                            </tr>
-                            <tr class="multi-row-bottom">
-                                <td colspan="5"></td>
-                                <td colspan="5">
-                                    <div class="gantt-bar bar-status-in-progress"
-                                        onclick="showModal('modal-edit-task', null, 'DM封入作業: 検品')" title="検品 50%">
-                                        検品 50%
-                                    </div>
-                                </td>
-                                <td colspan="21"></td>
-                            </tr>
-                            <tr>
-                                <td class="col-fixed">
-                                    <div class="info-cell">
-                                        <div class="cell-text">自主製品（パン）製造・販売</div>
-                                        <div><span class="badge badge-primary badge-sm">進行中</span></div>
-                                    </div>
-                                </td>
-                                <td colspan="1"></td>
-                                <td colspan="10">
-                                    <div class="gantt-bar bar-status-in-progress"
-                                        onclick="showModal('modal-edit-task', null, 'パン製造')" title="パン製造 100%">
-                                        パン製造 100%
-                                    </div>
-                                </td>
-                                <td colspan="20"></td>
-                            </tr>
-                            <tr>
-                                <td class="col-fixed">
-                                    <div class="info-cell">
-                                        <div class="cell-text">施設外就労（清掃）</div>
-                                        <div><span class="badge badge-primary badge-sm">進行中</span></div>
-                                    </div>
-                                </td>
-                                <td colspan="25"></td>
-                                <td colspan="2">
-                                    <div class="gantt-bar bar-status-in-progress"
-                                        onclick="showModal('modal-edit-task', null, '清掃作業')" title="清掃作業 30%">
-                                        清掃作業 30%
-                                    </div>
-                                </td>
-                                <td colspan="4"></td>
-                            </tr>
-                            <tr>
-                                <td class="col-fixed">
-                                    <div class="info-cell">
-                                        <div class="cell-text">地域バザー出店</div>
-                                        <div><span class="badge badge-success badge-sm">完了</span></div>
-                                    </div>
-                                </td>
-                                <td colspan="10"></td>
-                                <td colspan="5">
-                                    <div class="gantt-bar bar-status-completed"
-                                        onclick="showModal('modal-edit-task', null, '接客販売')" title="接客販売 100%">
-                                        接客販売 100%
-                                    </div>
-                                </td>
-                                <td colspan="16"></td>
-                            </tr>
-                            <tr>
-                                <td class="col-fixed">
-                                    <div class="info-cell">
-                                        <div class="cell-text">花見イベント販売</div>
-                                        <div><span class="badge badge-error badge-sm">中止</span></div>
-                                    </div>
-                                </td>
-                                <td colspan="15"></td>
-                                <td colspan="5">
-                                    <div class="gantt-bar bar-status-cancelled"
-                                        onclick="showModal('modal-edit-task', null, '販売')" title="販売 0%">
-                                        販売 0%
-                                    </div>
-                                </td>
-                                <td colspan="11"></td>
-                            </tr>
-                            <tr>
-                                <td class="col-fixed">
-                                    <div class="info-cell">
-                                        <div class="cell-text">新規カフェ出店計画</div>
-                                        <div><span class="badge badge-warning badge-sm">保留</span></div>
-                                    </div>
-                                </td>
-                                <td colspan="31"></td>
-                            </tr>
-                            <tr>
-                                <td class="col-fixed" style="height: 4rem;"></td>
-                                <td colspan="31"></td>
-                            </tr>
+                            <!-- Generated by JS -->
                         </tbody>
                     </table>
                 </div>
@@ -1456,134 +1374,122 @@
                     </table>
                 </div>
 
-                <div id="view-event" class="scheduler-container" style="display: none;">
-                    <table class="scheduler-table" id="event-table">
+            </div>
+
+    </div>
+
+    </main>
+
+    <div class="modal-backdrop" id="modal-edit-task" style="display: none;">
+        <div class="modal-content" style="max-width: 1100px;">
+            <div class="modal-header">作業割り当て編集</div>
+            <div class="modal-body">
+                <div
+                    style="margin-bottom: var(--spacing-4); font-size: var(--font-size-sm); color: var(--color-base-tertiary);">
+                    タスク設定金額: <span id="modal-base-amount" style="font-weight: bold;">0</span> 円
+                </div>
+
+                <div class="table-container">
+                    <table class="table" style="min-width: 900px;">
                         <thead>
-                            <tr id="event-table-header">
-                                <!-- Generated by JS -->
+                            <tr>
+                                <th style="width: 250px;">期間</th>
+                                <th style="width: 250px;">担当者</th>
+                                <th style="width: 80px;">進捗(%)</th>
+                                <th style="width: 100px;">差引(円)</th>
+                                <th style="width: 120px;">インセンティブ</th>
+                                <th style="width: 50px;"></th>
                             </tr>
                         </thead>
-                        <tbody id="event-table-body">
-                            <!-- Generated by JS -->
+                        <tbody id="assignment-table-body">
+                            <!-- Rows generated by JS -->
                         </tbody>
                     </table>
                 </div>
 
-            </div>
-
-        </main>
-
-        <div class="modal-backdrop" id="modal-edit-task" style="display: none;">
-            <div class="modal-content" style="max-width: 1100px;">
-                <div class="modal-header">作業割り当て編集</div>
-                <div class="modal-body">
-                    <div
-                        style="margin-bottom: var(--spacing-4); font-size: var(--font-size-sm); color: var(--color-base-tertiary);">
-                        タスク設定金額: <span id="modal-base-amount" style="font-weight: bold;">0</span> 円
-                    </div>
-
-                    <div class="table-container">
-                        <table class="table" style="min-width: 900px;">
-                            <thead>
-                                <tr>
-                                    <th style="width: 250px;">期間</th>
-                                    <th style="width: 250px;">担当者</th>
-                                    <th style="width: 80px;">進捗(%)</th>
-                                    <th style="width: 100px;">差引(円)</th>
-                                    <th style="width: 120px;">インセンティブ</th>
-                                    <th style="width: 50px;"></th>
-                                </tr>
-                            </thead>
-                            <tbody id="assignment-table-body">
-                                <!-- Rows generated by JS -->
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div style="margin-top: var(--spacing-2);">
-                        <button class="btn btn-neutral btn-sm" onclick="addAssignmentRow()">
-                            <span class="material-symbols-outlined"
-                                style="font-size: 1.2em; vertical-align: bottom; margin-right: 4px;">add</span>
-                            担当者を追加
-                        </button>
-                    </div>
+                <div style="margin-top: var(--spacing-2);">
+                    <button class="btn btn-neutral btn-sm" onclick="addAssignmentRow()">
+                        <span class="material-symbols-outlined"
+                            style="font-size: 1.2em; vertical-align: bottom; margin-right: 4px;">add</span>
+                        担当者を追加
+                    </button>
                 </div>
-                <div class="modal-footer" style="justify-content: flex-end;">
-                    <div>
-                        <button class="btn btn-neutral" onclick="hideModal('modal-edit-task')">キャンセル</button>
-                        <button class="btn btn-primary" onclick="hideModal('modal-edit-task');">更新する</button>
-                    </div>
+            </div>
+            <div class="modal-footer" style="justify-content: flex-end;">
+                <div>
+                    <button class="btn btn-neutral" onclick="hideModal('modal-edit-task')">キャンセル</button>
+                    <button class="btn btn-primary" onclick="hideModal('modal-edit-task');">更新する</button>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="modal-backdrop" id="modal-daily-report" style="display: none;">
-            <div class="modal-content">
-                <div class="modal-header">日報登録</div>
-                <div class="modal-body">
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4);">
-                        <div class="form-group">
-                            <label class="form-label">日付</label>
-                            <input type="date" class="input-field" value="2025-10-10">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">担当者</label>
-                            <select class="input-field">
-                                <option>田中 健司 (職員)</option>
-                                <option>山田 太郎 (利用者)</option>
-                                <option>鈴木 花子 (利用者)</option>
-                            </select>
-                        </div>
+    <div class="modal-backdrop" id="modal-daily-report" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">日報登録</div>
+            <div class="modal-body">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4);">
+                    <div class="form-group">
+                        <label class="form-label">日付</label>
+                        <input type="date" class="input-field" value="2025-10-10">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">案件・タスク</label>
-                        <input type="text" name="task_name" class="input-field" list="task-list"
-                            placeholder="タスクを選択または入力">
-                        <datalist id="task-list">
-                            <option value="DM封入作業: 封入">
-                            <option value="DM封入作業: 検品">
-                            <option value="名刺データ入力: 入力">
-                        </datalist>
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4);">
-                        <div class="form-group">
-                            <label class="form-label">開始時間</label>
-                            <input type="time" class="input-field" value="10:00">
-                        </div>
-                        <div class="form-group">
-                            <label class="form-label">終了時間</label>
-                            <input type="time" class="input-field" value="12:00">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">作業内容・コメント</label>
-                        <textarea class="input-field" rows="3" placeholder="作業の進み具合や気付いた点など"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">本日の調子 (利用者のみ)</label>
-                        <div style="display: flex; gap: var(--spacing-4);">
-                            <label style="display: flex; align-items: center; gap: var(--spacing-1); cursor: pointer;">
-                                <input type="radio" name="mood" checked> <span class="material-symbols-outlined"
-                                    style="color: var(--color-semantic-success-main);">sentiment_satisfied</span> 良い
-                            </label>
-                            <label style="display: flex; align-items: center; gap: var(--spacing-1); cursor: pointer;">
-                                <input type="radio" name="mood"> <span class="material-symbols-outlined"
-                                    style="color: var(--color-semantic-neutral-main);">sentiment_neutral</span> 普通
-                            </label>
-                            <label style="display: flex; align-items: center; gap: var(--spacing-1); cursor: pointer;">
-                                <input type="radio" name="mood"> <span class="material-symbols-outlined"
-                                    style="color: var(--color-semantic-error-main);">sentiment_dissatisfied</span> 悪い
-                            </label>
-                        </div>
+                        <label class="form-label">担当者</label>
+                        <select class="input-field">
+                            <option>田中 健司 (職員)</option>
+                            <option>山田 太郎 (利用者)</option>
+                            <option>鈴木 花子 (利用者)</option>
+                        </select>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button class="btn btn-neutral" onclick="hideModal('modal-daily-report')">キャンセル</button>
-                    <button class="btn btn-primary"
-                        onclick="hideModal('modal-daily-report'); alert('日報を登録しました');">登録する</button>
+                <div class="form-group">
+                    <label class="form-label">案件・タスク</label>
+                    <input type="text" name="task_name" class="input-field" list="task-list" placeholder="タスクを選択または入力">
+                    <datalist id="task-list">
+                        <option value="DM封入作業: 封入">
+                        <option value="DM封入作業: 検品">
+                        <option value="名刺データ入力: 入力">
+                    </datalist>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4);">
+                    <div class="form-group">
+                        <label class="form-label">開始時間</label>
+                        <input type="time" class="input-field" value="10:00">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">終了時間</label>
+                        <input type="time" class="input-field" value="12:00">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">作業内容・コメント</label>
+                    <textarea class="input-field" rows="3" placeholder="作業の進み具合や気付いた点など"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">本日の調子 (利用者のみ)</label>
+                    <div style="display: flex; gap: var(--spacing-4);">
+                        <label style="display: flex; align-items: center; gap: var(--spacing-1); cursor: pointer;">
+                            <input type="radio" name="mood" checked> <span class="material-symbols-outlined"
+                                style="color: var(--color-semantic-success-main);">sentiment_satisfied</span> 良い
+                        </label>
+                        <label style="display: flex; align-items: center; gap: var(--spacing-1); cursor: pointer;">
+                            <input type="radio" name="mood"> <span class="material-symbols-outlined"
+                                style="color: var(--color-semantic-neutral-main);">sentiment_neutral</span> 普通
+                        </label>
+                        <label style="display: flex; align-items: center; gap: var(--spacing-1); cursor: pointer;">
+                            <input type="radio" name="mood"> <span class="material-symbols-outlined"
+                                style="color: var(--color-semantic-error-main);">sentiment_dissatisfied</span> 悪い
+                        </label>
+                    </div>
                 </div>
             </div>
+            <div class="modal-footer">
+                <button class="btn btn-neutral" onclick="hideModal('modal-daily-report')">キャンセル</button>
+                <button class="btn btn-primary"
+                    onclick="hideModal('modal-daily-report'); alert('日報を登録しました');">登録する</button>
+            </div>
         </div>
+    </div>
 
     </div>
 
