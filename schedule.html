@@ -791,6 +791,41 @@
             document.getElementById(tabId).classList.add('is-active');
         }
 
+        function handleEventClick(projectId, type, label, dateStr) {
+            const project = projectsData[projectId];
+            if (!project) return;
+
+            // Show Modal
+            const modal = document.getElementById('modal-event-actual');
+            modal.style.display = 'flex';
+
+            // Set Title
+            document.getElementById('modal-event-title').textContent = `${project.name} - ${label}`;
+
+            // Reset Fields
+            document.getElementById('event-actual-date').value = dateStr;
+            document.getElementById('event-actual-amount').value = ''; // Should ideally fetch existing actual
+            document.getElementById('event-status-check').checked = false; // Should check if already done based on data
+
+            // Mock: Check if event is "Done" based on date logic used in render
+            // In a real app, we would look up the specific event record.
+            const targetDate = new Date(dateStr);
+            const mockToday = new Date(2025, 10, 10);
+            if (targetDate < mockToday) {
+                document.getElementById('event-status-check').checked = true;
+            }
+
+            // Bind Save Button
+            const saveBtn = document.getElementById('btn-save-event');
+            saveBtn.onclick = () => {
+                // Mock Save
+                alert(`実績を保存しました。\n日付: ${document.getElementById('event-actual-date').value}\n金額: ${document.getElementById('event-actual-amount').value}円\n完了: ${document.getElementById('event-status-check').checked}`);
+                hideModal('modal-event-actual');
+                // Re-render if state changed
+                renderProjectView();
+            };
+        }
+
         // サイドバーの現在地連動（アコーディオン自動展開）
         document.addEventListener("DOMContentLoaded", () => {
             const currentFile = window.location.pathname.split("/").pop();
@@ -957,14 +992,11 @@
                 const categoryBadgeClass = project.category === 'self' ? 'badge-outline' : 'badge-neutral';
 
                 // Fixed Column Layout
-                // Row 1: Name + Edit Button
+                // Row 1: Name (No Edit Button)
                 // Row 2: Status + Term + Category Badges
                 trProject.innerHTML = `<td class="col-fixed" rowspan="${rowSpan}" style="vertical-align: top; padding: 8px;">
                     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
-                        <div class="cell-text" style="white-space: normal; line-height: 1.4; font-weight: bold; margin-right: 4px;">${project.name}</div>
-                        <button class="btn btn-icon-sm btn-neutral" onclick="showModal('modal-edit-project', 'edit', '${project.id}')" title="案件編集">
-                            <span class="material-symbols-outlined" style="font-size: 1rem;">edit</span>
-                        </button>
+                        <div class="cell-text" style="white-space: normal; line-height: 1.4; font-weight: bold;">${project.name}</div>
                     </div>
                     <div style="display: flex; gap: 4px; flex-wrap: wrap;">
                         <span class="badge ${statusBadgeClass} badge-sm">${statusText}</span>
@@ -988,7 +1020,9 @@
                             const statusClass = evt.isDone ? 'event-status-done' : 'event-status-pending';
                             const title = `${evt.label} (${evt.isDone ? '済' : '未'})`;
 
-                            cellContent += `<div class="event-marker ${evt.class} ${statusClass}" title="${title}">`;
+                            // Add onclick handler
+                            cellContent += `<div class="event-marker ${evt.class} ${statusClass}" title="${title}" 
+                                onclick="handleEventClick('${project.id}', '${evt.type}', '${evt.label}', '${year}-${String(month).padStart(2, '0')}-${String(d).padStart(2, '0')}')">`;
                             if (icon) cellContent += `<span class="event-icon material-symbols-outlined">${icon}</span>`;
                             cellContent += `</div>`;
                         });
@@ -1529,6 +1563,37 @@
         </div>
     </div>
 
+    </div>
+
+    <!-- Event Actual Modal -->
+    <div class="modal-backdrop" id="modal-event-actual" style="display: none;">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header" id="modal-event-title">イベント実績入力</div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">実績日付</label>
+                    <input type="date" id="event-actual-date" class="input-field">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">金額</label>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="number" id="event-actual-amount" class="input-field" placeholder="金額を入力">
+                        <span>円</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">ステータス</label>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="event-status-check" class="form-check-input">
+                        <label for="event-status-check" class="form-check-label">完了済み</label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-neutral" onclick="hideModal('modal-event-actual')">キャンセル</button>
+                <button class="btn btn-primary" id="btn-save-event">保存</button>
+            </div>
+        </div>
     </div>
 
     <div id="gantt-tooltip" class="gantt-tooltip"></div>
