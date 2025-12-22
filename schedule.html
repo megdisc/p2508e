@@ -1204,7 +1204,11 @@
                 if (!config || !config.mode) return;
                 let targetDate = null;
                 if (config.mode === 'absolute' && config.date) {
-                    targetDate = new Date(config.date);
+                    const absDate = new Date(config.date);
+                    // Check if absDate matches current year/month/d
+                    if (absDate.getFullYear() === year && absDate.getMonth() === month - 1 && absDate.getDate() === d) {
+                        targetDate = currentDt;
+                    }
                 } else if (config.mode === 'relative') {
                     const day = parseInt(config.day);
                     let matchDay = day;
