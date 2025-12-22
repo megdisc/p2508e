@@ -1083,27 +1083,20 @@
                         const actual = project.actuals ? project.actuals[actualKey] : null;
 
                         if (actual && actual.date !== dateStr) {
-                            // Actual exists and is different date -> Render Ghost here
-                            markers.push({
-                                type: evt.type,
-                                label: evt.label,
-                                class: evt.class,
-                                icon: getEventIcon(evt.type),
-                                statusClass: 'event-status-ghost', // New class for ghost
-                                title: `${evt.label} (予定: ${dateStr})`,
-                                scheduledDate: dateStr,
-                                actualDate: actual.date, // Pass for modal
-                                isGhost: true
-                            });
+                            // Actual exists and is different date -> Do NOT render anything (Ghost removed)
                         } else {
                             // No actual, or actual is same date -> Render Normal
-                            const isDone = actual ? actual.isDone : false; // Or default logic
+                            const isDone = actual ? actual.isDone : false;
+
+                            // Determine class based on status ONLY (Simplify Colors)
+                            const colorClass = isDone ? 'bar-status-completed' : 'bar-status-not-started';
+
                             markers.push({
                                 type: evt.type,
                                 label: evt.label,
-                                class: evt.class,
-                                icon: getEventIcon(evt.type),
-                                statusClass: isDone ? 'event-status-done' : 'event-status-pending',
+                                class: colorClass, // Use task status colors
+                                icon: null, // No icon needed
+                                statusClass: '', // No extra status class needed
                                 title: `${evt.label} (${isDone ? '済' : '未'})`,
                                 scheduledDate: dateStr,
                                 actualDate: actual ? actual.date : '',
@@ -1121,18 +1114,21 @@
                                 const parts = key.split('_');
                                 const scheduledDate = parts.pop(); // last part is date
                                 const label = parts.pop();
-                                const type = parts.join('_'); // remaining is type (or just parts[0] if complicated)
+                                const type = parts.join('_');
 
                                 // Check if this was ALREADY handled above (i.e., scheduled date == actual date)
                                 if (scheduledDate === dateStr) continue;
 
                                 // This is an actual event moved TO this date
+                                const isDone = val.isDone;
+                                const colorClass = isDone ? 'bar-status-completed' : 'bar-status-not-started';
+
                                 markers.push({
-                                    type: type, // 'payment'
-                                    label: label, // 'payment'
-                                    class: `event-${type === 'delivery' ? 'client' : type === 'billing' ? 'client' : 'user'}`, // Simplified class mapping
-                                    icon: getEventIcon(type),
-                                    statusClass: val.isDone ? 'event-status-done' : 'event-status-pending',
+                                    type: type,
+                                    label: label,
+                                    class: colorClass, // Use task status colors
+                                    // No type-specific class
+                                    statusClass: '',
                                     title: `${label} (予定: ${scheduledDate})`,
                                     scheduledDate: scheduledDate,
                                     actualDate: dateStr,
@@ -1159,9 +1155,9 @@
                                 <div class="gantt-tooltip-row"><span class="gantt-tooltip-label">予定日:</span><span class="gantt-tooltip-value">${m.scheduledDate}</span></div>
                                 ${m.actualDate ? `<div class="gantt-tooltip-row"><span class="gantt-tooltip-label">実績日:</span><span class="gantt-tooltip-value">${m.actualDate}</span></div>` : ''}
                                 <div class="gantt-tooltip-row"><span class="gantt-tooltip-label">状態:</span><span class="gantt-tooltip-value">${statusStr}</span></div>
-                            `.replace(/"/g, '&quot;').replace(/\n/g, ''); // Simple escape
+                            `.replace(/"/g, '&quot;').replace(/\n/g, '');
 
-                            cellContent += `<div class="event-marker ${m.class} ${m.statusClass}" 
+                            cellContent += `<div class="event-marker ${m.class}" 
                                 onclick="handleEventClick('${project.id}', '${m.type}', '${m.label}', '${m.scheduledDate}', '${m.actualDate}')"
                                 onmouseenter="showGanttTooltip(event, '${tooltipHtml}')"
                                 onmouseleave="hideGanttTooltip()">
