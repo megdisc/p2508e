@@ -153,6 +153,12 @@
             background-color: var(--color-semantic-error-main);
         }
 
+        .event-status-ghost {
+            color: var(--color-base-tertiary);
+            /*Gray*/
+            opacity: 0.5;
+        }
+
         .bar-status-pending {
             background-color: var(--color-semantic-warning-main);
         }
@@ -402,6 +408,10 @@
                     { name: 'ヤマト運輸', billing: { mode: 'relative', month: '1', day: '20' }, payment: { mode: 'relative', month: '1', day: '99' } }
                 ],
                 incentive: { payment: { mode: 'relative', month: '1', day: '15' } },
+                actuals: {
+                    // Mock: Incentive Payment scheduled for Nov 15th, actually done on Nov 18th
+                    'payment_payment_2025-11-15': { date: '2025-11-18', isDone: true }
+                },
                 tasks: [
                     { name: '封入', startDay: 4, days: 5, progress: 100, status: 'completed' },
                     { name: '検品', startDay: 7, days: 4, progress: 60, status: 'in-progress' },
@@ -791,7 +801,7 @@
             document.getElementById(tabId).classList.add('is-active');
         }
 
-        function handleEventClick(projectId, type, label, dateStr) {
+        function handleEventClick(projectId, type, label, scheduledDateStr, actualDateStr) {
             const project = projectsData[projectId];
             if (!project) return;
 
@@ -803,25 +813,26 @@
             document.getElementById('modal-event-title').textContent = `${project.name} - ${label}`;
 
             // Reset Fields
-            document.getElementById('event-actual-date').value = dateStr;
-            document.getElementById('event-actual-amount').value = ''; // Should ideally fetch existing actual
-            document.getElementById('event-status-check').checked = false; // Should check if already done based on data
+            document.getElementById('event-scheduled-date').value = scheduledDateStr;
+            document.getElementById('event-actual-date').value = actualDateStr || scheduledDateStr; // Default to scheduled if no actual
 
-            // Mock: Check if event is "Done" based on date logic used in render
-            // In a real app, we would look up the specific event record.
-            const targetDate = new Date(dateStr);
-            const mockToday = new Date(2025, 10, 10);
-            if (targetDate < mockToday) {
-                document.getElementById('event-status-check').checked = true;
-            }
+            // Check status
+            // If actualDateStr exists, it's likely done, or check explicitly if we pass status
+            const isDone = !!actualDateStr; // precise logic can be improved if we pass isDone status
+            document.getElementById('event-status-check').checked = isDone;
 
             // Bind Save Button
             const saveBtn = document.getElementById('btn-save-event');
             saveBtn.onclick = () => {
                 // Mock Save
-                alert(`実績を保存しました。\n日付: ${document.getElementById('event-actual-date').value}\n金額: ${document.getElementById('event-actual-amount').value}円\n完了: ${document.getElementById('event-status-check').checked}`);
+                // In a real app, we would update projectsData[projectId].actuals
+                const newActualDate = document.getElementById('event-actual-date').value;
+                const isChecked = document.getElementById('event-status-check').checked;
+
+                alert(`実績を保存しました。\n予定日: ${scheduledDateStr}\n実績日: ${newActualDate}\n完了: ${isChecked}`);
                 hideModal('modal-event-actual');
-                // Re-render if state changed
+                // Re-render if state changed (would need to update mock data first)
+                // projectsData[projectId].actuals[`${type}_${label}_${scheduledDateStr}`] = { date: newActualDate, isDone: isChecked };
                 renderProjectView();
             };
         }
@@ -1007,23 +1018,87 @@
 
                 // Date Cells for Project Row (Event Markers)
                 for (let d = 1; d <= daysInMonth; d++) {
-                    const dateEvents = getEventsForDate(project, year, month, d);
+                    const currentDate = new Date(year, month - 1, d);
+                    const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+
                     let cellContent = '';
-                    if (dateEvents.length > 0) {
+                    const markers = [];
+
+                    // 1. Get Scheduled Events for this date
+                    const scheduledEvents = getEventsForDate(project, year, month, d);
+
+                    // 2. Process Scheduled Events
+                    scheduledEvents.forEach(evt => {
+                        const actualKey = `${evt.type}_${evt.label}_${dateStr}`;
+                        const actual = project.actuals ? project.actuals[actualKey] : null;
+
+                        if (actual && actual.date !== dateStr) {
+                            // Actual exists and is different date -> Render Ghost here
+                            markers.push({
+                                type: evt.type,
+                                label: evt.label,
+                                class: evt.class,
+                                icon: getEventIcon(evt.type),
+                                statusClass: 'event-status-ghost', // New class for ghost
+                                title: `${evt.label} (予定: ${dateStr})`,
+                                scheduledDate: dateStr,
+                                actualDate: actual.date, // Pass for modal
+                                isGhost: true
+                            });
+                        } else {
+                            // No actual, or actual is same date -> Render Normal
+                            const isDone = actual ? actual.isDone : false; // Or default logic
+                            markers.push({
+                                type: evt.type,
+                                label: evt.label,
+                                class: evt.class,
+                                icon: getEventIcon(evt.type),
+                                statusClass: isDone ? 'event-status-done' : 'event-status-pending',
+                                title: `${evt.label} (${isDone ? '済' : '未'})`,
+                                scheduledDate: dateStr,
+                                actualDate: actual ? actual.date : '',
+                                isGhost: false
+                            });
+                        }
+                    });
+
+                    // 3. Process Actual Events that landed on this date (but were scheduled elsewhere)
+                    if (project.actuals) {
+                        for (const [key, val] of Object.entries(project.actuals)) {
+                            // key format: type_label_scheduledDate
+                            if (val.date === dateStr) {
+                                // Extract info from key
+                                const parts = key.split('_');
+                                const scheduledDate = parts.pop(); // last part is date
+                                const label = parts.pop();
+                                const type = parts.join('_'); // remaining is type (or just parts[0] if complicated)
+
+                                // Check if this was ALREADY handled above (i.e., scheduled date == actual date)
+                                if (scheduledDate === dateStr) continue;
+
+                                // This is an actual event moved TO this date
+                                markers.push({
+                                    type: type, // 'payment'
+                                    label: label, // 'payment'
+                                    class: `event-${type === 'delivery' ? 'client' : type === 'billing' ? 'client' : 'user'}`, // Simplified class mapping
+                                    icon: getEventIcon(type),
+                                    statusClass: val.isDone ? 'event-status-done' : 'event-status-pending',
+                                    title: `${label} (予定: ${scheduledDate})`,
+                                    scheduledDate: scheduledDate,
+                                    actualDate: dateStr,
+                                    isGhost: false
+                                });
+                            }
+                        }
+                    }
+
+                    if (markers.length > 0) {
                         cellContent = '<div style="display: flex; gap: 2px; flex-wrap: wrap; justify-content: center;">';
-                        dateEvents.forEach(evt => {
-                            let icon = '';
-                            if (evt.type === 'delivery') icon = 'local_shipping';
-                            else if (evt.type === 'billing') icon = 'receipt_long';
-                            else if (evt.type === 'payment') icon = 'payments';
-
-                            const statusClass = evt.isDone ? 'event-status-done' : 'event-status-pending';
-                            const title = `${evt.label} (${evt.isDone ? '済' : '未'})`;
-
+                        markers.forEach(m => {
                             // Add onclick handler
-                            cellContent += `<div class="event-marker ${evt.class} ${statusClass}" title="${title}" 
-                                onclick="handleEventClick('${project.id}', '${evt.type}', '${evt.label}', '${year}-${String(month).padStart(2, '0')}-${String(d).padStart(2, '0')}')">`;
-                            if (icon) cellContent += `<span class="event-icon material-symbols-outlined">${icon}</span>`;
+                            cellContent += `<div class="event-marker ${m.class} ${m.statusClass}" title="${m.title}" 
+                                onclick="handleEventClick('${project.id}', '${m.type}', '${m.label}', '${m.scheduledDate}', '${m.actualDate}')">`;
+                            if (m.icon) cellContent += `<span class="event-icon material-symbols-outlined">${m.icon}</span>`;
                             cellContent += `</div>`;
                         });
                         cellContent += '</div>';
@@ -1031,7 +1106,6 @@
                     trProject.innerHTML += `<td style="vertical-align: top; height: 3rem; padding: 2px;">${cellContent}</td>`;
                 }
                 tableBody.appendChild(trProject);
-
                 // --- Task Rows (Gantt Bars) ---
                 if (project.tasks) {
                     project.tasks.forEach((task, index) => {
@@ -1052,10 +1126,10 @@
                                     task.status === 'in-progress' ? 'bar-status-in-progress' : 'bar-status-not-started';
 
                                 const barHtml = `<div class="gantt-bar ${statusClass}" 
-                                    onclick="showModal('modal-edit-task', null, '${project.name}: ${task.name}')" 
-                                    title="${project.name}: ${task.name} (進捗: ${task.progress}%)">
-                                    ${task.name}
-                                </div>`;
+                                                    onclick="showModal('modal-edit-task', null, '${project.name}: ${task.name}')" 
+                                                    title="${project.name}: ${task.name} (進捗: ${task.progress}%)">
+                                                    ${task.name}
+                                                </div>`;
 
                                 const td = document.createElement('td');
                                 td.colSpan = duration;
@@ -1072,6 +1146,13 @@
                     });
                 }
             });
+        }
+
+        function getEventIcon(type) {
+            if (type === 'delivery') return 'local_shipping';
+            if (type === 'billing') return 'receipt_long';
+            if (type === 'payment') return 'payments';
+            return 'event';
         }
 
         function getEventsForDate(project, year, month, d) {
@@ -1571,15 +1652,13 @@
             <div class="modal-header" id="modal-event-title">イベント実績入力</div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label class="form-label">実績日付</label>
-                    <input type="date" id="event-actual-date" class="input-field">
+                    <label class="form-label">予定日</label>
+                    <input type="date" id="event-scheduled-date" class="input-field" disabled
+                        style="background-color: var(--color-base-secondary);">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">金額</label>
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <input type="number" id="event-actual-amount" class="input-field" placeholder="金額を入力">
-                        <span>円</span>
-                    </div>
+                    <label class="form-label">実績日</label>
+                    <input type="date" id="event-actual-date" class="input-field">
                 </div>
                 <div class="form-group">
                     <label class="form-label">ステータス</label>
