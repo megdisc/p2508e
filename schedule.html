@@ -331,14 +331,23 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            font-size: 12px;
+            height: 1.4rem;
+            line-height: 1.4rem;
+            padding: 0 var(--spacing-2);
+            border-radius: var(--border-radius-full);
+            font-size: 0.75rem;
             color: #fff;
-            margin: 0 2px;
+            margin: 1px;
             cursor: pointer;
             position: relative;
+            white-space: nowrap;
+            box-shadow: var(--box-shadow-sm);
+            transition: opacity 0.2s;
+        }
+
+        .event-marker:hover {
+            opacity: 0.8;
+            z-index: 5;
         }
 
         /* Event Types Base Colors (Default to Strong/Done if no status override) */
@@ -1136,11 +1145,28 @@
                     if (markers.length > 0) {
                         cellContent = '<div style="display: flex; gap: 2px; flex-wrap: wrap; justify-content: center;">';
                         markers.forEach(m => {
-                            // Add onclick handler
-                            cellContent += `<div class="event-marker ${m.class} ${m.statusClass}" title="${m.title}" 
-                                onclick="handleEventClick('${project.id}', '${m.type}', '${m.label}', '${m.scheduledDate}', '${m.actualDate}')">`;
-                            if (m.icon) cellContent += `<span class="event-icon material-symbols-outlined">${m.icon}</span>`;
-                            cellContent += `</div>`;
+                            // Map type to text
+                            let typeText = '他';
+                            if (m.type === 'billing') typeText = '請求';
+                            else if (m.type === 'payment') typeText = '支払';
+                            else if (m.type === 'delivery') typeText = '納品';
+
+                            // Tooltip content preparation
+                            const statusStr = m.actualDate ? '完了' : '未完了';
+                            const tooltipHtml = `
+                                <div class="gantt-tooltip-title">${m.label}</div>
+                                <div class="gantt-tooltip-row"><span class="gantt-tooltip-label">種別:</span><span class="gantt-tooltip-value">${typeText}</span></div>
+                                <div class="gantt-tooltip-row"><span class="gantt-tooltip-label">予定日:</span><span class="gantt-tooltip-value">${m.scheduledDate}</span></div>
+                                ${m.actualDate ? `<div class="gantt-tooltip-row"><span class="gantt-tooltip-label">実績日:</span><span class="gantt-tooltip-value">${m.actualDate}</span></div>` : ''}
+                                <div class="gantt-tooltip-row"><span class="gantt-tooltip-label">状態:</span><span class="gantt-tooltip-value">${statusStr}</span></div>
+                            `.replace(/"/g, '&quot;').replace(/\n/g, ''); // Simple escape
+
+                            cellContent += `<div class="event-marker ${m.class} ${m.statusClass}" 
+                                onclick="handleEventClick('${project.id}', '${m.type}', '${m.label}', '${m.scheduledDate}', '${m.actualDate}')"
+                                onmouseenter="showGanttTooltip(event, '${tooltipHtml}')"
+                                onmouseleave="hideGanttTooltip()">
+                                ${typeText}
+                            </div>`;
                         });
                         cellContent += '</div>';
                     }
@@ -1895,4 +1921,20 @@
     </div>
 
     <div id="gantt-tooltip" class="gantt-tooltip"></div>
+    <script>
+        const tooltipEl = document.getElementById("gantt-tooltip");
+        function showGanttTooltip(event, htmlContent) {
+            if (!tooltipEl) return;
+            tooltipEl.innerHTML = htmlContent;
+            tooltipEl.style.display = "block";
+            const x = event.pageX + 10;
+            const y = event.pageY + 10;
+            tooltipEl.style.left = x + "px";
+            tooltipEl.style.top = y + "px";
+        }
+        function hideGanttTooltip() {
+            if (!tooltipEl) return;
+            tooltipEl.style.display = "none";
+        }
+    </script>
 </body>
