@@ -436,9 +436,18 @@
                 status: 'in-progress',
                 term: 'continuous', // or 'spot'
                 category: 'contract', // or 'self'
-                contract: { billingTiming: { mode: 'relative', month: '0', day: '99' }, clientPayment: { mode: 'relative', month: '1', day: '25' } },
+                contract: {
+                    billingTiming: { mode: 'relative', month: '0', day: '99' },
+                    clientPayment: { mode: 'relative', month: '1', day: '25' },
+                    deliveryDate: { mode: 'relative', month: '0', day: '25' } // 納品
+                },
                 subcontractors: [
-                    { name: 'ヤマト運輸', billing: { mode: 'relative', month: '1', day: '20' }, payment: { mode: 'relative', month: '1', day: '99' } }
+                    {
+                        name: 'ヤマト運輸',
+                        billing: { mode: 'relative', month: '1', day: '20' }, // 請求受領
+                        payment: { mode: 'relative', month: '1', day: '99' }, // 支払
+                        inspection: { mode: 'relative', month: '1', day: '15' } // 検収 (Mock: if needed)
+                    }
                 ],
                 incentive: { payment: { mode: 'relative', month: '1', day: '15' } },
                 actuals: {
@@ -485,7 +494,11 @@
                 status: 'completed',
                 term: 'spot',
                 category: 'contract',
-                contract: { billingTiming: { mode: 'relative', month: '0', day: '99' }, clientPayment: { mode: 'relative', month: '1', day: '30' } },
+                contract: {
+                    billingTiming: { mode: 'relative', month: '0', day: '99' },
+                    clientPayment: { mode: 'relative', month: '1', day: '30' },
+                    deliveryDate: { mode: 'relative', month: '0', day: '25' }
+                },
                 incentive: { payment: { mode: 'relative', month: '1', day: '10' } },
                 tasks: [
                     { name: '入力', startDay: 1, days: 3, progress: 100, status: 'completed' },
@@ -498,7 +511,10 @@
                 status: 'pending',
                 term: 'spot',
                 category: 'contract',
-                contract: { billingTiming: { mode: 'absolute', date: '2025-11-30' } },
+                contract: {
+                    billingTiming: { mode: 'absolute', date: '2025-11-30' },
+                    deliveryDate: { mode: 'absolute', date: '2025-11-20' }
+                },
                 incentive: {},
                 tasks: [
                     { name: 'デザイン', startDay: 15, days: 10, progress: 20, status: 'pending' },
@@ -1143,9 +1159,12 @@
                         markers.forEach(m => {
                             // Map type to text
                             let typeText = '他';
-                            if (m.type === 'billing') typeText = '請求';
+                            if (m.type === 'delivery') typeText = '納品';
+                            else if (m.type === 'billing') typeText = '請求';
+                            else if (m.type === 'deposit') typeText = '入金';
+                            else if (m.type === 'inspection') typeText = '検収';
+                            else if (m.type === 'invoice_receipt') typeText = '受領';
                             else if (m.type === 'payment') typeText = '支払';
-                            else if (m.type === 'delivery') typeText = '納品';
 
                             // Tooltip content preparation
                             const statusStr = m.actualDate ? '完了' : '未完了';
@@ -1214,6 +1233,9 @@
         function getEventIcon(type) {
             if (type === 'delivery') return 'local_shipping';
             if (type === 'billing') return 'receipt_long';
+            if (type === 'deposit') return 'account_balance_wallet';
+            if (type === 'inspection') return 'fact_check';
+            if (type === 'invoice_receipt') return 'receipt';
             if (type === 'payment') return 'payments';
             return 'event';
         }
@@ -1247,12 +1269,14 @@
             };
 
             if (project.contract) {
+                checkTiming(project.contract.deliveryDate, 'delivery', '顧客納品', 'event-client');
                 checkTiming(project.contract.billingTiming, 'billing', '顧客請求', 'event-client');
-                checkTiming(project.contract.clientPayment, 'payment', '顧客入金', 'event-client');
+                checkTiming(project.contract.clientPayment, 'deposit', '顧客入金', 'event-client');
             }
             if (project.subcontractors) {
                 project.subcontractors.forEach(sub => {
-                    checkTiming(sub.billing, 'billing', `外注請求(${sub.name})`, 'event-subcontractor');
+                    checkTiming(sub.inspection, 'inspection', `外注検収(${sub.name})`, 'event-subcontractor');
+                    checkTiming(sub.billing, 'invoice_receipt', `外注受領(${sub.name})`, 'event-subcontractor');
                     checkTiming(sub.payment, 'payment', `外注支払(${sub.name})`, 'event-subcontractor');
                 });
             }
