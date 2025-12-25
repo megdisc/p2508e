@@ -34,6 +34,21 @@ def update_file(filepath):
         if 'href="billing-production-activity.html"' in line:
             continue 
             
+        if 'href="billing-production-activity.html"' in line:
+            continue
+        
+        # 5. Rename Top to Dashboard
+        if 'href="index.html"' in line and 'ダッシュボード' in line:
+             new_lines.append('                <a href="index.html" class="nav-link">トップ</a>\n')
+             continue
+
+        # 6. Add Styleguide Link (at the end of nav)
+        if 'href="account.html"' in line:
+            new_lines.append(line)
+            active_class = ' class="active"' if filename == 'styleguide.html' else ''
+            new_lines.append(f'                <a href="styleguide.html" class="nav-link"{active_class}>スタイルガイド</a>\n')
+            continue
+
         new_lines.append(line)
 
     with open(filepath, 'w', encoding='utf-8') as f:
