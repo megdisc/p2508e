@@ -1011,7 +1011,7 @@
             renderProjectView();
         });
 
-        // Unified Project View Logic (Gantt + Events)
+        // Unified Project View Logic (Gantt + Events) - Dense Packing Version
         function renderProjectView() {
             const container = document.getElementById('view-project');
             const tableHead = container.querySelector('thead');
@@ -1042,15 +1042,7 @@
             tableBody.innerHTML = '';
 
             Object.values(projectsData).forEach(project => {
-                // Calculate RowSpan: 1 (Main Project Row) + Number of Tasks
-                const taskCount = project.tasks ? project.tasks.length : 0;
-                const rowSpan = 1 + taskCount;
-
-                // --- Main Project Row (Events) ---
-                const trProject = document.createElement('tr');
-                trProject.classList.add('multi-row-top');
-
-                // Determine Badge Strings and Classes
+                // Determine Badge Strings and Classes (Calculated once per project)
                 const statusText = project.status === 'in-progress' ? '進行中' :
                     project.status === 'completed' ? '完了' :
                         project.status === 'pending' ? '保留' :
@@ -1060,174 +1052,272 @@
                         project.status === 'pending' ? 'badge-warning' : 'badge-neutral';
 
                 const termText = project.term === 'continuous' ? '継続' : '単発';
-                const termBadgeClass = 'badge-neutral'; // Or potentially different style if needed
+                const termBadgeClass = 'badge-neutral';
 
                 const categoryText = project.category === 'self' ? '自主' : '受託';
                 const categoryBadgeClass = project.category === 'self' ? 'badge-outline' : 'badge-neutral';
 
-                // Fixed Column Layout
-                // Row 1: Name (No Edit Button)
-                // Row 2: Status + Term + Category Badges
-                trProject.innerHTML = `<td class="col-fixed" rowspan="${rowSpan}" style="vertical-align: top; padding: 8px;">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
-                        <div class="cell-text" style="white-space: normal; line-height: 1.4; font-weight: bold;">${project.name}</div>
-                        <button class="btn btn-icon btn-icon-success btn-sm" onclick="showScheduleEditor('${project.id}')">
-                            <span class="material-symbols-outlined" style="font-size: 1.2rem;">edit</span>
-                        </button>
-                    </div>
-                    <div style="display: flex; gap: 4px; flex-wrap: wrap;">
-                        <span class="badge ${statusBadgeClass} badge-sm">${statusText}</span>
-                        <span class="badge ${termBadgeClass} badge-sm">${termText}</span>
-                        <span class="badge ${categoryBadgeClass} badge-sm">${categoryText}</span>
-                    </div>
-                </td>`;
+                // --- 1. Gather All Items (Tasks & Events) ---
+                const items = getAllProjectItems(project, year, month, daysInMonth);
 
-                // Date Cells for Project Row (Event Markers)
-                for (let d = 1; d <= daysInMonth; d++) {
-                    const currentDate = new Date(year, month - 1, d);
-                    const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                // --- 2. Pack Items into Lanes ---
+                const lanes = packItemsToLanes(items);
 
-                    let cellContent = '';
-                    const markers = [];
+                // RowSpan for the Fixed Column is the number of lanes. 
+                // Ensure at least 1 row exists even if no items.
+                const rowSpan = Math.max(lanes.length, 1);
 
-                    // 1. Get Scheduled Events for this date
-                    const scheduledEvents = getEventsForDate(project, year, month, d);
+                // --- 3. Render Lanes ---
+                // If 0 lanes (empty project), we still render 1 row with empty cells
+                const renderLanes = lanes.length > 0 ? lanes : [[]];
 
-                    // 2. Process Scheduled Events
-                    scheduledEvents.forEach(evt => {
-                        const actualKey = `${evt.type}_${evt.label}_${dateStr}`;
-                        const actual = project.actuals ? project.actuals[actualKey] : null;
-
-                        if (actual && actual.date !== dateStr) {
-                            // Actual exists and is different date -> Do NOT render anything (Ghost removed)
-                        } else {
-                            // No actual, or actual is same date -> Render Normal
-                            const isDone = actual ? actual.isDone : false;
-
-                            // Determine class based on status ONLY (Simplify Colors)
-                            const colorClass = isDone ? 'bar-status-completed' : 'bar-status-not-started';
-
-                            markers.push({
-                                type: evt.type,
-                                label: evt.label,
-                                class: colorClass, // Use task status colors
-                                icon: null, // No icon needed
-                                statusClass: '', // No extra status class needed
-                                title: `${evt.label} (${isDone ? '済' : '未'})`,
-                                scheduledDate: dateStr,
-                                actualDate: actual ? actual.date : '',
-                                isGhost: false
-                            });
-                        }
-                    });
-
-                    // 3. Process Actual Events that landed on this date (but were scheduled elsewhere)
-                    if (project.actuals) {
-                        for (const [key, val] of Object.entries(project.actuals)) {
-                            // key format: type_label_scheduledDate
-                            if (val.date === dateStr) {
-                                // Extract info from key
-                                const parts = key.split('_');
-                                const scheduledDate = parts.pop(); // last part is date
-                                const label = parts.pop();
-                                const type = parts.join('_');
-
-                                // Check if this was ALREADY handled above (i.e., scheduled date == actual date)
-                                if (scheduledDate === dateStr) continue;
-
-                                // This is an actual event moved TO this date
-                                const isDone = val.isDone;
-                                const colorClass = isDone ? 'bar-status-completed' : 'bar-status-not-started';
-
-                                markers.push({
-                                    type: type,
-                                    label: label,
-                                    class: colorClass, // Use task status colors
-                                    // No type-specific class
-                                    statusClass: '',
-                                    title: `${label} (予定: ${scheduledDate})`,
-                                    scheduledDate: scheduledDate,
-                                    actualDate: dateStr,
-                                    isGhost: false
-                                });
-                            }
-                        }
+                renderLanes.forEach((laneItems, laneIndex) => {
+                    const tr = document.createElement('tr');
+                    if (laneIndex === 0) {
+                        tr.classList.add('multi-row-top');
+                    }
+                    if (laneIndex === rowSpan - 1) {
+                        tr.classList.add('multi-row-bottom');
                     }
 
-                    if (markers.length > 0) {
-                        cellContent = '<div style="display: flex; gap: 2px; flex-wrap: wrap; justify-content: center; align-items: center; height: 100%;">';
-                        markers.forEach(m => {
-                            // Map type to text
-                            let typeText = '他';
-                            if (m.type === 'delivery') typeText = '納品';
-                            else if (m.type === 'billing') typeText = '請求';
-                            else if (m.type === 'deposit') typeText = '入金';
-                            else if (m.type === 'inspection') typeText = '検収';
-                            else if (m.type === 'invoice_receipt') typeText = '受領';
-                            else if (m.type === 'payment') typeText = '支払';
-
-                            // Tooltip content preparation
-                            const statusStr = m.actualDate ? '完了' : '未完了';
-                            const tooltipHtml = `
-                                <div class="gantt-tooltip-title">${m.label}</div>
-                                <div class="gantt-tooltip-row"><span class="gantt-tooltip-label">種別:</span><span class="gantt-tooltip-value">${typeText}</span></div>
-                                <div class="gantt-tooltip-row"><span class="gantt-tooltip-label">予定日:</span><span class="gantt-tooltip-value">${m.scheduledDate}</span></div>
-                                ${m.actualDate ? `<div class="gantt-tooltip-row"><span class="gantt-tooltip-label">実績日:</span><span class="gantt-tooltip-value">${m.actualDate}</span></div>` : ''}
-                                <div class="gantt-tooltip-row"><span class="gantt-tooltip-label">状態:</span><span class="gantt-tooltip-value">${statusStr}</span></div>
-                            `.replace(/"/g, '&quot;').replace(/\n/g, '');
-
-                            cellContent += `<div class="event-marker ${m.class}" 
-                                onclick="handleEventClick('${project.id}', '${m.type}', '${m.label}', '${m.scheduledDate}', '${m.actualDate}')"
-                                onmouseenter="showGanttTooltip(event, '${tooltipHtml}')"
-                                onmouseleave="hideGanttTooltip()">
-                                ${typeText}
-                            </div>`;
-                        });
-                        cellContent += '</div>';
+                    // Render Fixed Column ONLY for the first lane
+                    if (laneIndex === 0) {
+                        tr.innerHTML = `<td class="col-fixed" rowspan="${rowSpan}" style="vertical-align: top; padding: 8px;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
+                                <div class="cell-text" style="white-space: normal; line-height: 1.4; font-weight: bold;">${project.name}</div>
+                                <button class="btn btn-icon btn-icon-success btn-sm" onclick="showScheduleEditor('${project.id}')">
+                                    <span class="material-symbols-outlined" style="font-size: 1.2rem;">edit</span>
+                                </button>
+                            </div>
+                            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                <span class="badge ${statusBadgeClass} badge-sm">${statusText}</span>
+                                <span class="badge ${termBadgeClass} badge-sm">${termText}</span>
+                                <span class="badge ${categoryBadgeClass} badge-sm">${categoryText}</span>
+                            </div>
+                        </td>`;
                     }
-                    trProject.innerHTML += `<td style="vertical-align: middle; height: 3rem; padding: 2px;">${cellContent}</td>`;
-                }
-                tableBody.appendChild(trProject);
-                // --- Task Rows (Gantt Bars) ---
-                if (project.tasks) {
-                    project.tasks.forEach((task, index) => {
-                        const trTask = document.createElement('tr');
-                        if (index === project.tasks.length - 1) {
-                            trTask.classList.add('multi-row-bottom');
-                        }
 
-                        let currentDay = 1;
-                        while (currentDay <= daysInMonth) {
-                            if (currentDay === task.startDay) {
-                                let duration = task.days;
-                                if (currentDay + duration - 1 > daysInMonth) {
-                                    duration = daysInMonth - currentDay + 1;
-                                }
+                    // Render Date Cells
+                    let currentDay = 1;
+                    while (currentDay <= daysInMonth) {
+                        // Find item in this lane starting at currentDay
+                        const item = laneItems.find(it => it.start === currentDay);
 
+                        if (item) {
+                            const colSpan = item.duration;
+                            const td = document.createElement('td');
+                            td.colSpan = colSpan;
+                            td.style.verticalAlign = 'middle';
+                            td.style.padding = '2px';
+
+                            if (item.type === 'task') {
+                                // Render Gantt Bar
+                                const task = item.data;
                                 const statusClass = task.status === 'completed' ? 'bar-status-completed' :
                                     task.status === 'in-progress' ? 'bar-status-in-progress' : 'bar-status-not-started';
 
-                                const barHtml = `<div class="gantt-bar ${statusClass}" 
+                                td.innerHTML = `<div class="gantt-bar ${statusClass}" 
                                                     onclick="showModal('modal-edit-task', null, '${project.name}: ${task.name}')" 
                                                     title="${project.name}: ${task.name} (進捗: ${task.progress}%)">
                                                     ${task.name}
                                                 </div>`;
+                            } else if (item.type === 'event_group') {
+                                // Render Event Markers
+                                // item.data is an array of event objects
+                                let cellHtml = '<div style="display: flex; gap: 2px; flex-wrap: wrap; justify-content: center; align-items: center; height: 100%;">';
+                                item.data.forEach(m => {
+                                    // Tooltip content
+                                    let typeText = '他';
+                                    if (m.type === 'delivery') typeText = '納品';
+                                    else if (m.type === 'billing') typeText = '請求';
+                                    else if (m.type === 'deposit') typeText = '入金';
+                                    else if (m.type === 'inspection') typeText = '検収';
+                                    else if (m.type === 'invoice_receipt') typeText = '受領';
+                                    else if (m.type === 'payment') typeText = '支払';
 
-                                const td = document.createElement('td');
-                                td.colSpan = duration;
-                                td.innerHTML = barHtml;
-                                trTask.appendChild(td);
+                                    const statusStr = m.actualDate ? '完了' : '未完了';
+                                    const tooltipHtml = `
+                                        <div class="gantt-tooltip-title">${m.label}</div>
+                                        <div class="gantt-tooltip-row"><span class="gantt-tooltip-label">種別:</span><span class="gantt-tooltip-value">${typeText}</span></div>
+                                        <div class="gantt-tooltip-row"><span class="gantt-tooltip-label">予定日:</span><span class="gantt-tooltip-value">${m.scheduledDate}</span></div>
+                                        ${m.actualDate ? `<div class="gantt-tooltip-row"><span class="gantt-tooltip-label">実績日:</span><span class="gantt-tooltip-value">${m.actualDate}</span></div>` : ''}
+                                        <div class="gantt-tooltip-row"><span class="gantt-tooltip-label">状態:</span><span class="gantt-tooltip-value">${statusStr}</span></div>
+                                    `.replace(/"/g, '&quot;').replace(/\n/g, '');
 
-                                currentDay += duration;
-                            } else {
-                                trTask.innerHTML += `<td></td>`;
-                                currentDay++;
+                                    cellHtml += `<div class="event-marker ${m.class}" 
+                                        onclick="handleEventClick('${project.id}', '${m.type}', '${m.label}', '${m.scheduledDate}', '${m.actualDate}')"
+                                        onmouseenter="showGanttTooltip(event, '${tooltipHtml}')"
+                                        onmouseleave="hideGanttTooltip()">
+                                        ${typeText}
+                                    </div>`;
+                                });
+                                cellHtml += '</div>';
+                                td.innerHTML = cellHtml;
                             }
+
+                            tr.appendChild(td);
+                            currentDay += colSpan;
+                        } else {
+                            // Find if there's any item that started before and is still spanning (should be blocked by logic, but for safety in rendering empty cells)
+                            // The Packing logic ensures no overlap in a lane. 
+                            // So if we don't find a start item, we assume it's empty space for 1 day
+                            // (unless we want to optimize empty colspan too, but 1-by-1 is simpler and safe)
+
+                            // Optimization: Check how many empty days until next item
+                            let emptySpan = 1;
+                            let lookAhead = currentDay + 1;
+                            while (lookAhead <= daysInMonth) {
+                                if (laneItems.find(it => it.start === lookAhead)) break;
+                                emptySpan++;
+                                lookAhead++;
+                            }
+
+                            const td = document.createElement('td');
+                            td.colSpan = emptySpan;
+                            tr.appendChild(td);
+                            currentDay += emptySpan;
                         }
-                        tableBody.appendChild(trTask);
+                    }
+                    tableBody.appendChild(tr);
+                });
+            });
+        }
+
+        function getAllProjectItems(project, year, month, daysInMonth) {
+            const items = [];
+
+            // 1. Tasks
+            if (project.tasks) {
+                project.tasks.forEach(task => {
+                    // Normalize task duration to current month
+                    let start = task.startDay;
+                    let duration = task.days;
+
+                    // Simple check if roughly in range (since tasks defined by startDay 1-31 relative to month)
+                    // Assumption: Task startDay is relative to CURRENT Viewing Month for this prototype
+                    // (Real app would check dates more robustly)
+
+                    if (start <= daysInMonth) {
+                        // Clamp duration
+                        if (start + duration - 1 > daysInMonth) {
+                            duration = daysInMonth - start + 1;
+                        }
+                        items.push({
+                            type: 'task',
+                            start: start,
+                            duration: duration,
+                            end: start + duration - 1,
+                            data: task
+                        });
+                    }
+                });
+            }
+
+            // 2. Events
+            // Group events by Day first
+            const eventsByDay = {}; // day -> []
+
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+
+                // Get Scheduled Events
+                const scheduledEvents = getEventsForDate(project, year, month, d);
+                scheduledEvents.forEach(evt => {
+                    const actualKey = `${evt.type}_${evt.label}_${dateStr}`;
+                    const actual = project.actuals ? project.actuals[actualKey] : null;
+
+                    // If actual exists and is on different date, hide original (ghost logic)
+                    if (actual && actual.date !== dateStr) return;
+
+                    const isDone = actual ? actual.isDone : false;
+                    const colorClass = isDone ? 'bar-status-completed' : 'bar-status-not-started';
+
+                    if (!eventsByDay[d]) eventsByDay[d] = [];
+                    eventsByDay[d].push({
+                        ...evt,
+                        class: colorClass,
+                        actualDate: actual ? actual.date : '',
+                        scheduledDate: dateStr
                     });
+                });
+
+                // Get Actual Events moved here
+                if (project.actuals) {
+                    for (const [key, val] of Object.entries(project.actuals)) {
+                        if (val.date === dateStr) {
+                            const parts = key.split('_');
+                            const scheduledDate = parts.pop();
+                            const label = parts.pop();
+                            const type = parts.join('_');
+
+                            if (scheduledDate === dateStr) continue; // Already handled
+
+                            const isDone = val.isDone;
+                            const colorClass = isDone ? 'bar-status-completed' : 'bar-status-not-started';
+
+                            if (!eventsByDay[d]) eventsByDay[d] = [];
+                            eventsByDay[d].push({
+                                type: type,
+                                label: label,
+                                class: colorClass,
+                                scheduledDate: scheduledDate,
+                                actualDate: dateStr,
+                                isDone: isDone
+                            });
+                        }
+                    }
+                }
+            }
+
+            // Convert event groups to Items
+            Object.keys(eventsByDay).forEach(dayStr => {
+                const day = parseInt(dayStr);
+                items.push({
+                    type: 'event_group',
+                    start: day,
+                    duration: 1,
+                    end: day,
+                    data: eventsByDay[day] // array of event markers
+                });
+            });
+
+            return items;
+        }
+
+        function packItemsToLanes(items) {
+            // Sort items by start day, then by duration (desc)
+            items.sort((a, b) => {
+                if (a.start !== b.start) return a.start - b.start;
+                return b.duration - a.duration;
+            });
+
+            const lanes = [];
+
+            items.forEach(item => {
+                // Try to space in existing lanes
+                let placed = false;
+                for (let i = 0; i < lanes.length; i++) {
+                    const lane = lanes[i];
+                    // Check overlap
+                    // Overlap if: item.start <= existing.end && item.end >= existing.start
+                    const hasOverlap = lane.some(existing => {
+                        return (item.start <= existing.end && item.end >= existing.start);
+                    });
+
+                    if (!hasOverlap) {
+                        lane.push(item);
+                        placed = true;
+                        break;
+                    }
+                }
+
+                if (!placed) {
+                    // Create new lane
+                    lanes.push([item]);
                 }
             });
+
+            return lanes;
         }
 
         function getEventIcon(type) {
