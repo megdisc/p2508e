@@ -37,10 +37,34 @@
         .scheduler-table td {
             border-bottom: var(--border-width-sm) solid var(--color-table-border);
             border-right: var(--border-width-sm) solid var(--color-base-secondary);
-            height: 2.5rem;
+            /* height: 2.5rem; Removed fixed height for compact control */
+            height: auto;
             vertical-align: middle;
             padding: 0;
             font-size: var(--font-size-xs);
+        }
+
+        /* Project Group Spacing Classes */
+        /* Project Group Spacing Classes */
+        .project-row-first td {
+            padding-top: 10px !important;
+            /* Visual gap for new project */
+            border-bottom: none;
+            /* No separator within project */
+        }
+
+        /* Override border if it's also the last row (single row project) */
+        .project-row-first.project-row-last td {
+            border-bottom: var(--border-width-sm) solid var(--color-table-border);
+        }
+
+        .project-row-middle td {
+            border-bottom: none;
+        }
+
+        .project-row-last td {
+            border-bottom: var(--border-width-sm) solid var(--color-table-border);
+            padding-bottom: 2px;
         }
 
         /* ヘッダー (日付) */
@@ -182,14 +206,14 @@
             font-size: 1rem;
         }
 
-        /* rowspan時のボーダー調整 */
+        /* rowspan時のボーダー調整 - Deprecated by new classes but kept for safety if needed
         .scheduler-table tr.multi-row-top td {
             border-bottom: 1px dashed var(--color-base-secondary);
         }
-
         .scheduler-table tr.multi-row-bottom td {
             border-top: none;
-        }
+        } 
+        */
 
         .badge-sm {
             padding: 2px 6px;
@@ -1073,16 +1097,18 @@
 
                 renderLanes.forEach((laneItems, laneIndex) => {
                     const tr = document.createElement('tr');
-                    if (laneIndex === 0) {
-                        tr.classList.add('multi-row-top');
-                    }
-                    if (laneIndex === rowSpan - 1) {
-                        tr.classList.add('multi-row-bottom');
-                    }
+
+                    // Assign Layout Classes
+                    let isFirst = (laneIndex === 0);
+                    let isLast = (laneIndex === renderLanes.length - 1); // Note: renderLanes, not rowSpan (though mostly same)
+
+                    if (isFirst) tr.classList.add('project-row-first');
+                    if (!isFirst && !isLast) tr.classList.add('project-row-middle');
+                    if (isLast) tr.classList.add('project-row-last');
 
                     // Render Fixed Column ONLY for the first lane
                     if (laneIndex === 0) {
-                        tr.innerHTML = `<td class="col-fixed" rowspan="${rowSpan}" style="vertical-align: top; padding: 8px;">
+                        tr.innerHTML = `<td class="col-fixed" rowspan="${rowSpan}" style="vertical-align: top; padding: 12px 8px 8px 8px;">
                             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px;">
                                 <div class="cell-text" style="white-space: normal; line-height: 1.4; font-weight: bold;">${project.name}</div>
                                 <button class="btn btn-icon btn-icon-success btn-sm" onclick="showScheduleEditor('${project.id}')">
