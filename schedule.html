@@ -1121,38 +1121,34 @@
                                                     title="${project.name}: ${task.name} (進捗: ${task.progress}%)">
                                                     ${task.name}
                                                 </div>`;
-                            } else if (item.type === 'event_group') {
-                                // Render Event Markers
-                                // item.data is an array of event objects
-                                let cellHtml = '<div style="display: flex; gap: 2px; flex-wrap: wrap; justify-content: center; align-items: center; height: 100%;">';
-                                item.data.forEach(m => {
-                                    // Tooltip content
-                                    let typeText = '他';
-                                    if (m.type === 'delivery') typeText = '納品';
-                                    else if (m.type === 'billing') typeText = '請求';
-                                    else if (m.type === 'deposit') typeText = '入金';
-                                    else if (m.type === 'inspection') typeText = '検収';
-                                    else if (m.type === 'invoice_receipt') typeText = '受領';
-                                    else if (m.type === 'payment') typeText = '支払';
+                            } else if (item.type === 'event') {
+                                // Render SINGLE Event Marker
+                                const m = item.data;
+                                let typeText = '他';
+                                if (m.type === 'delivery') typeText = '納品';
+                                else if (m.type === 'billing') typeText = '請求';
+                                else if (m.type === 'deposit') typeText = '入金';
+                                else if (m.type === 'inspection') typeText = '検収';
+                                else if (m.type === 'invoice_receipt') typeText = '受領';
+                                else if (m.type === 'payment') typeText = '支払';
 
-                                    const statusStr = m.actualDate ? '完了' : '未完了';
-                                    const tooltipHtml = `
-                                        <div class="gantt-tooltip-title">${m.label}</div>
-                                        <div class="gantt-tooltip-row"><span class="gantt-tooltip-label">種別:</span><span class="gantt-tooltip-value">${typeText}</span></div>
-                                        <div class="gantt-tooltip-row"><span class="gantt-tooltip-label">予定日:</span><span class="gantt-tooltip-value">${m.scheduledDate}</span></div>
-                                        ${m.actualDate ? `<div class="gantt-tooltip-row"><span class="gantt-tooltip-label">実績日:</span><span class="gantt-tooltip-value">${m.actualDate}</span></div>` : ''}
-                                        <div class="gantt-tooltip-row"><span class="gantt-tooltip-label">状態:</span><span class="gantt-tooltip-value">${statusStr}</span></div>
-                                    `.replace(/"/g, '&quot;').replace(/\n/g, '');
+                                const statusStr = m.actualDate ? '完了' : '未完了';
+                                const tooltipHtml = `
+                                    <div class="gantt-tooltip-title">${m.label}</div>
+                                    <div class="gantt-tooltip-row"><span class="gantt-tooltip-label">種別:</span><span class="gantt-tooltip-value">${typeText}</span></div>
+                                    <div class="gantt-tooltip-row"><span class="gantt-tooltip-label">予定日:</span><span class="gantt-tooltip-value">${m.scheduledDate}</span></div>
+                                    ${m.actualDate ? `<div class="gantt-tooltip-row"><span class="gantt-tooltip-label">実績日:</span><span class="gantt-tooltip-value">${m.actualDate}</span></div>` : ''}
+                                    <div class="gantt-tooltip-row"><span class="gantt-tooltip-label">状態:</span><span class="gantt-tooltip-value">${statusStr}</span></div>
+                                `.replace(/"/g, '&quot;').replace(/\n/g, '');
 
-                                    cellHtml += `<div class="event-marker ${m.class}" 
-                                        onclick="handleEventClick('${project.id}', '${m.type}', '${m.label}', '${m.scheduledDate}', '${m.actualDate}')"
-                                        onmouseenter="showGanttTooltip(event, '${tooltipHtml}')"
-                                        onmouseleave="hideGanttTooltip()">
-                                        ${typeText}
-                                    </div>`;
-                                });
-                                cellHtml += '</div>';
-                                td.innerHTML = cellHtml;
+                                td.style.textAlign = 'center';
+                                td.innerHTML = `<div class="event-marker ${m.class}" 
+                                    style="margin: 0 auto;"
+                                    onclick="handleEventClick('${project.id}', '${m.type}', '${m.label}', '${m.scheduledDate}', '${m.actualDate}')"
+                                    onmouseenter="showGanttTooltip(event, '${tooltipHtml}')"
+                                    onmouseleave="hideGanttTooltip()">
+                                    ${typeText}
+                                </div>`;
                             }
 
                             tr.appendChild(td);
@@ -1269,15 +1265,18 @@
                 }
             }
 
-            // Convert event groups to Items
+            // Convert event groups to Individual Items
             Object.keys(eventsByDay).forEach(dayStr => {
                 const day = parseInt(dayStr);
-                items.push({
-                    type: 'event_group',
-                    start: day,
-                    duration: 1,
-                    end: day,
-                    data: eventsByDay[day] // array of event markers
+                const events = eventsByDay[day];
+                events.forEach(evt => {
+                    items.push({
+                        type: 'event',
+                        start: day,
+                        duration: 1,
+                        end: day,
+                        data: evt
+                    });
                 });
             });
 
