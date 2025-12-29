@@ -357,63 +357,79 @@
             if (!project) return;
 
             document.getElementById('view-partner-project-name').textContent = project.name;
+            const body = document.getElementById('view-partner-modal-body');
+            let html = '';
 
             // --- Customer Section ---
-            const hasCustomer = project.source !== 'internal' && project.partner && project.partner !== '無し' && project.partner !== 'none';
-            document.getElementById('view-partner-name').textContent = hasCustomer ? project.partner : '自主事業 (顧客なし)';
+            const isInternal = project.source === 'internal';
 
-            // Format Billing/Payment
-            let billingText = '-';
-            let paymentText = '-';
-            const c = project.contract || {};
+            html += `<div style="margin-bottom: var(--spacing-stack-md);">
+                <div style="font-weight: bold; border-bottom: 2px solid var(--color-border-default); margin-bottom: var(--spacing-2); padding-bottom: var(--spacing-1);">
+                    顧客
+                </div>`;
 
-            if (project.source === 'internal') {
-                billingText = '(無し)';
-                paymentText = '(無し)';
+            if (isInternal) {
+                html += `<div style="color: var(--color-text-tertiary); padding: var(--spacing-2);">自主事業のため顧客設定はありません。</div>`;
             } else {
-                billingText = formatTiming(c.clientBilling, '納品');
-                paymentText = formatTiming(c.clientPayment, '請求');
-            }
+                const c = project.contract || {};
+                html += `<table class="table" style="width: 100%;">`;
+                html += `<thead><tr><th style="width: 30%; background-color: var(--color-bg-subtle);">顧客名</th><th style="width: 20%; background-color: var(--color-bg-subtle);">イベント</th><th style="background-color: var(--color-bg-subtle);">タイミング</th></tr></thead>`;
+                html += `<tbody>`;
 
-            document.getElementById('view-partner-billing').textContent = billingText;
-            document.getElementById('view-partner-payment').textContent = paymentText;
+                // Name (rowspan 4)
+                html += `<tr><td rowspan="4" style="vertical-align: top; font-weight: bold;">${project.partner || '-'}</td>`;
+
+                // Delivery
+                html += `<td>納品</td><td>${formatTiming(c.clientDelivery) || '-'}</td></tr>`;
+                // Acceptance
+                html += `<tr><td>検収</td><td>${formatTiming(c.clientAcceptance, '納品')}</td></tr>`;
+                // Billing
+                html += `<tr><td>請求</td><td>${formatTiming(c.clientBilling, '検収')}</td></tr>`;
+                // Payment
+                html += `<tr><td>入金</td><td>${formatTiming(c.clientPayment, '請求')}</td></tr>`;
+
+                html += `</tbody></table>`;
+            }
+            html += `</div>`;
 
             // --- Subcontractor Section ---
-            const subSection = document.getElementById('view-subcontractor-section');
-            const subBody = document.getElementById('view-subcontractor-tbody');
-            subBody.innerHTML = '';
-
-            let subs = project.subcontractors || [];
-
+            const subs = project.subcontractors || [];
             if (subs.length > 0) {
-                subSection.style.display = 'block';
+                html += `<div style="margin-bottom: var(--spacing-stack-md);">
+                <div style="font-weight: bold; border-bottom: 2px solid var(--color-border-default); margin-bottom: var(--spacing-2); padding-bottom: var(--spacing-1);">
+                    外注先
+                </div>`;
+                html += `<table class="table" style="width: 100%;">`;
+                html += `<thead><tr><th style="width: 30%; background-color: var(--color-bg-subtle);">外注先名</th><th style="width: 20%; background-color: var(--color-bg-subtle);">イベント</th><th style="background-color: var(--color-bg-subtle);">タイミング</th></tr></thead>`;
+                html += `<tbody>`;
+
                 subs.forEach(sub => {
-                    const tr = document.createElement('tr');
-
-                    // Sub Billing (Receipt) & Payment
-                    // Previous view only showed Payment. I should probably show both if I can, but table header is "Payment Timing".
-                    // I will append billing info or just show Payment as before?
-                    // The View Modal HTML (line 2079) only has "支払いタイミング".
-                    // I should probably update the table header to "請求・支払タイミング" or just show Payment.
-                    // Given the constraint, I'll show Payment Timing mainly, or combine.
-                    // "請求: ... / 支払: ..." 
-
-                    const billT = formatTiming(sub.billing, '受領');
-                    const payT = formatTiming(sub.payment, '請求');
-
-                    tr.innerHTML = `
-                        <td>${sub.name}</td>
-                        <td>
-                            <div style="font-size: 0.85em; color: var(--color-text-secondary);">受領: ${billT}</div>
-                            <div>支払: ${payT}</div>
-                        </td>
-                    `;
-                    subBody.appendChild(tr);
+                    html += `<tr><td rowspan="4" style="vertical-align: top; font-weight: bold; border-bottom: 2px solid var(--color-border-subtle);">${sub.name}</td>`;
+                    // Delivery (Purchase)
+                    html += `<td style="border-top: 1px solid var(--color-border-subtle);">仕入</td><td style="border-top: 1px solid var(--color-border-subtle);">${formatTiming(sub.delivery) || '-'}</td></tr>`;
+                    // Acceptance
+                    html += `<tr><td>検収</td><td>${formatTiming(sub.acceptance, '仕入')}</td></tr>`;
+                    // Receipt (Billing)
+                    html += `<tr><td>受領</td><td>${formatTiming(sub.billing, '検収')}</td></tr>`;
+                    // Payment
+                    html += `<tr><td style="border-bottom: 2px solid var(--color-border-subtle);">支払</td><td style="border-bottom: 2px solid var(--color-border-subtle);">${formatTiming(sub.payment, '受領')}</td></tr>`;
                 });
-            } else {
-                subSection.style.display = 'none';
+                html += `</tbody></table></div>`;
             }
 
+            // --- User Section ---
+            const incentive = project.incentive || {};
+            // For now, always show user section or only if defined? Projects usually imply user work.
+            html += `<div style="margin-bottom: var(--spacing-stack-md);">
+                <div style="font-weight: bold; border-bottom: 2px solid var(--color-border-default); margin-bottom: var(--spacing-2); padding-bottom: var(--spacing-1);">
+                    利用者
+                </div>`;
+            html += `<table class="table" style="width: 100%;">`;
+            // Simplified table for single item
+            html += `<tbody><tr><td style="width: 30%; font-weight: bold;">インセンティブ支払</td><td>${formatTiming(incentive.payment, '入金')}</td></tr></tbody>`;
+            html += `</table></div>`;
+
+            body.innerHTML = html;
             showModal('modal-partner-view');
         }
 
@@ -1672,7 +1688,7 @@
                                 <button class="btn btn-neutral" onclick="showTaskViewModal('project-1')">タスク</button>
                                 <button class="btn btn-neutral" onclick="showBudgetViewModal('project-1')">予算</button>
                                 <button class="btn btn-neutral"
-                                    onclick="showPartnerViewModalNew('project-1')">契約情報</button>
+                                    onclick="showPartnerViewModalNew('project-1')">イベント</button>
                             </div>
                         </div>
                     </div>
@@ -1720,7 +1736,7 @@
                                 <button class="btn btn-neutral" onclick="showTaskViewModal('project-3')">タスク</button>
                                 <button class="btn btn-neutral" onclick="showBudgetViewModal('project-3')">予算</button>
                                 <button class="btn btn-neutral"
-                                    onclick="showPartnerViewModalNew('project-3')">契約情報</button>
+                                    onclick="showPartnerViewModalNew('project-3')">イベント</button>
                             </div>
                         </div>
                     </div>
@@ -1768,7 +1784,7 @@
                                 <button class="btn btn-neutral" onclick="showTaskViewModal('project-4')">タスク</button>
                                 <button class="btn btn-neutral" onclick="showBudgetViewModal('project-4')">予算</button>
                                 <button class="btn btn-neutral" onclick="showPartnerViewModalNew('project-4')"
-                                    disabled>契約情報</button>
+                                    disabled>イベント</button>
                             </div>
                         </div>
                     </div>
@@ -1816,7 +1832,7 @@
                                 <button class="btn btn-neutral" onclick="showTaskViewModal('project-2')">タスク</button>
                                 <button class="btn btn-neutral" onclick="showBudgetViewModal('project-2')">予算</button>
                                 <button class="btn btn-neutral" onclick="showPartnerViewModalNew('project-2')"
-                                    disabled>契約情報</button>
+                                    disabled>イベント</button>
                             </div>
                         </div>
                     </div>
@@ -1864,7 +1880,7 @@
                                 <button class="btn btn-neutral" onclick="showTaskViewModal('project-5')">タスク</button>
                                 <button class="btn btn-neutral" onclick="showBudgetViewModal('project-5')">予算</button>
                                 <button class="btn btn-neutral" onclick="showPartnerViewModalNew('project-5')"
-                                    disabled>契約情報</button>
+                                    disabled>イベント</button>
                             </div>
                         </div>
                     </div>
@@ -1912,7 +1928,7 @@
                                 <button class="btn btn-neutral" onclick="showTaskViewModal('project-6')">タスク</button>
                                 <button class="btn btn-neutral" onclick="showBudgetViewModal('project-6')">予算</button>
                                 <button class="btn btn-neutral" onclick="showPartnerViewModalNew('project-6')"
-                                    disabled>契約情報</button>
+                                    disabled>イベント</button>
                             </div>
                         </div>
                     </div>
@@ -2336,51 +2352,12 @@
     <div class="modal-backdrop" id="modal-partner-view" style="display: none;">
         <div class="modal-content" style="max-width: 500px;">
             <div class="modal-header">
-                契約情報: <span id="view-partner-project-name"></span>
+                イベント情報: <span id="view-partner-project-name"></span>
             </div>
             <div class="modal-body">
 
-                <!-- Customer Section -->
-                <div style="margin-bottom: var(--spacing-stack-md);">
-                    <div
-                        style="font-weight: bold; border-bottom: 2px solid var(--color-border-default); margin-bottom: var(--spacing-2); padding-bottom: var(--spacing-1);">
-                        顧客
-                    </div>
-                    <table class="table" style="width: 100%;">
-                        <thead>
-                            <tr>
-                                <th style="background-color: var(--color-bg-subtle);">顧客名</th>
-                                <th style="background-color: var(--color-bg-subtle);">請求タイミング</th>
-                                <th style="background-color: var(--color-bg-subtle);">入金タイミング</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td id="view-partner-name">-</td>
-                                <td id="view-partner-billing">-</td>
-                                <td id="view-partner-payment">-</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- Subcontractor Section -->
-                <div id="view-subcontractor-section" style="display: none;">
-                    <div
-                        style="font-weight: bold; border-bottom: 2px solid var(--color-border-default); margin-bottom: var(--spacing-2); padding-bottom: var(--spacing-1);">
-                        外注先
-                    </div>
-                    <table class="table" style="width: 100%;">
-                        <thead>
-                            <tr>
-                                <th style="background-color: var(--color-bg-subtle);">外注先名</th>
-                                <th style="background-color: var(--color-bg-subtle);">支払いタイミング</th>
-                            </tr>
-                        </thead>
-                        <tbody id="view-subcontractor-tbody">
-                            <!-- JS Injected -->
-                        </tbody>
-                    </table>
+                <div id="view-partner-modal-body">
+                    <!-- JS Injected -->
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-neutral" onclick="hideModal('modal-partner-view')">閉じる</button>
