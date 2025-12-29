@@ -534,6 +534,9 @@
                     // Day Select
                     html += `<select class="input-field" style="width: auto;" 
                         onchange="updateContractTiming('${path}', 'day', this.value)">`;
+                    // Wage Payment Date Option
+                    html += `<option value="wage_payment_date" ${config.day === 'wage_payment_date' ? 'selected' : ''}>工賃支給日</option>`;
+
                     for (let i = 1; i <= 31; i++) html += `<option value="${i}" ${String(config.day) === String(i) ? 'selected' : ''}>${i}日</option>`;
                     html += `<option value="99" ${String(config.day) === '99' ? 'selected' : ''}>末日</option>`;
                     html += `</select>`;
@@ -670,12 +673,15 @@
 
             // Ensure incentive object exists in tempProjectData for rendering
             if (!tempProjectData.incentive) tempProjectData.incentive = {};
+            if (!tempProjectData.incentive.payment) {
+                tempProjectData.incentive.payment = { mode: 'relative', month: '1', day: 'wage_payment_date' };
+            }
             const incentive = tempProjectData.incentive;
 
             // Incentive Payment (Renamed)
             html += renderTimingConfigurator(incentive.payment, 'incentive.payment', {
                 label: '支払（利用者へのインセンティブの支払）',
-                basisLabel: '締め日',
+                basisLabel: '入金（顧客からの受託金の入金）',
                 showModeToggle: true
             });
 
@@ -741,7 +747,7 @@
             } else if (path.startsWith('incentive')) {
                 if (!tempProjectData.incentive) tempProjectData.incentive = {};
                 const subKey = parts[1]; // payment
-                if (!tempProjectData.incentive[subKey]) tempProjectData.incentive[subKey] = { mode: 'relative', month: '1', day: '25', frequency: 'monthly' };
+                if (!tempProjectData.incentive[subKey]) tempProjectData.incentive[subKey] = { mode: 'relative', month: '1', day: 'wage_payment_date', frequency: 'monthly' };
                 obj = tempProjectData.incentive[subKey];
             }
 
