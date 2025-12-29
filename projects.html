@@ -211,20 +211,20 @@
                     billingTiming: 'current_month_end',
                     billingFrequency: 'monthly',
                     paymentTiming: 'next_month_25',
-                    clientDelivery: 'current_month_end',
-                    clientAcceptance: 'next_month_10',
-                    clientBilling: 'next_month_20',
-                    clientPayment: 'next_next_month_end'
+                    clientDelivery: { mode: 'absolute', date: '2025-10-31' },
+                    clientAcceptance: { mode: 'relative', month: '1', day: '10' },
+                    clientBilling: { mode: 'relative', month: '1', day: '20' },
+                    clientPayment: { mode: 'relative', month: '2', day: '99' }
                 },
                 subcontractors: [
                     {
                         name: 'ヤマト運輸',
                         paymentTiming: 'next_month_end',
                         billingTiming: 'next_month_20',
-                        delivery: 'current_month_end',
-                        acceptance: 'next_month_10',
-                        billing: 'next_month_20',
-                        payment: 'next_month_end'
+                        delivery: { mode: 'absolute', date: '2025-10-31' },
+                        acceptance: { mode: 'relative', month: '1', day: '10' },
+                        billing: { mode: 'relative', month: '1', day: '20' },
+                        payment: { mode: 'relative', month: '1', day: '99' }
                     }
                 ],
                 startDate: '2025-10-01',
@@ -389,6 +389,60 @@
             document.getElementById(id).style.display = 'none';
         }
 
+        // --- Date Calculation Logic (New) ---
+        function calculateTimingDate(config, baseDateStr) {
+            if (!config) return '-';
+
+            // If absolute, return date directly
+            if (config.mode === 'absolute') {
+                return config.date ? config.date.replace(/-/g, '.') : '-';
+            }
+            // Fallback for legacy string codes (cannot calc, return as is or map?)
+            if (typeof config === 'string') {
+                // Try to resolve legacy? No, just return for formatTiming to handle text
+                return '-';
+            }
+
+            // If relative, and we have a base date
+            if (config.mode === 'relative' && baseDateStr && baseDateStr !== '-') {
+                // Parse base date (assume YYYY.MM.DD or YYYY-MM-DD or YYYY/MM/DD)
+                const standardizedDate = baseDateStr.replace(/\./g, '-').replace(/\//g, '-');
+                const base = new Date(standardizedDate);
+                if (isNaN(base.getTime())) return '-';
+
+                // Add months
+                let monthsToAdd = parseInt(config.month || 0);
+                if (isNaN(monthsToAdd)) monthsToAdd = 0;
+
+                // Create target date - Careful with month roll-over
+                // Strategy: Set to 1st of target month, then adjust day
+                const targetDate = new Date(base.getFullYear(), base.getMonth() + monthsToAdd, 1);
+
+                // Set day
+                let day = parseInt(config.day);
+                if (isNaN(day)) {
+                    if (config.day === 'wage_payment_date') day = 15; // Assumption
+                    else day = 99; // Default to end of month
+                }
+
+                if (day === 99) {
+                    // End of month: Go to next month 0th day
+                    targetDate.setMonth(targetDate.getMonth() + 1);
+                    targetDate.setDate(0);
+                } else {
+                    targetDate.setDate(day);
+                }
+
+                // Format YYYY.MM.DD
+                const y = targetDate.getFullYear();
+                const m = String(targetDate.getMonth() + 1).padStart(2, '0');
+                const d = String(targetDate.getDate()).padStart(2, '0');
+                return `${y}.${m}.${d}`;
+            }
+
+            return '-';
+        }
+
         // Helper for timing formatting (View)
         const formatTiming = (setting, context) => {
             if (!setting) return '-';
@@ -406,7 +460,7 @@
             }
 
             if (setting.mode === 'absolute') {
-                return setting.date || '-';
+                return setting.date ? setting.date.replace(/-/g, '.') : '-';
             } else if (setting.mode === 'relative') {
                 const f = setting.frequency === 'bimonthly' ? '隔月' : setting.frequency === 'monthly' ? '毎月' : '';
                 const m = parseInt(setting.month) === 0 ? '当月' :
@@ -465,9 +519,26 @@
             html += `<tbody>`;
 
             // 1. Customer Row
+            let clientPaymentDate = '-'; // Store for incentive calculation
+
             if (project.source !== 'internal') {
                 const c = project.contract || {};
                 const partnerName = project.partner || '-';
+
+                // Calculate Absolute Dates
+                const d_del = calculateTimingDate(c.clientDelivery);
+                const d_acc = calculateTimingDate(c.clientAcceptance, d_del);
+                const d_bil = calculateTimingDate(c.clientBilling, d_acc);
+                const d_pay = calculateTimingDate(c.clientPayment, d_bil);
+
+                clientPaymentDate = d_pay; // Save for incentive
+
+                // Display Logic: Use Calculated Date if valid, else fallback to formatTiming
+                const show_del = d_del !== '-' ? d_del : formatTiming(c.clientDelivery);
+                // For subsequent items, if calculation fails, fallback to formatTiming with context label
+                const show_acc = d_acc !== '-' ? d_acc : formatTiming(c.clientAcceptance, '納品');
+                const show_bil = d_bil !== '-' ? d_bil : formatTiming(c.clientBilling, '検収');
+                const show_pay = d_pay !== '-' ? d_pay : formatTiming(c.clientPayment, '請求');
 
                 html += `<tr>`;
                 html += `<td style="vertical-align: top;">
@@ -478,13 +549,13 @@
                          </td>`;
                 html += `<td>
                             <div class="timeline-container">
-                                ${renderTimelineItem('納品', formatTiming(c.clientDelivery), 'primary')}
+                                ${renderTimelineItem('納品', show_del, 'primary')}
                                 ${renderArrow()}
-                                ${renderTimelineItem('検収', formatTiming(c.clientAcceptance, '納品'), 'primary')}
+                                ${renderTimelineItem('検収', show_acc, 'primary')}
                                 ${renderArrow()}
-                                ${renderTimelineItem('請求', formatTiming(c.clientBilling, '検収'), 'primary')}
+                                ${renderTimelineItem('請求', show_bil, 'primary')}
                                 ${renderArrow()}
-                                ${renderTimelineItem('入金', formatTiming(c.clientPayment, '請求'), 'primary')}
+                                ${renderTimelineItem('入金', show_pay, 'primary')}
                             </div>
                          </td>`;
                 html += `</tr>`;
@@ -504,6 +575,17 @@
             const subs = project.subcontractors || [];
             if (subs.length > 0) {
                 subs.forEach(sub => {
+                    // Calculate Absolute Dates (Sub logic)
+                    const s_del = calculateTimingDate(sub.delivery);
+                    const s_acc = calculateTimingDate(sub.acceptance, s_del);
+                    const s_bil = calculateTimingDate(sub.billing, s_acc);
+                    const s_pay = calculateTimingDate(sub.payment, s_bil);
+
+                    const show_s_del = s_del !== '-' ? s_del : formatTiming(sub.delivery);
+                    const show_s_acc = s_acc !== '-' ? s_acc : formatTiming(sub.acceptance, '仕入');
+                    const show_s_bil = s_bil !== '-' ? s_bil : formatTiming(sub.billing, '検収');
+                    const show_s_pay = s_pay !== '-' ? s_pay : formatTiming(sub.payment, '受領');
+
                     html += `<tr>`;
                     html += `<td style="vertical-align: top;">
                                 <div style="display: flex; flex-direction: column; gap: 4px;">
@@ -513,13 +595,13 @@
                              </td>`;
                     html += `<td>
                                 <div class="timeline-container">
-                                    ${renderTimelineItem('仕入', formatTiming(sub.delivery), 'neutral')}
+                                    ${renderTimelineItem('仕入', show_s_del, 'neutral')}
                                     ${renderArrow()}
-                                    ${renderTimelineItem('検収', formatTiming(sub.acceptance, '仕入'), 'neutral')}
+                                    ${renderTimelineItem('検収', show_s_acc, 'neutral')}
                                     ${renderArrow()}
-                                    ${renderTimelineItem('受領', formatTiming(sub.billing, '検収'), 'neutral')}
+                                    ${renderTimelineItem('受領', show_s_bil, 'neutral')}
                                     ${renderArrow()}
-                                    ${renderTimelineItem('支払', formatTiming(sub.payment, '受領'), 'neutral')}
+                                    ${renderTimelineItem('支払', show_s_pay, 'neutral')}
                                 </div>
                              </td>`;
                     html += `</tr>`;
@@ -528,13 +610,17 @@
 
             // 3. User Row (Incentive)
             const incentive = project.incentive || {};
+            // User incentive usually relative to client payment
+            const i_pay = calculateTimingDate(incentive.payment, clientPaymentDate);
+            const show_i_pay = i_pay !== '-' ? i_pay : formatTiming(incentive.payment, '入金');
+
             html += `<tr>`;
             html += `<td style="vertical-align: top;">
                         <span class="badge badge-success">利用者</span>
                      </td>`;
             html += `<td>
                         <div class="timeline-container">
-                             ${renderTimelineItem('インセンティブ支払', formatTiming(incentive.payment, '入金'), 'success')}
+                             ${renderTimelineItem('インセンティブ支払', show_i_pay, 'success')}
                         </div>
                      </td>`;
             html += `</tr>`;
