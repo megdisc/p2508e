@@ -465,23 +465,24 @@
 
             // Helper to render a timing config block
             // config: { mode: 'absolute'|'relative', date: '', month: 0, day: 0, frequency: '' }
-            // options: { label, basisLabel, allowFrequency, showModeToggle }
+            // options: { label, basisLabel, allowFrequency, showModeToggle, forceAbsolute }
             const renderTimingConfigurator = (config, path, options) => {
-                if (!config) config = { mode: 'relative', month: '1', day: '99' }; // default
+                if (!config) {
+                    if (options.forceAbsolute) {
+                        config = { mode: 'absolute', date: '' };
+                    } else {
+                        config = { mode: 'relative', month: '1', day: '99' }; // default
+                    }
+                }
 
-                const mode = config.mode || (isContinuous ? 'relative' : 'absolute');
-
-                // Using standard form layout. Not using card here to avoid too much nesting visual noise, 
-                // but if requested, I can wrap. "Box" style is fine.
-                // Replaced inline style with a simple class-less div or utility if available. 
-                // Since there is no "box" utility, I'll keep the subtle background but use standard spacing vars cleanly.
-                // Or better: use a transparent container inside the card.
+                // If forceAbsolute is true, mode is always absolute
+                const mode = options.forceAbsolute ? 'absolute' : (config.mode || (isContinuous ? 'relative' : 'absolute'));
 
                 let html = `<div class="form-group">`;
                 html += `<label class="form-label">${options.label}</label>`;
 
-                // Mode Toggle (Only for Single)
-                if (!isContinuous && options.showModeToggle) {
+                // Mode Toggle (Only for Single and NOT forced absolute)
+                if (!isContinuous && options.showModeToggle && !options.forceAbsolute) {
                     const idAbs = `mode_${path.replace(/\./g, '_')}_abs`;
                     const idRel = `mode_${path.replace(/\./g, '_')}_rel`;
                     html += `
@@ -560,16 +561,24 @@
                         </div>
                         <div class="card-body">`;
 
-                // Client Billing
+                // Client Delivery (NEW)
+                html += renderTimingConfigurator(c.clientDelivery, 'contract.clientDelivery', {
+                    label: '納品（顧客への成果物の納品）',
+                    basisLabel: '',
+                    showModeToggle: false,
+                    forceAbsolute: true
+                });
+
+                // Client Billing (Renamed)
                 html += renderTimingConfigurator(c.clientBilling, 'contract.clientBilling', {
-                    label: '顧客への請求',
+                    label: '請求（顧客への受託金の請求）',
                     basisLabel: '納品(完了)',
                     showModeToggle: true
                 });
 
-                // Client Payment
+                // Client Payment (Renamed)
                 html += renderTimingConfigurator(c.clientPayment, 'contract.clientPayment', {
-                    label: '顧客からの入金',
+                    label: '入金（顧客からの受託金の入金）',
                     basisLabel: '請求',
                     showModeToggle: true
                 });
@@ -607,16 +616,24 @@
                             <div class="card-body">
                     `;
 
-                    // Sub Billing (Receipt)
+                    // Sub Acceptance (NEW)
+                    html += renderTimingConfigurator(sub.acceptance, `subcontractors.${index}.acceptance`, {
+                        label: '検収（外注先からの成果物の検収）',
+                        basisLabel: '',
+                        showModeToggle: false,
+                        forceAbsolute: true
+                    });
+
+                    // Sub Billing (Receipt) (Renamed)
                     html += renderTimingConfigurator(sub.billing, `subcontractors.${index}.billing`, {
-                        label: '外注先からの請求受領',
+                        label: '受領（外注先からの請求書の受領）',
                         basisLabel: '成果物受領',
                         showModeToggle: true
                     });
 
-                    // Sub Payment
+                    // Sub Payment (Renamed)
                     html += renderTimingConfigurator(sub.payment, `subcontractors.${index}.payment`, {
-                        label: '外注先への支払い',
+                        label: '支払（外注先への費用の支払）',
                         basisLabel: '請求受領',
                         showModeToggle: true
                     });
@@ -636,9 +653,9 @@
             if (!tempProjectData.incentive) tempProjectData.incentive = {};
             const incentive = tempProjectData.incentive;
 
-            // Incentive Payment
+            // Incentive Payment (Renamed)
             html += renderTimingConfigurator(incentive.payment, 'incentive.payment', {
-                label: 'インセンティブ支払い',
+                label: '支払（利用者へのインセンティブの支払）',
                 basisLabel: '締め日',
                 showModeToggle: true
             });
@@ -679,12 +696,24 @@
             if (path.startsWith('contract')) {
                 if (!tempProjectData.contract) tempProjectData.contract = {};
                 const subKey = parts[1]; // clientBilling
-                if (!tempProjectData.contract[subKey]) tempProjectData.contract[subKey] = { mode: 'relative', month: '1', day: '99', frequency: 'monthly' };
+                if (!tempProjectData.contract[subKey]) {
+                    if (subKey === 'clientDelivery') {
+                        tempProjectData.contract[subKey] = { mode: 'absolute', date: '' };
+                    } else {
+                        tempProjectData.contract[subKey] = { mode: 'relative', month: '1', day: '99', frequency: 'monthly' };
+                    }
+                }
                 obj = tempProjectData.contract[subKey];
             } else if (path.startsWith('subcontractors')) {
                 const idx = parseInt(parts[1]);
                 const subKey = parts[2]; // billing
-                if (!tempProjectData.subcontractors[idx][subKey]) tempProjectData.subcontractors[idx][subKey] = { mode: 'relative', month: '1', day: '99', frequency: 'monthly' };
+                if (!tempProjectData.subcontractors[idx][subKey]) {
+                    if (subKey === 'acceptance') {
+                        tempProjectData.subcontractors[idx][subKey] = { mode: 'absolute', date: '' };
+                    } else {
+                        tempProjectData.subcontractors[idx][subKey] = { mode: 'relative', month: '1', day: '99', frequency: 'monthly' };
+                    }
+                }
                 obj = tempProjectData.subcontractors[idx][subKey];
             } else if (path.startsWith('incentive')) {
                 if (!tempProjectData.incentive) tempProjectData.incentive = {};
@@ -1876,7 +1905,7 @@
                     <a class="tab-link is-active" id="tab-btn-basic" onclick="switchTab('basic')">基本情報</a>
                     <a class="tab-link" id="tab-btn-tasks" onclick="switchTab('tasks')">タスク</a>
                     <a class="tab-link" id="tab-btn-budget" onclick="switchTab('budget')">予算</a>
-                    <a class="tab-link" id="tab-btn-partner" onclick="switchTab('partner')">契約情報</a>
+                    <a class="tab-link" id="tab-btn-partner" onclick="switchTab('partner')">イベント</a>
                 </nav>
 
                 <div class="modal-body">
