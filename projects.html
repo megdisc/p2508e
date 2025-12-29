@@ -561,7 +561,7 @@
                         </div>
                         <div class="card-body">`;
 
-                // Client Delivery (NEW)
+                // Client Delivery (Abs Only)
                 html += renderTimingConfigurator(c.clientDelivery, 'contract.clientDelivery', {
                     label: '納品（顧客への成果物の納品）',
                     basisLabel: '',
@@ -569,10 +569,20 @@
                     forceAbsolute: true
                 });
 
+                // Client Acceptance (Toggleable) - NEW
+                html += renderTimingConfigurator(c.clientAcceptance, 'contract.clientAcceptance', {
+                    label: '検収（顧客による成果物の検収）',
+                    basisLabel: '納品',
+                    showModeToggle: true
+                });
+
+
                 // Client Billing (Renamed)
                 html += renderTimingConfigurator(c.clientBilling, 'contract.clientBilling', {
                     label: '請求（顧客への受託金の請求）',
-                    basisLabel: '納品(完了)',
+                    basisLabel: '検収', // Updated basis logic? Usually Billing is after Acceptance? 
+                    // Previous basis was "Delivery". Now that we have Acceptance, Billing usually follows Acceptance.
+                    // I'll set basisLabel to "検収" to be logical.
                     showModeToggle: true
                 });
 
@@ -616,25 +626,34 @@
                             <div class="card-body">
                     `;
 
-                    // Sub Acceptance (NEW)
-                    html += renderTimingConfigurator(sub.acceptance, `subcontractors.${index}.acceptance`, {
-                        label: '検収（外注先からの成果物の検収）',
+                    // Sub Purchase (Delivery from Sub) - NEW - Abs Only
+                    // "仕入（外注先からの成果物の仕入）"
+                    html += renderTimingConfigurator(sub.delivery, `subcontractors.${index}.delivery`, {
+                        label: '仕入（外注先からの成果物の仕入）',
                         basisLabel: '',
                         showModeToggle: false,
                         forceAbsolute: true
                     });
 
+                    // Sub Acceptance (Toggleable) - Updated from AbsOnly
+                    html += renderTimingConfigurator(sub.acceptance, `subcontractors.${index}.acceptance`, {
+                        label: '検収（外注先からの成果物の検収）',
+                        basisLabel: '仕入', // Basis is Delivery/Purchase
+                        showModeToggle: true,
+                        forceAbsolute: false // Explicitly false to allow toggling
+                    });
+
                     // Sub Billing (Receipt) (Renamed)
                     html += renderTimingConfigurator(sub.billing, `subcontractors.${index}.billing`, {
                         label: '受領（外注先からの請求書の受領）',
-                        basisLabel: '成果物受領',
+                        basisLabel: '検収', // Basis is Acceptance
                         showModeToggle: true
                     });
 
                     // Sub Payment (Renamed)
                     html += renderTimingConfigurator(sub.payment, `subcontractors.${index}.payment`, {
                         label: '支払（外注先への費用の支払）',
-                        basisLabel: '請求受領',
+                        basisLabel: '受領', // Basis is Receipt
                         showModeToggle: true
                     });
 
@@ -699,6 +718,8 @@
                 if (!tempProjectData.contract[subKey]) {
                     if (subKey === 'clientDelivery') {
                         tempProjectData.contract[subKey] = { mode: 'absolute', date: '' };
+                    } else if (subKey === 'clientAcceptance') {
+                        tempProjectData.contract[subKey] = { mode: 'relative', month: '1', day: '99', frequency: 'monthly' };
                     } else {
                         tempProjectData.contract[subKey] = { mode: 'relative', month: '1', day: '99', frequency: 'monthly' };
                     }
@@ -708,9 +729,11 @@
                 const idx = parseInt(parts[1]);
                 const subKey = parts[2]; // billing
                 if (!tempProjectData.subcontractors[idx][subKey]) {
-                    if (subKey === 'acceptance') {
+                    // Update: Delivery is Absolute. Acceptance is now Relative-allowed.
+                    if (subKey === 'delivery') {
                         tempProjectData.subcontractors[idx][subKey] = { mode: 'absolute', date: '' };
                     } else {
+                        // All others (acceptance, billing, payment) default to relative
                         tempProjectData.subcontractors[idx][subKey] = { mode: 'relative', month: '1', day: '99', frequency: 'monthly' };
                     }
                 }
