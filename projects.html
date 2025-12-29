@@ -227,6 +227,9 @@
                         payment: { mode: 'relative', month: '1', day: '99' }
                     }
                 ],
+                incentive: {
+                    payment: { mode: 'relative', month: '1', day: '15' } // Wage payment date (15th of next month relative to receipt)
+                },
                 startDate: '2025-10-01',
                 endDate: '2025-10-31',
                 isCancelled: false,
@@ -273,9 +276,14 @@
                     { name: '事業所積立金', type: '積立金', amount: 10000, note: '売上の5%' }
                 ],
                 contract: {
-                    billingTiming: 'next_month_10',
+                    billingTiming: { mode: 'relative', frequency: 'monthly', month: '1', day: '10' },
                     billingFrequency: 'monthly',
-                    paymentTiming: 'next_next_month_end'
+                    paymentTiming: { mode: 'relative', frequency: 'monthly', month: '2', day: '99' },
+                    // Continuous projects won't have absolute delivery/acceptance usually, but we can set defaults
+                    clientDelivery: { mode: 'relative', frequency: 'monthly', day: '25' },
+                    clientAcceptance: { mode: 'relative', frequency: 'monthly', month: '1', day: '5' },
+                    clientBilling: { mode: 'relative', frequency: 'monthly', month: '1', day: '10' },
+                    clientPayment: { mode: 'relative', frequency: 'monthly', month: '2', day: '99' }
                 }
             },
             'project-4': {
@@ -397,11 +405,11 @@
             if (config.mode === 'absolute') {
                 return config.date ? config.date.replace(/-/g, '.') : '-';
             }
-            // Fallback for legacy string codes (cannot calc, return as is or map?)
-            if (typeof config === 'string') {
-                // Try to resolve legacy? No, just return for formatTiming to handle text
-                return '-';
-            }
+            // If frequency is set, we do NOT calculate a specific date here
+            if (config.frequency) return '-';
+
+            // Fallback for legacy string codes
+            if (typeof config === 'string') return '-';
 
             // If relative, and we have a base date
             if (config.mode === 'relative' && baseDateStr && baseDateStr !== '-') {
@@ -469,9 +477,9 @@
                             parseInt(setting.month) === 3 ? '3ヶ月後' : 'その他';
                 const d = parseInt(setting.day) === 99 ? '末日' : `${setting.day}日`;
 
-                // Construct string like "納品翌月 10日" or "毎月 10日"
+                // If frequency exists: e.g. "Every Month 25th"
                 if (f) {
-                    return `${f} ${d}`; // Continuous usually just "Monthly 25th"
+                    return `${f}${d}`;
                 } else {
                     // Single Relative: "Basis + Month + Day"
                     // Context label provided by caller? simpler to just say "Relative Month Day"
@@ -480,7 +488,7 @@
                     // For Cleanliness: "翌月 10日" is usually sufficient if the header says "Payment Timing".
                     // But strictly speaking: "納品翌月 10日" is better.
                     // I will add a prefix if context is provided
-                    return `${context ? context : ''}${m} ${d}`;
+                    return `${context ? context : ''}${m}${d}`;
                 }
             }
             return '-';
