@@ -140,16 +140,12 @@
             justify-content: center;
             min-width: 90px;
             padding: var(--spacing-2);
-            border: 1px solid var(--color-border-default);
-            border-radius: var(--radius-base);
-            background-color: var(--color-bg-default);
+            /* Border and background removed for cleaner look */
             text-align: center;
         }
 
         .timeline-item.is-pending {
-            border-style: dashed;
-            background-color: var(--color-bg-subtle);
-            opacity: 0.7;
+            opacity: 0.5;
         }
 
         .timeline-item-label {
@@ -214,10 +210,22 @@
                 contract: {
                     billingTiming: 'current_month_end',
                     billingFrequency: 'monthly',
-                    paymentTiming: 'next_month_25'
+                    paymentTiming: 'next_month_25',
+                    clientDelivery: 'current_month_end',
+                    clientAcceptance: 'next_month_10',
+                    clientBilling: 'next_month_20',
+                    clientPayment: 'next_next_month_end'
                 },
                 subcontractors: [
-                    { name: 'ヤマト運輸', paymentTiming: 'next_month_end', billingTiming: 'next_month_20' }
+                    {
+                        name: 'ヤマト運輸',
+                        paymentTiming: 'next_month_end',
+                        billingTiming: 'next_month_20',
+                        delivery: 'current_month_end',
+                        acceptance: 'next_month_10',
+                        billing: 'next_month_20',
+                        payment: 'next_month_end'
+                    }
                 ],
                 startDate: '2025-10-01',
                 endDate: '2025-10-31',
@@ -384,8 +392,18 @@
         // Helper for timing formatting (View)
         const formatTiming = (setting, context) => {
             if (!setting) return '-';
-            // Legacy support (string)
-            if (typeof setting === 'string') return setting;
+            // Legacy support (string) - Map codes to readable text
+            if (typeof setting === 'string') {
+                const map = {
+                    'current_month_end': '当月末',
+                    'next_month_10': '翌月10日',
+                    'next_month_20': '翌月20日',
+                    'next_month_25': '翌月25日',
+                    'next_month_end': '翌月末',
+                    'next_next_month_end': '翌々月末'
+                };
+                return map[setting] || setting;
+            }
 
             if (setting.mode === 'absolute') {
                 return setting.date || '-';
@@ -425,12 +443,12 @@
             let html = '';
 
             // Helper to render timeline item
-            const renderTimelineItem = (label, dateFunc) => {
+            const renderTimelineItem = (label, dateFunc, badgeType = 'neutral') => {
                 let date = dateFunc || '-';
                 let isPending = date === '-';
                 return `
                     <div class="timeline-item ${isPending ? 'is-pending' : ''}">
-                        <div class="timeline-item-label">${label}</div>
+                        <span class="badge badge-${badgeType}" style="margin-bottom: 4px;">${label}</span>
                         <div class="timeline-item-date">${date}</div>
                     </div>`;
             };
@@ -460,13 +478,13 @@
                          </td>`;
                 html += `<td>
                             <div class="timeline-container">
-                                ${renderTimelineItem('納品', formatTiming(c.clientDelivery))}
+                                ${renderTimelineItem('納品', formatTiming(c.clientDelivery), 'primary')}
                                 ${renderArrow()}
-                                ${renderTimelineItem('検収', formatTiming(c.clientAcceptance, '納品'))}
+                                ${renderTimelineItem('検収', formatTiming(c.clientAcceptance, '納品'), 'primary')}
                                 ${renderArrow()}
-                                ${renderTimelineItem('請求', formatTiming(c.clientBilling, '検収'))}
+                                ${renderTimelineItem('請求', formatTiming(c.clientBilling, '検収'), 'primary')}
                                 ${renderArrow()}
-                                ${renderTimelineItem('入金', formatTiming(c.clientPayment, '請求'))}
+                                ${renderTimelineItem('入金', formatTiming(c.clientPayment, '請求'), 'primary')}
                             </div>
                          </td>`;
                 html += `</tr>`;
@@ -495,13 +513,13 @@
                              </td>`;
                     html += `<td>
                                 <div class="timeline-container">
-                                    ${renderTimelineItem('仕入', formatTiming(sub.delivery))}
+                                    ${renderTimelineItem('仕入', formatTiming(sub.delivery), 'neutral')}
                                     ${renderArrow()}
-                                    ${renderTimelineItem('検収', formatTiming(sub.acceptance, '仕入'))}
+                                    ${renderTimelineItem('検収', formatTiming(sub.acceptance, '仕入'), 'neutral')}
                                     ${renderArrow()}
-                                    ${renderTimelineItem('受領', formatTiming(sub.billing, '検収'))}
+                                    ${renderTimelineItem('受領', formatTiming(sub.billing, '検収'), 'neutral')}
                                     ${renderArrow()}
-                                    ${renderTimelineItem('支払', formatTiming(sub.payment, '受領'))}
+                                    ${renderTimelineItem('支払', formatTiming(sub.payment, '受領'), 'neutral')}
                                 </div>
                              </td>`;
                     html += `</tr>`;
@@ -516,7 +534,7 @@
                      </td>`;
             html += `<td>
                         <div class="timeline-container">
-                             ${renderTimelineItem('インセンティブ支払', formatTiming(incentive.payment, '入金'))}
+                             ${renderTimelineItem('インセンティブ支払', formatTiming(incentive.payment, '入金'), 'success')}
                         </div>
                      </td>`;
             html += `</tr>`;
