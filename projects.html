@@ -263,6 +263,7 @@
                 type: 'continuous',
                 source: 'external',
                 partner: '天神オフィスサプライ',
+                startDate: '2025-11-01',
                 revenue: 200000,
                 revenueItems: [
                     { name: '清掃委託料', amount: 200000, note: '月額固定' }
@@ -284,6 +285,9 @@
                     clientAcceptance: { mode: 'relative', frequency: 'monthly', month: '1', day: '5' },
                     clientBilling: { mode: 'relative', frequency: 'monthly', month: '1', day: '10' },
                     clientPayment: { mode: 'relative', frequency: 'monthly', month: '2', day: '99' }
+                },
+                incentive: {
+                    payment: { mode: 'relative', frequency: 'monthly', day: '25' }
                 }
             },
             'project-4': {
@@ -1863,7 +1867,7 @@
                                 <div style="display: flex; gap: var(--spacing-2);">
                                     <span class="badge badge-primary">進行中</span>
                                     <span class="badge badge-neutral">単発</span>
-                                    <span class="badge badge-neutral">受託｜株式会社 福岡工芸</span>
+                                    <span class="badge badge-neutral">受託</span>
                                 </div>
                             </div>
                             <div
@@ -1882,6 +1886,10 @@
                                 <div>
                                     <dt>期間</dt>
                                     <dd>2025.10.01 - 2025.10.31</dd>
+                                </div>
+                                <div>
+                                    <dt>顧客</dt>
+                                    <dd>株式会社 福岡工芸</dd>
                                 </div>
 
                                 <div style="grid-column: 1 / -1;">
@@ -1911,7 +1919,7 @@
                                 <div style="display: flex; gap: var(--spacing-2);">
                                     <span class="badge badge-neutral">未着手</span>
                                     <span class="badge badge-neutral">継続</span>
-                                    <span class="badge badge-neutral">受託｜天神オフィスサプライ</span>
+                                    <span class="badge badge-neutral">受託</span>
                                 </div>
                             </div>
                             <div
@@ -1930,6 +1938,10 @@
                                 <div>
                                     <dt>期間</dt>
                                     <dd>2025.11.01 - 継続中</dd>
+                                </div>
+                                <div>
+                                    <dt>顧客</dt>
+                                    <dd>天神オフィスサプライ</dd>
                                 </div>
 
                                 <div style="grid-column: 1 / -1;">
@@ -1989,8 +2001,8 @@
                                 style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
                                 <button class="btn btn-neutral" onclick="showTaskViewModal('project-4')">タスク</button>
                                 <button class="btn btn-neutral" onclick="showBudgetViewModal('project-4')">予算</button>
-                                <button class="btn btn-neutral" onclick="showPartnerViewModalNew('project-4')"
-                                    disabled>イベント</button>
+                                <button class="btn btn-neutral"
+                                    onclick="showPartnerViewModalNew('project-4')">イベント</button>
                             </div>
                         </div>
                     </div>
@@ -2037,8 +2049,8 @@
                                 style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
                                 <button class="btn btn-neutral" onclick="showTaskViewModal('project-2')">タスク</button>
                                 <button class="btn btn-neutral" onclick="showBudgetViewModal('project-2')">予算</button>
-                                <button class="btn btn-neutral" onclick="showPartnerViewModalNew('project-2')"
-                                    disabled>イベント</button>
+                                <button class="btn btn-neutral"
+                                    onclick="showPartnerViewModalNew('project-2')">イベント</button>
                             </div>
                         </div>
                     </div>
