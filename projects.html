@@ -108,6 +108,69 @@
         .bg-profit {
             background-color: var(--color-semantic-success-main);
         }
+
+        /* Timeline Chart Styles */
+        .timeline-container {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-2);
+            overflow-x: auto;
+            padding: var(--spacing-1) 0;
+            white-space: nowrap;
+        }
+
+        /* Hide scrollbar for cleaner look */
+        .timeline-container::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .timeline-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .timeline-container::-webkit-scrollbar-thumb {
+            background: var(--color-border-default);
+            border-radius: 4px;
+        }
+
+        .timeline-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-width: 90px;
+            padding: var(--spacing-2);
+            border: 1px solid var(--color-border-default);
+            border-radius: var(--radius-base);
+            background-color: var(--color-bg-default);
+            text-align: center;
+        }
+
+        .timeline-item.is-pending {
+            border-style: dashed;
+            background-color: var(--color-bg-subtle);
+            opacity: 0.7;
+        }
+
+        .timeline-item-label {
+            font-size: var(--font-size-xs);
+            font-weight: bold;
+            color: var(--color-text-secondary);
+            margin-bottom: 2px;
+        }
+
+        .timeline-item-date {
+            font-size: var(--font-size-sm);
+            font-weight: 500;
+        }
+
+        .timeline-arrow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-text-tertiary);
+            padding: 0 4px;
+        }
     </style>
 
     <script>
@@ -352,6 +415,7 @@
         };
 
         // --- Partner View Logic (Refactored) ---
+        // --- Partner View Logic (Refactored) ---
         function showPartnerViewModalNew(projectId) {
             const project = projectsData[projectId];
             if (!project) return;
@@ -360,74 +424,104 @@
             const body = document.getElementById('view-partner-modal-body');
             let html = '';
 
-            // --- Customer Section ---
-            const isInternal = project.source === 'internal';
+            // Helper to render timeline item
+            const renderTimelineItem = (label, dateFunc) => {
+                let date = dateFunc || '-';
+                let isPending = date === '-';
+                return `
+                    <div class="timeline-item ${isPending ? 'is-pending' : ''}">
+                        <div class="timeline-item-label">${label}</div>
+                        <div class="timeline-item-date">${date}</div>
+                    </div>`;
+            };
 
-            html += `<div style="margin-bottom: var(--spacing-stack-md);">
-                <div style="font-weight: bold; border-bottom: 2px solid var(--color-border-default); margin-bottom: var(--spacing-2); padding-bottom: var(--spacing-1);">
-                    顧客
-                </div>`;
-
-            if (isInternal) {
-                html += `<div style="color: var(--color-text-tertiary); padding: var(--spacing-2);">自主事業のため顧客設定はありません。</div>`;
-            } else {
-                const c = project.contract || {};
-                html += `<table class="table" style="width: 100%;">`;
-                html += `<thead><tr><th style="width: 30%; background-color: var(--color-bg-subtle);">顧客名</th><th style="width: 20%; background-color: var(--color-bg-subtle);">イベント</th><th style="background-color: var(--color-bg-subtle);">タイミング</th></tr></thead>`;
-                html += `<tbody>`;
-
-                // Name (rowspan 4)
-                html += `<tr><td rowspan="4" style="vertical-align: top; font-weight: bold;">${project.partner || '-'}</td>`;
-
-                // Delivery
-                html += `<td>納品</td><td>${formatTiming(c.clientDelivery) || '-'}</td></tr>`;
-                // Acceptance
-                html += `<tr><td>検収</td><td>${formatTiming(c.clientAcceptance, '納品')}</td></tr>`;
-                // Billing
-                html += `<tr><td>請求</td><td>${formatTiming(c.clientBilling, '検収')}</td></tr>`;
-                // Payment
-                html += `<tr><td>入金</td><td>${formatTiming(c.clientPayment, '請求')}</td></tr>`;
-
-                html += `</tbody></table>`;
+            const renderArrow = () => {
+                return `<div class="timeline-arrow"><span class="material-symbols-outlined" style="font-size: 16px;">arrow_forward</span></div>`;
             }
-            html += `</div>`;
 
-            // --- Subcontractor Section ---
+            html += `<table class="table">`;
+            html += `<thead><tr>
+                        <th style="width: 25%; background-color: var(--color-bg-subtle);">種別</th>
+                        <th style="background-color: var(--color-bg-subtle);">タイミング</th>
+                    </tr></thead>`;
+            html += `<tbody>`;
+
+            // 1. Customer Row
+            if (project.source !== 'internal') {
+                const c = project.contract || {};
+                const partnerName = project.partner || '-';
+
+                html += `<tr>`;
+                html += `<td style="vertical-align: top;">
+                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                <span class="badge badge-primary" style="width: fit-content;">顧客</span>
+                                <span style="font-weight: bold;">${partnerName}</span>
+                            </div>
+                         </td>`;
+                html += `<td>
+                            <div class="timeline-container">
+                                ${renderTimelineItem('納品', formatTiming(c.clientDelivery))}
+                                ${renderArrow()}
+                                ${renderTimelineItem('検収', formatTiming(c.clientAcceptance, '納品'))}
+                                ${renderArrow()}
+                                ${renderTimelineItem('請求', formatTiming(c.clientBilling, '検収'))}
+                                ${renderArrow()}
+                                ${renderTimelineItem('入金', formatTiming(c.clientPayment, '請求'))}
+                            </div>
+                         </td>`;
+                html += `</tr>`;
+            } else {
+                html += `<tr>`;
+                html += `<td style="vertical-align: top;">
+                            <div style="display: flex; flex-direction: column; gap: 4px;">
+                                <span class="badge badge-primary" style="width: fit-content;">顧客</span>
+                                <span style="color: var(--color-text-tertiary);">（自主事業）</span>
+                            </div>
+                         </td>`;
+                html += `<td><div style="color: var(--color-text-tertiary); padding: var(--spacing-2);">設定なし</div></td>`;
+                html += `</tr>`;
+            }
+
+            // 2. Subcontractor Rows
             const subs = project.subcontractors || [];
             if (subs.length > 0) {
-                html += `<div style="margin-bottom: var(--spacing-stack-md);">
-                <div style="font-weight: bold; border-bottom: 2px solid var(--color-border-default); margin-bottom: var(--spacing-2); padding-bottom: var(--spacing-1);">
-                    外注先
-                </div>`;
-                html += `<table class="table" style="width: 100%;">`;
-                html += `<thead><tr><th style="width: 30%; background-color: var(--color-bg-subtle);">外注先名</th><th style="width: 20%; background-color: var(--color-bg-subtle);">イベント</th><th style="background-color: var(--color-bg-subtle);">タイミング</th></tr></thead>`;
-                html += `<tbody>`;
-
                 subs.forEach(sub => {
-                    html += `<tr><td rowspan="4" style="vertical-align: top; font-weight: bold; border-bottom: 2px solid var(--color-border-subtle);">${sub.name}</td>`;
-                    // Delivery (Purchase)
-                    html += `<td style="border-top: 1px solid var(--color-border-subtle);">仕入</td><td style="border-top: 1px solid var(--color-border-subtle);">${formatTiming(sub.delivery) || '-'}</td></tr>`;
-                    // Acceptance
-                    html += `<tr><td>検収</td><td>${formatTiming(sub.acceptance, '仕入')}</td></tr>`;
-                    // Receipt (Billing)
-                    html += `<tr><td>受領</td><td>${formatTiming(sub.billing, '検収')}</td></tr>`;
-                    // Payment
-                    html += `<tr><td style="border-bottom: 2px solid var(--color-border-subtle);">支払</td><td style="border-bottom: 2px solid var(--color-border-subtle);">${formatTiming(sub.payment, '受領')}</td></tr>`;
+                    html += `<tr>`;
+                    html += `<td style="vertical-align: top;">
+                                <div style="display: flex; flex-direction: column; gap: 4px;">
+                                    <span class="badge badge-neutral" style="width: fit-content;">外注先</span>
+                                    <span style="font-weight: bold;">${sub.name}</span>
+                                </div>
+                             </td>`;
+                    html += `<td>
+                                <div class="timeline-container">
+                                    ${renderTimelineItem('仕入', formatTiming(sub.delivery))}
+                                    ${renderArrow()}
+                                    ${renderTimelineItem('検収', formatTiming(sub.acceptance, '仕入'))}
+                                    ${renderArrow()}
+                                    ${renderTimelineItem('受領', formatTiming(sub.billing, '検収'))}
+                                    ${renderArrow()}
+                                    ${renderTimelineItem('支払', formatTiming(sub.payment, '受領'))}
+                                </div>
+                             </td>`;
+                    html += `</tr>`;
                 });
-                html += `</tbody></table></div>`;
             }
 
-            // --- User Section ---
+            // 3. User Row (Incentive)
             const incentive = project.incentive || {};
-            // For now, always show user section or only if defined? Projects usually imply user work.
-            html += `<div style="margin-bottom: var(--spacing-stack-md);">
-                <div style="font-weight: bold; border-bottom: 2px solid var(--color-border-default); margin-bottom: var(--spacing-2); padding-bottom: var(--spacing-1);">
-                    利用者
-                </div>`;
-            html += `<table class="table" style="width: 100%;">`;
-            // Simplified table for single item
-            html += `<tbody><tr><td style="width: 30%; font-weight: bold;">インセンティブ支払</td><td>${formatTiming(incentive.payment, '入金')}</td></tr></tbody>`;
-            html += `</table></div>`;
+            html += `<tr>`;
+            html += `<td style="vertical-align: top;">
+                        <span class="badge badge-success">利用者</span>
+                     </td>`;
+            html += `<td>
+                        <div class="timeline-container">
+                             ${renderTimelineItem('インセンティブ支払', formatTiming(incentive.payment, '入金'))}
+                        </div>
+                     </td>`;
+            html += `</tr>`;
+
+            html += `</tbody></table>`;
 
             body.innerHTML = html;
             showModal('modal-partner-view');
@@ -2350,7 +2444,7 @@
 
     <!-- View Partner Contract Modal -->
     <div class="modal-backdrop" id="modal-partner-view" style="display: none;">
-        <div class="modal-content" style="max-width: 500px;">
+        <div class="modal-content">
             <div class="modal-header">
                 イベント情報: <span id="view-partner-project-name"></span>
             </div>
