@@ -1271,21 +1271,19 @@
     <!-- Unified Schedule Edit Modal -->
     <!-- Unified Schedule Edit Modal -->
     <div class="modal-backdrop" id="modal-schedule-edit" style="display: none;">
-        <div class="modal-content"
-            style="max-width: 900px; height: 85vh; display: flex; flex-direction: column; padding: 0;">
-            <div class="modal-header" style="flex-shrink: 0;">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
                 <h2 id="modal-schedule-edit-title" style="margin: 0; font-size: 1.25rem;">スケジュール編集</h2>
             </div>
 
-            <div
-                style="border-bottom: 1px solid var(--color-base-quinary); padding: 0 var(--spacing-4); background-color: var(--color-base-secondary);">
+            <div style="margin-bottom: var(--spacing-stack-md);">
                 <nav class="tabs-nav" id="schedule-tab-group">
                     <a class="tab-link is-active" id="tab-btn-events" onclick="switchScheduleTab('events')">イベント</a>
                     <a class="tab-link" id="tab-btn-tasks" onclick="switchScheduleTab('tasks')">タスク</a>
                 </nav>
             </div>
 
-            <div class="modal-body" style="flex: 1; overflow-y: auto; padding: var(--spacing-4);">
+            <div class="modal-body">
                 <!-- Events Tab -->
                 <div id="tab-content-events" class="tab-content is-active">
                     <table class="table" style="width: 100%;">
@@ -1331,8 +1329,7 @@
                 </div>
             </div>
 
-            <div class="modal-footer"
-                style="flex-shrink: 0; justify-content: flex-end; border-top: 1px solid var(--color-base-quinary);">
+            <div class="modal-footer">
                 <button class="btn btn-neutral" onclick="hideModal('modal-schedule-edit')">キャンセル</button>
                 <button class="btn btn-primary" onclick="saveScheduleChanges()">保存する</button>
             </div>
@@ -1382,95 +1379,166 @@
 
         // Render Events List (Table)
         function renderScheduleEventsList(project) {
-            const tbody = document.getElementById('schedule-edit-events-tbody');
-            tbody.innerHTML = '';
+            const container = document.getElementById('tab-content-events');
+            container.innerHTML = '';
 
-            // Generate all events for the project in the current month (or all months? Editor usually implies range).
-            // But getEventsForDate is for a specific day? No, lines 1394 used loop over daysInMonth.
-            // The scheduled editor previously showed events for the *current view month*.
             const currentDateInput = document.getElementById('schedule-date').value;
             const [yearStr, monthStr] = currentDateInput.split('-');
             const year = parseInt(yearStr);
             const month = parseInt(monthStr);
             const daysInMonth = new Date(year, month, 0).getDate();
 
-            let hasEvents = false;
+            // Buckets
+            const clientEvents = [];
+            const userEvents = [];
+            const subEventsMap = {}; // name -> []
+
+            // Description Maps
+            const clientDesc = {
+                '納品': '顧客への成果物の納品',
+                '検収': '顧客による成果物の検収',
+                '請求': '顧客への受託金の請求',
+                '入金': '顧客からの受託金の入金'
+            };
+            const subDesc = {
+                '仕入': '外注先からの成果物の仕入',
+                '検収': '外注先からの成果物の検収',
+                '受領': '外注先からの請求書の受領',
+                '支払': '外注先への費用の支払'
+            };
+            const userDesc = {
+                '支払': '利用者へのインセンティブの支払'
+            };
+
+            // Helper to clean label, detect type and add description
+            const processEvent = (evt, dateStr) => {
+                let mappedLabel = evt.label;
+                let subName = '';
+                let description = '';
+
+                if (evt.class === 'event-client') {
+                    // Remove '顧客' prefix
+                    mappedLabel = mappedLabel.replace('顧客', '');
+                    description = clientDesc[mappedLabel] || '';
+                    clientEvents.push({ ...evt, displayLabel: mappedLabel, description, dateStr });
+                } else if (evt.class === 'event-user') {
+                    mappedLabel = mappedLabel.replace('利用者', '');
+                    description = userDesc[mappedLabel] || '';
+                    userEvents.push({ ...evt, displayLabel: mappedLabel, description, dateStr });
+                } else if (evt.class === 'event-subcontractor') {
+                    // Format: "外注検収(Name)"
+                    const match = evt.label.match(/外注(.+)\((.+)\)/);
+                    if (match) {
+                        mappedLabel = match[1];
+                        subName = match[2];
+                    } else {
+                        // Fallback logic
+                        if (evt.label.includes('(')) {
+                            const parts = evt.label.split('(');
+                            mappedLabel = parts[0].replace('外注', '');
+                            subName = parts[1].replace(')', '');
+                        } else {
+                            mappedLabel = evt.label.replace('外注', '');
+                            subName = '不明';
+                        }
+                    }
+                    description = subDesc[mappedLabel] || '';
+                    if (!subEventsMap[subName]) subEventsMap[subName] = [];
+                    subEventsMap[subName].push({ ...evt, displayLabel: mappedLabel, description, dateStr });
+                }
+            };
 
             for (let d = 1; d <= daysInMonth; d++) {
-                // Mock function: getEventsForDate usually gets for specific date.
-                // Assuming `getEventsForDate` (global helper) or `getProjectEventsForDate`? 
-                // Previous code loop suggests: getEventsForDate(project, year, month, d)
-                // Wait, previous code used `getEventsForDate(project, year, month, d)`. I need to ensure that function exists or logic is replicated.
-                // I'll stick to the logic seen in the snippet (lines 1394).
-
-                // Note: The previous snippet used `getEventsForDate(project, year, month, d)`.
-                // I'll assume this helper exists or logic was inline. 
-                // Actually `getEventsForDate` in `schedule.html` usually serves the main scheduler. 
-                // Let's implement specific loop for this editor based on `project` data.
-
-                const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-                // Simplified: Checking contract/subcontractor events.
-                // I'll reuse a simplified logic or try to find `getEventsForDate`.
-                // Assuming it works as per previous code context.
-
-                // Since I can't call getEventsForDate(project...) without verifying signature, I will implement a safe lookup.
-                // But wait, the snippet I'm replacing was handling it.
-                // I will assume `getProjectEventsForDate(project, date)` exists or recreate the logic to find events from `project`.
-                // For safety, I will implement a local helper or logic to find events from `project.contract` and `project.subcontractors`.
-
-                const events = [];
-                // 1. Contract
-                if (project.contract) {
-                    // Check Delivery, Billing, etc. for this date. (Mock timing logic needed?)
-                    // This is too complex to reimplement fully here if helper is missing.
-                    // I will assume `getEventsForDate(selectedDate)` logic but filtered for this project?
-                    // No, let's look at `projectsData`.
-                }
-
-                // Fallback: Using the logic previously present in lines 1394: `getEventsForDate(project, year, month, d)`
-                const dayEvents = (typeof getEventsForDate === 'function' && getEventsForDate.length > 3)
+                const dayEvents = (typeof getEventsForDate === 'function')
                     ? getEventsForDate(project, year, month, d)
                     : [];
 
-                dayEvents.forEach(evt => {
-                    hasEvents = true;
-                    // evt = { type: 'contract'|'sub', label: '納品'..., date: ... }
+                const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                dayEvents.forEach(evt => processEvent(evt, dateStr));
+            }
 
-                    let badgeType = 'neutral';
-                    if (evt.label === '納品') badgeType = 'success';
-                    else if (evt.label === '請求') badgeType = 'warning';
-                    else if (evt.label === '入金') badgeType = 'success';
+            let hasAnyEvents = false;
 
-                    const actualKey = `${evt.type}_${evt.label}_${dateStr}`;
-                    const actual = project.actuals ? project.actuals[actualKey] : null;
-                    const inputsId = `evt-${d}-${evt.label}`;
+            const createTable = (rowsHtml) => {
+                return `
+                <div class="table-container" style="margin-bottom: var(--spacing-stack-md);">
+                    <table class="table" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>イベント</th>
+                                <th style="width: 150px;">日付</th>
+                                <th style="width: 80px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>${rowsHtml}</tbody>
+                    </table>
+                </div>`;
+            };
 
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td><span class="badge badge-${badgeType}">${evt.type === 'contract' ? '受' : '外'}</span></td>
+            const createRow = (evt) => {
+                const actualKey = `${evt.type}_${evt.label}_${evt.dateStr}`;
+                const actual = project.actuals ? project.actuals[actualKey] : null;
+                return `
+                    <tr>
                         <td>
-                            <div>${evt.label}</div>
-                            <div style="font-size: 0.8em; color: var(--color-text-secondary);">${dateStr.replace(/-/g, '.')}</div>
+                            <div>${evt.displayLabel}</div>
+                            <div style="font-size: 0.8em; color: var(--color-text-secondary);">${evt.description}</div>
                         </td>
                         <td>
-                            <input type="date" class="input-field event-actual-date" 
-                                data-project-id="${project.id}" 
+                            <input type="date" class="input-field event-actual-date"
+                                data-project-id="${project.id}"
                                 data-event-key="${actualKey}"
-                                data-scheduled-date="${dateStr}"
-                                value="${actual ? actual.date : dateStr}">
+                                data-scheduled-date="${evt.dateStr}"
+                                value="${actual ? actual.date : evt.dateStr}">
                         </td>
                         <td style="text-align: center;">
                              <button class="btn btn-icon-sm btn-neutral" title="リセット" onclick="resetEventDate(this)">
                                 <span class="material-symbols-outlined">restart_alt</span>
                             </button>
                         </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
+                    </tr>`;
+            };
+
+            // 1. Client Section
+            if (clientEvents.length > 0) {
+                hasAnyEvents = true;
+                const rows = clientEvents.map(createRow).join('');
+                container.innerHTML += `
+                    <div style="margin-bottom: var(--spacing-2); display: flex; align-items: center; gap: var(--spacing-2);">
+                        <span class="badge badge-primary">顧客</span>
+                        <span style="font-weight: bold;">${project.partner || '顧客'}</span>
+                    </div>
+                    ${createTable(rows)}
+                `;
             }
 
-            if (!hasEvents) {
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--color-text-tertiary);">この月のイベントはありません</td></tr>';
+            // 2. Subcontractor Sections
+            Object.keys(subEventsMap).forEach(subName => {
+                hasAnyEvents = true;
+                const rows = subEventsMap[subName].map(createRow).join('');
+                container.innerHTML += `
+                    <div style="margin-bottom: var(--spacing-2); display: flex; align-items: center; gap: var(--spacing-2);">
+                        <span class="badge badge-neutral">外注先</span>
+                        <span style="font-weight: bold;">${subName}</span>
+                    </div>
+                    ${createTable(rows)}
+                `;
+            });
+
+            // 3. User Section
+            if (userEvents.length > 0) {
+                hasAnyEvents = true;
+                const rows = userEvents.map(createRow).join('');
+                container.innerHTML += `
+                    <div style="margin-bottom: var(--spacing-2); display: flex; align-items: center; gap: var(--spacing-2);">
+                        <span class="badge badge-success">利用者</span>
+                    </div>
+                    ${createTable(rows)}
+                `;
+            }
+
+            if (!hasAnyEvents) {
+                container.innerHTML = '<div style="text-align: center; color: var(--color-text-tertiary); padding: var(--spacing-4);">この月のイベントはありません</div>';
             }
         }
 
