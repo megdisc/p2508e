@@ -458,30 +458,25 @@
                 id: 'project-1',
                 name: 'DM封入作業',
                 status: 'in-progress',
-                term: 'continuous', // or 'spot'
-                category: 'contract', // or 'self'
+                term: 'continuous',
+                category: 'contract',
+                partner: '株式会社 福岡工芸',
                 contract: {
-                    billingTiming: { mode: 'relative', month: '0', day: '99' },
-                    clientPayment: { mode: 'relative', month: '1', day: '25' },
-                    deliveryDate: { mode: 'relative', month: '0', day: '25' } // 納品
+                    billingTiming: { mode: 'relative', month: '1', day: '10' },
+                    clientPayment: { mode: 'relative', month: '2', day: '25' },
+                    deliveryDate: { mode: 'relative', month: '0', day: '31' }
                 },
+                incentive: { payment: { mode: 'relative', month: '2', day: '15' } },
                 subcontractors: [
-                    {
-                        name: 'ヤマト運輸',
-                        billing: { mode: 'relative', month: '1', day: '20' }, // 請求受領
-                        payment: { mode: 'relative', month: '1', day: '99' }, // 支払
-                        inspection: { mode: 'relative', month: '1', day: '15' } // 検収 (Mock: if needed)
-                    }
+                    { name: '博多ロジスティクス', delivery: { mode: 'relative', month: '0', day: '25' }, acceptance: { mode: 'relative', month: '0', day: '28' }, billing: { mode: 'relative', month: '1', day: '5' }, payment: { mode: 'relative', month: '1', day: '30' } }
                 ],
-                incentive: { payment: { mode: 'relative', month: '1', day: '15' } },
                 actuals: {
                     // Mock: Incentive Payment scheduled for Nov 15th, actually done on Nov 18th
                     'payment_payment_2025-11-15': { date: '2025-11-18', isDone: true }
                 },
                 tasks: [
-                    { name: '封入', startDay: 4, days: 5, progress: 100, status: 'completed' },
-                    { name: '検品', startDay: 7, days: 4, progress: 60, status: 'in-progress' },
-                    { name: '発送', startDay: 11, days: 1, progress: 0, status: 'not-started' }
+                    { name: 'DM封入作業: 封入', startDay: 5, days: 10, progress: 50, status: 'in-progress', assignments: [] },
+                    { name: 'DM封入作業: 検品', startDay: 15, days: 5, progress: 0, status: 'not-started', assignments: [] }
                 ]
             },
             'project-3': {
@@ -490,6 +485,7 @@
                 status: 'in-progress',
                 term: 'continuous',
                 category: 'contract',
+                partner: '○○市役所',
                 contract: { billingTiming: { mode: 'relative', month: '1', day: '10' }, clientPayment: { mode: 'relative', month: '2', day: '99' } },
                 incentive: { payment: { mode: 'relative', month: '1', day: '25' } },
                 tasks: [
@@ -504,6 +500,7 @@
                 status: 'in-progress',
                 term: 'continuous',
                 category: 'self',
+                partner: '（自主事業）',
                 contract: {},
                 incentive: { payment: { mode: 'relative', month: '0', day: '99' } },
                 tasks: [
@@ -518,6 +515,7 @@
                 status: 'completed',
                 term: 'spot',
                 category: 'contract',
+                partner: '天神オフィスサプライ',
                 contract: {
                     billingTiming: { mode: 'relative', month: '0', day: '99' },
                     clientPayment: { mode: 'relative', month: '1', day: '30' },
@@ -535,6 +533,7 @@
                 status: 'pending',
                 term: 'spot',
                 category: 'contract',
+                partner: '大濠デザイン事務所',
                 contract: {
                     billingTiming: { mode: 'absolute', date: '2025-11-30' },
                     deliveryDate: { mode: 'absolute', date: '2025-11-20' }
@@ -551,6 +550,7 @@
                 status: 'not-started',
                 term: 'spot',
                 category: 'contract',
+                partner: 'ヤマト運輸',
                 contract: {},
                 incentive: { payment: { mode: 'relative', month: '1', day: '15' } },
                 tasks: [
@@ -563,6 +563,7 @@
                 status: 'in-progress',
                 term: 'spot',
                 category: 'contract',
+                partner: '佐川急便',
                 contract: { billingTiming: { mode: 'relative', month: '0', day: '15' } },
                 incentive: { payment: { mode: 'relative', month: '0', day: '25' } },
                 tasks: [
@@ -1481,8 +1482,10 @@
                 return `
                     <tr>
                         <td>
-                            <div>${evt.displayLabel}</div>
-                            <div style="font-size: 0.8em; color: var(--color-text-secondary);">${evt.description}</div>
+                            <div>
+                                ${evt.displayLabel}
+                                <span style="font-size: 0.85em; color: var(--color-text-secondary); margin-left: 8px;">${evt.description}</span>
+                            </div>
                         </td>
                         <td>
                             <input type="date" class="input-field event-actual-date"
