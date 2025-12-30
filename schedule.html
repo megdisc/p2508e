@@ -486,49 +486,7 @@
                     { name: 'DM封入作業: 検品', startDay: 15, days: 5, progress: 0, status: 'not-started', assignments: [] }
                 ]
             },
-            // ... (lines 486-1210 omitted for brevity in tool call, target is specific blocks)
 
-            // I cannot span such a large gap with one replace. 
-            // I will split this into two calls or use multi_replace?
-            // multi_replace is better for non-contiguous.
-            // But I need to define the replacement content for the tool call.
-            // This tool call is replace_file_content (single block).
-            // I will just update the DATA first.
-            // Wait, I can do both if I target correctly?
-            // No, they are far apart (line ~460 vs ~1220).
-            // I will update DATA first.
-            'project-1': {
-                id: 'project-1',
-                name: 'DM封入作業',
-                status: 'in-progress',
-                term: 'continuous',
-                category: 'contract',
-                partner: '株式会社 福岡工芸',
-                contract: {
-                    billingTiming: { mode: 'relative', month: '1', day: '10' }, // 請求
-                    clientPayment: { mode: 'relative', month: '2', day: '25' }, // 入金
-                    deliveryDate: { mode: 'relative', month: '0', day: '31' }, // 納品
-                    clientAcceptance: { mode: 'relative', month: '1', day: '5' } // 検収
-                },
-                incentive: { payment: { mode: 'relative', month: '2', day: '15' } },
-                subcontractors: [
-                    {
-                        name: '博多ロジスティクス',
-                        delivery: { mode: 'relative', month: '0', day: '25' },
-                        acceptance: { mode: 'relative', month: '0', day: '28' },
-                        billing: { mode: 'relative', month: '1', day: '5' },
-                        payment: { mode: 'relative', month: '1', day: '30' }
-                    }
-                ],
-                actuals: {
-                    // Mock: Incentive Payment scheduled for Nov 15th, actually done on Nov 18th
-                    'payment_payment_2025-11-15': { date: '2025-11-18', isDone: true }
-                },
-                tasks: [
-                    { name: 'DM封入作業: 封入', startDay: 5, days: 10, progress: 50, status: 'in-progress', assignments: [] },
-                    { name: 'DM封入作業: 検品', startDay: 15, days: 5, progress: 0, status: 'not-started', assignments: [] }
-                ]
-            },
             'project-3': {
                 id: 'project-3',
                 name: '施設外就労（清掃）',
@@ -1126,8 +1084,8 @@
             if (project.tasks) {
                 project.tasks.forEach(task => {
                     // Normalize task duration to current month
-                    let start = task.startDay;
-                    let duration = task.days;
+                    let start = parseInt(task.startDay);
+                    let duration = parseInt(task.days);
 
                     // Simple check if roughly in range (since tasks defined by startDay 1-31 relative to month)
                     // Assumption: Task startDay is relative to CURRENT Viewing Month for this prototype
