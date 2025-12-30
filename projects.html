@@ -167,6 +167,32 @@
             color: var(--color-text-tertiary);
             padding: 0 4px;
         }
+
+        /* Tooltip Styles (Ported from schedule.html) */
+        .gantt-tooltip {
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            border-radius: 4px;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            z-index: 9999;
+            pointer-events: none;
+            display: none;
+            min-width: 200px;
+            font-size: 12px;
+            line-height: 1.4;
+            transform: translateY(-100%);
+        }
+
+        .gantt-tooltip-title {
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 4px;
+            color: #fff;
+        }
     </style>
 
     <script>
@@ -512,12 +538,16 @@
             let html = '';
 
             // Helper to render timeline item
-            const renderTimelineItem = (label, dateFunc, badgeType = 'neutral') => {
+            const renderTimelineItem = (label, dateFunc, badgeType = 'neutral', tooltip = '') => {
                 let date = dateFunc || '-';
                 let isPending = date === '-';
+                // Use &quot; for class to avoid conflict with HTML attribute quotes
+                const tooltipHtml = `<div class=&quot;gantt-tooltip-title&quot;>${label}</div><div>${tooltip}</div>`;
                 return `
                     <div class="timeline-item ${isPending ? 'is-pending' : ''}">
-                        <span class="badge badge-${badgeType}" style="margin-bottom: 4px;">${label}</span>
+                        <span class="badge badge-${badgeType}" style="margin-bottom: 4px;" 
+                            onmouseenter="showGanttTooltip(event, '${tooltipHtml}')" 
+                            onmouseleave="hideGanttTooltip()">${label}</span>
                         <div class="timeline-item-date">${date}</div>
                     </div>`;
             };
@@ -564,13 +594,13 @@
                          </td>`;
                 html += `<td>
                             <div class="timeline-container">
-                                ${renderTimelineItem('納品', show_del, 'primary')}
+                                ${renderTimelineItem('納品', show_del, 'primary', '顧客への成果物の納品')}
                                 ${renderArrow()}
-                                ${renderTimelineItem('検収', show_acc, 'primary')}
+                                ${renderTimelineItem('検収', show_acc, 'primary', '顧客による成果物の検収')}
                                 ${renderArrow()}
-                                ${renderTimelineItem('請求', show_bil, 'primary')}
+                                ${renderTimelineItem('請求', show_bil, 'primary', '顧客への受託金の請求')}
                                 ${renderArrow()}
-                                ${renderTimelineItem('入金', show_pay, 'primary')}
+                                ${renderTimelineItem('入金', show_pay, 'primary', '顧客からの受託金の入金')}
                             </div>
                          </td>`;
                 html += `</tr>`;
@@ -610,13 +640,13 @@
                              </td>`;
                     html += `<td>
                                 <div class="timeline-container">
-                                    ${renderTimelineItem('仕入', show_s_del, 'neutral')}
+                                    ${renderTimelineItem('仕入', show_s_del, 'neutral', '外注先からの成果物の仕入')}
                                     ${renderArrow()}
-                                    ${renderTimelineItem('検収', show_s_acc, 'neutral')}
+                                    ${renderTimelineItem('検収', show_s_acc, 'neutral', '外注先からの成果物の検収')}
                                     ${renderArrow()}
-                                    ${renderTimelineItem('受領', show_s_bil, 'neutral')}
+                                    ${renderTimelineItem('受領', show_s_bil, 'neutral', '外注先からの請求書の受領')}
                                     ${renderArrow()}
-                                    ${renderTimelineItem('支払', show_s_pay, 'neutral')}
+                                    ${renderTimelineItem('支払', show_s_pay, 'neutral', '外注先への費用の支払')}
                                 </div>
                              </td>`;
                     html += `</tr>`;
@@ -635,7 +665,7 @@
                      </td>`;
             html += `<td>
                         <div class="timeline-container">
-                             ${renderTimelineItem('インセンティブ支払', show_i_pay, 'success')}
+                             ${renderTimelineItem('支払', show_i_pay, 'success', '利用者へのインセンティブの支払')}
                         </div>
                      </td>`;
             html += `</tr>`;
@@ -2581,6 +2611,24 @@
             </div>
         </div>
 
+        <!-- Tooltip Container -->
+        <div id="gantt-tooltip" class="gantt-tooltip"></div>
+        <script>
+            const tooltipEl = document.getElementById("gantt-tooltip");
+            function showGanttTooltip(event, htmlContent) {
+                if (!tooltipEl) return;
+                tooltipEl.innerHTML = htmlContent;
+                tooltipEl.style.display = "block";
+                const x = event.pageX + 10;
+                const y = event.pageY + 10;
+                tooltipEl.style.left = x + "px";
+                tooltipEl.style.top = y + "px";
+            }
+            function hideGanttTooltip() {
+                if (!tooltipEl) return;
+                tooltipEl.style.display = "none";
+            }
+        </script>
 </body>
 
 </html>
