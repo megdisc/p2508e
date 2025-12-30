@@ -462,13 +462,63 @@
                 category: 'contract',
                 partner: '株式会社 福岡工芸',
                 contract: {
-                    billingTiming: { mode: 'relative', month: '1', day: '10' },
-                    clientPayment: { mode: 'relative', month: '2', day: '25' },
-                    deliveryDate: { mode: 'relative', month: '0', day: '31' }
+                    billingTiming: { mode: 'relative', month: '1', day: '10' }, // 請求
+                    clientPayment: { mode: 'relative', month: '2', day: '25' }, // 入金
+                    deliveryDate: { mode: 'relative', month: '0', day: '31' }, // 納品
+                    clientAcceptance: { mode: 'relative', month: '1', day: '5' } // 検収 (New)
                 },
                 incentive: { payment: { mode: 'relative', month: '2', day: '15' } },
                 subcontractors: [
-                    { name: '博多ロジスティクス', delivery: { mode: 'relative', month: '0', day: '25' }, acceptance: { mode: 'relative', month: '0', day: '28' }, billing: { mode: 'relative', month: '1', day: '5' }, payment: { mode: 'relative', month: '1', day: '30' } }
+                    {
+                        name: '博多ロジスティクス',
+                        delivery: { mode: 'relative', month: '0', day: '25' }, // 仕入
+                        acceptance: { mode: 'relative', month: '0', day: '28' }, // 検収
+                        billing: { mode: 'relative', month: '1', day: '5' }, // 受領 
+                        payment: { mode: 'relative', month: '1', day: '30' } // 支払
+                    }
+                ],
+                actuals: {
+                    // Mock: Incentive Payment scheduled for Nov 15th, actually done on Nov 18th
+                    'payment_payment_2025-11-15': { date: '2025-11-18', isDone: true }
+                },
+                tasks: [
+                    { name: 'DM封入作業: 封入', startDay: 5, days: 10, progress: 50, status: 'in-progress', assignments: [] },
+                    { name: 'DM封入作業: 検品', startDay: 15, days: 5, progress: 0, status: 'not-started', assignments: [] }
+                ]
+            },
+            // ... (lines 486-1210 omitted for brevity in tool call, target is specific blocks)
+
+            // I cannot span such a large gap with one replace. 
+            // I will split this into two calls or use multi_replace?
+            // multi_replace is better for non-contiguous.
+            // But I need to define the replacement content for the tool call.
+            // This tool call is replace_file_content (single block).
+            // I will just update the DATA first.
+            // Wait, I can do both if I target correctly?
+            // No, they are far apart (line ~460 vs ~1220).
+            // I will update DATA first.
+            'project-1': {
+                id: 'project-1',
+                name: 'DM封入作業',
+                status: 'in-progress',
+                term: 'continuous',
+                category: 'contract',
+                partner: '株式会社 福岡工芸',
+                contract: {
+                    billingTiming: { mode: 'relative', month: '1', day: '10' }, // 請求
+                    clientPayment: { mode: 'relative', month: '2', day: '25' }, // 入金
+                    deliveryDate: { mode: 'relative', month: '0', day: '31' }, // 納品
+                    clientAcceptance: { mode: 'relative', month: '1', day: '5' } // 検収
+                },
+                incentive: { payment: { mode: 'relative', month: '2', day: '15' } },
+                subcontractors: [
+                    {
+                        name: '博多ロジスティクス',
+                        delivery: { mode: 'relative', month: '0', day: '25' },
+                        acceptance: { mode: 'relative', month: '0', day: '28' },
+                        billing: { mode: 'relative', month: '1', day: '5' },
+                        payment: { mode: 'relative', month: '1', day: '30' }
+                    }
                 ],
                 actuals: {
                     // Mock: Incentive Payment scheduled for Nov 15th, actually done on Nov 18th
@@ -1235,7 +1285,14 @@
                 } else if (config.mode === 'relative') {
                     const day = parseInt(config.day);
                     let matchDay = day;
-                    if (day === 99) matchDay = new Date(year, month, 0).getDate();
+                    const daysInMonth = new Date(year, month, 0).getDate();
+
+                    if (day === 99) {
+                        matchDay = daysInMonth;
+                    } else if (day > daysInMonth) {
+                        // Clamp to end of month
+                        matchDay = daysInMonth;
+                    }
 
                     if (d === matchDay) targetDate = currentDt;
                 }
@@ -1249,12 +1306,14 @@
 
             if (project.contract) {
                 checkTiming(project.contract.deliveryDate, 'delivery', '顧客納品', 'event-client');
+                checkTiming(project.contract.clientAcceptance, 'inspection', '顧客検収', 'event-client');
                 checkTiming(project.contract.billingTiming, 'billing', '顧客請求', 'event-client');
                 checkTiming(project.contract.clientPayment, 'deposit', '顧客入金', 'event-client');
             }
             if (project.subcontractors) {
                 project.subcontractors.forEach(sub => {
-                    checkTiming(sub.inspection, 'inspection', `外注検収(${sub.name})`, 'event-subcontractor');
+                    checkTiming(sub.delivery, 'delivery', `外注仕入(${sub.name})`, 'event-subcontractor');
+                    checkTiming(sub.acceptance, 'inspection', `外注検収(${sub.name})`, 'event-subcontractor');
                     checkTiming(sub.billing, 'invoice_receipt', `外注受領(${sub.name})`, 'event-subcontractor');
                     checkTiming(sub.payment, 'payment', `外注支払(${sub.name})`, 'event-subcontractor');
                 });
@@ -1262,6 +1321,7 @@
             if (project.incentive) {
                 checkTiming(project.incentive.payment, 'payment', '利用者支払', 'event-user');
             }
+
             return events;
         }
     </script>
@@ -1457,6 +1517,30 @@
                 const dateStr = `${year}-${String(month).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
                 dayEvents.forEach(evt => processEvent(evt, dateStr));
             }
+
+            // Sort Events by Logical Order (Delivery -> Inspection -> Billing -> Payment)
+            const sortOrder = {
+                'delivery': 1,
+                'inspection': 2,
+                'invoice_receipt': 2.5,
+                'billing': 3,
+                'deposit': 4,
+                'payment': 4
+            };
+
+            const sortEvents = (events) => {
+                return events.sort((a, b) => {
+                    const orderA = sortOrder[a.type] || 99;
+                    const orderB = sortOrder[b.type] || 99;
+                    return orderA - orderB;
+                });
+            };
+
+            sortEvents(clientEvents);
+            sortEvents(userEvents); // Maybe user events too? 'payment' is 4.
+            Object.keys(subEventsMap).forEach(key => {
+                sortEvents(subEventsMap[key]);
+            });
 
             let hasAnyEvents = false;
 
