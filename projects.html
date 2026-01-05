@@ -863,27 +863,54 @@
             }
 
             // --- Subcontractor Section ---
+            // SYNC LOGIC:
+            // 1. Identify all Subcontractors from Tasks
+            const taskSubs = new Set();
+            (tempProjectData.tasks || []).forEach(t => {
+                if (t.assigneeType === 'subcontractor' && t.assignee) {
+                    taskSubs.add(t.assignee);
+                }
+            });
+
+            // 2. Synchronize tempProjectData.subcontractors
+            // Remove subs not in tasks
+            tempProjectData.subcontractors = tempProjectData.subcontractors.filter(sub => taskSubs.has(sub.name));
+
+            // Add new subs from tasks
+            taskSubs.forEach(name => {
+                const exists = tempProjectData.subcontractors.find(sub => sub.name === name);
+                if (!exists) {
+                    tempProjectData.subcontractors.push({
+                        name: name,
+                        delivery: { mode: 'absolute', date: '' },
+                        acceptance: { mode: 'relative', month: '1', day: '99', frequency: 'monthly' },
+                        billing: { mode: 'relative', month: '1', day: '99', frequency: 'monthly' },
+                        payment: { mode: 'relative', month: '1', day: '99', frequency: 'monthly' }
+                    });
+                }
+            });
+
             html += `<div style="margin-bottom: var(--spacing-stack-md);">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-2);">
                     <span style="font-weight: bold;">外注先</span>
-                    <button class="btn btn-sm btn-neutral" onclick="addSubcontractor()">＋ 追加</button>
+                    <!-- Add Button Removed: Auto-synced from tasks -->
                 </div>`;
 
+            // Helpful note if empty
             if (tempProjectData.subcontractors.length === 0) {
-                html += `<div style="color: var(--color-text-tertiary); padding: var(--spacing-2);">外注先は登録されていません。</div>`;
+                html += `<div style="color: var(--color-base-tertiary); padding: var(--spacing-2); font-size: var(--font-size-sm);">
+                    タスクで外注先が担当者に設定されると、ここに自動的に表示されます。
+                 </div>`;
             } else {
                 tempProjectData.subcontractors.forEach((sub, index) => {
                     html += `
                         <div class="card" style="margin-bottom: var(--spacing-stack-md);">
                             <div class="card-header" style="display: flex; justify-content: space-between; align-items: center;">
-                                <!-- Dropdown for Partner Name -->
-                                <select class="input-field" style="font-weight: bold; width: auto; min-width: 200px;"
-                                    onchange="updateSubcontractor(${index}, 'name', this.value)">
-                                    ${renderPartnerOptions(sub.name)}
-                                </select>
-                                <button class="btn btn-icon btn-icon-error" onclick="removeSubcontractor(${index})">
-                                    <span class="material-symbols-outlined">delete</span>
-                                </button>
+                                <!-- Read-only Name -->
+                                <span style="font-weight: bold; font-size: var(--font-size-md);">
+                                    ${sub.name}
+                                </span>
+                                <!-- Delete Button Removed -->
                             </div>
                             <div class="card-body">
                     `;
@@ -1125,7 +1152,8 @@
             thead.innerHTML = `
                 <tr>
                     <th style="width: 25%;">タスク名</th>
-
+                    <th style="width: 15%;">担当者区分</th>
+                    <th style="width: 20%;">外注先</th>
                     <th>必要スキル</th>
                     <th style="width: 60px; text-align: center;">操作</th>
                 </tr>
@@ -1136,51 +1164,83 @@
 
             if (tempProjectData.tasks.length === 0) {
                 const tr = document.createElement('tr');
-                tr.innerHTML = '<td colspan="3" style="text-align: center; color: var(--color-base-quaternary); padding: var(--spacing-4);">タスクが登録されていません。</td>';
+                tr.innerHTML = '<td colspan="5" style="text-align: center; color: var(--color-base-quaternary); padding: var(--spacing-4);">タスクが登録されていません。</td>';
                 tbody.appendChild(tr);
             } else {
                 tempProjectData.tasks.forEach((task, taskIndex) => {
                     const tr = document.createElement('tr');
 
-                    // Skills
-                    let skillsHtml = '';
-                    if (task.skills && task.skills.length > 0) {
-                        skillsHtml = task.skills.map((skill, skillIndex) => `
-                            <div style="display: flex; align-items: center; gap: var(--spacing-2); margin-bottom: var(--spacing-2);">
-                                <select class="input-field" style="padding: 4px 8px; font-size: 12px; width: 140px;" onchange="updateSkill(${taskIndex}, ${skillIndex}, 'name', this.value)">
-                                    <option value="" ${skill.name === '' ? 'selected' : ''}>選択してください</option>
-                                    <option value="封入" ${skill.name === '封入' ? 'selected' : ''}>封入</option>
-                                    <option value="シール貼り" ${skill.name === 'シール貼り' ? 'selected' : ''}>シール貼り</option>
-                                    <option value="データ入力" ${skill.name === 'データ入力' ? 'selected' : ''}>データ入力</option>
-                                    <option value="清掃" ${skill.name === '清掃' ? 'selected' : ''}>清掃</option>
-                                    <option value="検品" ${skill.name === '検品' ? 'selected' : ''}>検品</option>
-                                    <option value="組立" ${skill.name === '組立' ? 'selected' : ''}>組立</option>
-                                    <option value="その他" ${skill.name === 'その他' ? 'selected' : ''}>その他</option>
-                                </select>
-                                <select class="input-field" style="padding: 4px 8px; font-size: 12px; width: 80px;" onchange="updateSkill(${taskIndex}, ${skillIndex}, 'level', this.value)">
-                                    <option value="1" ${skill.level == 1 ? 'selected' : ''}>Lv.1</option>
-                                    <option value="2" ${skill.level == 2 ? 'selected' : ''}>Lv.2</option>
-                                    <option value="3" ${skill.level == 3 ? 'selected' : ''}>Lv.3</option>
-                                    <option value="4" ${skill.level == 4 ? 'selected' : ''}>Lv.4</option>
-                                    <option value="5" ${skill.level == 5 ? 'selected' : ''}>Lv.5</option>
-                                </select>
-                                <button class="btn btn-icon btn-icon-error" style="width: 24px; height: 24px; font-size: 14px;" onclick="removeSkill(${taskIndex}, ${skillIndex})" title="スキル削除">
-                                    <span class="material-symbols-outlined" style="font-size: 14px;">close</span>
-                                </button>
-                            </div>
-                        `).join('');
+                    // Default values if missing
+                    if (!task.assigneeType) task.assigneeType = 'user';
+                    if (!task.assignee) task.assignee = '';
+
+                    // 1. Assignee Type Check logic
+                    const isUser = task.assigneeType === 'user';
+                    const isSub = task.assigneeType === 'subcontractor';
+
+                    // 2. Assignee Input Construction
+                    let assigneeInputHtml = '';
+                    if (isSub) {
+                        assigneeInputHtml = `<select class="input-field" onchange="updateTaskField(${taskIndex}, 'assignee', this.value)">
+                            ${renderPartnerOptions(task.assignee)}
+                        </select>`;
+                    } else {
+                        assigneeInputHtml = '<span style="color: var(--color-base-tertiary); font-size: var(--font-size-sm);">-</span>';
                     }
-                    skillsHtml += `
-                        <button class="btn btn-sm btn-neutral" onclick="addSkill(${taskIndex})" style="padding: 2px 8px; font-size: 11px; height: auto;">
-                            <span class="material-symbols-outlined" style="font-size: 12px;">add</span> スキル追加
-                        </button>
-                    `;
+
+                    // 3. Skills Input Construction
+                    let skillsHtml = '';
+                    if (isUser) {
+                        if (task.skills && task.skills.length > 0) {
+                            skillsHtml = task.skills.map((skill, skillIndex) => `
+                                <div style="display: flex; align-items: center; gap: var(--spacing-2); margin-bottom: var(--spacing-2);">
+                                    <select class="input-field" style="padding: 4px 8px; font-size: 12px; width: 140px;" onchange="updateSkill(${taskIndex}, ${skillIndex}, 'name', this.value)">
+                                        <option value="" ${skill.name === '' ? 'selected' : ''}>選択してください</option>
+                                        <option value="封入" ${skill.name === '封入' ? 'selected' : ''}>封入</option>
+                                        <option value="シール貼り" ${skill.name === 'シール貼り' ? 'selected' : ''}>シール貼り</option>
+                                        <option value="データ入力" ${skill.name === 'データ入力' ? 'selected' : ''}>データ入力</option>
+                                        <option value="清掃" ${skill.name === '清掃' ? 'selected' : ''}>清掃</option>
+                                        <option value="検品" ${skill.name === '検品' ? 'selected' : ''}>検品</option>
+                                        <option value="組立" ${skill.name === '組立' ? 'selected' : ''}>組立</option>
+                                        <option value="その他" ${skill.name === 'その他' ? 'selected' : ''}>その他</option>
+                                    </select>
+                                    <select class="input-field" style="padding: 4px 8px; font-size: 12px; width: 80px;" onchange="updateSkill(${taskIndex}, ${skillIndex}, 'level', this.value)">
+                                        <option value="1" ${skill.level == 1 ? 'selected' : ''}>Lv.1</option>
+                                        <option value="2" ${skill.level == 2 ? 'selected' : ''}>Lv.2</option>
+                                        <option value="3" ${skill.level == 3 ? 'selected' : ''}>Lv.3</option>
+                                        <option value="4" ${skill.level == 4 ? 'selected' : ''}>Lv.4</option>
+                                        <option value="5" ${skill.level == 5 ? 'selected' : ''}>Lv.5</option>
+                                    </select>
+                                    <button class="btn btn-icon btn-icon-error" style="width: 24px; height: 24px; font-size: 14px;" onclick="removeSkill(${taskIndex}, ${skillIndex})" title="スキル削除">
+                                        <span class="material-symbols-outlined" style="font-size: 14px;">close</span>
+                                    </button>
+                                </div>
+                            `).join('');
+                        }
+                        skillsHtml += `
+                            <button class="btn btn-sm btn-neutral" onclick="addSkill(${taskIndex})" style="padding: 2px 8px; font-size: 11px; height: auto;">
+                                <span class="material-symbols-outlined" style="font-size: 12px;">add</span> スキル追加
+                            </button>
+                        `;
+                    } else {
+                        skillsHtml = '<span style="color: var(--color-base-tertiary); font-size: var(--font-size-sm);">-</span>';
+                    }
 
                     tr.innerHTML = `
                         <td style="vertical-align: top;">
                             <input type="text" class="input-field" value="${task.name}" onchange="updateTaskField(${taskIndex}, 'name', this.value)" placeholder="タスク名">
                         </td>
-
+                        <td style="vertical-align: top;">
+                            <select class="input-field" onchange="updateTaskField(${taskIndex}, 'assigneeType', this.value)">
+                                <option value="user" ${task.assigneeType === 'user' ? 'selected' : ''}>利用者</option>
+                                <option value="staff" ${task.assigneeType === 'staff' ? 'selected' : ''}>職員</option>
+                                <option value="subcontractor" ${task.assigneeType === 'subcontractor' ? 'selected' : ''}>外注先</option>
+                                <option value="client" ${task.assigneeType === 'client' ? 'selected' : ''}>顧客</option>
+                            </select>
+                        </td>
+                        <td style="vertical-align: top;">
+                            ${assigneeInputHtml}
+                        </td>
                         <td style="vertical-align: top;">
                             ${skillsHtml}
                         </td>
@@ -1203,6 +1263,8 @@
             tempProjectData.tasks.push({
                 id: Date.now(),
                 name: '新規タスク',
+                assigneeType: 'user', // Default
+                assignee: '',
                 progress: 0,
                 skills: []
             });
@@ -1221,6 +1283,14 @@
                 value = Math.min(100, Math.max(0, parseInt(value) || 0));
             }
             tempProjectData.tasks[index][field] = value;
+
+            // Re-render if Assignee Type changes (to switch input type)
+            if (field === 'assigneeType') {
+                // Determine default assignee based on type?
+                // For now just clear it or leave it. Maybe clear if switching to sub/from sub?
+                // Let's keep it simple: just re-render.
+                renderTaskEditor();
+            }
         }
 
         // Deprecated helper replaced by generic one
