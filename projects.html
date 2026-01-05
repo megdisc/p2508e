@@ -212,7 +212,9 @@
                     {
                         id: 1,
                         name: '封入作業',
-                        skills: [{ name: '手先作業', level: 2 }, { name: '集中力', level: 3 }],
+                        assigneeType: 'subcontractor',
+                        assignee: '株式会社 福岡工芸',
+                        skills: [],
                         unitPrice: 10,
                         quantity: 3000,
                         total: 30000,
@@ -221,6 +223,8 @@
                     {
                         id: 2,
                         name: '検品作業',
+                        assigneeType: 'user',
+                        assignee: '利用者A',
                         skills: [{ name: '目視確認', level: 3 }],
                         unitPrice: 5,
                         quantity: 3000,
