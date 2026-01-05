@@ -482,8 +482,8 @@
                     'payment_payment_2025-11-15': { date: '2025-11-18', isDone: true }
                 },
                 tasks: [
-                    { name: 'DM封入作業: 封入', startDay: 5, days: 10, progress: 50, status: 'in-progress', assignments: [] },
-                    { name: 'DM封入作業: 検品', startDay: 15, days: 5, progress: 0, status: 'not-started', assignments: [] }
+                    { name: 'DM封入作業: 封入', startDay: 5, days: 10, progress: 50, status: 'in-progress', assigneeType: 'subcontractor', assignee: '株式会社 福岡工芸', assignments: [] },
+                    { name: 'DM封入作業: 検品', startDay: 15, days: 5, progress: 0, status: 'not-started', assigneeType: 'user', assignee: '', assignments: [] }
                 ]
             },
 
@@ -1606,27 +1606,28 @@
 
             project.tasks.forEach(task => {
                 const baseAmount = taskAmounts[task.name] || 0;
+                // Default to 'user' if undefined
+                const aType = task.assigneeType || 'user';
+                const aName = task.assignee || '';
 
                 if (task.assignments && task.assignments.length > 0) {
                     task.assignments.forEach((assign, assignIdx) => {
-                        addAssignmentRowGlobal(tbody, project.id, task.name, assign, baseAmount);
+                        addAssignmentRowGlobal(tbody, project.id, task.name, assign, baseAmount, aType, aName);
                     });
                 } else {
-                    // Show one empty row if no assignments yet? Or just Add button adds.
-                    // If no assignments, nothing to show in table unless we auto-add one?
-                    // Let's add one empty row if assignments is empty but task exists.
-                    addAssignmentRowGlobal(tbody, project.id, task.name, null, baseAmount);
+                    addAssignmentRowGlobal(tbody, project.id, task.name, null, baseAmount, aType, aName);
                 }
             });
 
             recalculateGlobalIncentives();
         }
 
-        function addAssignmentRowGlobal(tbody, projectId, taskName, data = null, baseAmount = 0) {
+        function addAssignmentRowGlobal(tbody, projectId, taskName, data = null, baseAmount = 0, taskAssigneeType = 'user', taskAssigneeName = '') {
             const row = document.createElement('tr');
             row.dataset.projectId = projectId;
             row.dataset.taskName = taskName;
             row.dataset.baseAmount = baseAmount;
+            row.dataset.assigneeType = taskAssigneeType; // Store for saving
 
             // Period Parsing
             let startDate = '2025-08-04';
@@ -1637,23 +1638,39 @@
                 if (parts[1]) endDate = parts[1].replace(/\//g, '-').trim();
             }
 
-            let type = '';
-            let assigneeName = '';
+            // Extract existing assignee ID if available (for User/Staff)
             let assigneeId = '';
-
             if (data?.assignee) {
-                if (data.assignee.includes('(利用者)')) { type = 'user'; assigneeName = data.assignee.replace(' (利用者)', ''); }
-                else if (data.assignee.includes('(職員)')) { type = 'staff'; assigneeName = data.assignee.replace(' (職員)', ''); }
-                else if (data.assignee.includes('(外注先)')) { type = 'subcontractor'; assigneeName = data.assignee.replace(' (外注先)', ''); }
-                else if (data.assignee.includes('(顧客)')) { type = 'client'; assigneeName = data.assignee.replace(' (顧客)', ''); }
-
-                // Map Name to ID (Mock)
-                if (type === 'user') assigneeId = (assigneeName === '山田 太郎' ? 'user1' : assigneeName === '鈴木 花子' ? 'user2' : 'user3');
-                else if (type === 'staff') assigneeId = 'staff1'; // Simplified
+                let name = data.assignee.replace(/ \(.*?\)$/, ''); // Remove type suffix
+                if (taskAssigneeType === 'user') assigneeId = (name === '山田 太郎' ? 'user1' : name === '鈴木 花子' ? 'user2' : 'user3');
+                else if (taskAssigneeType === 'staff') assigneeId = 'staff1';
             }
 
             const progress = data?.progress || 0;
             const deduction = 0;
+
+            // 1. Badge HTML
+            let typeBadgeClass = 'badge-neutral';
+            let typeLabel = '未定';
+            switch (taskAssigneeType) {
+                case 'user': typeBadgeClass = 'badge-success'; typeLabel = '利用者'; break;
+                case 'staff': typeBadgeClass = 'badge-neutral'; typeLabel = '職員'; break;
+                case 'subcontractor': typeBadgeClass = 'badge-warning'; typeLabel = '外注先'; break;
+                case 'client': typeBadgeClass = 'badge-primary'; typeLabel = '顧客'; break;
+            }
+            const badgeHtml = `<span class="badge ${typeBadgeClass}">${typeLabel}</span>`;
+
+            // 2. Name Input HTML
+            let nameInputHtml = '';
+            if (taskAssigneeType === 'subcontractor' || taskAssigneeType === 'client') {
+                // Read-only text
+                nameInputHtml = `<span style="font-size: 0.9em; padding-left: 4px;">${taskAssigneeName || '-'}</span>
+                                 <input type="hidden" class="assignee-name-fixed" value="${taskAssigneeName}">`;
+            } else {
+                // Dropdown
+                nameInputHtml = `<select class="input-field assignee-name" style="padding: 2px 4px; font-size: 0.8rem; flex: 1; max-width: 120px;">
+                                 </select>`;
+            }
 
             row.innerHTML = `
                 <td>
@@ -1667,16 +1684,9 @@
                     </div>
                 </td>
                 <td>
-                    <div style="display: flex; flex-direction: row; gap: 4px;">
-                        <select class="input-field assignee-type" style="padding: 2px 4px; font-size: 0.8rem; width: 60px;" onchange="updateAssigneeOptions(this)">
-                            <option value="">種別</option>
-                            <option value="staff" ${type === 'staff' ? 'selected' : ''}>職員</option>
-                            <option value="user" ${type === 'user' ? 'selected' : ''}>利用者</option>
-                            <option value="subcontractor" ${type === 'subcontractor' ? 'selected' : ''}>外注先</option>
-                            <option value="client" ${type === 'client' ? 'selected' : ''}>顧客</option>
-                        </select>
-                        <select class="input-field assignee-name" style="padding: 2px 4px; font-size: 0.8rem; flex: 1; max-width: 100px;">
-                        </select>
+                    <div style="display: flex; flex-direction: row; gap: 8px; align-items: center;">
+                        ${badgeHtml}
+                        ${nameInputHtml}
                     </div>
                 </td>
                  <td>
@@ -1694,33 +1704,24 @@
             `;
 
             tbody.appendChild(row);
-            // Initialize Assignee Options
-            const typeSelect = row.querySelector('.assignee-type');
-            updateAssigneeOptions(typeSelect, assigneeId);
+
+            // Initialize Assignee Options for Dropdowns
+            if (taskAssigneeType === 'user' || taskAssigneeType === 'staff') {
+                const nameSelect = row.querySelector('.assignee-name');
+                updateAssigneeOptionsNew(nameSelect, taskAssigneeType, assigneeId);
+            }
         }
 
         function addNewAssignmentDraft() {
-            // Add a draft row for the *current project's first task*?
-            // We need to know which project we are editing to add a relevant assignment.
-            // The modal title usually says "Project Name - Edit".
-            // We can find the projectId stored somewhere or assume we only edit one project at a time.
-            // `currentEditingProjectId`?
-            // Wait, `schedule.html` editor is opened with `editSchedule(projectId)`.
-            // I need to store `currentEditingProjectId` when opening the modal.
-            // Looking at `editSchedule(projectId)` (if it exists) or how `showModal` was called.
-            // The previous code passed `project` to `renderScheduleTasksList`.
-            // I will use a global variable `currentScheduleProjectId` if possible, or infer from somewhere.
-            // Lines 1346: `function editSchedule(projectId) { ... }` (presumably).
-            // I will rely on the fact that I should know the project.
-            // For now, I'll prompt or pick the first task of the project currently being edited.
-
-            // I need `currentEditingProjectId`. I'll set it in `editSchedule`.
             if (currentEditingProjectId && projectsData[currentEditingProjectId]) {
                 const project = projectsData[currentEditingProjectId];
                 if (project.tasks && project.tasks.length > 0) {
                     const task = project.tasks[0];
                     const tbody = document.getElementById('schedule-edit-tasks-tbody');
-                    addAssignmentRowGlobal(tbody, project.id, task.name, null, taskAmounts[task.name] || 0);
+                    // Need to pass type and assignee now
+                    const aType = task.assigneeType || 'user';
+                    const aName = task.assignee || '';
+                    addAssignmentRowGlobal(tbody, project.id, task.name, null, taskAmounts[task.name] || 0, aType, aName);
                 } else {
                     alert('この案件にはタスクがありません');
                 }
@@ -1791,9 +1792,7 @@
 
             // 2. Tasks
             const taskRows = document.querySelectorAll('#schedule-edit-tasks-tbody tr');
-            // Clear existing assignments for Tasks we are editing?
-            // Or clear all tasks' assignments and rebuild?
-            // Since we list ALL assignments for the project, we should rebuild.
+            // Rebuild assignments
             if (project.tasks) {
                 project.tasks.forEach(t => t.assignments = []);
             }
@@ -1802,17 +1801,22 @@
                 const tname = row.dataset.taskName;
                 const start = row.querySelector('.row-start-date').value.replace(/-/g, '/');
                 const end = row.querySelector('.row-end-date').value.replace(/-/g, '/');
-                const typeSelect = row.querySelector('.assignee-type');
-                const nameSelect = row.querySelector('.assignee-name');
                 const progress = row.querySelector('.row-progress').value;
 
+                // New Logic for Assignee
+                const type = row.dataset.assigneeType;
                 let assigneeStr = '';
-                const type = typeSelect.value;
-                const nameText = nameSelect.options[nameSelect.selectedIndex]?.text || '';
-                if (type === 'user') assigneeStr = `${nameText} (利用者)`;
-                else if (type === 'staff') assigneeStr = `${nameText} (職員)`;
-                else if (type === 'subcontractor') assigneeStr = `${nameText} (外注先)`;
-                else if (type === 'client') assigneeStr = `${nameText} (顧客)`;
+
+                if (type === 'subcontractor' || type === 'client') {
+                    const fixedName = row.querySelector('.assignee-name-fixed').value;
+                    if (type === 'subcontractor') assigneeStr = `${fixedName} (外注先)`;
+                    else assigneeStr = `${fixedName} (顧客)`;
+                } else {
+                    const nameSelect = row.querySelector('.assignee-name');
+                    const nameText = nameSelect.options[nameSelect.selectedIndex]?.text || '';
+                    if (type === 'user') assigneeStr = `${nameText} (利用者)`;
+                    else if (type === 'staff') assigneeStr = `${nameText} (職員)`;
+                }
 
                 const task = project.tasks.find(t => t.name === tname);
                 if (task) {
@@ -1833,35 +1837,14 @@
             renderScheduler();
         }
 
-        function updateAssigneeOptions(selectElement, selectedId = null) {
-            const type = selectElement.value;
-            // In new structure, they are siblings in the same div
-            const nameSelect = selectElement.nextElementSibling;
+        function updateAssigneeOptionsNew(nameSelect, type, selectedId = null) {
             nameSelect.innerHTML = '';
-
             let options = [];
+            // Use global mock data
             if (type === 'staff') {
-                options = [
-                    { value: 'staff1', text: '田中 健司' },
-                    { value: 'staff2', text: '伊藤 良子' },
-                    { value: 'staff3', text: '佐藤 吾郎' }
-                ];
+                options = staffData.map(s => ({ value: s.id, text: s.name }));
             } else if (type === 'user') {
-                options = [
-                    { value: 'user1', text: '山田 太郎' },
-                    { value: 'user2', text: '鈴木 花子' },
-                    { value: 'user3', text: '高橋 一郎' }
-                ];
-            } else if (type === 'subcontractor') {
-                options = [
-                    { value: 'sub1', text: '株式会社A' },
-                    { value: 'sub2', text: '有限会社B' }
-                ];
-            } else if (type === 'client') {
-                options = [
-                    { value: 'client1', text: '○○市役所' },
-                    { value: 'client2', text: '△△商事' }
-                ]
+                options = userData.map(u => ({ value: u.id, text: u.name }));
             }
 
             if (options.length > 0) {
@@ -1876,7 +1859,7 @@
                 });
             } else {
                 const option = document.createElement('option');
-                option.textContent = '選択してください';
+                option.textContent = 'なし';
                 nameSelect.appendChild(option);
             }
         }
