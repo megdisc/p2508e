@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Compath - 費用記録</title>
+
+    <link rel="stylesheet" href="globals.css">
+    <link rel="stylesheet" href="ui.css">
+
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+
+    <style>
+        .expense-table th {
+            width: 15%;
+            background-color: var(--color-base-secondary);
+            font-weight: bold;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .expense-table td {
+            vertical-align: middle;
+        }
+
+        .input-currency {
+            text-align: right;
+        }
+
+        /* Toggle Styles from attendance.html */
+        .view-toggle {
+            display: flex;
+            background-color: var(--color-base-secondary);
+            border-radius: var(--radius-button);
+            padding: 2px;
+            border: 1px solid var(--color-base-quinary);
+        }
+
+        .view-toggle label {
+            padding: var(--spacing-1) var(--spacing-3);
+            font-size: var(--font-size-sm);
+            cursor: pointer;
+            border-radius: var(--radius-button);
+            transition: all 0.2s;
+            color: var(--color-base-quaternary);
+        }
+
+        .view-toggle input[type="radio"] {
+            display: none;
+        }
+
+        .view-toggle input[type="radio"]:checked+label {
+            background-color: var(--color-theme-main);
+            color: var(--color-base-primary);
+            box-shadow: var(--box-shadow-sm);
+            font-weight: var(--font-weight-medium);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="page-wrapper">
+
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div style="width: 100%; text-align: center;">
+                    <div style="margin-bottom: var(--spacing-stack-xs);">Compath</div>
+                    <select class="input-field">
+                        <option value="tenjin">こんぱす天神</option>
+                        <option value="hakata">こんぱす博多</option>
+                    </select>
+                </div>
+            </div>
+            <!-- Navigation -->
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-link">トップ</a>
+                <details class="nav-accordion">
+                    <summary>施設情報</summary>
+                    <ul>
+                        <li><a href="corporation.html">法人情報</a></li>
+                        <li><a href="office.html">事業所情報</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>職員・利用者情報</summary>
+                    <ul>
+                        <li><a href="staff.html">職員情報</a></li>
+                        <li><a href="members.html">利用者情報</a></li>
+                    </ul>
+                </details>
+
+                <a href="partners.html" class="nav-link">取引先情報</a>
+                <details class="nav-accordion">
+                    <summary>スキル情報</summary>
+                    <ul>
+                        <li><a href="skills-settings.html">スキル設定</a></li>
+                        <li><a href="skills-evaluation.html">スキル評価</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>工賃・控除情報</summary>
+                    <ul>
+                        <li><a href="wages-settings.html">工賃設定</a></li>
+                        <li><a href="deductions-settings.html">控除設定</a></li>
+                        <li><a href="wages-evaluation.html">工賃レベル評価</a></li>
+                    </ul>
+                </details>
+
+                <a href="savings-settings.html" class="nav-link">積立金設定</a>
+
+                <a href="attendance.html" class="nav-link">出欠状況</a>
+                <details class="nav-accordion" open>
+                    <summary>生産活動</summary>
+                    <ul>
+                        <li><a href="projects.html">案件情報</a></li>
+                        <li><a href="schedule.html">進捗状況</a></li>
+                        <li><a href="expenses-record.html" class="active">費用記録</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>福祉事業活動</summary>
+                    <ul>
+                        <li><a href="support-plans.html">個別支援計画</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>請求・支払</summary>
+                    <ul>
+                        <li><a href="billing-national-health.html">国保連請求</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>分析</summary>
+                    <ul>
+                        <li><a href="analytics-production.html">生産活動収支分析</a></li>
+                        <li><a href="analytics-wages.html">平均工賃分析</a></li>
+
+                        <li><a href="analytics-savings.html">積立金分析</a></li>
+                    </ul>
+                </details>
+                <a href="account.html" class="nav-link">ユーザーアカウント</a>
+                <a href="styleguide.html" class="nav-link">スタイルガイド</a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-info"><span class="user-name">田中 健司</span><a href="#">ログアウト</a></div>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
+
+                <!-- Main Content -->
+                <div style="margin-bottom: var(--spacing-stack-md);">
+                    <h1 style="margin: 0 0 var(--spacing-stack-sm) 0;">費用記録</h1>
+
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--spacing-4);">
+
+                        <!-- View Toggle -->
+                        <div class="view-toggle" style="display: inline-flex;">
+                            <input type="radio" id="mode-monthly" name="view-mode-main" checked
+                                onchange="switchView('monthly')">
+                            <label for="mode-monthly">月別記録</label>
+
+                            <input type="radio" id="mode-yearly" name="view-mode-main" onchange="switchView('yearly')">
+                            <label for="mode-yearly">年間集計</label>
+                        </div>
+
+                        <!-- Month Controls -->
+                        <div id="controls-monthly" style="display: flex; align-items: center; gap: var(--spacing-2);">
+                            <button class="btn btn-icon btn-neutral" onclick="changeMonth(-1)"><span
+                                    class="material-symbols-outlined">chevron_left</span></button>
+                            <input type="month" id="target-month" class="input-field" value="2025-11"
+                                style="width: auto;" onchange="renderView()">
+                            <button class="btn btn-icon btn-neutral" onclick="changeMonth(1)"><span
+                                    class="material-symbols-outlined">chevron_right</span></button>
+                        </div>
+
+                        <!-- Year Controls -->
+                        <div id="controls-yearly" style="display: none; align-items: center; gap: var(--spacing-2);">
+                            <button class="btn btn-icon btn-neutral" onclick="changeYear(-1)"><span
+                                    class="material-symbols-outlined">chevron_left</span></button>
+                            <div style="font-weight: bold; font-size: 1.1em;" id="target-year-display">2025年</div>
+                            <button class="btn btn-icon btn-neutral" onclick="changeYear(1)"><span
+                                    class="material-symbols-outlined">chevron_right</span></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Monthly View -->
+                <div id="view-monthly">
+
+                    <!-- Filters & Sort -->
+                    <div
+                        style="display: flex; gap: var(--spacing-stack-md); flex-wrap: wrap; margin-bottom: var(--spacing-stack-md);">
+
+                        <!-- Filter Card -->
+                        <div class="card" style="flex: 1; min-width: 320px;">
+                            <div class="card-body"
+                                style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
+                                <div class="form-group" style="margin: 0; flex: 1; min-width: 160px;">
+                                    <label class="form-label">キーワード検索</label>
+                                    <input type="text" id="filter-keyword" class="input-field" placeholder="勘定科目・備考..."
+                                        oninput="renderMonthlyTable()">
+                                </div>
+                                <div class="form-group" style="margin: 0; flex: 1; min-width: 140px;">
+                                    <label class="form-label">区分</label>
+                                    <select id="filter-distinction" class="input-field" onchange="renderMonthlyTable()">
+                                        <option value="">すべて</option>
+                                        <option value="production">生産活動</option>
+                                        <option value="welfare">福祉事業</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sort Card -->
+                        <div class="card" style="flex: 0 0 auto;">
+                            <div class="card-body"
+                                style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
+                                <div class="form-group" style="margin: 0; width: 180px;">
+                                    <label class="form-label">並び替え</label>
+                                    <select id="sort-order" class="input-field" onchange="renderMonthlyTable()">
+                                        <option value="date_desc">日付 (新しい順)</option>
+                                        <option value="date_asc">日付 (古い順)</option>
+                                        <option value="amount_desc">金額 (高い順)</option>
+                                        <option value="amount_asc">金額 (安い順)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header"
+                            style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>記録一覧</div>
+                            <!-- Bulk Edit Button -->
+                            <button class="btn btn-icon btn-icon-primary" onclick="openBulkEditModal()" title="一括編集">
+                                <span class="material-symbols-outlined">edit</span>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-container">
+                                <table class="table expense-table" style="width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 150px;">日付</th>
+                                            <th style="width: 140px;">区分</th>
+                                            <th>勘定科目</th>
+                                            <th>内容</th>
+                                            <th style="width: 150px;">金額</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="expense-tbody">
+                                        <!-- JS Generated -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Yearly View -->
+                <div id="view-yearly" style="display: none;">
+                    <div class="card">
+                        <div class="card-header">
+                            年間集計
+                        </div>
+                        <div class="card-body">
+                            <div class="table-container">
+                                <table class="table expense-table" style="width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 120px;">月</th>
+                                            <th>生産活動 計</th>
+                                            <th>福祉事業 計</th>
+                                            <th>合計</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="yearly-tbody">
+                                        <!-- JS Generated -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Bulk Edit Modal -->
+    <div class="modal-backdrop" id="modal-expense-bulk-edit" style="display: none;">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                費用情報の編集 (一括)
+            </div>
+            <div class="modal-body">
+                <div style="margin-bottom: var(--spacing-stack-md); display: flex; justify-content: flex-end;">
+                    <button class="btn btn-primary btn-sm" onclick="addBulkRow()">
+                        <span class="material-symbols-outlined"
+                            style="font-size: 1.2em; vertical-align: middle;">add</span>
+                        行を追加
+                    </button>
+                </div>
+                <div class="table-container" style="max-height: 60vh; overflow-y: auto;">
+                    <table class="table expense-table" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th style="width: 140px;">日付</th>
+                                <th style="width: 130px;">区分</th>
+                                <th style="width: 180px;">勘定科目</th>
+                                <th>内容</th>
+                                <th style="width: 120px;">金額</th>
+                                <th style="width: 50px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="bulk-edit-tbody">
+                            <!-- JS Generated -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-neutral" onclick="closeBulkEditModal()">キャンセル</button>
+                <button class="btn btn-primary" onclick="saveBulkChanges()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * 勘定科目定義
+         */
+        const ACCOUNT_CATEGORIES = {
+            'production': {
+                label: '生産活動',
+                items: ['就労支援事業製造原価', '材料費', '労務費', '外注加工費', '就労支援事業販管費', '修繕費', '通信運搬費', '消耗品費', '雑費']
+            },
+            'welfare': {
+                label: '福祉事業',
+                items: ['事務費', '人件費', '福利厚生活動支出', '教育研修支出', '消耗器具備品費', '水道光熱費', '燃料費', '賃借料', '保険料', '租税公課', '支払利息']
+            }
+        };
+
+        // Mock Data
+        let expenseRecords = [
+            { id: 'exp-1', month: '2025-11', date: '2025-11-05', distinction: 'production', category: '材料費', amount: 15000, note: 'パン生地用小麦粉' },
+            { id: 'exp-2', month: '2025-11', date: '2025-11-12', distinction: 'production', category: '消耗品費', amount: 2500, note: '包装用フィルム' },
+            { id: 'exp-3', month: '2025-11', date: '2025-11-20', distinction: 'welfare', category: '事務費', amount: 8000, note: 'プリンターインク' }
+        ];
+
+        let currentYear = 2025;
+        // Temporary buffer for bulk edit
+        let bulkEditBuffer = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderView();
+        });
+
+        /* --- View Switching --- */
+        function switchView(mode) {
+            const monthlyView = document.getElementById('view-monthly');
+            const monthlyControls = document.getElementById('controls-monthly');
+            const yearlyView = document.getElementById('view-yearly');
+            const yearlyControls = document.getElementById('controls-yearly');
+
+            if (mode === 'monthly') {
+                monthlyView.style.display = 'block';
+                monthlyControls.style.display = 'flex';
+                yearlyView.style.display = 'none';
+                yearlyControls.style.display = 'none';
+            } else {
+                monthlyView.style.display = 'none';
+                monthlyControls.style.display = 'none';
+                yearlyView.style.display = 'block';
+                yearlyControls.style.display = 'flex';
+            }
+            renderView();
+        }
+
+        function renderView() {
+            if (document.getElementById('mode-monthly').checked) {
+                renderMonthlyTable();
+            } else {
+                renderYearlyTable();
+            }
+        }
+
+        /* --- Monthly Logic --- */
+        function changeMonth(delta) {
+            const input = document.getElementById('target-month');
+            if (!input.value) input.value = new Date().toISOString().slice(0, 7);
+
+            const date = new Date(input.value + '-01');
+            date.setMonth(date.getMonth() + delta);
+            input.value = date.toISOString().slice(0, 7);
+
+            renderMonthlyTable();
+        }
+
+        function renderMonthlyTable() {
+            const tbody = document.getElementById('expense-tbody');
+            const monthVal = document.getElementById('target-month').value;
+
+            // Filter Inputs
+            const keyword = document.getElementById('filter-keyword').value.toLowerCase();
+            const distinction = document.getElementById('filter-distinction').value;
+            const sortOrder = document.getElementById('sort-order').value;
+
+            tbody.innerHTML = '';
+
+            let currentMonthData = expenseRecords.filter(r => r.month === monthVal);
+
+            // Apply Filters
+            if (distinction) {
+                currentMonthData = currentMonthData.filter(r => r.distinction === distinction);
+            }
+            if (keyword) {
+                currentMonthData = currentMonthData.filter(r =>
+                    r.category.toLowerCase().includes(keyword) || r.note.toLowerCase().includes(keyword)
+                );
+            }
+
+            // Apply Sort
+            currentMonthData.sort((a, b) => {
+                const dateA = new Date(a.date);
+                const dateB = new Date(b.date);
+
+                if (sortOrder === 'date_desc') return dateB - dateA;
+                if (sortOrder === 'date_asc') return dateA - dateB;
+                if (sortOrder === 'amount_desc') return b.amount - a.amount;
+                if (sortOrder === 'amount_asc') return a.amount - b.amount;
+                return 0;
+            });
+
+            if (currentMonthData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--color-text-tertiary); padding: 2rem;">条件に一致する記録はありません</td></tr>';
+                return;
+            }
+
+            currentMonthData.forEach(record => {
+                const tr = document.createElement('tr');
+
+                // Badges
+                let badgeClass = 'badge-neutral';
+                let designationName = 'その他';
+                if (record.distinction === 'production') {
+                    badgeClass = 'badge-primary';
+                    designationName = '生産活動';
+                } else if (record.distinction === 'welfare') {
+                    badgeClass = 'badge-success';
+                    designationName = '福祉事業';
+                }
+
+                tr.innerHTML = `
+                    <td>${record.date}</td>
+                    <td><span class="badge ${badgeClass}">${designationName}</span></td>
+                    <td>${record.category}</td>
+                    <td>${record.note}</td>
+                    <td class="input-currency">¥ ${record.amount.toLocaleString()}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        /* --- Yearly Logic --- */
+        function changeYear(delta) {
+            currentYear += delta;
+            document.getElementById('target-year-display').textContent = `${currentYear}年`;
+            renderYearlyTable();
+        }
+
+        function renderYearlyTable() {
+            const tbody = document.getElementById('yearly-tbody');
+            tbody.innerHTML = '';
+
+            const prefix = `${currentYear}-`;
+            const aggregates = {};
+
+            for (let i = 1; i <= 12; i++) {
+                const m = i.toString().padStart(2, '0');
+                aggregates[m] = { prod: 0, welf: 0 };
+            }
+
+            expenseRecords.forEach(r => {
+                if (r.month.startsWith(prefix)) {
+                    const m = r.month.split('-')[1];
+                    if (aggregates[m]) {
+                        if (r.distinction === 'production') aggregates[m].prod += r.amount;
+                        else if (r.distinction === 'welfare') aggregates[m].welf += r.amount;
+                    }
+                }
+            });
+
+            Object.keys(aggregates).sort().forEach(m => {
+                const data = aggregates[m];
+                const total = data.prod + data.welf;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${currentYear}年 ${parseInt(m)}月</td>
+                    <td class="input-currency">¥ ${data.prod.toLocaleString()}</td>
+                    <td class="input-currency">¥ ${data.welf.toLocaleString()}</td>
+                    <td class="input-currency" style="font-weight: bold;">¥ ${total.toLocaleString()}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        /* --- Bulk Edit Modal Logic --- */
+        function openBulkEditModal() {
+            const monthVal = document.getElementById('target-month').value;
+            // Clone data for editing
+            const currentData = expenseRecords.filter(r => r.month === monthVal);
+            // Deep copy to buffer
+            bulkEditBuffer = JSON.parse(JSON.stringify(currentData));
+
+            // Sort by date initially
+            bulkEditBuffer.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            renderBulkEditTable();
+            document.getElementById('modal-expense-bulk-edit').style.display = 'flex';
+        }
+
+        function closeBulkEditModal() {
+            document.getElementById('modal-expense-bulk-edit').style.display = 'none';
+        }
+
+        function renderBulkEditTable() {
+            const tbody = document.getElementById('bulk-edit-tbody');
+            tbody.innerHTML = '';
+
+            if (bulkEditBuffer.length === 0) {
+                // Option to show empty message, but we might just show empty table
+            }
+
+            bulkEditBuffer.forEach((record, index) => {
+                const tr = document.createElement('tr');
+
+                // Distinction Radio Name needs to be unique per row
+                const radioName = `distinction-${record.id}`;
+                const isProd = record.distinction === 'production';
+
+                // Categories
+                const categories = ACCOUNT_CATEGORIES[record.distinction]?.items || [];
+                const catOptions = categories.map(c =>
+                    `<option value="${c}" ${record.category === c ? 'selected' : ''}>${c}</option>`
+                ).join('');
+
+                tr.innerHTML = `
+                    <td>
+                        <input type="date" class="input-field" value="${record.date}" 
+                            onchange="updateBulkRecord('${record.id}', 'date', this.value)">
+                    </td>
+                    <td>
+                        <select class="input-field" onchange="updateBulkDistinction('${record.id}', this.value)">
+                             <option value="production" ${isProd ? 'selected' : ''}>生産活動</option>
+                             <option value="welfare" ${!isProd ? 'selected' : ''}>福祉事業</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select class="input-field" id="cat-select-${record.id}" onchange="updateBulkRecord('${record.id}', 'category', this.value)">
+                            ${catOptions}
+                        </select>
+                    </td>
+                    <td>
+                        <input type="text" class="input-field" value="${record.note}" placeholder="内容"
+                            onchange="updateBulkRecord('${record.id}', 'note', this.value)">
+                    </td>
+                    <td>
+                        <input type="number" class="input-field input-currency" value="${record.amount}" placeholder="0"
+                            onchange="updateBulkRecord('${record.id}', 'amount', this.value)">
+                    </td>
+                    <td style="text-align: center;">
+                        <button class="btn btn-icon btn-icon-error btn-icon-sm" onclick="deleteBulkRow('${record.id}')">
+                            <span class="material-symbols-outlined">delete</span>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function addBulkRow() {
+            const monthVal = document.getElementById('target-month').value;
+            const newId = 'temp-' + Math.random().toString(36).substr(2, 9);
+            const newRecord = {
+                id: newId,
+                month: monthVal, // Should be tied to the view's month
+                date: monthVal + '-01',
+                distinction: 'production',
+                category: ACCOUNT_CATEGORIES['production'].items[0],
+                amount: 0,
+                note: ''
+            };
+            bulkEditBuffer.push(newRecord);
+            renderBulkEditTable();
+        }
+
+        function deleteBulkRow(id) {
+            bulkEditBuffer = bulkEditBuffer.filter(r => r.id !== id);
+            renderBulkEditTable();
+        }
+
+        function updateBulkRecord(id, field, value) {
+            const record = bulkEditBuffer.find(r => r.id === id);
+            if (!record) return;
+
+            if (field === 'amount') {
+                record[field] = parseInt(value) || 0;
+            } else {
+                record[field] = value;
+            }
+        }
+
+        function updateBulkDistinction(id, newDistinction) {
+            const record = bulkEditBuffer.find(r => r.id === id);
+            if (!record) return;
+
+            record.distinction = newDistinction;
+            record.category = ACCOUNT_CATEGORIES[newDistinction].items[0];
+
+            // Re-render only this row's category select would be efficient, but full re-render is safer/easier
+            renderBulkEditTable();
+        }
+
+        function saveBulkChanges() {
+            const monthVal = document.getElementById('target-month').value;
+
+            // Remove all records for this month from main store
+            expenseRecords = expenseRecords.filter(r => r.month !== monthVal);
+
+            // Add back everything from buffer
+            // Ensure month property is correct based on date? 
+            // Or strictly enforce them to belong to the displayed month? 
+            // User might change date to another month. 
+            // Let's rely on the record.date to determine 'month' property.
+
+            bulkEditBuffer.forEach(r => {
+                if (r.date) {
+                    r.month = r.date.slice(0, 7);
+                }
+                expenseRecords.push(r);
+            });
+
+            closeBulkEditModal();
+            renderView();
+        }
+    </script>
+</body>
+
+</html>
