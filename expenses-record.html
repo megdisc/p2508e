@@ -153,6 +153,7 @@
         <main class="main-content">
             <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
 
+                <!-- Main Content -->
                 <div style="margin-bottom: var(--spacing-stack-md);">
                     <h1 style="margin: 0 0 var(--spacing-stack-sm) 0;">費用記録</h1>
 
@@ -196,8 +197,9 @@
                         <div class="card-header"
                             style="display: flex; justify-content: space-between; align-items: center;">
                             <div>記録一覧</div>
-                            <button class="btn btn-icon btn-icon-primary" onclick="openEditModal()" title="新規登録">
-                                <span class="material-symbols-outlined">add</span>
+                            <!-- Bulk Edit Button -->
+                            <button class="btn btn-icon btn-icon-primary" onclick="openBulkEditModal()" title="一括編集">
+                                <span class="material-symbols-outlined">edit</span>
                             </button>
                         </div>
                         <div class="card-body">
@@ -210,7 +212,6 @@
                                             <th>勘定科目</th>
                                             <th style="width: 150px;">金額</th>
                                             <th>備考</th>
-                                            <th style="width: 80px;">操作</th>
                                         </tr>
                                     </thead>
                                     <tbody id="expense-tbody">
@@ -252,57 +253,41 @@
         </main>
     </div>
 
-    <!-- Edit Modal -->
-    <div class="modal-backdrop" id="modal-expense-edit" style="display: none;">
-        <div class="modal-content modal-sm">
+    <!-- Bulk Edit Modal -->
+    <div class="modal-backdrop" id="modal-expense-bulk-edit" style="display: none;">
+        <div class="modal-content modal-lg">
             <div class="modal-header">
-                費用情報の編集
+                費用情報の編集 (一括)
             </div>
             <div class="modal-body">
-                <input type="hidden" id="edit-id">
-
-                <div class="form-group">
-                    <label class="form-label">日付</label>
-                    <input type="date" id="edit-date" class="input-field">
+                <div style="margin-bottom: var(--spacing-stack-md); display: flex; justify-content: flex-end;">
+                    <button class="btn btn-primary btn-sm" onclick="addBulkRow()">
+                        <span class="material-symbols-outlined"
+                            style="font-size: 1.2em; vertical-align: middle;">add</span>
+                        行を追加
+                    </button>
                 </div>
-
-                <div class="form-group">
-                    <label class="form-label">区分</label>
-                    <div style="display: flex; gap: var(--spacing-4);">
-                        <div class="form-check" style="margin-bottom: 0;">
-                            <input class="form-check-input" type="radio" name="edit-distinction" id="dist-prod"
-                                value="production" onchange="updateCategoryOptions()" checked>
-                            <label class="form-check-label" for="dist-prod">生産活動</label>
-                        </div>
-                        <div class="form-check" style="margin-bottom: 0;">
-                            <input class="form-check-input" type="radio" name="edit-distinction" id="dist-welfare"
-                                value="welfare" onchange="updateCategoryOptions()">
-                            <label class="form-check-label" for="dist-welfare">福祉事業</label>
-                        </div>
-                    </div>
+                <div class="table-container" style="max-height: 60vh; overflow-y: auto;">
+                    <table class="table expense-table" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th style="width: 140px;">日付</th>
+                                <th style="width: 130px;">区分</th>
+                                <th style="width: 180px;">勘定科目</th>
+                                <th style="width: 120px;">金額</th>
+                                <th>備考</th>
+                                <th style="width: 50px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="bulk-edit-tbody">
+                            <!-- JS Generated -->
+                        </tbody>
+                    </table>
                 </div>
-
-                <div class="form-group">
-                    <label class="form-label">勘定科目</label>
-                    <select id="edit-category" class="input-field">
-                        <!-- JS populated -->
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">金額</label>
-                    <input type="number" id="edit-amount" class="input-field input-currency" placeholder="0">
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">備考</label>
-                    <input type="text" id="edit-note" class="input-field" placeholder="備考を入力">
-                </div>
-
             </div>
             <div class="modal-footer">
-                <button class="btn btn-neutral" onclick="closeEditModal()">キャンセル</button>
-                <button class="btn btn-primary" onclick="saveExpense()">保存</button>
+                <button class="btn btn-neutral" onclick="closeBulkEditModal()">キャンセル</button>
+                <button class="btn btn-primary" onclick="saveBulkChanges()">保存</button>
             </div>
         </div>
     </div>
@@ -330,6 +315,8 @@
         ];
 
         let currentYear = 2025;
+        // Temporary buffer for bulk edit
+        let bulkEditBuffer = [];
 
         document.addEventListener('DOMContentLoaded', () => {
             renderView();
@@ -385,7 +372,7 @@
                 .sort((a, b) => new Date(b.date) - new Date(a.date));
 
             if (currentMonthData.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--color-text-tertiary); padding: 2rem;">この月の記録はありません</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--color-text-tertiary); padding: 2rem;">この月の記録はありません</td></tr>';
                 return;
             }
 
@@ -399,7 +386,7 @@
                     badgeClass = 'badge-primary';
                     designationName = '生産活動';
                 } else if (record.distinction === 'welfare') {
-                    badgeClass = 'badge-success'; // Using green for welfare
+                    badgeClass = 'badge-success';
                     designationName = '福祉事業';
                 }
 
@@ -409,14 +396,6 @@
                     <td>${record.category}</td>
                     <td class="input-currency">¥ ${record.amount.toLocaleString()}</td>
                     <td>${record.note}</td>
-                    <td style="text-align: center;">
-                        <button class="btn btn-icon btn-icon-primary" onclick="openEditModal('${record.id}')" title="編集">
-                             <span class="material-symbols-outlined">edit</span>
-                        </button>
-                        <button class="btn btn-icon btn-icon-error" onclick="deleteRecord('${record.id}')" title="削除">
-                            <span class="material-symbols-outlined">delete</span>
-                        </button>
-                    </td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -434,10 +413,8 @@
             tbody.innerHTML = '';
 
             const prefix = `${currentYear}-`;
-            // Calculate aggregates
-            const aggregates = {}; // "01" -> { prod: 0, welf: 0 }
+            const aggregates = {};
 
-            // Init months
             for (let i = 1; i <= 12; i++) {
                 const m = i.toString().padStart(2, '0');
                 aggregates[m] = { prod: 0, welf: 0 };
@@ -446,8 +423,10 @@
             expenseRecords.forEach(r => {
                 if (r.month.startsWith(prefix)) {
                     const m = r.month.split('-')[1];
-                    if (r.distinction === 'production') aggregates[m].prod += r.amount;
-                    else if (r.distinction === 'welfare') aggregates[m].welf += r.amount;
+                    if (aggregates[m]) {
+                        if (r.distinction === 'production') aggregates[m].prod += r.amount;
+                        else if (r.distinction === 'welfare') aggregates[m].welf += r.amount;
+                    }
                 }
             });
 
@@ -465,101 +444,143 @@
             });
         }
 
-        /* --- Modal Logic --- */
-        function openEditModal(id = null) {
-            const modal = document.getElementById('modal-expense-edit');
-            const editId = document.getElementById('edit-id');
-            const editDate = document.getElementById('edit-date');
-            const distProd = document.getElementById('dist-prod');
-            const distWelf = document.getElementById('dist-welfare');
-            const editCat = document.getElementById('edit-category');
-            const editAmt = document.getElementById('edit-amount');
-            const editNote = document.getElementById('edit-note');
+        /* --- Bulk Edit Modal Logic --- */
+        function openBulkEditModal() {
+            const monthVal = document.getElementById('target-month').value;
+            // Clone data for editing
+            const currentData = expenseRecords.filter(r => r.month === monthVal);
+            // Deep copy to buffer
+            bulkEditBuffer = JSON.parse(JSON.stringify(currentData));
 
-            editId.value = id || '';
+            // Sort by date initially
+            bulkEditBuffer.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-            if (id) {
-                // Edit existing
-                const record = expenseRecords.find(r => r.id === id);
-                if (!record) return;
+            renderBulkEditTable();
+            document.getElementById('modal-expense-bulk-edit').style.display = 'flex';
+        }
 
-                editDate.value = record.date;
-                if (record.distinction === 'production') distProd.checked = true;
-                else distWelf.checked = true;
+        function closeBulkEditModal() {
+            document.getElementById('modal-expense-bulk-edit').style.display = 'none';
+        }
 
-                updateCategoryOptions(); // Refresh cat options based on distinction
-                editCat.value = record.category;
-                editAmt.value = record.amount;
-                editNote.value = record.note;
-            } else {
-                // New
-                const monthVal = document.getElementById('target-month').value;
-                editDate.value = monthVal + '-01'; // Default date
-                distProd.checked = true;
-                updateCategoryOptions();
-                editCat.selectedIndex = 0;
-                editAmt.value = '';
-                editNote.value = '';
+        function renderBulkEditTable() {
+            const tbody = document.getElementById('bulk-edit-tbody');
+            tbody.innerHTML = '';
+
+            if (bulkEditBuffer.length === 0) {
+                // Option to show empty message, but we might just show empty table
             }
 
-            modal.style.display = 'flex';
-        }
+            bulkEditBuffer.forEach((record, index) => {
+                const tr = document.createElement('tr');
 
-        function closeEditModal() {
-            document.getElementById('modal-expense-edit').style.display = 'none';
-        }
+                // Distinction Radio Name needs to be unique per row
+                const radioName = `distinction-${record.id}`;
+                const isProd = record.distinction === 'production';
 
-        function updateCategoryOptions() {
-            const isProd = document.getElementById('dist-prod').checked;
-            const key = isProd ? 'production' : 'welfare';
-            const select = document.getElementById('edit-category');
+                // Categories
+                const categories = ACCOUNT_CATEGORIES[record.distinction]?.items || [];
+                const catOptions = categories.map(c =>
+                    `<option value="${c}" ${record.category === c ? 'selected' : ''}>${c}</option>`
+                ).join('');
 
-            select.innerHTML = '';
-            ACCOUNT_CATEGORIES[key].items.forEach(c => {
-                const option = document.createElement('option');
-                option.value = c;
-                option.textContent = c;
-                select.appendChild(option);
+                tr.innerHTML = `
+                    <td>
+                        <input type="date" class="input-field" value="${record.date}" 
+                            onchange="updateBulkRecord('${record.id}', 'date', this.value)">
+                    </td>
+                    <td>
+                        <select class="input-field" onchange="updateBulkDistinction('${record.id}', this.value)">
+                             <option value="production" ${isProd ? 'selected' : ''}>生産活動</option>
+                             <option value="welfare" ${!isProd ? 'selected' : ''}>福祉事業</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select class="input-field" id="cat-select-${record.id}" onchange="updateBulkRecord('${record.id}', 'category', this.value)">
+                            ${catOptions}
+                        </select>
+                    </td>
+                    <td>
+                        <input type="number" class="input-field input-currency" value="${record.amount}" placeholder="0"
+                            onchange="updateBulkRecord('${record.id}', 'amount', this.value)">
+                    </td>
+                    <td>
+                        <input type="text" class="input-field" value="${record.note}" placeholder="備考"
+                            onchange="updateBulkRecord('${record.id}', 'note', this.value)">
+                    </td>
+                    <td style="text-align: center;">
+                        <button class="btn btn-icon btn-icon-error btn-icon-sm" onclick="deleteBulkRow('${record.id}')">
+                            <span class="material-symbols-outlined">delete</span>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
             });
         }
 
-        function saveExpense() {
-            const id = document.getElementById('edit-id').value;
-            const date = document.getElementById('edit-date').value;
-            const isProd = document.getElementById('dist-prod').checked;
-            const category = document.getElementById('edit-category').value;
-            const amount = parseInt(document.getElementById('edit-amount').value) || 0;
-            const note = document.getElementById('edit-note').value;
-
-            const month = date.slice(0, 7);
-            const distinction = isProd ? 'production' : 'welfare';
-
-            if (!id) {
-                // Create
-                const newId = 'new-' + Math.random().toString(36).substr(2, 9);
-                expenseRecords.push({
-                    id: newId, month, date, distinction, category, amount, note
-                });
-            } else {
-                // Update
-                const record = expenseRecords.find(r => r.id === id);
-                if (record) {
-                    record.date = date;
-                    record.month = month;
-                    record.distinction = distinction;
-                    record.category = category;
-                    record.amount = amount;
-                    record.note = note;
-                }
-            }
-
-            closeEditModal();
-            renderView(); // Refresh table
+        function addBulkRow() {
+            const monthVal = document.getElementById('target-month').value;
+            const newId = 'temp-' + Math.random().toString(36).substr(2, 9);
+            const newRecord = {
+                id: newId,
+                month: monthVal, // Should be tied to the view's month
+                date: monthVal + '-01',
+                distinction: 'production',
+                category: ACCOUNT_CATEGORIES['production'].items[0],
+                amount: 0,
+                note: ''
+            };
+            bulkEditBuffer.push(newRecord);
+            renderBulkEditTable();
         }
 
-        function deleteRecord(id) {
-            if (!confirm('この項目を削除しますか？')) return;
-            expenseRecords = expenseRecords.filter(r => r.id !== id);
+        function deleteBulkRow(id) {
+            bulkEditBuffer = bulkEditBuffer.filter(r => r.id !== id);
+            renderBulkEditTable();
+        }
+
+        function updateBulkRecord(id, field, value) {
+            const record = bulkEditBuffer.find(r => r.id === id);
+            if (!record) return;
+
+            if (field === 'amount') {
+                record[field] = parseInt(value) || 0;
+            } else {
+                record[field] = value;
+            }
+        }
+
+        function updateBulkDistinction(id, newDistinction) {
+            const record = bulkEditBuffer.find(r => r.id === id);
+            if (!record) return;
+
+            record.distinction = newDistinction;
+            record.category = ACCOUNT_CATEGORIES[newDistinction].items[0];
+
+            // Re-render only this row's category select would be efficient, but full re-render is safer/easier
+            renderBulkEditTable();
+        }
+
+        function saveBulkChanges() {
+            const monthVal = document.getElementById('target-month').value;
+
+            // Remove all records for this month from main store
+            expenseRecords = expenseRecords.filter(r => r.month !== monthVal);
+
+            // Add back everything from buffer
+            // Ensure month property is correct based on date? 
+            // Or strictly enforce them to belong to the displayed month? 
+            // User might change date to another month. 
+            // Let's rely on the record.date to determine 'month' property.
+
+            bulkEditBuffer.forEach(r => {
+                if (r.date) {
+                    r.month = r.date.slice(0, 7);
+                }
+                expenseRecords.push(r);
+            });
+
+            closeBulkEditModal();
             renderView();
         }
     </script>
