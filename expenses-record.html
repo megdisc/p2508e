@@ -19,6 +19,7 @@
             background-color: var(--color-base-secondary);
             font-weight: bold;
             text-align: center;
+            white-space: nowrap;
         }
 
         .expense-table td {
@@ -27,6 +28,35 @@
 
         .input-currency {
             text-align: right;
+        }
+
+        /* Toggle Styles from attendance.html */
+        .view-toggle {
+            display: flex;
+            background-color: var(--color-base-secondary);
+            border-radius: var(--radius-button);
+            padding: 2px;
+            border: 1px solid var(--color-base-quinary);
+        }
+
+        .view-toggle label {
+            padding: var(--spacing-1) var(--spacing-3);
+            font-size: var(--font-size-sm);
+            cursor: pointer;
+            border-radius: var(--radius-button);
+            transition: all 0.2s;
+            color: var(--color-base-quaternary);
+        }
+
+        .view-toggle input[type="radio"] {
+            display: none;
+        }
+
+        .view-toggle input[type="radio"]:checked+label {
+            background-color: var(--color-theme-main);
+            color: var(--color-base-primary);
+            box-shadow: var(--box-shadow-sm);
+            font-weight: var(--font-weight-medium);
         }
     </style>
 </head>
@@ -123,144 +153,414 @@
         <main class="main-content">
             <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
 
-                <div
-                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
-                    <h1 style="margin: 0;">費用記録</h1>
+                <div style="margin-bottom: var(--spacing-stack-md);">
+                    <h1 style="margin: 0 0 var(--spacing-stack-sm) 0;">費用記録</h1>
+
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--spacing-4);">
+
+                        <!-- View Toggle -->
+                        <div class="view-toggle" style="display: inline-flex;">
+                            <input type="radio" id="mode-monthly" name="view-mode-main" checked
+                                onchange="switchView('monthly')">
+                            <label for="mode-monthly">月別記録</label>
+
+                            <input type="radio" id="mode-yearly" name="view-mode-main" onchange="switchView('yearly')">
+                            <label for="mode-yearly">年間集計</label>
+                        </div>
+
+                        <!-- Month Controls -->
+                        <div id="controls-monthly" style="display: flex; align-items: center; gap: var(--spacing-2);">
+                            <button class="btn btn-icon btn-neutral" onclick="changeMonth(-1)"><span
+                                    class="material-symbols-outlined">chevron_left</span></button>
+                            <input type="month" id="target-month" class="input-field" value="2025-11"
+                                style="width: auto;" onchange="renderView()">
+                            <button class="btn btn-icon btn-neutral" onclick="changeMonth(1)"><span
+                                    class="material-symbols-outlined">chevron_right</span></button>
+                        </div>
+
+                        <!-- Year Controls -->
+                        <div id="controls-yearly" style="display: none; align-items: center; gap: var(--spacing-2);">
+                            <button class="btn btn-icon btn-neutral" onclick="changeYear(-1)"><span
+                                    class="material-symbols-outlined">chevron_left</span></button>
+                            <div style="font-weight: bold; font-size: 1.1em;" id="target-year-display">2025年</div>
+                            <button class="btn btn-icon btn-neutral" onclick="changeYear(1)"><span
+                                    class="material-symbols-outlined">chevron_right</span></button>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- Month Selector -->
-                <div
-                    style="background-color: var(--color-base-primary); padding: var(--spacing-3); border-radius: var(--radius-md); border: 1px solid var(--color-border-default); display: flex; align-items: center; gap: var(--spacing-3); margin-bottom: var(--spacing-stack-lg);">
-                    <div style="font-weight: bold;">対象月:</div>
-                    <button class="btn btn-icon btn-neutral" onclick="changeMonth(-1)"><span
-                            class="material-symbols-outlined">chevron_left</span></button>
-                    <input type="month" id="target-month" class="input-field" value="2025-11" style="width: auto;"
-                        onchange="renderExpenseTable()">
-                    <button class="btn btn-icon btn-neutral" onclick="changeMonth(1)"><span
-                            class="material-symbols-outlined">chevron_right</span></button>
+                <!-- Monthly View -->
+                <div id="view-monthly">
+                    <div class="card">
+                        <div class="card-header"
+                            style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>記録一覧</div>
+                            <button class="btn btn-icon btn-icon-primary" onclick="openEditModal()" title="新規登録">
+                                <span class="material-symbols-outlined">add</span>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-container">
+                                <table class="table expense-table" style="width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 150px;">日付</th>
+                                            <th style="width: 140px;">区分</th>
+                                            <th>勘定科目</th>
+                                            <th style="width: 150px;">金額</th>
+                                            <th>備考</th>
+                                            <th style="width: 80px;">操作</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="expense-tbody">
+                                        <!-- JS Generated -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="table-container">
-                    <table class="table expense-table" style="width: 100%;">
-                        <thead>
-                            <tr>
-                                <th style="width: 20%;">案件名</th>
-                                <th style="width: 20%;">費用項目</th>
-                                <th style="width: 15%;">予算額</th>
-                                <th style="width: 15%;">発生日</th>
-                                <th style="width: 15%;">実績額</th>
-                                <th style="width: 15%;">備考</th>
-                            </tr>
-                        </thead>
-                        <tbody id="expense-tbody">
-                            <!-- JS Generated -->
-                        </tbody>
-                    </table>
+                <!-- Yearly View -->
+                <div id="view-yearly" style="display: none;">
+                    <div class="card">
+                        <div class="card-header">
+                            年間集計
+                        </div>
+                        <div class="card-body">
+                            <div class="table-container">
+                                <table class="table expense-table" style="width: 100%;">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 120px;">月</th>
+                                            <th>生産活動 計</th>
+                                            <th>福祉事業 計</th>
+                                            <th>合計</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="yearly-tbody">
+                                        <!-- JS Generated -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
             </div>
         </main>
     </div>
 
+    <!-- Edit Modal -->
+    <div class="modal-backdrop" id="modal-expense-edit" style="display: none;">
+        <div class="modal-content modal-sm">
+            <div class="modal-header">
+                費用情報の編集
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="edit-id">
+
+                <div class="form-group">
+                    <label class="form-label">日付</label>
+                    <input type="date" id="edit-date" class="input-field">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">区分</label>
+                    <div style="display: flex; gap: var(--spacing-4);">
+                        <div class="form-check" style="margin-bottom: 0;">
+                            <input class="form-check-input" type="radio" name="edit-distinction" id="dist-prod"
+                                value="production" onchange="updateCategoryOptions()" checked>
+                            <label class="form-check-label" for="dist-prod">生産活動</label>
+                        </div>
+                        <div class="form-check" style="margin-bottom: 0;">
+                            <input class="form-check-input" type="radio" name="edit-distinction" id="dist-welfare"
+                                value="welfare" onchange="updateCategoryOptions()">
+                            <label class="form-check-label" for="dist-welfare">福祉事業</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">勘定科目</label>
+                    <select id="edit-category" class="input-field">
+                        <!-- JS populated -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">金額</label>
+                    <input type="number" id="edit-amount" class="input-field input-currency" placeholder="0">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">備考</label>
+                    <input type="text" id="edit-note" class="input-field" placeholder="備考を入力">
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-neutral" onclick="closeEditModal()">キャンセル</button>
+                <button class="btn btn-primary" onclick="saveExpense()">保存</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Mock Projects Data (Simulated import from projects.html)
-        const projectsData = {
-            'project-1': {
-                id: 'project-1',
-                name: 'DM封入作業',
-                expenses: [
-                    { name: '材料費', type: '積立金以外', amount: 5000, note: '' },
-                    { name: '運搬費', type: '積立金以外', amount: 2000, note: '' }
-                ]
+        /**
+         * 勘定科目定義
+         */
+        const ACCOUNT_CATEGORIES = {
+            'production': {
+                label: '生産活動',
+                items: ['就労支援事業製造原価', '材料費', '労務費', '外注加工費', '就労支援事業販管費', '修繕費', '通信運搬費', '消耗品費', '雑費']
             },
-            'project-2': {
-                id: 'project-2',
-                name: '自主製品（パン）',
-                expenses: [
-                    { name: '小麦粉', type: '積立金以外', amount: 15000, note: '' },
-                    { name: '包装材', type: '積立金以外', amount: 3000, note: '' }
-                ]
-            },
-            'project-3': {
-                id: 'project-3',
-                name: '施設外就労（清掃）',
-                expenses: []
+            'welfare': {
+                label: '福祉事業',
+                items: ['事務費', '人件費', '福利厚生活動支出', '教育研修支出', '消耗器具備品費', '水道光熱費', '燃料費', '賃借料', '保険料', '租税公課', '支払利息']
             }
         };
 
-        // Mock Actuals Storage: { 'projectId_expenseIdx_YYYY-MM': { date: '2025-11-15', amount: 5000, note: '...' } }
-        const expenseActuals = {};
+        // Mock Data
+        let expenseRecords = [
+            { id: 'exp-1', month: '2025-11', date: '2025-11-05', distinction: 'production', category: '材料費', amount: 15000, note: 'パン生地用小麦粉' },
+            { id: 'exp-2', month: '2025-11', date: '2025-11-12', distinction: 'production', category: '消耗品費', amount: 2500, note: '包装用フィルム' },
+            { id: 'exp-3', month: '2025-11', date: '2025-11-20', distinction: 'welfare', category: '事務費', amount: 8000, note: 'プリンターインク' }
+        ];
+
+        let currentYear = 2025;
 
         document.addEventListener('DOMContentLoaded', () => {
-            renderExpenseTable();
+            renderView();
         });
 
+        /* --- View Switching --- */
+        function switchView(mode) {
+            const monthlyView = document.getElementById('view-monthly');
+            const monthlyControls = document.getElementById('controls-monthly');
+            const yearlyView = document.getElementById('view-yearly');
+            const yearlyControls = document.getElementById('controls-yearly');
+
+            if (mode === 'monthly') {
+                monthlyView.style.display = 'block';
+                monthlyControls.style.display = 'flex';
+                yearlyView.style.display = 'none';
+                yearlyControls.style.display = 'none';
+            } else {
+                monthlyView.style.display = 'none';
+                monthlyControls.style.display = 'none';
+                yearlyView.style.display = 'block';
+                yearlyControls.style.display = 'flex';
+            }
+            renderView();
+        }
+
+        function renderView() {
+            if (document.getElementById('mode-monthly').checked) {
+                renderMonthlyTable();
+            } else {
+                renderYearlyTable();
+            }
+        }
+
+        /* --- Monthly Logic --- */
         function changeMonth(delta) {
             const input = document.getElementById('target-month');
+            if (!input.value) input.value = new Date().toISOString().slice(0, 7);
+
             const date = new Date(input.value + '-01');
             date.setMonth(date.getMonth() + delta);
             input.value = date.toISOString().slice(0, 7);
-            renderExpenseTable();
+
+            renderMonthlyTable();
         }
 
-        function renderExpenseTable() {
+        function renderMonthlyTable() {
             const tbody = document.getElementById('expense-tbody');
             const monthVal = document.getElementById('target-month').value;
             tbody.innerHTML = '';
 
-            let hasData = false;
+            const currentMonthData = expenseRecords.filter(r => r.month === monthVal)
+                .sort((a, b) => new Date(b.date) - new Date(a.date));
 
-            Object.values(projectsData).forEach(project => {
-                const otherExpenses = (project.expenses || []).filter(e => e.type !== '積立金'); // Only Other Expenses
+            if (currentMonthData.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--color-text-tertiary); padding: 2rem;">この月の記録はありません</td></tr>';
+                return;
+            }
 
-                if (otherExpenses.length > 0) {
-                    hasData = true;
-                    otherExpenses.forEach((exp, idx) => {
-                        const tr = document.createElement('tr');
+            currentMonthData.forEach(record => {
+                const tr = document.createElement('tr');
 
-                        // Storage Key
-                        const key = `${project.id}_${idx}_${monthVal}`;
-                        const actual = expenseActuals[key] || {};
+                // Badges
+                let badgeClass = 'badge-neutral';
+                let designationName = 'その他';
+                if (record.distinction === 'production') {
+                    badgeClass = 'badge-primary';
+                    designationName = '生産活動';
+                } else if (record.distinction === 'welfare') {
+                    badgeClass = 'badge-success'; // Using green for welfare
+                    designationName = '福祉事業';
+                }
 
-                        tr.innerHTML = `
-                            <td>${project.name}</td>
-                            <td>${exp.name}</td>
-                            <td class="input-currency">¥ ${exp.amount.toLocaleString()}</td>
-                            <td>
-                                <input type="date" class="input-field" value="${actual.date || ''}" 
-                                    onchange="updateActual('${key}', 'date', this.value)">
-                            </td>
-                            <td>
-                                <input type="number" class="input-field input-currency" value="${actual.amount !== undefined ? actual.amount : ''}" placeholder="0"
-                                    onchange="updateActual('${key}', 'amount', this.value)">
-                            </td>
-                            <td>
-                                <input type="text" class="input-field" value="${actual.note || ''}" 
-                                    onchange="updateActual('${key}', 'note', this.value)">
-                            </td>
-                        `;
-                        tbody.appendChild(tr);
-                    });
+                tr.innerHTML = `
+                    <td>${record.date}</td>
+                    <td><span class="badge ${badgeClass}">${designationName}</span></td>
+                    <td>${record.category}</td>
+                    <td class="input-currency">¥ ${record.amount.toLocaleString()}</td>
+                    <td>${record.note}</td>
+                    <td style="text-align: center;">
+                        <button class="btn btn-icon btn-icon-primary" onclick="openEditModal('${record.id}')" title="編集">
+                             <span class="material-symbols-outlined">edit</span>
+                        </button>
+                        <button class="btn btn-icon btn-icon-error" onclick="deleteRecord('${record.id}')" title="削除">
+                            <span class="material-symbols-outlined">delete</span>
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        /* --- Yearly Logic --- */
+        function changeYear(delta) {
+            currentYear += delta;
+            document.getElementById('target-year-display').textContent = `${currentYear}年`;
+            renderYearlyTable();
+        }
+
+        function renderYearlyTable() {
+            const tbody = document.getElementById('yearly-tbody');
+            tbody.innerHTML = '';
+
+            const prefix = `${currentYear}-`;
+            // Calculate aggregates
+            const aggregates = {}; // "01" -> { prod: 0, welf: 0 }
+
+            // Init months
+            for (let i = 1; i <= 12; i++) {
+                const m = i.toString().padStart(2, '0');
+                aggregates[m] = { prod: 0, welf: 0 };
+            }
+
+            expenseRecords.forEach(r => {
+                if (r.month.startsWith(prefix)) {
+                    const m = r.month.split('-')[1];
+                    if (r.distinction === 'production') aggregates[m].prod += r.amount;
+                    else if (r.distinction === 'welfare') aggregates[m].welf += r.amount;
                 }
             });
 
-            if (!hasData) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--color-text-tertiary); padding: 2rem;">記録対象の費用項目がありません</td></tr>';
-            }
+            Object.keys(aggregates).sort().forEach(m => {
+                const data = aggregates[m];
+                const total = data.prod + data.welf;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${currentYear}年 ${parseInt(m)}月</td>
+                    <td class="input-currency">¥ ${data.prod.toLocaleString()}</td>
+                    <td class="input-currency">¥ ${data.welf.toLocaleString()}</td>
+                    <td class="input-currency" style="font-weight: bold;">¥ ${total.toLocaleString()}</td>
+                `;
+                tbody.appendChild(tr);
+            });
         }
 
-        function updateActual(key, field, value) {
-            if (!expenseActuals[key]) expenseActuals[key] = {};
+        /* --- Modal Logic --- */
+        function openEditModal(id = null) {
+            const modal = document.getElementById('modal-expense-edit');
+            const editId = document.getElementById('edit-id');
+            const editDate = document.getElementById('edit-date');
+            const distProd = document.getElementById('dist-prod');
+            const distWelf = document.getElementById('dist-welfare');
+            const editCat = document.getElementById('edit-category');
+            const editAmt = document.getElementById('edit-amount');
+            const editNote = document.getElementById('edit-note');
 
-            if (field === 'amount') {
-                expenseActuals[key][field] = parseInt(value) || 0;
+            editId.value = id || '';
+
+            if (id) {
+                // Edit existing
+                const record = expenseRecords.find(r => r.id === id);
+                if (!record) return;
+
+                editDate.value = record.date;
+                if (record.distinction === 'production') distProd.checked = true;
+                else distWelf.checked = true;
+
+                updateCategoryOptions(); // Refresh cat options based on distinction
+                editCat.value = record.category;
+                editAmt.value = record.amount;
+                editNote.value = record.note;
             } else {
-                expenseActuals[key][field] = value;
+                // New
+                const monthVal = document.getElementById('target-month').value;
+                editDate.value = monthVal + '-01'; // Default date
+                distProd.checked = true;
+                updateCategoryOptions();
+                editCat.selectedIndex = 0;
+                editAmt.value = '';
+                editNote.value = '';
             }
-            console.log('Saved:', key, expenseActuals[key]);
 
-            // Visual feedback (Flash background?)
-            // For now, implicit save
+            modal.style.display = 'flex';
+        }
+
+        function closeEditModal() {
+            document.getElementById('modal-expense-edit').style.display = 'none';
+        }
+
+        function updateCategoryOptions() {
+            const isProd = document.getElementById('dist-prod').checked;
+            const key = isProd ? 'production' : 'welfare';
+            const select = document.getElementById('edit-category');
+
+            select.innerHTML = '';
+            ACCOUNT_CATEGORIES[key].items.forEach(c => {
+                const option = document.createElement('option');
+                option.value = c;
+                option.textContent = c;
+                select.appendChild(option);
+            });
+        }
+
+        function saveExpense() {
+            const id = document.getElementById('edit-id').value;
+            const date = document.getElementById('edit-date').value;
+            const isProd = document.getElementById('dist-prod').checked;
+            const category = document.getElementById('edit-category').value;
+            const amount = parseInt(document.getElementById('edit-amount').value) || 0;
+            const note = document.getElementById('edit-note').value;
+
+            const month = date.slice(0, 7);
+            const distinction = isProd ? 'production' : 'welfare';
+
+            if (!id) {
+                // Create
+                const newId = 'new-' + Math.random().toString(36).substr(2, 9);
+                expenseRecords.push({
+                    id: newId, month, date, distinction, category, amount, note
+                });
+            } else {
+                // Update
+                const record = expenseRecords.find(r => r.id === id);
+                if (record) {
+                    record.date = date;
+                    record.month = month;
+                    record.distinction = distinction;
+                    record.category = category;
+                    record.amount = amount;
+                    record.note = note;
+                }
+            }
+
+            closeEditModal();
+            renderView(); // Refresh table
+        }
+
+        function deleteRecord(id) {
+            if (!confirm('この項目を削除しますか？')) return;
+            expenseRecords = expenseRecords.filter(r => r.id !== id);
+            renderView();
         }
     </script>
 </body>
