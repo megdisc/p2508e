@@ -708,7 +708,7 @@ input[type="number"].input-field {
     transform: rotate(90deg);
 }
 
-.nav-accordion:hover summary {
+.nav-accordion summary:hover {
     background-color: var(--palette-translucent-2552);
 }
 
@@ -723,7 +723,8 @@ input[type="number"].input-field {
     transition: background-color var(--transition-duration-fast) var(--transition-timing-ease);
 }
 
-.nav-link:hover {
+.nav-link:hover,
+.nav-link.active {
     background-color: var(--palette-translucent-2552);
     opacity: 1;
 }
@@ -745,7 +746,8 @@ input[type="number"].input-field {
     transition: background-color var(--transition-duration-fast) var(--transition-timing-ease);
 }
 
-.sidebar-nav ul a:hover {
+.sidebar-nav ul a:hover,
+.sidebar-nav ul a.active {
     background-color: var(--palette-translucent-2552);
     opacity: 1;
 }
