@@ -193,6 +193,48 @@
 
                 <!-- Monthly View -->
                 <div id="view-monthly">
+
+                    <!-- Filters & Sort -->
+                    <div
+                        style="display: flex; gap: var(--spacing-stack-md); flex-wrap: wrap; margin-bottom: var(--spacing-stack-md);">
+
+                        <!-- Filter Card -->
+                        <div class="card" style="flex: 1; min-width: 320px;">
+                            <div class="card-body"
+                                style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
+                                <div class="form-group" style="margin: 0; flex: 1; min-width: 160px;">
+                                    <label class="form-label">キーワード検索</label>
+                                    <input type="text" id="filter-keyword" class="input-field" placeholder="勘定科目・備考..."
+                                        oninput="renderMonthlyTable()">
+                                </div>
+                                <div class="form-group" style="margin: 0; flex: 1; min-width: 140px;">
+                                    <label class="form-label">区分</label>
+                                    <select id="filter-distinction" class="input-field" onchange="renderMonthlyTable()">
+                                        <option value="">すべて</option>
+                                        <option value="production">生産活動</option>
+                                        <option value="welfare">福祉事業</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Sort Card -->
+                        <div class="card" style="flex: 0 0 auto;">
+                            <div class="card-body"
+                                style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
+                                <div class="form-group" style="margin: 0; width: 180px;">
+                                    <label class="form-label">並び替え</label>
+                                    <select id="sort-order" class="input-field" onchange="renderMonthlyTable()">
+                                        <option value="date_desc">日付 (新しい順)</option>
+                                        <option value="date_asc">日付 (古い順)</option>
+                                        <option value="amount_desc">金額 (高い順)</option>
+                                        <option value="amount_asc">金額 (安い順)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="card">
                         <div class="card-header"
                             style="display: flex; justify-content: space-between; align-items: center;">
@@ -366,13 +408,40 @@
         function renderMonthlyTable() {
             const tbody = document.getElementById('expense-tbody');
             const monthVal = document.getElementById('target-month').value;
+
+            // Filter Inputs
+            const keyword = document.getElementById('filter-keyword').value.toLowerCase();
+            const distinction = document.getElementById('filter-distinction').value;
+            const sortOrder = document.getElementById('sort-order').value;
+
             tbody.innerHTML = '';
 
-            const currentMonthData = expenseRecords.filter(r => r.month === monthVal)
-                .sort((a, b) => new Date(b.date) - new Date(a.date));
+            let currentMonthData = expenseRecords.filter(r => r.month === monthVal);
+
+            // Apply Filters
+            if (distinction) {
+                currentMonthData = currentMonthData.filter(r => r.distinction === distinction);
+            }
+            if (keyword) {
+                currentMonthData = currentMonthData.filter(r =>
+                    r.category.toLowerCase().includes(keyword) || r.note.toLowerCase().includes(keyword)
+                );
+            }
+
+            // Apply Sort
+            currentMonthData.sort((a, b) => {
+                const dateA = new Date(a.date);
+                const dateB = new Date(b.date);
+
+                if (sortOrder === 'date_desc') return dateB - dateA;
+                if (sortOrder === 'date_asc') return dateA - dateB;
+                if (sortOrder === 'amount_desc') return b.amount - a.amount;
+                if (sortOrder === 'amount_asc') return a.amount - b.amount;
+                return 0;
+            });
 
             if (currentMonthData.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--color-text-tertiary); padding: 2rem;">この月の記録はありません</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--color-text-tertiary); padding: 2rem;">条件に一致する記録はありません</td></tr>';
                 return;
             }
 
