@@ -223,7 +223,8 @@
         <div class="modal-content modal-lg" style="max-width: 900px;">
             <div class="modal-header">
                 <div style="display: flex; flex-direction: column;">
-                    <span style="font-size: 0.8em; color: var(--color-text-tertiary);">費用管理</span>
+                    <span id="modal-title-label"
+                        style="font-size: 0.8em; color: var(--color-text-tertiary);">費用管理</span>
                     <span id="modal-project-name" style="font-size: 1.2em; font-weight: bold;">--</span>
                 </div>
             </div>
@@ -239,7 +240,7 @@
                         <div style="text-align: right; font-size: 1.1em; font-weight: bold; margin-bottom: 4px;">
                             合計: <span id="modal-total-amount">0</span> 円
                         </div>
-                        <button class="btn btn-primary btn-sm" onclick="addExpenseRow()">
+                        <button id="btn-add-expense" class="btn btn-primary btn-sm" onclick="addExpenseRow()">
                             <span class="material-symbols-outlined"
                                 style="font-size: 1.2em; vertical-align: middle;">add</span>
                             経費を追加
@@ -249,14 +250,8 @@
 
                 <div class="table-container" style="max-height: 50vh; overflow-y: auto;">
                     <table class="table expense-table" style="width: 100%;">
-                        <thead>
-                            <tr>
-                                <th style="width: 140px;">日付</th>
-                                <th style="width: 180px;">勘定科目</th>
-                                <th>内容</th>
-                                <th style="width: 120px;">金額</th>
-                                <th style="width: 50px;"></th>
-                            </tr>
+                        <thead id="modal-table-header">
+                            <!-- JS Generated -->
                         </thead>
                         <tbody id="modal-expense-tbody">
                             <!-- JS Generated -->
@@ -264,7 +259,7 @@
                     </table>
                 </div>
 
-                <div
+                <div id="modal-save-hint"
                     style="margin-top: var(--spacing-stack-md); padding: var(--spacing-3); background-color: var(--color-bg-subtle); border-radius: var(--radius-base); font-size: 0.9em; color: var(--color-text-secondary);">
                     <p style="margin: 0;">※ 入力した内容は自動的に保存されます。</p>
                 </div>
@@ -288,7 +283,7 @@
                 type: 'single',
                 source: 'external',
                 budget: { revenue: 300000, reserves: 10000, expenses: 50000 },
-                actuals: { revenue: 0, reserves: 0 } // expenses calculated dynamically
+                actuals: { revenue: 0, reserves: 0 }
             },
             'project-2': {
                 id: 'project-2',
@@ -349,7 +344,6 @@
             '雑費'
         ];
 
-        // Expense Records
         let expenseRecords = [
             { id: 'exp-1', projectId: 'project-2', date: '2025-11-05', category: '材料費', amount: 15000, note: 'パン生地用小麦粉' },
             { id: 'exp-2', projectId: 'project-2', date: '2025-11-12', category: '消耗品費', amount: 2500, note: '包装用フィルム' },
@@ -358,6 +352,7 @@
         ];
 
         let currentModalProjectId = null;
+        let currentModalMode = 'view'; // 'view' or 'edit'
 
         document.addEventListener('DOMContentLoaded', () => {
             renderProjectGrid();
@@ -380,11 +375,9 @@
                 if (searchKey && !project.name.toLowerCase().includes(searchKey)) return;
                 if (statusFilter && project.status !== statusFilter) return;
 
-                // 1. Calculate Expenses Actual
                 const pExpenses = expenseRecords.filter(r => r.projectId === project.id);
                 const actualExpenses = pExpenses.reduce((sum, r) => sum + r.amount, 0);
 
-                // 2. Status Badge
                 let badgeClass = 'badge-neutral';
                 let statusText = '不明';
                 switch (project.status) {
@@ -395,7 +388,6 @@
                     case 'pending': badgeClass = 'badge-warning'; statusText = '保留'; break;
                 }
 
-                // 3. Source Badge
                 let sourceBadge = '';
                 if (project.source === 'external') {
                     sourceBadge = '<span class="badge badge-neutral">受託</span>';
@@ -418,7 +410,7 @@
                             </div>
                         </div>
                         <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
-                            <button class="btn btn-icon btn-icon-primary" title="編集" onclick="openExpenseModal('${project.id}')">
+                            <button class="btn btn-icon btn-icon-primary" title="編集" onclick="openExpenseModal('${project.id}', 'edit')">
                                 <span class="material-symbols-outlined">edit</span>
                             </button>
                         </div>
@@ -428,7 +420,7 @@
                             <thead>
                                 <tr>
                                     <th></th>
-                                    <th>計画（予算）</th>
+                                    <th>予算</th>
                                     <th>実績</th>
                                 </tr>
                             </thead>
@@ -450,6 +442,9 @@
                                 </tr>
                             </tbody>
                          </table>
+                         <div style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
+                             <button class="btn btn-neutral" onclick="openExpenseModal('${project.id}', 'view')">詳細</button>
+                         </div>
                     </div>
                 `;
                 container.appendChild(card);
@@ -458,10 +453,28 @@
 
         // --- Modal Logic ---
 
-        function openExpenseModal(projectId) {
+        function openExpenseModal(projectId, mode = 'view') {
             currentModalProjectId = projectId;
+            currentModalMode = mode;
             const project = projectsData[projectId];
+
             document.getElementById('modal-project-name').textContent = project.name;
+
+            // Adjust Modal UI based on mode
+            const addBtn = document.getElementById('btn-add-expense');
+            const saveHint = document.getElementById('modal-save-hint');
+            const titleLabel = document.getElementById('modal-title-label');
+
+            if (mode === 'edit') {
+                addBtn.style.display = 'inline-flex';
+                saveHint.style.display = 'block';
+                titleLabel.textContent = '費用編集';
+            } else {
+                addBtn.style.display = 'none';
+                saveHint.style.display = 'none';
+                titleLabel.textContent = '費用詳細（閲覧）';
+            }
+
             renderModalTable();
             document.getElementById('modal-project-expenses').style.display = 'flex';
         }
@@ -469,12 +482,35 @@
         function closeModal() {
             document.getElementById('modal-project-expenses').style.display = 'none';
             currentModalProjectId = null;
-            renderProjectGrid(); // Update grid summary
+            renderProjectGrid();
         }
 
         function renderModalTable() {
+            const thead = document.getElementById('modal-table-header');
             const tbody = document.getElementById('modal-expense-tbody');
             tbody.innerHTML = '';
+
+            // Header
+            if (currentModalMode === 'edit') {
+                thead.innerHTML = `
+                    <tr>
+                        <th style="width: 140px;">日付</th>
+                        <th style="width: 180px;">勘定科目</th>
+                        <th>内容</th>
+                        <th style="width: 120px;">金額</th>
+                        <th style="width: 50px;"></th>
+                    </tr>
+                `;
+            } else {
+                thead.innerHTML = `
+                    <tr>
+                        <th style="width: 140px;">日付</th>
+                        <th style="width: 180px;">勘定科目</th>
+                        <th>内容</th>
+                        <th style="width: 120px;">金額</th>
+                    </tr>
+                `;
+            }
 
             const targetMonth = document.getElementById('modal-target-month').value;
             let projectExpenses = expenseRecords.filter(r => r.projectId === currentModalProjectId);
@@ -490,30 +526,42 @@
             projectExpenses.forEach(record => {
                 total += record.amount;
                 const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>
-                        <input type="date" class="input-field" value="${record.date}" 
-                            onchange="updateRecord('${record.id}', 'date', this.value)">
-                    </td>
-                    <td>
-                        <select class="input-field" onchange="updateRecord('${record.id}', 'category', this.value)">
-                            ${EXPENSE_CATEGORIES.map(c => `<option value="${c}" ${c === record.category ? 'selected' : ''}>${c}</option>`).join('')}
-                        </select>
-                    </td>
-                    <td>
-                        <input type="text" class="input-field" value="${record.note}" placeholder="内容"
-                            onchange="updateRecord('${record.id}', 'note', this.value)">
-                    </td>
-                    <td>
-                        <input type="number" class="input-field input-currency" value="${record.amount}" placeholder="0"
-                            onchange="updateRecord('${record.id}', 'amount', this.value)">
-                    </td>
-                    <td style="text-align: center;">
-                        <button class="btn btn-icon btn-icon-error btn-icon-sm" onclick="deleteRecord('${record.id}')">
-                            <span class="material-symbols-outlined">delete</span>
-                        </button>
-                    </td>
-                `;
+
+                if (currentModalMode === 'edit') {
+                    // Edit Mode (Inputs)
+                    tr.innerHTML = `
+                        <td>
+                            <input type="date" class="input-field" value="${record.date}" 
+                                onchange="updateRecord('${record.id}', 'date', this.value)">
+                        </td>
+                        <td>
+                            <select class="input-field" onchange="updateRecord('${record.id}', 'category', this.value)">
+                                ${EXPENSE_CATEGORIES.map(c => `<option value="${c}" ${c === record.category ? 'selected' : ''}>${c}</option>`).join('')}
+                            </select>
+                        </td>
+                        <td>
+                            <input type="text" class="input-field" value="${record.note}" placeholder="内容"
+                                onchange="updateRecord('${record.id}', 'note', this.value)">
+                        </td>
+                        <td>
+                            <input type="number" class="input-field input-currency" value="${record.amount}" placeholder="0"
+                                onchange="updateRecord('${record.id}', 'amount', this.value)">
+                        </td>
+                        <td style="text-align: center;">
+                            <button class="btn btn-icon btn-icon-error btn-icon-sm" onclick="deleteRecord('${record.id}')">
+                                <span class="material-symbols-outlined">delete</span>
+                            </button>
+                        </td>
+                    `;
+                } else {
+                    // View Mode (Text)
+                    tr.innerHTML = `
+                        <td>${record.date}</td>
+                        <td>${record.category}</td>
+                        <td>${record.note}</td>
+                        <td class="input-currency">¥ ${record.amount.toLocaleString()}</td>
+                    `;
+                }
                 tbody.appendChild(tr);
             });
 
@@ -521,6 +569,7 @@
         }
 
         function addExpenseRow() {
+            if (currentModalMode !== 'edit') return;
             const targetMonth = document.getElementById('modal-target-month').value;
             const today = new Date().toISOString().slice(0, 10);
             const defaultDate = today.startsWith(targetMonth) ? today : (targetMonth + '-01');
