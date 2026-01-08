@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Compath - 会計書類</title>
+
+    <link rel="stylesheet" href="globals.css">
+    <link rel="stylesheet" href="ui.css">
+
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <style>
+        .accounting-table-container {
+            overflow-x: auto;
+            border: 1px solid var(--color-table-border);
+            border-radius: var(--radius-md);
+            margin-top: var(--spacing-4);
+        }
+
+        .accounting-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: var(--font-size-sm);
+        }
+
+        .accounting-table th,
+        .accounting-table td {
+            border: 1px solid var(--color-table-border);
+            padding: var(--spacing-2);
+        }
+
+        .accounting-table th {
+            background-color: var(--color-base-secondary);
+            font-weight: var(--font-weight-medium);
+            text-align: center;
+        }
+
+        .accounting-table td.numeric {
+            text-align: right;
+            font-family: monospace;
+        }
+
+        .accounting-table tr.total-row {
+            background-color: var(--color-base-tertiary);
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon"></div>
+                    <span class="logo-text">Compath</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-link">
+                    <span class="material-symbols-outlined">dashboard</span>
+                    <span class="nav-text">ダッシュボード</span>
+                </a>
+                <a href="schedule.html" class="nav-link">
+                    <span class="material-symbols-outlined">calendar_month</span>
+                    <span class="nav-text">スケジュール</span>
+                </a>
+                <a href="projects.html" class="nav-link">
+                    <span class="material-symbols-outlined">work</span>
+                    <span class="nav-text">案件管理</span>
+                </a>
+                <a href="members.html" class="nav-link">
+                    <span class="material-symbols-outlined">group</span>
+                    <span class="nav-text">メンバー管理</span>
+                </a>
+                <a href="attendance.html" class="nav-link">
+                    <span class="material-symbols-outlined">schedule</span>
+                    <span class="nav-text">勤怠管理</span>
+                </a>
+                <a href="#" class="nav-link accordion-header" onclick="toggleAccordion(event, 'billing-menu')">
+                    <span class="material-symbols-outlined">receipt_long</span>
+                    <span class="nav-text">請求・給付</span>
+                    <span class="material-symbols-outlined accordion-icon">expand_more</span>
+                </a>
+                <div id="billing-menu" class="accordion-content">
+                    <ul>
+                        <li><a href="billing-national-health.html">国保連請求</a></li>
+                        <li><a href="production-balance.html">生産活動収支状況</a></li>
+                    </ul>
+                </div>
+                <!-- Settings Group -->
+                <div class="nav-group-label" style="margin-top: 16px;">設定</div>
+                <a href="office.html" class="nav-link">事業所設定</a>
+                <a href="account.html" class="nav-link">ユーザーアカウント</a>
+                <a href="accounting-documents.html" class="nav-link" class="active">会計書類</a>
+                <a href="styleguide.html" class="nav-link">スタイルガイド</a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="avatar">U</div>
+                    <div class="user-info">
+                        <div class="user-name">管理者 太郎</div>
+                        <div class="user-role">管理者</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="header">
+                <div class="header-left">
+                    <button class="btn btn-icon" id="sidebar-toggle">
+                        <span class="material-symbols-outlined">menu_open</span>
+                    </button>
+                    <h1>会計書類</h1>
+                </div>
+                <div class="header-right">
+                    <!-- Actions if needed -->
+                </div>
+            </header>
+
+            <div class="content-body">
+                <div class="card">
+                    <div class="tab-group" style="margin-bottom: var(--spacing-4); flex-wrap: wrap;">
+                        <button class="tab-link active" onclick="switchDocument('annex1', this)">事業活動計算書<br><span
+                                style="font-size:0.8em">(別紙1)</span></button>
+                        <button class="tab-link" onclick="switchDocument('annex2', this)">事業活動内訳表<br><span
+                                style="font-size:0.8em">(別紙2)</span></button>
+                        <button class="tab-link" onclick="switchDocument('annex3', this)">積立金明細表<br><span
+                                style="font-size:0.8em">(別紙3)</span></button>
+                        <button class="tab-link" onclick="switchDocument('annex4', this)">積立資産明細表<br><span
+                                style="font-size:0.8em">(別紙4)</span></button>
+                        <button class="tab-link" onclick="switchDocument('table1', this)">事業活動明細書<br><span
+                                style="font-size:0.8em">(表1)</span></button>
+                        <button class="tab-link" onclick="switchDocument('table2', this)">製造原価明細書<br><span
+                                style="font-size:0.8em">(表2)</span></button>
+                        <button class="tab-link" onclick="switchDocument('table3', this)">販管費明細書<br><span
+                                style="font-size:0.8em">(表3)</span></button>
+                    </div>
+
+                    <button class="tab-link" onclick="switchDocument('table4', this)">就労支援事業明細書<br><span
+                            style="font-size:0.8em">(表4)</span></button>
+                    <hr
+                        style="width: 100%; border: 0; border-top: 1px solid var(--color-border-default); margin: var(--spacing-2) 0;">
+                    <span
+                        style="font-size: var(--font-size-xs); color: var(--color-text-tertiary); margin-bottom: var(--spacing-2); display: block;">多機能事業所用</span>
+                    <div style="display: flex; gap: var(--spacing-2); flex-wrap: wrap;">
+                        <button class="tab-link" onclick="switchDocument('table5', this)">事業活動明細書<br><span
+                                style="font-size:0.8em">(表5)</span></button>
+                        <button class="tab-link" onclick="switchDocument('table6', this)">製造原価明細書<br><span
+                                style="font-size:0.8em">(表6)</span></button>
+                        <button class="tab-link" onclick="switchDocument('table7', this)">販管費明細書<br><span
+                                style="font-size:0.8em">(表7)</span></button>
+                        <button class="tab-link" onclick="switchDocument('table8', this)">就労支援事業明細書<br><span
+                                style="font-size:0.8em">(表8)</span></button>
+                    </div>
+                </div>
+
+                <div id="document-container">
+                    <!-- Content will be injected here -->
+                </div>
+            </div>
+    </div>
+    </main>
+    </div>
+
+    <!-- Script for Tab Switching and Rendering -->
+    <script>
+        const documents = {
+            'annex1': {
+                title: '就労支援事業事業活動計算書（別紙1）',
+                headers: ['勘定科目', '当年度決算額', '前年度決算額', '増減'],
+                rows: [
+                    { name: 'I サービス活動増減の部', type: 'header' },
+                    { name: '1. 収益', type: 'header-sub' },
+                    { name: '障害福祉サービス等事業収益', type: 'data', current: 5000000, previous: 4800000 },
+                    { name: '就労支援事業収益', type: 'data', current: 3000000, previous: 2500000 },
+                    { name: '経常経費寄附金収益', type: 'data', current: 100000, previous: 500000 },
+                    { name: 'サービス活動収益計(1)', type: 'total', current: 8100000, previous: 7800000 },
+                    { name: '2. 費用', type: 'header-sub' },
+                    { name: '人件費', type: 'data', current: 4000000, previous: 3800000 },
+                    { name: '事業費', type: 'data', current: 1500000, previous: 1400000 },
+                    { name: '事務費', type: 'data', current: 800000, previous: 750000 },
+                    { name: '就労支援事業費用', type: 'data', current: 1000000, previous: 900000 },
+                    { name: 'サービス活動費用計(2)', type: 'total', current: 7300000, previous: 6850000 },
+                    { name: 'サービス活動増減差額(3)=(1)-(2)', type: 'total-diff', current: 800000, previous: 950000 }
+                ]
+            },
+            'annex2': {
+                title: '就労支援事業事業活動内訳表（別紙2）',
+                headers: ['勘定科目', '合計', '就労移行支援', '就労継続支援A型', '就労継続支援B型'],
+                rows: [
+                    { name: 'I サービス活動増減の部', type: 'header' },
+                    { name: '1. 収益', type: 'header-sub' },
+                    { name: '就労支援事業収益合計', type: 'total', current: 3000000, col1: 0, col2: 1200000, col3: 1800000 },
+                    { name: '2. 費用', type: 'header-sub' },
+                    { name: '就労支援事業費用合計', type: 'total', current: 1000000, col1: 0, col2: 400000, col3: 600000 }
+                ]
+            },
+            'annex3': {
+                title: 'その他の積立金明細表（別紙3）',
+                headers: ['積立金の種類', '期首残高', '当期増加額', '当期減少額', '期末残高'],
+                rows: [
+                    { name: '設備整備積立金', type: 'data', col1: 2000000, col2: 500000, col3: 0, col4: 2500000 },
+                    { name: '工賃変動積立金', type: 'data', col1: 500000, col2: 100000, col3: 50000, col4: 550000 }
+                ]
+            },
+            'annex4': {
+                title: 'その他の積立資産明細表（別紙4）',
+                headers: ['積立資産の種類', '期首残高', '当期増加額', '当期減少額', '期末残高'],
+                rows: [
+                    { name: '設備整備積立資産', type: 'data', col1: 2000000, col2: 500000, col3: 0, col4: 2500000 }
+                ]
+            },
+            'table1': {
+                title: '就労支援事業別事業活動明細書（表1）',
+                headers: ['科目', '合計', 'A作業', 'B作業', 'C作業'],
+                rows: [
+                    { name: '売上高', type: 'data', current: 3000000, col1: 1000000, col2: 1500000, col3: 500000 },
+                    { name: '売上原価', type: 'data', current: 1000000, col1: 300000, col2: 500000, col3: 200000 },
+                    { name: '売上総利益', type: 'total', current: 2000000, col1: 700000, col2: 1000000, col3: 300000 }
+                ]
+            },
+            'table2': {
+                title: '就労支援事業製造原価明細書（表2）',
+                headers: ['科目', '合計', 'A作業', 'B作業', 'C作業'],
+                rows: [
+                    { name: '材料費', type: 'data', current: 800000, col1: 200000, col2: 400000, col3: 200000 },
+                    { name: '労務費', type: 'data', current: 0, col1: 0, col2: 0, col3: 0 },
+                    { name: '外注加工費', type: 'data', current: 100000, col1: 50000, col2: 50000, col3: 0 },
+                    { name: '経費', type: 'data', current: 100000, col1: 50000, col2: 50000, col3: 0 },
+                    { name: '当期製造費用', type: 'total', current: 1000000, col1: 300000, col2: 500000, col3: 200000 }
+                ]
+            },
+            'table3': {
+                title: '就労支援事業販管費明細書（表3）',
+                headers: ['科目', '合計', 'A作業', 'B作業', 'C作業'],
+                rows: [
+                    { name: '職員給料手当', type: 'data', current: 200000, col1: 50000, col2: 100000, col3: 50000 },
+                    { name: '車両燃料費', type: 'data', current: 50000, col1: 10000, col2: 30000, col3: 10000 },
+                    { name: '販売管理費計', type: 'total', current: 250000, col1: 60000, col2: 130000, col3: 60000 }
+                ]
+            },
+            'table4': {
+                title: '就労支援事業明細書（表4）',
+                headers: ['科目', '合計', 'A作業', 'B作業', 'C作業'],
+                rows: [
+                    { name: '売上高', type: 'data', current: 1000000, col1: 300000, col2: 500000, col3: 200000 },
+                    { name: '製造費用', type: 'data', current: 600000, col1: 180000, col2: 300000, col3: 120000 },
+                    { name: '販売費及び一般管理費', type: 'data', current: 200000, col1: 60000, col2: 100000, col3: 40000 },
+                    { name: '事業活動損益', type: 'total', current: 200000, col1: 60000, col2: 100000, col3: 40000 }
+                ]
+            },
+            'table5': {
+                title: '就労支援事業別事業活動明細書（多機能事業所様式）（表5）',
+                headers: ['科目', '合計', 'Aサービス', 'Bサービス'],
+                rows: [
+                    { name: '売上高', type: 'data', current: 5000000, col1: 3000000, col2: 2000000 },
+                    { name: '売上原価', type: 'data', current: 3000000, col1: 1800000, col2: 1200000 },
+                    { name: '売上総利益', type: 'total', current: 2000000, col1: 1200000, col2: 800000 }
+                ]
+            },
+            'table6': {
+                title: '就労支援事業製造原価明細書（多機能事業所様式）（表6）',
+                headers: ['科目', '合計', 'Aサービス', 'Bサービス'],
+                rows: [
+                    { name: '材料費', type: 'data', current: 2000000, col1: 1200000, col2: 800000 },
+                    { name: '労務費', type: 'data', current: 0, col1: 0, col2: 0 },
+                    { name: '外注加工費', type: 'data', current: 500000, col1: 300000, col2: 200000 },
+                    { name: '経費', type: 'data', current: 500000, col1: 300000, col2: 200000 },
+                    { name: '当期製造費用', type: 'total', current: 3000000, col1: 1800000, col2: 1200000 }
+                ]
+            },
+            'table7': {
+                title: '就労支援事業販管費明細書（多機能事業所様式）（表7）',
+                headers: ['科目', '合計', 'Aサービス', 'Bサービス'],
+                rows: [
+                    { name: '人件費', type: 'data', current: 1500000, col1: 900000, col2: 600000 },
+                    { name: 'その他経費', type: 'data', current: 500000, col1: 300000, col2: 200000 },
+                    { name: '販売管理費計', type: 'total', current: 2000000, col1: 1200000, col2: 800000 }
+                ]
+            },
+            'table8': {
+                title: '就労支援事業明細書（多機能事業所様式）（表8）',
+                headers: ['科目', '合計', 'Aサービス', 'Bサービス'],
+                rows: [
+                    { name: '売上高', type: 'data', current: 3000000, col1: 2000000, col2: 1000000 },
+                    { name: '製造費用', type: 'data', current: 1500000, col1: 1000000, col2: 500000 },
+                    { name: '販売費及び一般管理費', type: 'data', current: 1000000, col1: 600000, col2: 400000 },
+                    { name: '事業活動損益', type: 'total', current: 500000, col1: 400000, col2: 100000 }
+                ]
+            }
+        };
+
+        function formatCurrency(num) {
+            if (num === undefined || num === null) return '-';
+            return new Intl.NumberFormat('ja-JP').format(num);
+        }
+
+        function switchDocument(docId, btn) {
+            // Update Tab Active State
+            document.querySelectorAll('.tab-link').forEach(el => el.classList.remove('active'));
+            btn.classList.add('active');
+
+            renderDocument(docId);
+        }
+
+        function renderDocument(docId) {
+            const container = document.getElementById('document-container');
+            const data = documents[docId];
+            if (!data) return;
+
+            let html = `<h3>${data.title}</h3>`;
+            html += `<div class="accounting-table-container"><table class="accounting-table">`;
+
+            // Header
+            html += `<thead><tr>`;
+            data.headers.forEach(h => {
+                html += `<th>${h}</th>`;
+            });
+            html += `</tr></thead><tbody>`;
+
+            // Rows
+            data.rows.forEach(row => {
+                const trClass = row.type.includes('total') ? 'total-row' : '';
+                const baseStyle = row.type === 'header' ? 'background-color: #EEE; font-weight: bold;' :
+                    row.type === 'header-sub' ? 'padding-left: 20px; font-weight: bold;' : '';
+
+                html += `<tr class="${trClass}" style="${baseStyle}">`;
+                html += `<td>${row.name}</td>`;
+
+                // Logic to handle different column structures based on doc type roughly
+                // This is a simple generic render for the mock
+                if (data.headers.length === 4) {
+                    // Assume Standard Calc: Current, Previous, Diff
+                    if (row.type === 'header' || row.type === 'header-sub') {
+                        html += `<td></td><td></td><td></td>`;
+                    } else {
+                        const diff = (row.current || 0) - (row.previous || 0);
+                        html += `<td class="numeric">${formatCurrency(row.current)}</td>`;
+                        html += `<td class="numeric">${formatCurrency(row.previous)}</td>`;
+                        html += `<td class="numeric">${formatCurrency(diff)}</td>`;
+                    }
+                } else if (data.headers.length === 5) {
+                    // Check if headers has '合計' (Total + 3 cols) or '積立' (Start, Inc, Dec, End)
+                    if (row.type === 'header' || row.type === 'header-sub') {
+                        html += `<td></td><td></td><td></td><td></td>`;
+                    } else {
+                        if (row.current !== undefined) {
+                            // Breakdown Table (Total, A, B, C)
+                            html += `<td class="numeric">${formatCurrency(row.current)}</td>`;
+                            html += `<td class="numeric">${formatCurrency(row.col1)}</td>`;
+                            html += `<td class="numeric">${formatCurrency(row.col2)}</td>`;
+                            html += `<td class="numeric">${formatCurrency(row.col3)}</td>`;
+                        } else {
+                            // Reserve Table (Start, Inc, Dec, End)
+                            html += `<td class="numeric">${formatCurrency(row.col1)}</td>`;
+                            html += `<td class="numeric">${formatCurrency(row.col2)}</td>`;
+                            html += `<td class="numeric">${formatCurrency(row.col3)}</td>`;
+                            html += `<td class="numeric">${formatCurrency(row.col4)}</td>`;
+                        }
+                    }
+                }
+
+                html += `</tr>`;
+            });
+
+            html += `</tbody></table></div>`;
+            container.innerHTML = html;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Init Sidebar Toggle
+            document.getElementById('sidebar-toggle').addEventListener('click', () => {
+                document.getElementById('sidebar').classList.toggle('collapsed');
+            });
+
+            // Initial render
+            const initialTab = document.querySelector('.tab-link.active');
+            if (initialTab) {
+                switchDocument('annex1', initialTab);
+            }
+        });
+
+        // Sidebar Accordion Logic (Ported)
+        function toggleAccordion(e, id) {
+            e.preventDefault();
+            const content = document.getElementById(id);
+            const parent = e.currentTarget;
+
+            // Toggle
+            if (content.style.maxHeight) {
+                content.style.maxHeight = null;
+                parent.classList.remove('open');
+            } else {
+                content.style.maxHeight = content.scrollHeight + "px";
+                parent.classList.add('open');
+            }
+        }
+    </script>
+</body>
+
+</html>
