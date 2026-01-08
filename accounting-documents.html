@@ -217,7 +217,7 @@
 
                 <div class="card">
                     <div class="card-body">
-                        <div id="document-container" style="margin-top: 24px;">
+                        <div id="document-container">
                             <!-- Content will be injected here -->
                         </div>
                     </div>
@@ -370,7 +370,7 @@
             if (!data) return;
 
             // Updated Layout using Standard Classes
-            let html = `<h2 style="margin-top: 0; margin-bottom: 16px;">${data.title}</h2>`;
+            let html = `<div class="card-header">${data.title}</div>`;
 
             // Using .table-container (and .table) from ui.css
             html += `<div class="table-container"><table class="table">`;
