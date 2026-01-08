@@ -38,11 +38,27 @@
     <style>
         /* View Toggle Style from schedule.html */
         .view-toggle {
-            display: flex;
+            display: inline-flex;
             background-color: var(--color-base-secondary);
             border-radius: var(--radius-button);
             padding: 2px;
             border: 1px solid var(--color-base-quinary);
+
+            /* Horizontal Scroll Settings */
+            max-width: 100%;
+            overflow-x: auto;
+            white-space: nowrap;
+
+            /* Hide Scrollbar */
+            scrollbar-width: none;
+            /* Firefox */
+            -ms-overflow-style: none;
+            /* IE/Edge */
+        }
+
+        .view-toggle::-webkit-scrollbar {
+            display: none;
+            /* Chrome/Safari */
         }
 
         .view-toggle label {
@@ -53,8 +69,10 @@
             transition: all 0.2s;
             color: var(--color-base-quaternary);
             margin-right: 2px;
-            /* Add slight spacing if wrapping occurs */
-            margin-bottom: 2px;
+            margin-bottom: 0;
+            /* Remove bottom margin for single line */
+            flex-shrink: 0;
+            /* Prevent labels from shrinking */
         }
 
         .view-toggle input[type="radio"] {
@@ -169,9 +187,9 @@
                     <h1 style="margin: 0;">会計書類</h1>
                 </div>
 
-                <!-- View Toggle Style Navigation -->
+                <!-- Single Line View Toggle -->
                 <div style="margin-bottom: var(--spacing-stack-md);">
-                    <div class="view-toggle" style="display: inline-flex; flex-wrap: wrap;">
+                    <div class="view-toggle">
                         <input type="radio" id="doc-annex1" name="document-view" checked
                             onchange="switchDocument('annex1')">
                         <label for="doc-annex1">事業活動計算書(別紙1)</label>
@@ -184,11 +202,7 @@
 
                         <input type="radio" id="doc-annex4" name="document-view" onchange="switchDocument('annex4')">
                         <label for="doc-annex4">積立資産明細表(別紙4)</label>
-                    </div>
-                </div>
 
-                <div style="margin-bottom: var(--spacing-stack-md);">
-                    <div class="view-toggle" style="display: inline-flex; flex-wrap: wrap;">
                         <input type="radio" id="doc-table1" name="document-view" onchange="switchDocument('table1')">
                         <label for="doc-table1">事業活動明細書(表1)</label>
 
@@ -200,25 +214,18 @@
 
                         <input type="radio" id="doc-table4" name="document-view" onchange="switchDocument('table4')">
                         <label for="doc-table4">就労支援事業明細書(表4)</label>
-                    </div>
-                </div>
 
-                <div
-                    style="font-size: var(--font-size-xs); color: var(--color-base-tertiary); font-weight: bold; margin-bottom: var(--spacing-stack-sm);">
-                    多機能事業所様式</div>
-                <div style="margin-bottom: var(--spacing-stack-md);">
-                    <div class="view-toggle" style="display: inline-flex; flex-wrap: wrap;">
                         <input type="radio" id="doc-table5" name="document-view" onchange="switchDocument('table5')">
-                        <label for="doc-table5">事業活動明細書(表5)</label>
+                        <label for="doc-table5">多機能: 事業活動明細書(表5)</label>
 
                         <input type="radio" id="doc-table6" name="document-view" onchange="switchDocument('table6')">
-                        <label for="doc-table6">製造原価明細書(表6)</label>
+                        <label for="doc-table6">多機能: 製造原価明細書(表6)</label>
 
                         <input type="radio" id="doc-table7" name="document-view" onchange="switchDocument('table7')">
-                        <label for="doc-table7">販管費明細書(表7)</label>
+                        <label for="doc-table7">多機能: 販管費明細書(表7)</label>
 
                         <input type="radio" id="doc-table8" name="document-view" onchange="switchDocument('table8')">
-                        <label for="doc-table8">就労支援事業明細書(表8)</label>
+                        <label for="doc-table8">多機能: 就労支援事業明細書(表8)</label>
                     </div>
                 </div>
 
