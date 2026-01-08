@@ -6,169 +6,175 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
     <title>Compath - 会計書類</title>
-
     <link rel="stylesheet" href="globals.css">
     <link rel="stylesheet" href="ui.css">
-
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-    <style>
-        .accounting-table-container {
-            overflow-x: auto;
-            border: 1px solid var(--color-table-border);
-            border-radius: var(--radius-md);
-            margin-top: var(--spacing-4);
-        }
+    <script>
+        // サイドバーの現在地連動（アコーディオン自動展開）
+        document.addEventListener("DOMContentLoaded", () => {
+            const currentFile = window.location.pathname.split("/").pop();
+            document.querySelectorAll(".sidebar-nav a").forEach(link => {
+                const href = link.getAttribute("href");
+                if (href && (href === currentFile || (currentFile === '' && href === 'index.html'))) {
+                    link.classList.add("active");
+                    const details = link.closest("details");
+                    if (details) details.open = true;
+                }
+            });
 
-        .accounting-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: var(--font-size-sm);
-        }
-
-        .accounting-table th,
-        .accounting-table td {
-            border: 1px solid var(--color-table-border);
-            padding: var(--spacing-2);
-        }
-
-        .accounting-table th {
-            background-color: var(--color-base-secondary);
-            font-weight: var(--font-weight-medium);
-            text-align: center;
-        }
-
-        .accounting-table td.numeric {
-            text-align: right;
-            font-family: monospace;
-        }
-
-        .accounting-table tr.total-row {
-            background-color: var(--color-base-tertiary);
-            font-weight: bold;
-        }
-    </style>
+            // Initial Document Render
+            switchDocument('annex1', document.querySelector('.tab-link'));
+        });
+    </script>
 </head>
 
 <body>
-    <div class="app-container">
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
+    <div class="page-wrapper">
+        <aside class="sidebar">
             <div class="sidebar-header">
-                <div class="logo">
-                    <div class="logo-icon"></div>
-                    <span class="logo-text">Compath</span>
+                <div style="width: 100%; text-align: center;">
+                    <div style="margin-bottom: var(--spacing-stack-xs);">Compath</div>
+                    <select class="input-field">
+                        <option value="tenjin">こんぱす天神</option>
+                        <option value="hakata">こんぱす博多</option>
+                    </select>
                 </div>
             </div>
-
             <nav class="sidebar-nav">
-                <a href="index.html" class="nav-link">
-                    <span class="material-symbols-outlined">dashboard</span>
-                    <span class="nav-text">ダッシュボード</span>
-                </a>
-                <a href="schedule.html" class="nav-link">
-                    <span class="material-symbols-outlined">calendar_month</span>
-                    <span class="nav-text">スケジュール</span>
-                </a>
-                <a href="projects.html" class="nav-link">
-                    <span class="material-symbols-outlined">work</span>
-                    <span class="nav-text">案件管理</span>
-                </a>
-                <a href="members.html" class="nav-link">
-                    <span class="material-symbols-outlined">group</span>
-                    <span class="nav-text">メンバー管理</span>
-                </a>
-                <a href="attendance.html" class="nav-link">
-                    <span class="material-symbols-outlined">schedule</span>
-                    <span class="nav-text">勤怠管理</span>
-                </a>
-                <a href="#" class="nav-link accordion-header" onclick="toggleAccordion(event, 'billing-menu')">
-                    <span class="material-symbols-outlined">receipt_long</span>
-                    <span class="nav-text">請求・給付</span>
-                    <span class="material-symbols-outlined accordion-icon">expand_more</span>
-                </a>
-                <div id="billing-menu" class="accordion-content">
+                <a href="index.html" class="nav-link">トップ</a>
+                <details class="nav-accordion">
+                    <summary>施設情報</summary>
+                    <ul>
+                        <li><a href="corporation.html">法人情報</a></li>
+                        <li><a href="office.html">事業所情報</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>職員・利用者情報</summary>
+                    <ul>
+                        <li><a href="staff.html">職員情報</a></li>
+                        <li><a href="members.html">利用者情報</a></li>
+                    </ul>
+                </details>
+
+                <a href="partners.html" class="nav-link">取引先情報</a>
+                <details class="nav-accordion">
+                    <summary>スキル情報</summary>
+                    <ul>
+                        <li><a href="skills-settings.html">スキル設定</a></li>
+                        <li><a href="skills-evaluation.html">スキル評価</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>工賃・控除情報</summary>
+                    <ul>
+                        <li><a href="wages-settings.html">工賃設定</a></li>
+                        <li><a href="deductions-settings.html">控除設定</a></li>
+                        <li><a href="wages-evaluation.html">工賃レベル評価</a></li>
+                    </ul>
+                </details>
+
+                <a href="savings-settings.html" class="nav-link">積立金設定</a>
+
+                <a href="attendance.html" class="nav-link">出欠状況</a>
+                <details class="nav-accordion">
+                    <summary>生産活動</summary>
+                    <ul>
+                        <li><a href="projects.html">案件情報</a></li>
+                        <li><a href="schedule.html">進捗状況</a></li>
+                        <li><a href="expenses-record.html">費用記録</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>福祉事業活動</summary>
+                    <ul>
+                        <li><a href="support-plans.html">個別支援計画</a></li>
+                    </ul>
+                </details>
+                <details class="nav-accordion">
+                    <summary>請求・支払</summary>
                     <ul>
                         <li><a href="billing-national-health.html">国保連請求</a></li>
                         <li><a href="production-balance.html">生産活動収支状況</a></li>
                     </ul>
-                </div>
-                <!-- Settings Group -->
-                <div class="nav-group-label" style="margin-top: 16px;">設定</div>
-                <a href="office.html" class="nav-link">事業所設定</a>
+                </details>
+                <details class="nav-accordion">
+                    <summary>分析</summary>
+                    <ul>
+                        <li><a href="analytics-production.html">生産活動収支分析</a></li>
+                        <li><a href="analytics-wages.html">平均工賃分析</a></li>
+
+                        <li><a href="analytics-savings.html">積立金分析</a></li>
+                    </ul>
+                </details>
                 <a href="account.html" class="nav-link">ユーザーアカウント</a>
-                <a href="accounting-documents.html" class="nav-link" class="active">会計書類</a>
+                <a href="accounting-documents.html" class="nav-link">会計書類</a>
                 <a href="styleguide.html" class="nav-link">スタイルガイド</a>
             </nav>
-
             <div class="sidebar-footer">
-                <div class="user-profile">
-                    <div class="avatar">U</div>
-                    <div class="user-info">
-                        <div class="user-name">管理者 太郎</div>
-                        <div class="user-role">管理者</div>
-                    </div>
+                <div class="user-info">
+                    <span class="user-name">田中 健司</span>
+                    <a href="#">ログアウト</a>
                 </div>
             </div>
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
-            <header class="header">
-                <div class="header-left">
-                    <button class="btn btn-icon" id="sidebar-toggle">
-                        <span class="material-symbols-outlined">menu_open</span>
-                    </button>
-                    <h1>会計書類</h1>
+            <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
+                    <h1 style="margin: 0;">会計書類</h1>
                 </div>
-                <div class="header-right">
-                    <!-- Actions if needed -->
-                </div>
-            </header>
 
-            <div class="content-body">
                 <div class="card">
-                    <div class="tab-group" style="margin-bottom: var(--spacing-4); flex-wrap: wrap;">
-                        <button class="tab-link active" onclick="switchDocument('annex1', this)">事業活動計算書<br><span
-                                style="font-size:0.8em">(別紙1)</span></button>
-                        <button class="tab-link" onclick="switchDocument('annex2', this)">事業活動内訳表<br><span
-                                style="font-size:0.8em">(別紙2)</span></button>
-                        <button class="tab-link" onclick="switchDocument('annex3', this)">積立金明細表<br><span
-                                style="font-size:0.8em">(別紙3)</span></button>
-                        <button class="tab-link" onclick="switchDocument('annex4', this)">積立資産明細表<br><span
-                                style="font-size:0.8em">(別紙4)</span></button>
-                        <button class="tab-link" onclick="switchDocument('table1', this)">事業活動明細書<br><span
-                                style="font-size:0.8em">(表1)</span></button>
-                        <button class="tab-link" onclick="switchDocument('table2', this)">製造原価明細書<br><span
-                                style="font-size:0.8em">(表2)</span></button>
-                        <button class="tab-link" onclick="switchDocument('table3', this)">販管費明細書<br><span
-                                style="font-size:0.8em">(表3)</span></button>
-                    </div>
+                    <div class="card-body">
+                        <!-- Standard Tabs Layout from Styleguide -->
+                        <!-- Note: Since we have many tabs, we might need a multi-line layout or scroll. 
+                             ui.css tabs-nav doesn't explicitly support wrap well, let's force wrap. -->
+                        <nav class="tabs-nav" style="flex-wrap: wrap; gap: 8px; border-bottom: none; margin-bottom: 0;">
+                            <a class="tab-link is-active" onclick="switchDocument('annex1', this)">事業活動計算書<br><span
+                                    style="font-size:0.8em">(別紙1)</span></a>
+                            <a class="tab-link" onclick="switchDocument('annex2', this)">事業活動内訳表<br><span
+                                    style="font-size:0.8em">(別紙2)</span></a>
+                            <a class="tab-link" onclick="switchDocument('annex3', this)">積立金明細表<br><span
+                                    style="font-size:0.8em">(別紙3)</span></a>
+                            <a class="tab-link" onclick="switchDocument('annex4', this)">積立資産明細表<br><span
+                                    style="font-size:0.8em">(別紙4)</span></a>
+                        </nav>
+                        <nav class="tabs-nav" style="flex-wrap: wrap; gap: 8px; margin-top: 10px;">
+                            <a class="tab-link" onclick="switchDocument('table1', this)">事業活動明細書<br><span
+                                    style="font-size:0.8em">(表1)</span></a>
+                            <a class="tab-link" onclick="switchDocument('table2', this)">製造原価明細書<br><span
+                                    style="font-size:0.8em">(表2)</span></a>
+                            <a class="tab-link" onclick="switchDocument('table3', this)">販管費明細書<br><span
+                                    style="font-size:0.8em">(表3)</span></a>
+                            <a class="tab-link" onclick="switchDocument('table4', this)">就労支援事業明細書<br><span
+                                    style="font-size:0.8em">(表4)</span></a>
+                        </nav>
 
-                    <button class="tab-link" onclick="switchDocument('table4', this)">就労支援事業明細書<br><span
-                            style="font-size:0.8em">(表4)</span></button>
-                    <hr
-                        style="width: 100%; border: 0; border-top: 1px solid var(--color-border-default); margin: var(--spacing-2) 0;">
-                    <span
-                        style="font-size: var(--font-size-xs); color: var(--color-text-tertiary); margin-bottom: var(--spacing-2); display: block;">多機能事業所用</span>
-                    <div style="display: flex; gap: var(--spacing-2); flex-wrap: wrap;">
-                        <button class="tab-link" onclick="switchDocument('table5', this)">事業活動明細書<br><span
-                                style="font-size:0.8em">(表5)</span></button>
-                        <button class="tab-link" onclick="switchDocument('table6', this)">製造原価明細書<br><span
-                                style="font-size:0.8em">(表6)</span></button>
-                        <button class="tab-link" onclick="switchDocument('table7', this)">販管費明細書<br><span
-                                style="font-size:0.8em">(表7)</span></button>
-                        <button class="tab-link" onclick="switchDocument('table8', this)">就労支援事業明細書<br><span
-                                style="font-size:0.8em">(表8)</span></button>
-                    </div>
-                </div>
+                        <div
+                            style="margin: 16px 0 8px; font-size: var(--font-size-xs); color: var(--color-base-tertiary); font-weight: bold;">
+                            多機能事業所様式</div>
+                        <nav class="tabs-nav" style="flex-wrap: wrap; gap: 8px;">
+                            <a class="tab-link" onclick="switchDocument('table5', this)">事業活動明細書<br><span
+                                    style="font-size:0.8em">(表5)</span></a>
+                            <a class="tab-link" onclick="switchDocument('table6', this)">製造原価明細書<br><span
+                                    style="font-size:0.8em">(表6)</span></a>
+                            <a class="tab-link" onclick="switchDocument('table7', this)">販管費明細書<br><span
+                                    style="font-size:0.8em">(表7)</span></a>
+                            <a class="tab-link" onclick="switchDocument('table8', this)">就労支援事業明細書<br><span
+                                    style="font-size:0.8em">(表8)</span></a>
+                        </nav>
 
-                <div id="document-container">
-                    <!-- Content will be injected here -->
+                        <div id="document-container" style="margin-top: 24px;">
+                            <!-- Content will be injected here -->
+                        </div>
+                    </div>
                 </div>
             </div>
-    </div>
-    </main>
+        </main>
     </div>
 
     <!-- Script for Tab Switching and Rendering -->
@@ -304,10 +310,10 @@
             return new Intl.NumberFormat('ja-JP').format(num);
         }
 
-        function switchDocument(docId, btn) {
+        function switchDocument(docId, link) {
             // Update Tab Active State
-            document.querySelectorAll('.tab-link').forEach(el => el.classList.remove('active'));
-            btn.classList.add('active');
+            document.querySelectorAll('.tab-link').forEach(el => el.classList.remove('is-active'));
+            if (link) link.classList.add('is-active');
 
             renderDocument(docId);
         }
@@ -317,8 +323,11 @@
             const data = documents[docId];
             if (!data) return;
 
-            let html = `<h3>${data.title}</h3>`;
-            html += `<div class="accounting-table-container"><table class="accounting-table">`;
+            // Updated Layout using Standard Classes
+            let html = `<h2 style="margin-top: 0; margin-bottom: 16px;">${data.title}</h2>`;
+
+            // Using .table-container (and .table) from ui.css
+            html += `<div class="table-container"><table class="table">`;
 
             // Header
             html += `<thead><tr>`;
@@ -329,42 +338,53 @@
 
             // Rows
             data.rows.forEach(row => {
-                const trClass = row.type.includes('total') ? 'total-row' : '';
-                const baseStyle = row.type === 'header' ? 'background-color: #EEE; font-weight: bold;' :
-                    row.type === 'header-sub' ? 'padding-left: 20px; font-weight: bold;' : '';
+                // Determine styling based on type but relying on standard classes where possible
+                // Use inline style sparingly or standard helpers if they existed
+                const isTotal = row.type.includes('total');
+                const isHeader = row.type === 'header';
+                const isSubHeader = row.type === 'header-sub';
 
-                html += `<tr class="${trClass}" style="${baseStyle}">`;
-                html += `<td>${row.name}</td>`;
+                let trStyle = '';
+                if (isTotal) trStyle = 'font-weight: bold; background-color: var(--color-base-secondary);';
+                if (isHeader) trStyle = 'font-weight: bold; background-color: var(--color-bg-subtle);'; // Assuming variable or hardcoded
 
-                // Logic to handle different column structures based on doc type roughly
-                // This is a simple generic render for the mock
+                html += `<tr style="${trStyle}">`;
+
+                // Name Column
+                let nameStyle = '';
+                if (isSubHeader) nameStyle = 'padding-left: 24px; font-weight: bold;';
+                if (isHeader) nameStyle = 'font-weight: bold;';
+
+                html += `<td style="${nameStyle}">${row.name}</td>`;
+
+                // Data Columns
                 if (data.headers.length === 4) {
-                    // Assume Standard Calc: Current, Previous, Diff
-                    if (row.type === 'header' || row.type === 'header-sub') {
+                    // Standard: Current, Previous, Diff
+                    if (isHeader || isSubHeader) {
                         html += `<td></td><td></td><td></td>`;
                     } else {
                         const diff = (row.current || 0) - (row.previous || 0);
-                        html += `<td class="numeric">${formatCurrency(row.current)}</td>`;
-                        html += `<td class="numeric">${formatCurrency(row.previous)}</td>`;
-                        html += `<td class="numeric">${formatCurrency(diff)}</td>`;
+                        html += `<td>${formatCurrency(row.current)}</td>`;
+                        html += `<td>${formatCurrency(row.previous)}</td>`;
+                        // Simple conditional color for diff
+                        const color = diff < 0 ? 'var(--color-semantic-error-main)' : 'inherit';
+                        html += `<td style="color: ${color};">${formatCurrency(diff)}</td>`;
                     }
                 } else if (data.headers.length === 5) {
-                    // Check if headers has '合計' (Total + 3 cols) or '積立' (Start, Inc, Dec, End)
-                    if (row.type === 'header' || row.type === 'header-sub') {
+                    // Breakdown or Reserve
+                    if (isHeader || isSubHeader) {
                         html += `<td></td><td></td><td></td><td></td>`;
                     } else {
                         if (row.current !== undefined) {
-                            // Breakdown Table (Total, A, B, C)
-                            html += `<td class="numeric">${formatCurrency(row.current)}</td>`;
-                            html += `<td class="numeric">${formatCurrency(row.col1)}</td>`;
-                            html += `<td class="numeric">${formatCurrency(row.col2)}</td>`;
-                            html += `<td class="numeric">${formatCurrency(row.col3)}</td>`;
+                            html += `<td>${formatCurrency(row.current)}</td>`;
+                            html += `<td>${formatCurrency(row.col1)}</td>`;
+                            html += `<td>${formatCurrency(row.col2)}</td>`;
+                            html += `<td>${formatCurrency(row.col3)}</td>`;
                         } else {
-                            // Reserve Table (Start, Inc, Dec, End)
-                            html += `<td class="numeric">${formatCurrency(row.col1)}</td>`;
-                            html += `<td class="numeric">${formatCurrency(row.col2)}</td>`;
-                            html += `<td class="numeric">${formatCurrency(row.col3)}</td>`;
-                            html += `<td class="numeric">${formatCurrency(row.col4)}</td>`;
+                            html += `<td>${formatCurrency(row.col1)}</td>`;
+                            html += `<td>${formatCurrency(row.col2)}</td>`;
+                            html += `<td>${formatCurrency(row.col3)}</td>`;
+                            html += `<td>${formatCurrency(row.col4)}</td>`;
                         }
                     }
                 }
@@ -374,36 +394,6 @@
 
             html += `</tbody></table></div>`;
             container.innerHTML = html;
-        }
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            // Init Sidebar Toggle
-            document.getElementById('sidebar-toggle').addEventListener('click', () => {
-                document.getElementById('sidebar').classList.toggle('collapsed');
-            });
-
-            // Initial render
-            const initialTab = document.querySelector('.tab-link.active');
-            if (initialTab) {
-                switchDocument('annex1', initialTab);
-            }
-        });
-
-        // Sidebar Accordion Logic (Ported)
-        function toggleAccordion(e, id) {
-            e.preventDefault();
-            const content = document.getElementById(id);
-            const parent = e.currentTarget;
-
-            // Toggle
-            if (content.style.maxHeight) {
-                content.style.maxHeight = null;
-                parent.classList.remove('open');
-            } else {
-                content.style.maxHeight = content.scrollHeight + "px";
-                parent.classList.add('open');
-            }
         }
     </script>
 </body>
