@@ -38,27 +38,13 @@
     <style>
         /* View Toggle Style from schedule.html */
         .view-toggle {
-            display: inline-flex;
+            display: flex;
+            flex-wrap: wrap;
+            /* Enable wrapping */
             background-color: var(--color-base-secondary);
-            border-radius: var(--radius-button);
+            border-radius: var(--radius-card);
             padding: 2px;
             border: 1px solid var(--color-base-quinary);
-
-            /* Horizontal Scroll Settings */
-            max-width: 100%;
-            overflow-x: auto;
-            white-space: nowrap;
-
-            /* Hide Scrollbar */
-            scrollbar-width: none;
-            /* Firefox */
-            -ms-overflow-style: none;
-            /* IE/Edge */
-        }
-
-        .view-toggle::-webkit-scrollbar {
-            display: none;
-            /* Chrome/Safari */
         }
 
         .view-toggle label {
@@ -69,8 +55,8 @@
             transition: all 0.2s;
             color: var(--color-base-quaternary);
             margin-right: 2px;
-            margin-bottom: 0;
-            /* Remove bottom margin for single line */
+            margin-bottom: 2px;
+            /* Add margin for wrapped lines */
             flex-shrink: 0;
             /* Prevent labels from shrinking */
         }
