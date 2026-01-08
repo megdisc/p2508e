@@ -238,14 +238,47 @@
                     { name: '障害福祉サービス等事業収益', type: 'data', current: 5000000, previous: 4800000 },
                     { name: '就労支援事業収益', type: 'data', current: 3000000, previous: 2500000 },
                     { name: '経常経費寄附金収益', type: 'data', current: 100000, previous: 500000 },
+                    { name: 'その他の収益', type: 'data', current: 0, previous: 0 },
                     { name: 'サービス活動収益計(1)', type: 'total', current: 8100000, previous: 7800000 },
                     { name: '2. 費用', type: 'header-sub' },
                     { name: '人件費', type: 'data', current: 4000000, previous: 3800000 },
                     { name: '事業費', type: 'data', current: 1500000, previous: 1400000 },
                     { name: '事務費', type: 'data', current: 800000, previous: 750000 },
                     { name: '就労支援事業費用', type: 'data', current: 1000000, previous: 900000 },
+                    { name: '利用者負担軽減額', type: 'data', current: 0, previous: 0 },
+                    { name: '減価償却費', type: 'data', current: 0, previous: 0 },
+                    { name: '国庫補助金等特別積立金取崩額', type: 'data', current: 0, previous: 0 },
+                    { name: '貸倒損失額', type: 'data', current: 0, previous: 0 },
+                    { name: '貸倒引当金繰入', type: 'data', current: 0, previous: 0 },
+                    { name: '徴収不能額', type: 'data', current: 0, previous: 0 },
+                    { name: '徴収不能引当金繰入', type: 'data', current: 0, previous: 0 },
+                    { name: 'その他の費用', type: 'data', current: 0, previous: 0 },
                     { name: 'サービス活動費用計(2)', type: 'total', current: 7300000, previous: 6850000 },
-                    { name: 'サービス活動増減差額(3)=(1)-(2)', type: 'total-diff', current: 800000, previous: 950000 }
+                    { name: 'サービス活動増減差額(3)=(1)-(2)', type: 'total-diff', current: 800000, previous: 950000 },
+                    { name: 'II サービス活動外増減の部', type: 'header' },
+                    { name: '1. 収益', type: 'header-sub' },
+                    { name: '受取利息配当金収益', type: 'data', current: 100, previous: 100 },
+                    { name: 'その他のサービス活動外収益', type: 'data', current: 0, previous: 0 },
+                    { name: 'サービス活動外収益計(4)', type: 'total', current: 100, previous: 100 },
+                    { name: '2. 費用', type: 'header-sub' },
+                    { name: '支払利息', type: 'data', current: 0, previous: 0 },
+                    { name: 'その他のサービス活動外費用', type: 'data', current: 0, previous: 0 },
+                    { name: 'サービス活動外費用計(5)', type: 'total', current: 0, previous: 0 },
+                    { name: 'サービス活動外増減差額(6)=(4)-(5)', type: 'total-diff', current: 100, previous: 100 },
+                    { name: '経常増減差額(7)=(3)+(6)', type: 'total-diff', current: 800100, previous: 950100 },
+                    { name: 'III 特別増減の部', type: 'header' },
+                    { name: '1. 収益', type: 'header-sub' },
+                    { name: '施設整備等補助金収益', type: 'data', current: 0, previous: 0 },
+                    { name: 'その他の特別収益', type: 'data', current: 0, previous: 0 },
+                    { name: '特別収益計(8)', type: 'total', current: 0, previous: 0 },
+                    { name: '2. 費用', type: 'header-sub' },
+                    { name: '固定資産売却損・処分損', type: 'data', current: 0, previous: 0 },
+                    { name: '国庫補助金等特別積立金積立額', type: 'data', current: 0, previous: 0 },
+                    { name: '特別費用計(9)', type: 'total', current: 0, previous: 0 },
+                    { name: '特別増減差額(10)=(8)-(9)', type: 'total-diff', current: 0, previous: 0 },
+                    { name: '当期活動増減差額(11)=(7)+(10)', type: 'total-diff', current: 800100, previous: 950100 },
+                    { name: '前期繰越活動増減差額(12)', type: 'data', current: 500000, previous: 200000 },
+                    { name: '当期末繰越活動増減差額(13)=(11)+(12)', type: 'total', current: 1300100, previous: 1150100 }
                 ]
             },
             'annex2': {
@@ -254,9 +287,35 @@
                 rows: [
                     { name: 'I サービス活動増減の部', type: 'header' },
                     { name: '1. 収益', type: 'header-sub' },
-                    { name: '就労支援事業収益合計', type: 'total', current: 3000000, col1: 0, col2: 1200000, col3: 1800000 },
+                    { name: '障害福祉サービス等事業収益', type: 'data', current: 5000000, col1: 2000000, col2: 1500000, col3: 1500000 },
+                    { name: '就労支援事業収益', type: 'data', current: 3000000, col1: 0, col2: 2000000, col3: 1000000 },
+                    { name: '経常経費寄附金収益', type: 'data', current: 100000, col1: 0, col2: 50000, col3: 50000 },
+                    { name: 'その他の収益', type: 'data', current: 0, col1: 0, col2: 0, col3: 0 },
+                    { name: 'サービス活動収益計(1)', type: 'total', current: 8100000, col1: 2000000, col2: 3550000, col3: 2550000 },
                     { name: '2. 費用', type: 'header-sub' },
-                    { name: '就労支援事業費用合計', type: 'total', current: 1000000, col1: 0, col2: 400000, col3: 600000 }
+                    { name: '人件費', type: 'data', current: 4000000, col1: 1500000, col2: 1500000, col3: 1000000 },
+                    { name: '事業費', type: 'data', current: 1500000, col1: 200000, col2: 700000, col3: 600000 },
+                    { name: '事務費', type: 'data', current: 800000, col1: 200000, col2: 300000, col3: 300000 },
+                    { name: '就労支援事業費用', type: 'data', current: 1000000, col1: 0, col2: 400000, col3: 600000 },
+                    { name: '利用者負担軽減額', type: 'data', current: 0, col1: 0, col2: 0, col3: 0 },
+                    { name: '減価償却費', type: 'data', current: 0, col1: 0, col2: 0, col3: 0 },
+                    { name: '国庫補助金等特別積立金取崩額', type: 'data', current: 0, col1: 0, col2: 0, col3: 0 },
+                    { name: '徴収不能額', type: 'data', current: 0, col1: 0, col2: 0, col3: 0 },
+                    { name: 'その他の費用', type: 'data', current: 0, col1: 0, col2: 0, col3: 0 },
+                    { name: 'サービス活動費用計(2)', type: 'total', current: 7300000, col1: 1900000, col2: 2900000, col3: 2500000 },
+                    { name: 'サービス活動増減差額(3)=(1)-(2)', type: 'total-diff', current: 800000, col1: 100000, col2: 650000, col3: 50000 },
+                    { name: 'II サービス活動外増減の部', type: 'header' },
+                    { name: '1. 収益', type: 'header-sub' },
+                    { name: '受取利息配当金収益', type: 'data', current: 100, col1: 20, col2: 40, col3: 40 },
+                    { name: 'サービス活動外収益計(4)', type: 'total', current: 100, col1: 20, col2: 40, col3: 40 },
+                    { name: '2. 費用', type: 'header-sub' },
+                    { name: '支払利息', type: 'data', current: 0, col1: 0, col2: 0, col3: 0 },
+                    { name: 'サービス活動外費用計(5)', type: 'total', current: 0, col1: 0, col2: 0, col3: 0 },
+                    { name: 'サービス活動外増減差額(6)=(4)-(5)', type: 'total-diff', current: 100, col1: 20, col2: 40, col3: 40 },
+                    { name: '経常増減差額(7)=(3)+(6)', type: 'total-diff', current: 800100, col1: 100020, col2: 650040, col3: 50040 },
+                    { name: 'III 特別増減の部', type: 'header' },
+                    { name: '特別増減差額(10)=(8)-(9)', type: 'total-diff', current: 0, col1: 0, col2: 0, col3: 0 },
+                    { name: '当期活動増減差額(11)=(7)+(10)', type: 'total-diff', current: 800100, col1: 100020, col2: 650040, col3: 50040 }
                 ]
             },
             'annex3': {
@@ -264,6 +323,7 @@
                 headers: ['積立金の種類', '期首残高', '当期増加額', '当期減少額', '期末残高'],
                 rows: [
                     { name: '設備整備積立金', type: 'data', col1: 2000000, col2: 500000, col3: 0, col4: 2500000 },
+                    { name: '修繕積立金', type: 'data', col1: 1000000, col2: 200000, col3: 100000, col4: 1100000 },
                     { name: '工賃変動積立金', type: 'data', col1: 500000, col2: 100000, col3: 50000, col4: 550000 }
                 ]
             },
@@ -271,7 +331,9 @@
                 title: 'その他の積立資産明細表（別紙4）',
                 headers: ['積立資産の種類', '期首残高', '当期増加額', '当期減少額', '期末残高'],
                 rows: [
-                    { name: '設備整備積立資産', type: 'data', col1: 2000000, col2: 500000, col3: 0, col4: 2500000 }
+                    { name: '設備整備積立資産', type: 'data', col1: 2000000, col2: 500000, col3: 0, col4: 2500000 },
+                    { name: '修繕積立資産', type: 'data', col1: 1000000, col2: 200000, col3: 100000, col4: 1100000 },
+                    { name: '工賃変動積立資産', type: 'data', col1: 500000, col2: 100000, col3: 50000, col4: 550000 }
                 ]
             },
             'table1': {
