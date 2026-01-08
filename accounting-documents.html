@@ -24,9 +24,50 @@
             });
 
             // Initial Document Render
-            switchDocument('annex1', document.querySelector('.tab-link'));
+            // Uncheck all radios first? No, default checked is fine.
+            // But we need to make sure the script knows which to render.
+            // Actually the current structure sets 'checked' on the first one.
+            // But my previous script called switchDocument manually.
+            // I'll update the script in a separate step or just rely on 'checked'
+            // attribute triggering nothing unless I call it.
+            // Wait, standard radio doesn't trigger onchange on load.
+            // I'll need to call rendering manually on load.
+            switchDocument('annex1');
         });
     </script>
+    <style>
+        /* View Toggle Style from schedule.html */
+        .view-toggle {
+            display: flex;
+            background-color: var(--color-base-secondary);
+            border-radius: var(--radius-button);
+            padding: 2px;
+            border: 1px solid var(--color-base-quinary);
+        }
+
+        .view-toggle label {
+            padding: var(--spacing-1) var(--spacing-3);
+            font-size: var(--font-size-sm);
+            cursor: pointer;
+            border-radius: var(--radius-button);
+            transition: all 0.2s;
+            color: var(--color-base-quaternary);
+            margin-right: 2px;
+            /* Add slight spacing if wrapping occurs */
+            margin-bottom: 2px;
+        }
+
+        .view-toggle input[type="radio"] {
+            display: none;
+        }
+
+        .view-toggle input[type="radio"]:checked+label {
+            background-color: var(--color-theme-main);
+            color: var(--color-base-primary);
+            box-shadow: var(--box-shadow-sm);
+            font-weight: var(--font-weight-medium);
+        }
+    </style>
 </head>
 
 <body>
@@ -128,46 +169,61 @@
                     <h1 style="margin: 0;">会計書類</h1>
                 </div>
 
+                <!-- View Toggle Style Navigation -->
+                <div style="margin-bottom: var(--spacing-stack-md);">
+                    <div class="view-toggle" style="display: inline-flex; flex-wrap: wrap;">
+                        <input type="radio" id="doc-annex1" name="document-view" checked
+                            onchange="switchDocument('annex1')">
+                        <label for="doc-annex1">事業活動計算書(別紙1)</label>
+
+                        <input type="radio" id="doc-annex2" name="document-view" onchange="switchDocument('annex2')">
+                        <label for="doc-annex2">事業活動内訳表(別紙2)</label>
+
+                        <input type="radio" id="doc-annex3" name="document-view" onchange="switchDocument('annex3')">
+                        <label for="doc-annex3">積立金明細表(別紙3)</label>
+
+                        <input type="radio" id="doc-annex4" name="document-view" onchange="switchDocument('annex4')">
+                        <label for="doc-annex4">積立資産明細表(別紙4)</label>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: var(--spacing-stack-md);">
+                    <div class="view-toggle" style="display: inline-flex; flex-wrap: wrap;">
+                        <input type="radio" id="doc-table1" name="document-view" onchange="switchDocument('table1')">
+                        <label for="doc-table1">事業活動明細書(表1)</label>
+
+                        <input type="radio" id="doc-table2" name="document-view" onchange="switchDocument('table2')">
+                        <label for="doc-table2">製造原価明細書(表2)</label>
+
+                        <input type="radio" id="doc-table3" name="document-view" onchange="switchDocument('table3')">
+                        <label for="doc-table3">販管費明細書(表3)</label>
+
+                        <input type="radio" id="doc-table4" name="document-view" onchange="switchDocument('table4')">
+                        <label for="doc-table4">就労支援事業明細書(表4)</label>
+                    </div>
+                </div>
+
+                <div
+                    style="font-size: var(--font-size-xs); color: var(--color-base-tertiary); font-weight: bold; margin-bottom: var(--spacing-stack-sm);">
+                    多機能事業所様式</div>
+                <div style="margin-bottom: var(--spacing-stack-md);">
+                    <div class="view-toggle" style="display: inline-flex; flex-wrap: wrap;">
+                        <input type="radio" id="doc-table5" name="document-view" onchange="switchDocument('table5')">
+                        <label for="doc-table5">事業活動明細書(表5)</label>
+
+                        <input type="radio" id="doc-table6" name="document-view" onchange="switchDocument('table6')">
+                        <label for="doc-table6">製造原価明細書(表6)</label>
+
+                        <input type="radio" id="doc-table7" name="document-view" onchange="switchDocument('table7')">
+                        <label for="doc-table7">販管費明細書(表7)</label>
+
+                        <input type="radio" id="doc-table8" name="document-view" onchange="switchDocument('table8')">
+                        <label for="doc-table8">就労支援事業明細書(表8)</label>
+                    </div>
+                </div>
+
                 <div class="card">
                     <div class="card-body">
-                        <!-- Standard Tabs Layout from Styleguide -->
-                        <!-- Note: Since we have many tabs, we might need a multi-line layout or scroll. 
-                             ui.css tabs-nav doesn't explicitly support wrap well, let's force wrap. -->
-                        <nav class="tabs-nav" style="flex-wrap: wrap; gap: 8px; border-bottom: none; margin-bottom: 0;">
-                            <a class="tab-link is-active" onclick="switchDocument('annex1', this)">事業活動計算書<br><span
-                                    style="font-size:0.8em">(別紙1)</span></a>
-                            <a class="tab-link" onclick="switchDocument('annex2', this)">事業活動内訳表<br><span
-                                    style="font-size:0.8em">(別紙2)</span></a>
-                            <a class="tab-link" onclick="switchDocument('annex3', this)">積立金明細表<br><span
-                                    style="font-size:0.8em">(別紙3)</span></a>
-                            <a class="tab-link" onclick="switchDocument('annex4', this)">積立資産明細表<br><span
-                                    style="font-size:0.8em">(別紙4)</span></a>
-                        </nav>
-                        <nav class="tabs-nav" style="flex-wrap: wrap; gap: 8px; margin-top: 10px;">
-                            <a class="tab-link" onclick="switchDocument('table1', this)">事業活動明細書<br><span
-                                    style="font-size:0.8em">(表1)</span></a>
-                            <a class="tab-link" onclick="switchDocument('table2', this)">製造原価明細書<br><span
-                                    style="font-size:0.8em">(表2)</span></a>
-                            <a class="tab-link" onclick="switchDocument('table3', this)">販管費明細書<br><span
-                                    style="font-size:0.8em">(表3)</span></a>
-                            <a class="tab-link" onclick="switchDocument('table4', this)">就労支援事業明細書<br><span
-                                    style="font-size:0.8em">(表4)</span></a>
-                        </nav>
-
-                        <div
-                            style="margin: 16px 0 8px; font-size: var(--font-size-xs); color: var(--color-base-tertiary); font-weight: bold;">
-                            多機能事業所様式</div>
-                        <nav class="tabs-nav" style="flex-wrap: wrap; gap: 8px;">
-                            <a class="tab-link" onclick="switchDocument('table5', this)">事業活動明細書<br><span
-                                    style="font-size:0.8em">(表5)</span></a>
-                            <a class="tab-link" onclick="switchDocument('table6', this)">製造原価明細書<br><span
-                                    style="font-size:0.8em">(表6)</span></a>
-                            <a class="tab-link" onclick="switchDocument('table7', this)">販管費明細書<br><span
-                                    style="font-size:0.8em">(表7)</span></a>
-                            <a class="tab-link" onclick="switchDocument('table8', this)">就労支援事業明細書<br><span
-                                    style="font-size:0.8em">(表8)</span></a>
-                        </nav>
-
                         <div id="document-container" style="margin-top: 24px;">
                             <!-- Content will be injected here -->
                         </div>
@@ -310,11 +366,8 @@
             return new Intl.NumberFormat('ja-JP').format(num);
         }
 
-        function switchDocument(docId, link) {
-            // Update Tab Active State
-            document.querySelectorAll('.tab-link').forEach(el => el.classList.remove('is-active'));
-            if (link) link.classList.add('is-active');
-
+        function switchDocument(docId) {
+            // Tab active state is handled by radio button CSS
             renderDocument(docId);
         }
 
