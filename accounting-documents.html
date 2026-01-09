@@ -165,8 +165,8 @@
                     <h1 style="margin: 0;">会計書類</h1>
                 </div>
 
-                <!-- Single Line View Toggle -->
-                <div style="margin-bottom: var(--spacing-stack-md);">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
                     <div class="view-toggle">
                         <input type="radio" id="doc-annex1" name="document-view" checked
                             onchange="switchDocument('annex1')">
@@ -204,6 +204,21 @@
 
                         <input type="radio" id="doc-table8" name="document-view" onchange="switchDocument('table8')">
                         <label for="doc-table8">多機能: 就労支援事業明細書(表8)</label>
+                    </div>
+
+                    <!-- Year Picker -->
+                    <div id="controls-year" style="display: flex; align-items: center; gap: var(--spacing-2);">
+                        <button class="btn btn-icon btn-neutral" onclick="changeYear(-1)"><span
+                                class="material-symbols-outlined">chevron_left</span></button>
+                        <select id="year-select" class="input-field" style="width: auto; font-weight: bold;"
+                            onchange="updateYearFromSelect()">
+                            <option value="5">令和5年度</option>
+                            <option value="6">令和6年度</option>
+                            <option value="7" selected>令和7年度</option>
+                            <option value="8">令和8年度</option>
+                        </select>
+                        <button class="btn btn-icon btn-neutral" onclick="changeYear(1)"><span
+                                class="material-symbols-outlined">chevron_right</span></button>
                     </div>
                 </div>
 
@@ -539,6 +554,38 @@
             return new Intl.NumberFormat('ja-JP').format(num);
         }
 
+        let currentYear = 7;
+
+        function changeYear(offset) {
+            const select = document.getElementById('year-select');
+            if (!select) return;
+
+            let newVal = parseInt(select.value) + offset;
+            // Simple validation to keep within options if we assume fixed options
+            // But let's allow setting it even if not in options (though select won't show it if not there)
+            // For this UI, ensuring it exists in options is better.
+            const options = Array.from(select.options).map(o => parseInt(o.value));
+            if (!options.includes(newVal)) return;
+
+            select.value = newVal;
+            currentYear = newVal;
+
+            // Re-render current document
+            const checkedRadio = document.querySelector('input[name="document-view"]:checked');
+            if (checkedRadio) {
+                switchDocument(checkedRadio.id.replace('doc-', ''));
+            }
+        }
+
+        function updateYearFromSelect() {
+            const select = document.getElementById('year-select');
+            currentYear = parseInt(select.value);
+            const checkedRadio = document.querySelector('input[name="document-view"]:checked');
+            if (checkedRadio) {
+                switchDocument(checkedRadio.id.replace('doc-', ''));
+            }
+        }
+
         function switchDocument(docId) {
             renderDocument(docId);
         }
@@ -557,7 +604,7 @@
                         <div>事業所名: こんぱす天神</div>
                     </div>
                     <div style="text-align: right;">
-                        <div>自 令和7年4月1日 至 令和8年3月31日</div>
+                        <div>自 令和${currentYear}年4月1日 至 令和${currentYear + 1}年3月31日</div>
                         <div>(単位: 円)</div>
                     </div>
                 </div>
