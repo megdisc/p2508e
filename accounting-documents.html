@@ -136,6 +136,7 @@
                         <li><a href="production-balance.html">生産活動収支状況</a></li>
                     </ul>
                 </details>
+                <a href="accounting-documents.html" class="nav-link">会計書類</a>
                 <details class="nav-accordion">
                     <summary>分析</summary>
                     <ul>
@@ -146,7 +147,6 @@
                     </ul>
                 </details>
                 <a href="account.html" class="nav-link">ユーザーアカウント</a>
-                <a href="accounting-documents.html" class="nav-link">会計書類</a>
                 <a href="styleguide.html" class="nav-link">スタイルガイド</a>
             </nav>
             <div class="sidebar-footer">
@@ -435,13 +435,13 @@
             },
             'table5': {
                 title: '就労支援事業別事業活動明細書（多機能事業所様式）（表5）',
-                headers: ['科目', '合計', 'Aサービス', 'Bサービス'],
+                headers: ['勘定科目', '合計', '就労移行支援', '就労継続支援A型', '就労継続支援B型'],
                 rows: [
                     createRow('I 売上高', 'header'),
                     createRow('売上高', 'data'),
                     createRow('II 売上原価', 'header'),
                     createRow('期首製品棚卸高', 'data'),
-                    createRow('当期就労支援事業製造原価', 'data'),
+                    createRow('当期就労支援事業費', 'data'),
                     createRow('合計', 'total'),
                     createRow('期末製品棚卸高', 'data'),
                     createRow('売上原価', 'total'),
@@ -453,7 +453,7 @@
             },
             'table6': {
                 title: '就労支援事業製造原価明細書（多機能事業所様式）（表6）',
-                headers: ['科目', '合計', 'Aサービス', 'Bサービス'],
+                headers: ['勘定科目', '合計', '就労移行支援', '就労継続支援A型', '就労継続支援B型'],
                 rows: [
                     createRow('I 材料費', 'header'),
                     createRow('期首材料棚卸高', 'data'),
@@ -479,7 +479,7 @@
             },
             'table7': {
                 title: '就労支援事業販管費明細書（多機能事業所様式）（表7）',
-                headers: ['科目', '合計', 'Aサービス', 'Bサービス'],
+                headers: ['勘定科目', '合計', '就労移行支援', '就労継続支援A型', '就労継続支援B型'],
                 rows: [
                     createRow('I 人件費', 'header'),
                     ...items.sgaLabor.map(item => createRow(item, 'data')),
@@ -495,19 +495,40 @@
             },
             'table8': {
                 title: '就労支援事業明細書（多機能事業所様式）（表8）',
-                headers: ['科目', '合計', 'Aサービス', 'Bサービス'],
+                headers: ['勘定科目', '合計', '就労移行支援', '就労継続支援A型', '就労継続支援B型'],
                 rows: [
                     createRow('I 売上高', 'header'),
                     createRow('売上高', 'data'),
                     createRow('II 就労支援事業費用', 'header'),
-                    createRow('期首製品（仕掛品・材料）棚卸高', 'data'),
-                    createRow('当期仕入高', 'data'),
+                    // Material
+                    createRow('期首材料棚卸高', 'data'),
+                    createRow('当期材料仕入高', 'data'),
+                    createRow('期末材料棚卸高', 'data'),
+                    createRow('材料費', 'total'),
+                    // Labor (Uses Manufacturing Labor items mostly, or combined)
+                    // Simplified often just lists specific items directly.
+                    // Guidelines say "Wages, Staff Salaries"
                     createRow('利用者賃金・工賃', 'data'),
+                    createRow('就労支援事業指導員等給与', 'data'),
                     createRow('職員給料手当', 'data'),
-                    createRow('その他経費', 'data'),
+                    createRow('法定福利費', 'data'),
+                    createRow('外注加工費', 'data'),
+
+                    // Expenses - Combined List (No distinction between Mfg/SG&A Expenses)
+                    ...items.expenses.map(item => createRow(item, 'data')),
+
+                    createRow('国庫補助金等特別積立金取崩額', 'data'),
+                    createRow('徴収不能額', 'data'),
+                    createRow('徴収不能引当金繰入', 'data'),
+
+                    createRow('当期就労支援事業費用合計', 'total'),
+
+                    // Inventory Adjustments (WIP + Products)
+                    createRow('期首製品（仕掛品）棚卸高', 'data'),
                     createRow('合計', 'total'),
-                    createRow('期末製品（仕掛品・材料）棚卸高', 'data'),
-                    createRow('就労支援事業費用', 'total'),
+                    createRow('期末製品（仕掛品）棚卸高', 'data'),
+
+                    createRow('就労支援事業費用', 'total-diff'),
                     createRow('就労支援事業活動増減差額', 'total-diff')
                 ]
             }
