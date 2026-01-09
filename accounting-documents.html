@@ -224,11 +224,12 @@
         const createRow = (name, type, options = {}) => ({ name, type, ...options });
 
         // Common Account Titles (経費) - Standard Guideline Items
+        // REMOVED '支払利息' (Interest) as it belongs to Non-Operating expenses, not Manufacturing/SG&A Operating Expenses
         const commonExpenses = [
             '福利厚生費', '旅費交通費', '器具什器費', '消耗品費', '印刷製本費',
             '水道光熱費', '燃料費', '修繕費', '通信運搬費', '会議費',
             '広報費', '損害保険料', '賃借料', '図書・教育費', '租税公課',
-            '減価償却費', '支払利息', '雑費'
+            '減価償却費', '受注活動費', '雑費'
         ];
 
         // Specific Account Titles for different sections
@@ -238,7 +239,7 @@
                 '就労支援事業指導員等賞与引当金繰入', '就労支援事業指導員等退職給付費用', '法定福利費'
             ],
             sgaLabor: [
-                '職員給料手当', '職員賞与引当金繰入', '退職給付費用', '法定福利費'
+                '職員給料手当', '賞与引当金繰入', '退職給付費用', '法定福利費'
             ],
             expenses: commonExpenses
         };
@@ -389,7 +390,7 @@
                     createRow('当期外注加工費', 'data'),
                     createRow('IV 経費', 'header'),
                     ...items.expenses.map(item => createRow(item, 'data')),
-                    createRow('国庫補助金等特別積立金取崩額', 'data'),
+                    createRow('国庫補助金等特別積立金取崩額', 'data'), // Deducted usually
                     createRow('当期経費', 'total'),
                     createRow('当期就労支援事業製造費用', 'total'),
                     createRow('期首仕掛品棚卸高', 'data'),
@@ -408,6 +409,8 @@
                     createRow('II 経費', 'header'),
                     ...items.expenses.map(item => createRow(item, 'data')),
                     createRow('国庫補助金等特別積立金取崩額', 'data'),
+                    createRow('徴収不能額', 'data'),
+                    createRow('徴収不能引当金繰入', 'data'),
                     createRow('経費計', 'total'),
                     createRow('就労支援事業販売費及び一般管理費', 'total-diff')
                 ]
@@ -484,6 +487,8 @@
                     createRow('II 経費', 'header'),
                     ...items.expenses.map(item => createRow(item, 'data')),
                     createRow('国庫補助金等特別積立金取崩額', 'data'),
+                    createRow('徴収不能額', 'data'),
+                    createRow('徴収不能引当金繰入', 'data'),
                     createRow('経費計', 'total'),
                     createRow('就労支援事業販売費及び一般管理費', 'total-diff')
                 ]
@@ -597,37 +602,17 @@
                     if (isHeader || isSubHeader) {
                         for (let i = 0; i < totalCols; i++) html += `<td></td>`;
                     } else {
-                        // Standardize row data access
-                        // If row has properties like current, col1, col2 etc. use them
-                        // If standard row has no data initialized in my 'createRow' logic above (just name/type), default to 0
-                        // For Tables, usually Current(Total) = col1 + col2...
-                        // Since I mostly left them empty in 'rows' definition above for brevity, I will render 0s.
-
-                        // Handle Annex 3/4 explicitly or generic
-                        // Annex 3/4 cols: [Total(col1?), Inc(col2), Dec(col3), End(col4)] -> actually mapping is usually Start, Inc, Dec, End.
-                        // My code for Annex 3/4 has explicit defaults.
-
-                        // Generic Rendering
                         const getValue = (key) => row[key] !== undefined ? row[key] : 0;
 
-                        // Check if it's Annex 3/4 (header count 5 but distinct structure)
-                        // Actually standard tables are: Item | Total | A | B | C (5 cols)
-                        // Annex 3/4: Item | Start | Inc | Dec | End (5 cols)
-                        // Logic is same: render 4 data cells.
-
-                        // Map potential keys: current/col1/col2/col3/col4
-                        // Annex 3/4 uses col1..col4. Tables use current, col1..col3.
-                        // I will try to support both by checking existence.
-
                         if (row.current !== undefined || (row.col1 === undefined && totalCols > 3)) {
-                            // Likely Table 1-8 or Annex 2
+                            // Tables 1-8, Annex 2
                             html += `<td>${formatCurrency(getValue('current'))}</td>`;
                             html += `<td>${formatCurrency(getValue('col1'))}</td>`;
                             html += `<td>${formatCurrency(getValue('col2'))}</td>`;
                             if (totalCols >= 4) html += `<td>${formatCurrency(getValue('col3'))}</td>`;
                             if (totalCols >= 5) html += `<td>${formatCurrency(getValue('col4'))}</td>`;
                         } else {
-                            // Likely Annex 3/4 or just col-based
+                            // Annex 3/4
                             html += `<td>${formatCurrency(getValue('col1'))}</td>`;
                             html += `<td>${formatCurrency(getValue('col2'))}</td>`;
                             html += `<td>${formatCurrency(getValue('col3'))}</td>`;
