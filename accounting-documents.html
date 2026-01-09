@@ -24,14 +24,6 @@
             });
 
             // Initial Document Render
-            // Uncheck all radios first? No, default checked is fine.
-            // But we need to make sure the script knows which to render.
-            // Actually the current structure sets 'checked' on the first one.
-            // But my previous script called switchDocument manually.
-            // I'll update the script in a separate step or just rely on 'checked'
-            // attribute triggering nothing unless I call it.
-            // Wait, standard radio doesn't trigger onchange on load.
-            // I'll need to call rendering manually on load.
             switchDocument('annex1');
         });
     </script>
@@ -228,190 +220,290 @@
 
     <!-- Script for Tab Switching and Rendering -->
     <script>
+        // Helper to create empty or total rows
+        const createRow = (name, type, options = {}) => ({ name, type, ...options });
+
+        // Common Account Titles (経費) - Standard Guideline Items
+        const commonExpenses = [
+            '福利厚生費', '旅費交通費', '器具什器費', '消耗品費', '印刷製本費',
+            '水道光熱費', '燃料費', '修繕費', '通信運搬費', '会議費',
+            '広報費', '損害保険料', '賃借料', '図書・教育費', '租税公課',
+            '減価償却費', '支払利息', '雑費'
+        ];
+
+        // Specific Account Titles for different sections
+        const items = {
+            manufacturingLabor: [
+                '利用者賃金', '利用者工賃', '就労支援事業指導員等給与',
+                '就労支援事業指導員等賞与引当金繰入', '就労支援事業指導員等退職給付費用', '法定福利費'
+            ],
+            sgaLabor: [
+                '職員給料手当', '職員賞与引当金繰入', '退職給付費用', '法定福利費'
+            ],
+            expenses: commonExpenses
+        };
+
         const documents = {
             'annex1': {
                 title: '就労支援事業事業活動計算書（別紙1）',
                 headers: ['勘定科目', '当年度決算額', '前年度決算額', '増減'],
                 rows: [
-                    { name: 'I サービス活動増減の部', type: 'header' },
-                    { name: '1. 収益', type: 'header-sub' },
-                    { name: '障害福祉サービス等事業収益', type: 'data', current: 5000000, previous: 4800000 },
-                    { name: '就労支援事業収益', type: 'data', current: 3000000, previous: 2500000 },
-                    { name: '経常経費寄附金収益', type: 'data', current: 100000, previous: 500000 },
-                    { name: 'その他の収益', type: 'data', current: 0, previous: 0 },
-                    { name: 'サービス活動収益計(1)', type: 'total', current: 8100000, previous: 7800000 },
-                    { name: '2. 費用', type: 'header-sub' },
-                    { name: '人件費', type: 'data', current: 4000000, previous: 3800000 },
-                    { name: '事業費', type: 'data', current: 1500000, previous: 1400000 },
-                    { name: '事務費', type: 'data', current: 800000, previous: 750000 },
-                    { name: '就労支援事業費用', type: 'data', current: 1000000, previous: 900000 },
-                    { name: '利用者負担軽減額', type: 'data', current: 0, previous: 0 },
-                    { name: '減価償却費', type: 'data', current: 0, previous: 0 },
-                    { name: '国庫補助金等特別積立金取崩額', type: 'data', current: 0, previous: 0 },
-                    { name: '貸倒損失額', type: 'data', current: 0, previous: 0 },
-                    { name: '貸倒引当金繰入', type: 'data', current: 0, previous: 0 },
-                    { name: '徴収不能額', type: 'data', current: 0, previous: 0 },
-                    { name: '徴収不能引当金繰入', type: 'data', current: 0, previous: 0 },
-                    { name: 'その他の費用', type: 'data', current: 0, previous: 0 },
-                    { name: 'サービス活動費用計(2)', type: 'total', current: 7300000, previous: 6850000 },
-                    { name: 'サービス活動増減差額(3)=(1)-(2)', type: 'total-diff', current: 800000, previous: 950000 },
-                    { name: 'II サービス活動外増減の部', type: 'header' },
-                    { name: '1. 収益', type: 'header-sub' },
-                    { name: '受取利息配当金収益', type: 'data', current: 100, previous: 100 },
-                    { name: 'その他のサービス活動外収益', type: 'data', current: 0, previous: 0 },
-                    { name: 'サービス活動外収益計(4)', type: 'total', current: 100, previous: 100 },
-                    { name: '2. 費用', type: 'header-sub' },
-                    { name: '支払利息', type: 'data', current: 0, previous: 0 },
-                    { name: 'その他のサービス活動外費用', type: 'data', current: 0, previous: 0 },
-                    { name: 'サービス活動外費用計(5)', type: 'total', current: 0, previous: 0 },
-                    { name: 'サービス活動外増減差額(6)=(4)-(5)', type: 'total-diff', current: 100, previous: 100 },
-                    { name: '経常増減差額(7)=(3)+(6)', type: 'total-diff', current: 800100, previous: 950100 },
-                    { name: 'III 特別増減の部', type: 'header' },
-                    { name: '1. 収益', type: 'header-sub' },
-                    { name: '施設整備等補助金収益', type: 'data', current: 0, previous: 0 },
-                    { name: 'その他の特別収益', type: 'data', current: 0, previous: 0 },
-                    { name: '特別収益計(8)', type: 'total', current: 0, previous: 0 },
-                    { name: '2. 費用', type: 'header-sub' },
-                    { name: '固定資産売却損・処分損', type: 'data', current: 0, previous: 0 },
-                    { name: '国庫補助金等特別積立金積立額', type: 'data', current: 0, previous: 0 },
-                    { name: '特別費用計(9)', type: 'total', current: 0, previous: 0 },
-                    { name: '特別増減差額(10)=(8)-(9)', type: 'total-diff', current: 0, previous: 0 },
-                    { name: '当期活動増減差額(11)=(7)+(10)', type: 'total-diff', current: 800100, previous: 950100 },
-                    { name: '前期繰越活動増減差額(12)', type: 'data', current: 500000, previous: 200000 },
-                    { name: '当期末繰越活動増減差額(13)=(11)+(12)', type: 'total', current: 1300100, previous: 1150100 }
+                    createRow('I サービス活動増減の部', 'header'),
+                    createRow('1. 収益', 'header-sub'),
+                    createRow('障害福祉サービス等事業収益', 'data'),
+                    createRow('就労支援事業収益', 'data'),
+                    createRow('経常経費寄附金収益', 'data'),
+                    createRow('その他の収益', 'data'),
+                    createRow('サービス活動収益計(1)', 'total'),
+                    createRow('2. 費用', 'header-sub'),
+                    createRow('人件費', 'data'),
+                    createRow('事業費', 'data'),
+                    createRow('事務費', 'data'),
+                    createRow('就労支援事業費用', 'data'),
+                    createRow('利用者負担軽減額', 'data'),
+                    createRow('減価償却費', 'data'),
+                    createRow('国庫補助金等特別積立金取崩額', 'data'),
+                    createRow('徴収不能額', 'data'),
+                    createRow('徴収不能引当金繰入', 'data'),
+                    createRow('その他の費用', 'data'),
+                    createRow('サービス活動費用計(2)', 'total'),
+                    createRow('サービス活動増減差額(3)=(1)-(2)', 'total-diff'),
+                    createRow('II サービス活動外増減の部', 'header'),
+                    createRow('1. 収益', 'header-sub'),
+                    createRow('受取利息配当金収益', 'data'),
+                    createRow('その他のサービス活動外収益', 'data'),
+                    createRow('サービス活動外収益計(4)', 'total'),
+                    createRow('2. 費用', 'header-sub'),
+                    createRow('支払利息', 'data'),
+                    createRow('その他のサービス活動外費用', 'data'),
+                    createRow('サービス活動外費用計(5)', 'total'),
+                    createRow('サービス活動外増減差額(6)=(4)-(5)', 'total-diff'),
+                    createRow('経常増減差額(7)=(3)+(6)', 'total-diff'),
+                    createRow('III 特別増減の部', 'header'),
+                    createRow('1. 収益', 'header-sub'),
+                    createRow('施設整備等補助金収益', 'data'),
+                    createRow('固定資産売却益', 'data'),
+                    createRow('特別収益計(8)', 'total'),
+                    createRow('2. 費用', 'header-sub'),
+                    createRow('固定資産売却損・処分損', 'data'),
+                    createRow('国庫補助金等特別積立金積立額', 'data'),
+                    createRow('特別費用計(9)', 'total'),
+                    createRow('特別増減差額(10)=(8)-(9)', 'total-diff'),
+                    createRow('当期活動増減差額(11)=(7)+(10)', 'total-diff'),
+                    createRow('前期繰越活動増減差額(12)', 'data'),
+                    createRow('当期末繰越活動増減差額(13)=(11)+(12)', 'total'),
+                    createRow('基本金取崩額(14)', 'data'),
+                    createRow('その他の積立金取崩額(15)', 'data'),
+                    createRow('その他の積立金積立額(16)', 'data'),
+                    createRow('次期繰越活動増減差額(17)=(13)+(14)+(15)-(16)', 'total')
                 ]
             },
             'annex2': {
                 title: '就労支援事業事業活動内訳表（別紙2）',
                 headers: ['勘定科目', '合計', '就労移行支援', '就労継続支援A型', '就労継続支援B型'],
                 rows: [
-                    { name: 'I サービス活動増減の部', type: 'header' },
-                    { name: '1. 収益', type: 'header-sub' },
-                    { name: '障害福祉サービス等事業収益', type: 'data', current: 5000000, col1: 2000000, col2: 1500000, col3: 1500000 },
-                    { name: '就労支援事業収益', type: 'data', current: 3000000, col1: 0, col2: 2000000, col3: 1000000 },
-                    { name: '経常経費寄附金収益', type: 'data', current: 100000, col1: 0, col2: 50000, col3: 50000 },
-                    { name: 'その他の収益', type: 'data', current: 0, col1: 0, col2: 0, col3: 0 },
-                    { name: 'サービス活動収益計(1)', type: 'total', current: 8100000, col1: 2000000, col2: 3550000, col3: 2550000 },
-                    { name: '2. 費用', type: 'header-sub' },
-                    { name: '人件費', type: 'data', current: 4000000, col1: 1500000, col2: 1500000, col3: 1000000 },
-                    { name: '事業費', type: 'data', current: 1500000, col1: 200000, col2: 700000, col3: 600000 },
-                    { name: '事務費', type: 'data', current: 800000, col1: 200000, col2: 300000, col3: 300000 },
-                    { name: '就労支援事業費用', type: 'data', current: 1000000, col1: 0, col2: 400000, col3: 600000 },
-                    { name: '利用者負担軽減額', type: 'data', current: 0, col1: 0, col2: 0, col3: 0 },
-                    { name: '減価償却費', type: 'data', current: 0, col1: 0, col2: 0, col3: 0 },
-                    { name: '国庫補助金等特別積立金取崩額', type: 'data', current: 0, col1: 0, col2: 0, col3: 0 },
-                    { name: '徴収不能額', type: 'data', current: 0, col1: 0, col2: 0, col3: 0 },
-                    { name: 'その他の費用', type: 'data', current: 0, col1: 0, col2: 0, col3: 0 },
-                    { name: 'サービス活動費用計(2)', type: 'total', current: 7300000, col1: 1900000, col2: 2900000, col3: 2500000 },
-                    { name: 'サービス活動増減差額(3)=(1)-(2)', type: 'total-diff', current: 800000, col1: 100000, col2: 650000, col3: 50000 },
-                    { name: 'II サービス活動外増減の部', type: 'header' },
-                    { name: '1. 収益', type: 'header-sub' },
-                    { name: '受取利息配当金収益', type: 'data', current: 100, col1: 20, col2: 40, col3: 40 },
-                    { name: 'サービス活動外収益計(4)', type: 'total', current: 100, col1: 20, col2: 40, col3: 40 },
-                    { name: '2. 費用', type: 'header-sub' },
-                    { name: '支払利息', type: 'data', current: 0, col1: 0, col2: 0, col3: 0 },
-                    { name: 'サービス活動外費用計(5)', type: 'total', current: 0, col1: 0, col2: 0, col3: 0 },
-                    { name: 'サービス活動外増減差額(6)=(4)-(5)', type: 'total-diff', current: 100, col1: 20, col2: 40, col3: 40 },
-                    { name: '経常増減差額(7)=(3)+(6)', type: 'total-diff', current: 800100, col1: 100020, col2: 650040, col3: 50040 },
-                    { name: 'III 特別増減の部', type: 'header' },
-                    { name: '特別増減差額(10)=(8)-(9)', type: 'total-diff', current: 0, col1: 0, col2: 0, col3: 0 },
-                    { name: '当期活動増減差額(11)=(7)+(10)', type: 'total-diff', current: 800100, col1: 100020, col2: 650040, col3: 50040 }
+                    createRow('I サービス活動増減の部', 'header'),
+                    createRow('1. 収益', 'header-sub'),
+                    createRow('障害福祉サービス等事業収益', 'data'),
+                    createRow('就労支援事業収益', 'data'),
+                    createRow('経常経費寄附金収益', 'data'),
+                    createRow('その他の収益', 'data'),
+                    createRow('サービス活動収益計(1)', 'total'),
+                    createRow('2. 費用', 'header-sub'),
+                    createRow('人件費', 'data'),
+                    createRow('事業費', 'data'),
+                    createRow('事務費', 'data'),
+                    createRow('就労支援事業費用', 'data'),
+                    createRow('利用者負担軽減額', 'data'),
+                    createRow('減価償却費', 'data'),
+                    createRow('国庫補助金等特別積立金取崩額', 'data'),
+                    createRow('徴収不能額', 'data'),
+                    createRow('その他の費用', 'data'),
+                    createRow('サービス活動費用計(2)', 'total'),
+                    createRow('サービス活動増減差額(3)=(1)-(2)', 'total-diff'),
+                    createRow('II サービス活動外増減の部', 'header'),
+                    createRow('サービス活動外収益計(4)', 'total'),
+                    createRow('サービス活動外費用計(5)', 'total'),
+                    createRow('経常増減差額(7)=(3)+(4)-(5)', 'total-diff'),
+                    createRow('III 特別増減の部', 'header'),
+                    createRow('特別収益計(8)', 'total'),
+                    createRow('特別費用計(9)', 'total'),
+                    createRow('特別増減差額(10)=(8)-(9)', 'total-diff'),
+                    createRow('当期活動増減差額(11)=(7)+(10)', 'total-diff')
                 ]
             },
             'annex3': {
                 title: 'その他の積立金明細表（別紙3）',
                 headers: ['積立金の種類', '期首残高', '当期増加額', '当期減少額', '期末残高'],
                 rows: [
-                    { name: '設備整備積立金', type: 'data', col1: 2000000, col2: 500000, col3: 0, col4: 2500000 },
-                    { name: '修繕積立金', type: 'data', col1: 1000000, col2: 200000, col3: 100000, col4: 1100000 },
-                    { name: '工賃変動積立金', type: 'data', col1: 500000, col2: 100000, col3: 50000, col4: 550000 }
+                    createRow('設備整備積立金', 'data', { col1: 2000000, col2: 500000, col3: 0, col4: 2500000 }),
+                    createRow('修繕積立金', 'data', { col1: 1000000, col2: 200000, col3: 100000, col4: 1100000 }),
+                    createRow('工賃変動積立金', 'data', { col1: 500000, col2: 100000, col3: 50000, col4: 550000 }),
+                    createRow('人件費積立金', 'data', { col1: 0, col2: 0, col3: 0, col4: 0 }),
+                    createRow('合計', 'total', { col1: 3500000, col2: 800000, col3: 150000, col4: 4150000 })
                 ]
             },
             'annex4': {
                 title: 'その他の積立資産明細表（別紙4）',
                 headers: ['積立資産の種類', '期首残高', '当期増加額', '当期減少額', '期末残高'],
                 rows: [
-                    { name: '設備整備積立資産', type: 'data', col1: 2000000, col2: 500000, col3: 0, col4: 2500000 },
-                    { name: '修繕積立資産', type: 'data', col1: 1000000, col2: 200000, col3: 100000, col4: 1100000 },
-                    { name: '工賃変動積立資産', type: 'data', col1: 500000, col2: 100000, col3: 50000, col4: 550000 }
+                    createRow('設備整備積立資産', 'data', { col1: 2000000, col2: 500000, col3: 0, col4: 2500000 }),
+                    createRow('修繕積立資産', 'data', { col1: 1000000, col2: 200000, col3: 100000, col4: 1100000 }),
+                    createRow('工賃変動積立資産', 'data', { col1: 500000, col2: 100000, col3: 50000, col4: 550000 }),
+                    createRow('人件費積立資産', 'data', { col1: 0, col2: 0, col3: 0, col4: 0 }),
+                    createRow('合計', 'total', { col1: 3500000, col2: 800000, col3: 150000, col4: 4150000 })
                 ]
             },
             'table1': {
                 title: '就労支援事業別事業活動明細書（表1）',
                 headers: ['科目', '合計', 'A作業', 'B作業', 'C作業'],
                 rows: [
-                    { name: '売上高', type: 'data', current: 3000000, col1: 1000000, col2: 1500000, col3: 500000 },
-                    { name: '売上原価', type: 'data', current: 1000000, col1: 300000, col2: 500000, col3: 200000 },
-                    { name: '売上総利益', type: 'total', current: 2000000, col1: 700000, col2: 1000000, col3: 300000 }
+                    createRow('I 売上高', 'header'),
+                    createRow('売上高', 'data'),
+                    createRow('II 売上原価', 'header'),
+                    createRow('期首製品棚卸高', 'data'),
+                    createRow('当期就労支援事業製造原価', 'data'),
+                    createRow('合計', 'total'),
+                    createRow('期末製品棚卸高', 'data'),
+                    createRow('売上原価', 'total'),
+                    createRow('売上総利益', 'total'),
+                    createRow('III 就労支援事業販売費及び一般管理費', 'header'),
+                    createRow('就労支援事業販売費及び一般管理費', 'data'),
+                    createRow('就労支援事業活動増減差額', 'total-diff')
                 ]
             },
             'table2': {
                 title: '就労支援事業製造原価明細書（表2）',
                 headers: ['科目', '合計', 'A作業', 'B作業', 'C作業'],
                 rows: [
-                    { name: '材料費', type: 'data', current: 800000, col1: 200000, col2: 400000, col3: 200000 },
-                    { name: '労務費', type: 'data', current: 0, col1: 0, col2: 0, col3: 0 },
-                    { name: '外注加工費', type: 'data', current: 100000, col1: 50000, col2: 50000, col3: 0 },
-                    { name: '経費', type: 'data', current: 100000, col1: 50000, col2: 50000, col3: 0 },
-                    { name: '当期製造費用', type: 'total', current: 1000000, col1: 300000, col2: 500000, col3: 200000 }
+                    createRow('I 材料費', 'header'),
+                    createRow('期首材料棚卸高', 'data'),
+                    createRow('当期材料仕入高', 'data'),
+                    createRow('合計', 'total'),
+                    createRow('期末材料棚卸高', 'data'),
+                    createRow('当期材料費', 'total'),
+                    createRow('II 労務費', 'header'),
+                    ...items.manufacturingLabor.map(item => createRow(item, 'data')),
+                    createRow('当期労務費', 'total'),
+                    createRow('III 外注加工費', 'header'),
+                    createRow('当期外注加工費', 'data'),
+                    createRow('IV 経費', 'header'),
+                    ...items.expenses.map(item => createRow(item, 'data')),
+                    createRow('国庫補助金等特別積立金取崩額', 'data'),
+                    createRow('当期経費', 'total'),
+                    createRow('当期就労支援事業製造費用', 'total'),
+                    createRow('期首仕掛品棚卸高', 'data'),
+                    createRow('合計', 'total'),
+                    createRow('期末仕掛品棚卸高', 'data'),
+                    createRow('当期就労支援事業製造原価', 'total-diff')
                 ]
             },
             'table3': {
                 title: '就労支援事業販管費明細書（表3）',
                 headers: ['科目', '合計', 'A作業', 'B作業', 'C作業'],
                 rows: [
-                    { name: '職員給料手当', type: 'data', current: 200000, col1: 50000, col2: 100000, col3: 50000 },
-                    { name: '車両燃料費', type: 'data', current: 50000, col1: 10000, col2: 30000, col3: 10000 },
-                    { name: '販売管理費計', type: 'total', current: 250000, col1: 60000, col2: 130000, col3: 60000 }
+                    createRow('I 人件費', 'header'),
+                    ...items.sgaLabor.map(item => createRow(item, 'data')),
+                    createRow('人件費計', 'total'),
+                    createRow('II 経費', 'header'),
+                    ...items.expenses.map(item => createRow(item, 'data')),
+                    createRow('国庫補助金等特別積立金取崩額', 'data'),
+                    createRow('経費計', 'total'),
+                    createRow('就労支援事業販売費及び一般管理費', 'total-diff')
                 ]
             },
             'table4': {
                 title: '就労支援事業明細書（表4）',
                 headers: ['科目', '合計', 'A作業', 'B作業', 'C作業'],
                 rows: [
-                    { name: '売上高', type: 'data', current: 1000000, col1: 300000, col2: 500000, col3: 200000 },
-                    { name: '製造費用', type: 'data', current: 600000, col1: 180000, col2: 300000, col3: 120000 },
-                    { name: '販売費及び一般管理費', type: 'data', current: 200000, col1: 60000, col2: 100000, col3: 40000 },
-                    { name: '事業活動損益', type: 'total', current: 200000, col1: 60000, col2: 100000, col3: 40000 }
+                    createRow('I 売上高', 'header'),
+                    createRow('売上高', 'data'),
+                    createRow('II 就労支援事業費用', 'header'),
+                    createRow('期首製品（仕掛品・材料）棚卸高', 'data'),
+                    createRow('当期仕入高', 'data'),
+                    createRow('利用者賃金・工賃', 'data'),
+                    createRow('職員給料手当', 'data'),
+                    createRow('その他経費', 'data'),
+                    createRow('合計', 'total'),
+                    createRow('期末製品（仕掛品・材料）棚卸高', 'data'),
+                    createRow('就労支援事業費用', 'total'),
+                    createRow('就労支援事業活動増減差額', 'total-diff')
                 ]
             },
             'table5': {
                 title: '就労支援事業別事業活動明細書（多機能事業所様式）（表5）',
                 headers: ['科目', '合計', 'Aサービス', 'Bサービス'],
                 rows: [
-                    { name: '売上高', type: 'data', current: 5000000, col1: 3000000, col2: 2000000 },
-                    { name: '売上原価', type: 'data', current: 3000000, col1: 1800000, col2: 1200000 },
-                    { name: '売上総利益', type: 'total', current: 2000000, col1: 1200000, col2: 800000 }
+                    createRow('I 売上高', 'header'),
+                    createRow('売上高', 'data'),
+                    createRow('II 売上原価', 'header'),
+                    createRow('期首製品棚卸高', 'data'),
+                    createRow('当期就労支援事業製造原価', 'data'),
+                    createRow('合計', 'total'),
+                    createRow('期末製品棚卸高', 'data'),
+                    createRow('売上原価', 'total'),
+                    createRow('売上総利益', 'total'),
+                    createRow('III 就労支援事業販売費及び一般管理費', 'header'),
+                    createRow('就労支援事業販売費及び一般管理費', 'data'),
+                    createRow('就労支援事業活動増減差額', 'total-diff')
                 ]
             },
             'table6': {
                 title: '就労支援事業製造原価明細書（多機能事業所様式）（表6）',
                 headers: ['科目', '合計', 'Aサービス', 'Bサービス'],
                 rows: [
-                    { name: '材料費', type: 'data', current: 2000000, col1: 1200000, col2: 800000 },
-                    { name: '労務費', type: 'data', current: 0, col1: 0, col2: 0 },
-                    { name: '外注加工費', type: 'data', current: 500000, col1: 300000, col2: 200000 },
-                    { name: '経費', type: 'data', current: 500000, col1: 300000, col2: 200000 },
-                    { name: '当期製造費用', type: 'total', current: 3000000, col1: 1800000, col2: 1200000 }
+                    createRow('I 材料費', 'header'),
+                    createRow('期首材料棚卸高', 'data'),
+                    createRow('当期材料仕入高', 'data'),
+                    createRow('合計', 'total'),
+                    createRow('期末材料棚卸高', 'data'),
+                    createRow('当期材料費', 'total'),
+                    createRow('II 労務費', 'header'),
+                    ...items.manufacturingLabor.map(item => createRow(item, 'data')),
+                    createRow('当期労務費', 'total'),
+                    createRow('III 外注加工費', 'header'),
+                    createRow('当期外注加工費', 'data'),
+                    createRow('IV 経費', 'header'),
+                    ...items.expenses.map(item => createRow(item, 'data')),
+                    createRow('国庫補助金等特別積立金取崩額', 'data'),
+                    createRow('当期経費', 'total'),
+                    createRow('当期就労支援事業製造費用', 'total'),
+                    createRow('期首仕掛品棚卸高', 'data'),
+                    createRow('合計', 'total'),
+                    createRow('期末仕掛品棚卸高', 'data'),
+                    createRow('当期就労支援事業製造原価', 'total-diff')
                 ]
             },
             'table7': {
                 title: '就労支援事業販管費明細書（多機能事業所様式）（表7）',
                 headers: ['科目', '合計', 'Aサービス', 'Bサービス'],
                 rows: [
-                    { name: '人件費', type: 'data', current: 1500000, col1: 900000, col2: 600000 },
-                    { name: 'その他経費', type: 'data', current: 500000, col1: 300000, col2: 200000 },
-                    { name: '販売管理費計', type: 'total', current: 2000000, col1: 1200000, col2: 800000 }
+                    createRow('I 人件費', 'header'),
+                    ...items.sgaLabor.map(item => createRow(item, 'data')),
+                    createRow('人件費計', 'total'),
+                    createRow('II 経費', 'header'),
+                    ...items.expenses.map(item => createRow(item, 'data')),
+                    createRow('国庫補助金等特別積立金取崩額', 'data'),
+                    createRow('経費計', 'total'),
+                    createRow('就労支援事業販売費及び一般管理費', 'total-diff')
                 ]
             },
             'table8': {
                 title: '就労支援事業明細書（多機能事業所様式）（表8）',
                 headers: ['科目', '合計', 'Aサービス', 'Bサービス'],
                 rows: [
-                    { name: '売上高', type: 'data', current: 3000000, col1: 2000000, col2: 1000000 },
-                    { name: '製造費用', type: 'data', current: 1500000, col1: 1000000, col2: 500000 },
-                    { name: '販売費及び一般管理費', type: 'data', current: 1000000, col1: 600000, col2: 400000 },
-                    { name: '事業活動損益', type: 'total', current: 500000, col1: 400000, col2: 100000 }
+                    createRow('I 売上高', 'header'),
+                    createRow('売上高', 'data'),
+                    createRow('II 就労支援事業費用', 'header'),
+                    createRow('期首製品（仕掛品・材料）棚卸高', 'data'),
+                    createRow('当期仕入高', 'data'),
+                    createRow('利用者賃金・工賃', 'data'),
+                    createRow('職員給料手当', 'data'),
+                    createRow('その他経費', 'data'),
+                    createRow('合計', 'total'),
+                    createRow('期末製品（仕掛品・材料）棚卸高', 'data'),
+                    createRow('就労支援事業費用', 'total'),
+                    createRow('就労支援事業活動増減差額', 'total-diff')
                 ]
             }
         };
@@ -422,7 +514,6 @@
         }
 
         function switchDocument(docId) {
-            // Tab active state is handled by radio button CSS
             renderDocument(docId);
         }
 
@@ -431,68 +522,116 @@
             const data = documents[docId];
             if (!data) return;
 
-            // Updated Layout using Standard Classes
-            let html = `<div class="card-header">${data.title}</div>`;
+            // Document Header Meta Information
+            let html = `
+                <div class="card-header" style="justify-content: center; font-size: 1.25rem;">${data.title}</div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 16px; font-size: 0.9rem; color: var(--color-base-primary);">
+                    <div style="text-align: left;">
+                        <div>法人名: 社会福祉法人へのへのもへじ</div>
+                        <div>事業所名: こんぱす天神</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div>自 令和7年4月1日 至 令和8年3月31日</div>
+                        <div>(単位: 円)</div>
+                    </div>
+                </div>
+            `;
 
-            // Using .table-container (and .table) from ui.css
             html += `<div class="table-container"><table class="table">`;
 
-            // Header
+            // Table Header
             html += `<thead><tr>`;
             data.headers.forEach(h => {
                 html += `<th>${h}</th>`;
             });
             html += `</tr></thead><tbody>`;
 
-            // Rows
+            // Table Body
             data.rows.forEach(row => {
-                // Determine styling based on type but relying on standard classes where possible
-                // Use inline style sparingly or standard helpers if they existed
                 const isTotal = row.type.includes('total');
                 const isHeader = row.type === 'header';
                 const isSubHeader = row.type === 'header-sub';
 
                 let trStyle = '';
                 if (isTotal) trStyle = 'font-weight: bold; background-color: var(--color-base-secondary);';
-                if (isHeader) trStyle = 'font-weight: bold; background-color: var(--color-bg-subtle);'; // Assuming variable or hardcoded
-
+                if (isHeader) trStyle = 'font-weight: bold; background-color: var(--color-bg-subtle);';
                 html += `<tr style="${trStyle}">`;
 
                 // Name Column
                 let nameStyle = '';
                 if (isSubHeader) nameStyle = 'padding-left: 24px; font-weight: bold;';
                 if (isHeader) nameStyle = 'font-weight: bold;';
+                if (row.type === 'data') nameStyle = 'padding-left: 12px;';
 
                 html += `<td style="${nameStyle}">${row.name}</td>`;
 
-                // Data Columns
-                if (data.headers.length === 4) {
-                    // Standard: Current, Previous, Diff
+                // Calculate Diff helper
+                const calcDiff = (curr, prev) => (curr || 0) - (prev || 0);
+                const getCellColor = (val) => val < 0 ? 'color: var(--color-semantic-error-main);' : '';
+
+                // Render logic based on Table Type
+                // Annex 1 is the only one with Year-on-Year comparison (Headers include '増減')
+                const isComparison = data.headers.includes('増減');
+
+                if (isComparison) {
+                    // Annex 1 type: Current, Previous, Increase/Decrease
                     if (isHeader || isSubHeader) {
                         html += `<td></td><td></td><td></td>`;
                     } else {
-                        const diff = (row.current || 0) - (row.previous || 0);
-                        html += `<td>${formatCurrency(row.current)}</td>`;
-                        html += `<td>${formatCurrency(row.previous)}</td>`;
-                        // Simple conditional color for diff
-                        const color = diff < 0 ? 'var(--color-semantic-error-main)' : 'inherit';
-                        html += `<td style="color: ${color};">${formatCurrency(diff)}</td>`;
-                    }
-                } else if (data.headers.length === 5) {
-                    // Breakdown or Reserve
-                    if (isHeader || isSubHeader) {
-                        html += `<td></td><td></td><td></td><td></td>`;
-                    } else {
-                        if (row.current !== undefined) {
-                            html += `<td>${formatCurrency(row.current)}</td>`;
-                            html += `<td>${formatCurrency(row.col1)}</td>`;
-                            html += `<td>${formatCurrency(row.col2)}</td>`;
-                            html += `<td>${formatCurrency(row.col3)}</td>`;
+                        // Current
+                        html += `<td>${formatCurrency(row.current || 0)}</td>`;
+                        // Previous
+                        html += `<td>${formatCurrency(row.previous || 0)}</td>`;
+                        // Diff
+                        if (row.type === 'total-diff' || row.type === 'data' || row.type === 'total') {
+                            const diff = calcDiff(row.current, row.previous);
+                            html += `<td style="${getCellColor(diff)}">${formatCurrency(diff)}</td>`;
                         } else {
-                            html += `<td>${formatCurrency(row.col1)}</td>`;
-                            html += `<td>${formatCurrency(row.col2)}</td>`;
-                            html += `<td>${formatCurrency(row.col3)}</td>`;
-                            html += `<td>${formatCurrency(row.col4)}</td>`;
+                            html += `<td></td>`;
+                        }
+                    }
+                } else {
+                    // Breakdown types (Annex 2-4, Tables 1-8)
+                    const totalCols = data.headers.length - 1;
+
+                    if (isHeader || isSubHeader) {
+                        for (let i = 0; i < totalCols; i++) html += `<td></td>`;
+                    } else {
+                        // Standardize row data access
+                        // If row has properties like current, col1, col2 etc. use them
+                        // If standard row has no data initialized in my 'createRow' logic above (just name/type), default to 0
+                        // For Tables, usually Current(Total) = col1 + col2...
+                        // Since I mostly left them empty in 'rows' definition above for brevity, I will render 0s.
+
+                        // Handle Annex 3/4 explicitly or generic
+                        // Annex 3/4 cols: [Total(col1?), Inc(col2), Dec(col3), End(col4)] -> actually mapping is usually Start, Inc, Dec, End.
+                        // My code for Annex 3/4 has explicit defaults.
+
+                        // Generic Rendering
+                        const getValue = (key) => row[key] !== undefined ? row[key] : 0;
+
+                        // Check if it's Annex 3/4 (header count 5 but distinct structure)
+                        // Actually standard tables are: Item | Total | A | B | C (5 cols)
+                        // Annex 3/4: Item | Start | Inc | Dec | End (5 cols)
+                        // Logic is same: render 4 data cells.
+
+                        // Map potential keys: current/col1/col2/col3/col4
+                        // Annex 3/4 uses col1..col4. Tables use current, col1..col3.
+                        // I will try to support both by checking existence.
+
+                        if (row.current !== undefined || (row.col1 === undefined && totalCols > 3)) {
+                            // Likely Table 1-8 or Annex 2
+                            html += `<td>${formatCurrency(getValue('current'))}</td>`;
+                            html += `<td>${formatCurrency(getValue('col1'))}</td>`;
+                            html += `<td>${formatCurrency(getValue('col2'))}</td>`;
+                            if (totalCols >= 4) html += `<td>${formatCurrency(getValue('col3'))}</td>`;
+                            if (totalCols >= 5) html += `<td>${formatCurrency(getValue('col4'))}</td>`;
+                        } else {
+                            // Likely Annex 3/4 or just col-based
+                            html += `<td>${formatCurrency(getValue('col1'))}</td>`;
+                            html += `<td>${formatCurrency(getValue('col2'))}</td>`;
+                            html += `<td>${formatCurrency(getValue('col3'))}</td>`;
+                            if (totalCols >= 4) html += `<td>${formatCurrency(getValue('col4'))}</td>`;
                         }
                     }
                 }
