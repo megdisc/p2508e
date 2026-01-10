@@ -165,10 +165,16 @@
                 <div
                     style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
                     <h1 style="margin: 0;">外注先支払</h1>
-                    <!-- Bulk Print Button -->
-                    <button class="btn btn-neutral" onclick="alert('表示中の一覧を一括印刷します')">
-                        <span class="material-symbols-outlined">print</span> 一括印刷
-                    </button>
+                    <div style="display: flex; gap: var(--spacing-2);">
+                        <!-- Bulk Edit Button -->
+                        <button class="btn btn-success" onclick="alert('表示中の一覧を一括編集します')">
+                            <span class="material-symbols-outlined">edit</span> 一括編集
+                        </button>
+                        <!-- Bulk Print Button -->
+                        <button class="btn btn-primary" onclick="alert('表示中の一覧を一括印刷します')">
+                            <span class="material-symbols-outlined">print</span> 一括印刷
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Controls Area -->
@@ -265,10 +271,11 @@
                         <thead>
                             <tr>
                                 <th>外注先名</th>
+                                <th style="width: 120px; text-align: center;">ステータス</th>
+                                <th style="width: 150px; text-align: center;">支払日</th>
                                 <th style="text-align: center; width: 80px;">件数</th>
                                 <th style="text-align: right; width: 150px;">支払額(税抜)</th>
                                 <th style="text-align: right; width: 150px;">税込合計</th>
-                                <th style="width: 120px; text-align: center;">ステータス</th>
                                 <th style="width: 180px; text-align: center;">操作</th>
                             </tr>
                         </thead>
@@ -278,6 +285,38 @@
                     </table>
                 </div>
 
+            </div>
+
+            <!-- Status Edit Modal -->
+            <div class="modal-backdrop" id="modal-status-edit" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        ステータス変更
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="edit-subcontractor-id">
+                        <div class="form-group">
+                            <label class="form-label" for="edit-subcontractor-name">外注先名</label>
+                            <input type="text" id="edit-subcontractor-name" class="input-field" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="edit-status-select">ステータス</label>
+                            <select id="edit-status-select" class="input-field">
+                                <option value="unconfirmed">未確定</option>
+                                <option value="confirmed">確定済</option>
+                                <option value="paid">支払済</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="edit-payment-date">支払日</label>
+                            <input type="date" id="edit-payment-date" class="input-field">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-neutral" onclick="closeStatusModal()">キャンセル</button>
+                        <button class="btn btn-primary" onclick="saveStatus()">保存する</button>
+                    </div>
+                </div>
             </div>
 
             <!-- Script for Logic -->
@@ -293,6 +332,20 @@
 
                 // Random data generator
                 function generateData() {
+                    // Get current target month
+                    const targetMonthStr = document.getElementById('target-month').value;
+                    let defaultDate = "";
+                    if (targetMonthStr) {
+                        const [year, month] = targetMonthStr.split('-').map(Number);
+                        // Default: End of Next Month (Standard B2B Term)
+                        const nextMonthEnd = new Date(year, month + 1, 0);
+
+                        const y = nextMonthEnd.getFullYear();
+                        const m = String(nextMonthEnd.getMonth() + 1).padStart(2, '0');
+                        const d = String(nextMonthEnd.getDate()).padStart(2, '0');
+                        defaultDate = `${y}-${m}-${d}`;
+                    }
+
                     return SUBCONTRACTORS.map(sub => {
                         const count = Math.floor(Math.random() * 3) + 1;
                         const baseAmount = (Math.floor(Math.random() * 30) + 5) * 10000; // 50,000 - 350,000
@@ -310,7 +363,8 @@
                             baseAmount: baseAmount,
                             tax: tax,
                             total: total,
-                            status: status
+                            status: status,
+                            paymentDate: defaultDate // Added default date
                         };
                     });
                 }
@@ -396,23 +450,34 @@
 
                         // Status Badge
                         let statusBadge = '';
-                        if (item.status === 'unconfirmed') statusBadge = '<span class="badge badge-neutral">未確定</span>';
-                        else if (item.status === 'confirmed') statusBadge = '<span class="badge badge-primary">確定済</span>';
-                        else statusBadge = '<span class="badge badge-success">完了</span>';
+                        let statusClass = 'badge-neutral';
+                        let statusText = '未確定';
+
+                        if (item.status === 'confirmed') {
+                            statusClass = 'badge-primary';
+                            statusText = '確定済';
+                        }
+                        else if (item.status === 'paid') {
+                            statusClass = 'badge-success';
+                            statusText = '支払済';
+                        }
+                        statusBadge = `<span class="badge ${statusClass}">${statusText}</span>`;
 
                         // Actions
                         const actions = `
                     <button class="btn btn-sm btn-neutral" onclick="alert('${item.name}の詳細を開きます')">詳細</button>
-                    <button class="btn btn-sm btn-neutral" onclick="alert('${item.name}の支払通知書を印刷します')"><span class="material-symbols-outlined" style="font-size: 1.2em;">print</span></button>
+                    <button class="btn btn-icon btn-icon-sm btn-icon-success" onclick="openStatusModal(${item.id})"><span class="material-symbols-outlined">edit</span></button>
+                    <button class="btn btn-icon btn-icon-sm btn-icon-primary" onclick="alert('${item.name}の支払通知書を印刷します')"><span class="material-symbols-outlined">print</span></button>
                 `;
 
                         tr.innerHTML = `
                     <td style="font-weight: 500;">${item.name}</td>
+                    <td style="text-align: center;">${statusBadge}</td>
+                    <td style="text-align: center;">${item.paymentDate}</td>
                     <td style="text-align: center;">${item.count}件</td>
                     <td style="text-align: right;">¥ ${item.baseAmount.toLocaleString()}</td>
                     <td style="text-align: right; font-weight: bold;">¥ ${item.total.toLocaleString()}</td>
-                    <td style="text-align: center;">${statusBadge}</td>
-                    <td style="text-align: center; gap: 4px; display: flex; justify-content: center;">${actions}</td>
+                    <td style="text-align: center; gap: 4px; display: flex; justify-content: center; align-items: center;">${actions}</td>
                 `;
                         tbody.appendChild(tr);
                     });
@@ -421,6 +486,37 @@
                     document.getElementById('summary-total-payment').textContent = sumPayment.toLocaleString();
                     document.getElementById('summary-total-tax').textContent = sumTax.toLocaleString();
                     document.getElementById('summary-grand-total').textContent = sumGrandTotal.toLocaleString();
+                }
+
+                // --- Modal Logic ---
+                function openStatusModal(id) {
+                    const sub = currentData.find(s => s.id === id);
+                    if (!sub) return;
+
+                    document.getElementById('edit-subcontractor-id').value = sub.id;
+                    document.getElementById('edit-subcontractor-name').value = sub.name;
+                    document.getElementById('edit-status-select').value = sub.status;
+                    document.getElementById('edit-payment-date').value = sub.paymentDate;
+
+                    document.getElementById('modal-status-edit').style.display = 'flex';
+                }
+
+                function closeStatusModal() {
+                    document.getElementById('modal-status-edit').style.display = 'none';
+                }
+
+                function saveStatus() {
+                    const id = parseInt(document.getElementById('edit-subcontractor-id').value);
+                    const newStatus = document.getElementById('edit-status-select').value;
+                    const newDate = document.getElementById('edit-payment-date').value;
+
+                    const sub = currentData.find(s => s.id === id);
+                    if (sub) {
+                        sub.status = newStatus;
+                        sub.paymentDate = newDate;
+                        renderData();
+                        closeStatusModal();
+                    }
                 }
 
             </script>
