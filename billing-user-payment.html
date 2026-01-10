@@ -249,6 +249,7 @@
                             <tr>
                                 <th>氏名</th>
                                 <th style="width: 120px; text-align: center;">ステータス</th>
+                                <th style="width: 150px; text-align: center;">支払い・請求日</th>
                                 <th style="text-align: right; width: 150px;">工賃</th>
                                 <th style="text-align: right; width: 150px;">控除</th>
                                 <th style="text-align: right; width: 150px;">支給額</th>
@@ -261,17 +262,7 @@
                     </table>
                 </div>
 
-                <!-- Card View (Experimental) -->
-                <div
-                    style="margin-top: var(--spacing-stack-xl); border-top: 1px dashed var(--color-border); padding-top: var(--spacing-stack-lg);">
-                    <h2
-                        style="font-size: 1.2rem; color: var(--color-text-secondary); margin-bottom: var(--spacing-stack-md);">
-                        （検討用）カード形式表示</h2>
-                    <div id="card-grid"
-                        style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: var(--spacing-stack-md);">
-                        <!-- Generated Cards -->
-                    </div>
-                </div>
+
 
             </div>
 
@@ -294,6 +285,10 @@
                                 <option value="confirmed">確定済</option>
                                 <option value="paid">支払済/請求済</option>
                             </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="edit-payment-date">支払い・請求日</label>
+                            <input type="date" id="edit-payment-date" class="input-field">
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -319,8 +314,29 @@
 
         // Random data generator
         function generateData() {
+            // Get current target month
+            const targetMonthStr = document.getElementById('target-month').value;
+            let defaultDate = "";
+            if (targetMonthStr) {
+                const [year, month] = targetMonthStr.split('-').map(Number);
+                // Default: Next Month 20th (from wages-settings)
+                const nextMonth = new Date(year, month, 20); // month is 0-indexed in Date, but here input is 1-indexed. new Date(2023, 10, 20) is Nov 20th if month was Oct (9).
+                // Wait. input "2023-10". split gives 2023, 10.
+                // new Date(2023, 10, 20) -> Month 10 is November (0=Jan... 9=Oct, 10=Nov).
+                // So this correctly calculates "Next Month 20th".
+
+                const y = nextMonth.getFullYear();
+                const m = String(nextMonth.getMonth() + 1).padStart(2, '0');
+                const d = String(nextMonth.getDate()).padStart(2, '0');
+                defaultDate = `${y}-${m}-${d}`;
+            }
+
+
             return USERS.map(user => {
-                const baseWage = Math.floor(Math.random() * 20000) + 10000;
+                // Adjusted to ensure positive payment (wages > deductions)
+                // Deductions are approx 40k-50k.
+                // Set Base Wage to 60,000 - 90,000
+                const baseWage = Math.floor(Math.random() * 30000) + 60000;
                 const adjustment = Math.floor(Math.random() * 2000) - 1000;
                 const totalWages = baseWage + adjustment;
 
@@ -348,7 +364,8 @@
                         total: totalDeductions
                     },
                     payment: totalWages - totalDeductions,
-                    status: status
+                    status: status,
+                    paymentDate: defaultDate // Added default date
                 };
             });
         }
@@ -418,9 +435,6 @@
             const tbody = document.getElementById('tbody-main');
             tbody.innerHTML = '';
 
-            // Card Container
-            const cardGrid = document.getElementById('card-grid');
-            cardGrid.innerHTML = '';
 
             let sumWages = 0;
             let sumDeductions = 0;
@@ -456,6 +470,7 @@
                 tr.innerHTML = `
                     <td style="font-weight: 500;">${item.name}</td>
                     <td style="text-align: center;">${statusBadge}</td>
+                    <td style="text-align: center;">${item.paymentDate}</td>
                     <td style="text-align: right;">¥ ${item.wages.total.toLocaleString()}</td>
                     <td style="text-align: right;">¥ ${item.deductions.total.toLocaleString()}</td>
                     <td style="text-align: right; font-weight: bold; color: ${item.payment < 0 ? 'var(--color-danger)' : 'inherit'};">¥ ${item.payment.toLocaleString()}</td>
@@ -463,50 +478,6 @@
                 `;
                 tbody.appendChild(tr);
 
-                // --- Card Render (Updated to match members.html style) ---
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.innerHTML = `
-                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
-                        <div>
-                            <span style="font: var(--font-body-sm); color: var(--color-base-quaternary);">${item.kana}</span>
-                            <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">${item.name}</div>
-                            ${statusBadge}
-                        </div>
-                        <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
-                            <button class="btn btn-icon btn-icon-success" title="編集" onclick="openStatusModal(${item.id})">
-                                <span class="material-symbols-outlined">edit</span>
-                            </button>
-                            <button class="btn btn-icon btn-icon-primary" title="印刷" onclick="alert('${item.name}を印刷します')">
-                                <span class="material-symbols-outlined">print</span>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                         <dl class="data-list">
-                            <div>
-                                <dt>工賃総額</dt>
-                                <dd>¥ ${item.wages.total.toLocaleString()}</dd>
-                            </div>
-                            <div>
-                                <dt>控除総額</dt>
-                                <dd>¥ ${item.deductions.total.toLocaleString()}</dd>
-                            </div>
-                            <!-- Special row for Payment -->
-                            <div>
-                                <dt style="font-weight: bold;">支給額</dt>
-                                <dd style="font-weight: bold; color: ${item.payment < 0 ? 'var(--color-danger)' : 'var(--color-primary)'};">¥ ${item.payment.toLocaleString()}</dd>
-                            </div>
-                        </dl>
-                        
-                        <div style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
-                             <button class="btn btn-neutral" onclick="alert('${item.name}の詳細')">
-                                詳細を確認
-                            </button>
-                        </div>
-                    </div>
-                `;
-                cardGrid.appendChild(card);
             });
 
             // Update Summary
@@ -523,6 +494,7 @@
             document.getElementById('edit-user-id').value = user.id;
             document.getElementById('edit-user-name').value = user.name;
             document.getElementById('edit-status-select').value = user.status;
+            document.getElementById('edit-payment-date').value = user.paymentDate;
 
             document.getElementById('modal-status-edit').style.display = 'flex';
         }
@@ -534,10 +506,12 @@
         function saveStatus() {
             const id = parseInt(document.getElementById('edit-user-id').value);
             const newStatus = document.getElementById('edit-status-select').value;
+            const newDate = document.getElementById('edit-payment-date').value;
 
             const user = currentData.find(u => u.id === id);
             if (user) {
                 user.status = newStatus;
+                user.paymentDate = newDate;
                 renderData();
                 closeStatusModal();
             }
