@@ -298,11 +298,83 @@
                 </div>
             </div>
 
+            <!-- Payment Detail Modal -->
+            <div class="modal-backdrop" id="modal-payment-detail" style="display: none;">
+                <div class="modal-content" style="max-width: 800px;">
+                    <div class="modal-header">
+                        支給明細詳細 <span id="detail-user-name"
+                            style="font-weight: normal; margin-left: 10px; font-size: 0.9em;"></span>
+                    </div>
+                    <div class="modal-body">
+                        <div style="display: flex; gap: var(--spacing-4); flex-wrap: wrap;">
+                            <!-- Wages Section -->
+                            <div style="flex: 1; min-width: 300px;">
+                                <h3
+                                    style="border-bottom: 2px solid var(--color-primary); padding-bottom: 4px; margin-bottom: 12px;">
+                                    支給の部</h3>
+
+                                <h4 style="font-size: 1em; color: var(--color-base-tertiary); margin-bottom: 8px;">基本工賃
+                                </h4>
+                                <table class="table" style="margin-bottom: 16px;">
+                                    <tbody id="detail-basic-wages">
+                                        <!-- Generated -->
+                                    </tbody>
+                                </table>
+
+                                <h4 style="font-size: 1em; color: var(--color-base-tertiary); margin-bottom: 8px;">加算手当
+                                </h4>
+                                <table class="table" style="margin-bottom: 16px;">
+                                    <tbody id="detail-allowances">
+                                        <!-- Generated -->
+                                    </tbody>
+                                </table>
+
+                                <div
+                                    style="text-align: right; font-weight: bold; padding: 8px; background-color: var(--color-base-secondary); border-radius: 4px;">
+                                    支給合計: ¥ <span id="detail-total-wages">0</span>
+                                </div>
+                            </div>
+
+                            <!-- Deductions Section -->
+                            <div style="flex: 1; min-width: 300px;">
+                                <h3
+                                    style="border-bottom: 2px solid var(--color-danger); padding-bottom: 4px; margin-bottom: 12px;">
+                                    控除の部</h3>
+
+                                <table class="table" style="margin-bottom: 16px;">
+                                    <tbody id="detail-deductions">
+                                        <!-- Generated -->
+                                    </tbody>
+                                </table>
+
+                                <div
+                                    style="text-align: right; font-weight: bold; padding: 8px; background-color: var(--color-base-secondary); border-radius: 4px;">
+                                    控除合計: ¥ <span id="detail-total-deductions">0</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Net Payment -->
+                        <div
+                            style="margin-top: 24px; padding: 16px; background-color: var(--color-base-secondary); border-radius: 8px; text-align: center;">
+                            <div style="font-size: 0.9em; color: var(--color-base-tertiary);">差引支給額</div>
+                            <div style="font-size: 2em; font-weight: bold; color: var(--color-primary);">¥ <span
+                                    id="detail-net-payment">0</span></div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" onclick="closeDetailModal()">閉じる</button>
+                    </div>
+                </div>
+            </div>
+
         </main>
     </div>
 
     <!-- Script for Logic -->
     <script>
+        // --- Dummy Data Definition ---
         // --- Dummy Data Definition ---
         const USERS = [
             { id: 1, name: "田中 健司", kana: "たなか けんじ" },
@@ -317,55 +389,105 @@
             // Get current target month
             const targetMonthStr = document.getElementById('target-month').value;
             let defaultDate = "";
+            let daysInMonth = 30; // Approximation
             if (targetMonthStr) {
                 const [year, month] = targetMonthStr.split('-').map(Number);
-                // Default: Next Month 20th (from wages-settings)
-                const nextMonth = new Date(year, month, 20); // month is 0-indexed in Date, but here input is 1-indexed. new Date(2023, 10, 20) is Nov 20th if month was Oct (9).
-                // Wait. input "2023-10". split gives 2023, 10.
-                // new Date(2023, 10, 20) -> Month 10 is November (0=Jan... 9=Oct, 10=Nov).
-                // So this correctly calculates "Next Month 20th".
+                // Default: Next Month 20th
+                const nextMonth = new Date(year, month, 20);
 
                 const y = nextMonth.getFullYear();
                 const m = String(nextMonth.getMonth() + 1).padStart(2, '0');
                 const d = String(nextMonth.getDate()).padStart(2, '0');
                 defaultDate = `${y}-${m}-${d}`;
+                daysInMonth = new Date(year, month, 0).getDate();
             }
 
-
             return USERS.map(user => {
-                // Adjusted to ensure positive payment (wages > deductions)
-                // Deductions are approx 40k-50k.
-                // Set Base Wage to 60,000 - 90,000
-                const baseWage = Math.floor(Math.random() * 30000) + 60000;
-                const adjustment = Math.floor(Math.random() * 2000) - 1000;
-                const totalWages = baseWage + adjustment;
+                // --- Basic Wages ---
+                // Level 1: 200, Level 2: 250, Level 3: 300
+                const level = Math.floor(Math.random() * 3) + 1;
+                const hourlyRate = level === 1 ? 200 : level === 2 ? 250 : 300;
+                // Worked Days: 15-22 days
+                const daysWorked = Math.floor(Math.random() * 8) + 15;
+                // Avg Hours/Day: 4-6
+                const hoursWorked = daysWorked * (Math.floor(Math.random() * 3) + 4);
+                const basicWageTotal = hourlyRate * hoursWorked;
 
-                const rent = 20000;
-                const utilities = Math.floor(Math.random() * 5000) + 3000;
-                const food = Math.floor(Math.random() * 10000) + 15000;
-                const totalDeductions = rent + utilities + food;
+                // --- Allowances ---
+                let allowances = [];
+                // Leader (10% chance)
+                if (Math.random() < 0.1) {
+                    const leaderDays = Math.floor(Math.random() * daysWorked) + 1;
+                    allowances.push({ name: "リーダー手当", unit: "100円/日", quantity: leaderDays + "日", amount: leaderDays * 100 });
+                }
+                // Off-site (30% chance)
+                if (Math.random() < 0.3) {
+                    const offsiteDays = Math.floor(Math.random() * daysWorked) + 1;
+                    allowances.push({ name: "施設外就労手当", unit: "200円/日", quantity: offsiteDays + "日", amount: offsiteDays * 200 });
+                }
+                // Attendance (Perfect 3000, Good 1000)
+                const absentDays = Math.floor(Math.random() * 5); // 0-4 days absent
+                if (absentDays === 0) {
+                    allowances.push({ name: "皆勤手当", unit: "3,000円/月", quantity: "1式", amount: 3000 });
+                } else if (absentDays <= 3) {
+                    allowances.push({ name: "精勤手当", unit: "1,000円/月", quantity: "1式", amount: 1000 });
+                }
+                // Commute (50% chance)
+                if (Math.random() < 0.5) {
+                    allowances.push({ name: "通信費補助", unit: "500円/月", quantity: "1式", amount: 500 });
+                }
+                // Incentive (Production Contribution)
+                const incentive = Math.floor(Math.random() * 5000); // 0 - 5000
+                if (incentive > 0) {
+                    allowances.push({ name: "インセンティブ", unit: "-", quantity: "1式", amount: incentive });
+                }
 
-                // Simple merged status log for demo
+                const allowanceTotal = allowances.reduce((sum, item) => sum + item.amount, 0);
+
+                // --- Deductions ---
+                let deductionsList = [];
+                // Lunch (80% chance, 300/day)
+                if (Math.random() < 0.8) {
+                    const lunchDays = Math.floor(Math.random() * daysWorked); // Not always every day
+                    if (lunchDays > 0) {
+                        deductionsList.push({ name: "昼食代", unit: "300円/食", quantity: lunchDays + "回", amount: lunchDays * 300 });
+                    }
+                }
+                // Transport (40% chance, 100/day)
+                if (Math.random() < 0.4) {
+                    const rideDays = Math.floor(Math.random() * daysWorked);
+                    if (rideDays > 0) {
+                        deductionsList.push({ name: "送迎費", unit: "100円/回", quantity: rideDays + "回", amount: rideDays * 100 });
+                    }
+                }
+                // Utilities (Fixed 1000)
+                deductionsList.push({ name: "光熱費", unit: "1,000円/月", quantity: "1式", amount: 1000 });
+
+                const deductionTotal = deductionsList.reduce((sum, item) => sum + item.amount, 0);
+
+                // --- Totals ---
+                const totalWages = basicWageTotal + allowanceTotal;
+                const payment = totalWages - deductionTotal;
+
+                // Status
                 const status = ['unconfirmed', 'confirmed', 'paid'][Math.floor(Math.random() * 3)];
 
                 return {
                     id: user.id,
                     name: user.name,
                     kana: user.kana,
+                    status: status,
+                    paymentDate: defaultDate,
                     wages: {
-                        base: baseWage,
-                        adjustment: adjustment,
+                        basic: { level: level, rate: hourlyRate, hours: hoursWorked, amount: basicWageTotal },
+                        allowances: allowances,
                         total: totalWages
                     },
                     deductions: {
-                        rent: rent,
-                        utilities: utilities,
-                        food: food,
-                        total: totalDeductions
+                        list: deductionsList,
+                        total: deductionTotal
                     },
-                    payment: totalWages - totalDeductions,
-                    status: status,
-                    paymentDate: defaultDate // Added default date
+                    payment: payment
                 };
             });
         }
@@ -379,10 +501,13 @@
             const month = String(today.getMonth() + 1).padStart(2, '0');
             document.getElementById('target-month').value = `${year}-${month}`;
 
-            // Generate Initial Data
+            // Generate Initial Data (also on initialization)
             currentData = generateData();
             renderData();
         }
+
+        // Auto-run init
+        initPage();
 
         function changeMonth(delta) {
             const input = document.getElementById('target-month');
@@ -406,15 +531,15 @@
             const sortOrder = document.getElementById('sort-order').value;
 
             // Filter
-            let displayData = currentData.filter(item => {
+            let displayData = currentData.filter(user => {
                 // Keyword
-                if (filterKeyword && !item.name.includes(filterKeyword) && !item.kana.includes(filterKeyword)) return false;
+                if (filterKeyword && !user.name.includes(filterKeyword) && !user.kana.includes(filterKeyword)) return false;
 
                 // Status
-                if (filterStatus && item.status !== filterStatus) {
-                    if (filterStatus === 'paid' && item.status !== 'paid') return false;
-                    if (filterStatus === 'confirmed' && item.status !== 'confirmed') return false;
-                    if (filterStatus === 'unconfirmed' && item.status !== 'unconfirmed') return false;
+                if (filterStatus && user.status !== filterStatus) {
+                    if (filterStatus === 'paid' && user.status !== 'paid') return false;
+                    if (filterStatus === 'confirmed' && user.status !== 'confirmed') return false;
+                    if (filterStatus === 'unconfirmed' && user.status !== 'unconfirmed') return false;
                 }
                 return true;
             });
@@ -422,10 +547,10 @@
             // Sort
             displayData.sort((a, b) => {
                 if (sortOrder === 'name_asc') {
-                    return a.kana.localeCompare(b.kana);
-                } else if (sortOrder === 'payment_desc') {
+                    return a.name.localeCompare(b.name);
+                } else if (sortOrder === 'amount_desc') {
                     return b.payment - a.payment;
-                } else if (sortOrder === 'payment_asc') {
+                } else if (sortOrder === 'amount_asc') {
                     return a.payment - b.payment;
                 }
                 return 0;
@@ -434,7 +559,6 @@
             // Render Rows & Calc Totals
             const tbody = document.getElementById('tbody-main');
             tbody.innerHTML = '';
-
 
             let sumWages = 0;
             let sumDeductions = 0;
@@ -445,7 +569,9 @@
                 sumDeductions += item.deductions.total;
                 sumPayment += item.payment;
 
-                // Status Badge Helper
+                const tr = document.createElement('tr');
+
+                // Status Badge
                 let statusBadge = '';
                 let statusClass = 'badge-neutral';
                 let statusText = '未確定';
@@ -453,40 +579,101 @@
                 if (item.status === 'confirmed') {
                     statusClass = 'badge-primary';
                     statusText = '確定済';
-                } else if (item.status === 'paid') {
+                }
+                else if (item.status === 'paid') {
                     statusClass = 'badge-success';
                     statusText = '支払済';
                 }
                 statusBadge = `<span class="badge ${statusClass}">${statusText}</span>`;
 
-                // --- Table Row Render ---
-                const tr = document.createElement('tr');
+                // Actions
                 const actions = `
-                    <button class="btn btn-sm btn-neutral" onclick="alert('${item.name}の詳細を開きます')">詳細</button>
-                    <button class="btn btn-icon btn-icon-sm btn-icon-success" onclick="openStatusModal(${item.id})"><span class="material-symbols-outlined">edit</span></button>
-                    <button class="btn btn-icon btn-icon-sm btn-icon-primary" onclick="alert('${item.name}の帳票を印刷します')"><span class="material-symbols-outlined">print</span></button>
-                `;
+                <button class="btn btn-sm btn-neutral" onclick="openDetailModal(${item.id})">詳細</button>
+                <button class="btn btn-icon btn-icon-sm btn-icon-success" onclick="openStatusModal(${item.id})"><span class="material-symbols-outlined">edit</span></button>
+                <button class="btn btn-icon btn-icon-sm btn-icon-primary" onclick="alert('${item.name}の支払明細書を印刷します')"><span class="material-symbols-outlined">print</span></button>
+            `;
 
                 tr.innerHTML = `
-                    <td style="font-weight: 500;">${item.name}</td>
-                    <td style="text-align: center;">${statusBadge}</td>
-                    <td style="text-align: center;">${item.paymentDate}</td>
-                    <td style="text-align: right;">¥ ${item.wages.total.toLocaleString()}</td>
-                    <td style="text-align: right;">¥ ${item.deductions.total.toLocaleString()}</td>
-                    <td style="text-align: right; font-weight: bold; color: ${item.payment < 0 ? 'var(--color-danger)' : 'inherit'};">¥ ${item.payment.toLocaleString()}</td>
-                    <td style="text-align: center; gap: 4px; display: flex; justify-content: center; align-items: center;">${actions}</td>
-                `;
+                <td style="font-weight: 500;">${item.name}</td>
+                <td style="text-align: center;">${statusBadge}</td>
+                <td style="text-align: center;">${item.paymentDate}</td>
+                <td style="text-align: right;">¥ ${item.wages.total.toLocaleString()}</td>
+                <td style="text-align: right;">¥ ${item.deductions.total.toLocaleString()}</td>
+                <td style="text-align: right; font-weight: bold; color: ${item.payment < 0 ? 'var(--color-danger)' : 'inherit'};">¥ ${item.payment.toLocaleString()}</td>
+                <td style="text-align: center; gap: 4px; display: flex; justify-content: center; align-items: center;">${actions}</td>
+            `;
                 tbody.appendChild(tr);
-
             });
 
             // Update Summary
             document.getElementById('summary-total-wages').textContent = sumWages.toLocaleString();
             document.getElementById('summary-total-deductions').textContent = sumDeductions.toLocaleString();
-            document.getElementById('summary-total-payment').textContent = sumPayment.toLocaleString();
+            document.getElementById('summary-grand-total').textContent = sumPayment.toLocaleString();
         }
 
-        // --- Modal Logic ---
+        // --- Detail Modal Logic ---
+        function openDetailModal(id) {
+            const user = currentData.find(u => u.id === id);
+            if (!user) return;
+
+            document.getElementById('detail-user-name').textContent = user.name;
+
+            // Basic Wages
+            const basic = user.wages.basic;
+            const basicHtml = `
+                <tr>
+                    <td>基本工賃 (Lv.${basic.level})</td>
+                    <td style="text-align: right;">@${basic.rate}円 × ${basic.hours}h</td>
+                    <td style="text-align: right;">¥ ${basic.amount.toLocaleString()}</td>
+                </tr>
+            `;
+            document.getElementById('detail-basic-wages').innerHTML = basicHtml;
+
+            // Allowances
+            let allowHtml = '';
+            user.wages.allowances.forEach(a => {
+                allowHtml += `
+                    <tr>
+                        <td>${a.name}</td>
+                        <td style="text-align: right;">${a.quantity}</td>
+                        <td style="text-align: right;">¥ ${a.amount.toLocaleString()}</td>
+                    </tr>
+                `;
+            });
+            if (user.wages.allowances.length === 0) {
+                allowHtml = '<tr><td colspan="3" style="text-align: center; color: var(--color-text-tertiary);">なし</td></tr>';
+            }
+            document.getElementById('detail-allowances').innerHTML = allowHtml;
+            document.getElementById('detail-total-wages').textContent = user.wages.total.toLocaleString();
+
+            // Deductions
+            let deductHtml = '';
+            user.deductions.list.forEach(d => {
+                deductHtml += `
+                    <tr>
+                        <td>${d.name}</td>
+                        <td style="text-align: right;">${d.quantity}</td>
+                        <td style="text-align: right;">¥ ${d.amount.toLocaleString()}</td>
+                    </tr>
+                `;
+            });
+            if (user.deductions.list.length === 0) {
+                deductHtml = '<tr><td colspan="3" style="text-align: center; color: var(--color-text-tertiary);">なし</td></tr>';
+            }
+            document.getElementById('detail-deductions').innerHTML = deductHtml;
+            document.getElementById('detail-total-deductions').textContent = user.deductions.total.toLocaleString();
+
+            // Net
+            document.getElementById('detail-net-payment').textContent = user.payment.toLocaleString();
+
+            document.getElementById('modal-payment-detail').style.display = 'flex';
+        }
+
+        function closeDetailModal() {
+            document.getElementById('modal-payment-detail').style.display = 'none';
+        }
+
+        // --- Status Modal Logic ---
         function openStatusModal(id) {
             const user = currentData.find(u => u.id === id);
             if (!user) return;
