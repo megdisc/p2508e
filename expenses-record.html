@@ -337,7 +337,7 @@
 
     <!-- Project Expenses Modal -->
     <div class="modal-backdrop" id="modal-project-expenses" style="display: none;">
-        <div class="modal-content modal-lg" style="max-width: 900px;">
+        <div class="modal-content modal-lg" style="max-width: 1000px;">
             <div class="modal-header">
                 <div style="display: flex; flex-direction: column;">
                     <span id="modal-title-label"
@@ -365,7 +365,7 @@
                     </div>
                 </div>
 
-                <div class="table-container" style="max-height: 50vh; overflow-y: auto;">
+                <div class="table-container">
                     <table class="table expense-table" style="width: 100%;">
                         <thead id="modal-table-header">
                             <!-- JS Generated -->
@@ -376,13 +376,11 @@
                     </table>
                 </div>
 
-                <div id="modal-save-hint"
-                    style="margin-top: var(--spacing-stack-md); padding: var(--spacing-3); background-color: var(--color-bg-subtle); border-radius: var(--radius-base); font-size: 0.9em; color: var(--color-text-secondary);">
-                    <p style="margin: 0;">※ 入力した内容は自動的に保存されます。</p>
-                </div>
+                <!-- Auto-save hint removed -->
 
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer" id="modal-project-footer">
+                <!-- Buttons injected by JS -->
                 <button class="btn btn-neutral" onclick="closeModal()">閉じる</button>
             </div>
         </div>
@@ -417,7 +415,7 @@
                     </div>
                 </div>
 
-                <div class="table-container" style="max-height: 50vh; overflow-y: auto;">
+                <div class="table-container">
                     <table class="table expense-table" style="width: 100%;">
                         <thead>
                             <tr>
@@ -531,10 +529,12 @@
 
         let currentModalProjectId = null;
         let currentModalMode = 'view'; // 'view' or 'edit'
+        let tempProjectRecords = []; // Temporary storage for Project Edit Modal
 
         document.addEventListener('DOMContentLoaded', () => {
-            renderProjectGrid();
+            let searchDebounceTimeout;
 
+            // --- Initialization ---
             // Initialize Date Inputs to Current Month
             const today = new Date();
             const yearStr = today.getFullYear();
@@ -736,6 +736,8 @@
 
         // --- Modal Logic ---
 
+        // --- Modal Logic ---
+
         function openExpenseModal(projectId, mode = 'view') {
             currentModalProjectId = projectId;
             currentModalMode = mode;
@@ -743,29 +745,71 @@
 
             document.getElementById('modal-project-name').textContent = project.name;
 
-            // Adjust Modal UI based on mode
-            const addBtn = document.getElementById('btn-add-expense');
-            const saveHint = document.getElementById('modal-save-hint');
+            // Header Title
+            // Header Title
             const titleLabel = document.getElementById('modal-title-label');
+            titleLabel.textContent = mode === 'edit' ? '費用編集' : '費用詳細（閲覧）';
 
+            // Add Button Handling (via JS injection or display toggle)
+            const addBtn = document.getElementById('btn-add-expense');
+            // We use a different button strategy or update this existing one.
+            // Let's rely on render logic to show/hide the Add button if it exists, or inject it.
+            // The existing HTML has `btn-add-expense`.
             if (mode === 'edit') {
                 addBtn.style.display = 'inline-flex';
-                saveHint.style.display = 'block';
-                titleLabel.textContent = '費用編集';
+                addBtn.onclick = addProjectExpenseRow; // Re-bind to new function
             } else {
                 addBtn.style.display = 'none';
-                saveHint.style.display = 'none';
-                titleLabel.textContent = '費用詳細（閲覧）';
             }
 
+            // Init Temp Data if Edit
+            if (mode === 'edit') {
+                // Clone all records for this project
+                tempProjectRecords = JSON.parse(JSON.stringify(
+                    expenseRecords.filter(r => r.projectId === projectId)
+                ));
+            }
+
+            updateProjectModalFooter();
             renderModalTable();
             document.getElementById('modal-project-expenses').style.display = 'flex';
         }
 
         function closeModal() {
+            // Confirmation removed as per request
+            document.getElementById('modal-project-expenses').style.display = 'none';
+            currentModalProjectId = null;
+            tempProjectRecords = [];
+            renderProjectGrid();
+        }
+
+        function updateProjectModalFooter() {
+            const footer = document.getElementById('modal-project-footer');
+            if (currentModalMode === 'edit') {
+                footer.innerHTML = `
+                    <button class="btn btn-neutral" onclick="closeModal()">キャンセル</button>
+                    <button class="btn btn-primary" onclick="saveProjectEdit()">保存</button>
+                `;
+            } else {
+                footer.innerHTML = `
+                    <button class="btn btn-neutral" onclick="closeModal()">閉じる</button>
+                `;
+            }
+        }
+
+        function saveProjectEdit() {
+            // Remove old records for this project
+            expenseRecords = expenseRecords.filter(r => r.projectId !== currentModalProjectId);
+
+            // Add new records (excluding deleted)
+            const newRecords = tempProjectRecords.filter(r => !r._deleted);
+            expenseRecords.push(...newRecords);
+
+            // Refresh
             document.getElementById('modal-project-expenses').style.display = 'none';
             currentModalProjectId = null;
             renderProjectGrid();
+            renderMonthlyViewTable(); // Update background view if needed
         }
 
         function renderModalTable() {
@@ -780,8 +824,9 @@
                         <th style="width: 140px;">日付</th>
                         <th style="width: 180px;">勘定科目</th>
                         <th>内容</th>
+                        <th style="width: 200px;">案件名</th>
                         <th style="width: 120px;">金額</th>
-                        <th style="width: 50px;"></th>
+                        <th style="width: 60px; text-align: center;">削除</th>
                     </tr>
                 `;
             } else {
@@ -790,50 +835,73 @@
                         <th style="width: 140px;">日付</th>
                         <th style="width: 180px;">勘定科目</th>
                         <th>内容</th>
+                        <th>案件名</th>
                         <th style="width: 120px;">金額</th>
                     </tr>
                 `;
             }
 
             const targetMonth = document.getElementById('modal-target-month').value;
-            let projectExpenses = expenseRecords.filter(r => r.projectId === currentModalProjectId);
 
-            if (targetMonth) {
-                projectExpenses = projectExpenses.filter(r => r.date.startsWith(targetMonth));
+            let displayRecords = [];
+            if (currentModalMode === 'edit') {
+                displayRecords = tempProjectRecords;
+            } else {
+                displayRecords = expenseRecords.filter(r => r.projectId === currentModalProjectId);
             }
 
-            projectExpenses.sort((a, b) => new Date(a.date) - new Date(b.date));
+            if (targetMonth) {
+                displayRecords = displayRecords.filter(r => r.date.startsWith(targetMonth));
+            }
+
+            displayRecords.sort((a, b) => new Date(a.date) - new Date(b.date));
 
             let total = 0;
+            const projectName = projectsData[currentModalProjectId].name;
 
-            projectExpenses.forEach(record => {
-                total += record.amount;
+            displayRecords.forEach(record => {
+                if (!record._deleted) {
+                    total += record.amount;
+                }
+
                 const tr = document.createElement('tr');
+                if (record._deleted) {
+                    tr.style.opacity = '0.5';
+                    tr.style.textDecoration = 'line-through';
+                }
 
                 if (currentModalMode === 'edit') {
-                    // Edit Mode (Inputs)
+                    // Edit Mode (Inputs) - Project Name is FIXED text
+                    // Generate Category Options
+                    let categoryOptions = `<option value="" disabled ${!record.category ? 'selected' : ''}>--</option>` +
+                        EXPENSE_CATEGORIES.map(c =>
+                            `<option value="${c}" ${c === record.category ? 'selected' : ''}>${c}</option>`
+                        ).join('');
+
                     tr.innerHTML = `
                         <td>
-                            <input type="date" class="input-field" value="${record.date}" 
-                                onchange="updateRecord('${record.id}', 'date', this.value)">
+                            <input type="date" class="input-field" value="${record.date}"
+                                onchange="updateProjectRecord('${record.id}', 'date', this.value)" ${record._deleted ? 'disabled' : ''}>
                         </td>
                         <td>
-                            <select class="input-field" onchange="updateRecord('${record.id}', 'category', this.value)">
-                                ${EXPENSE_CATEGORIES.map(c => `<option value="${c}" ${c === record.category ? 'selected' : ''}>${c}</option>`).join('')}
+                            <select class="input-field" onchange="updateProjectRecord('${record.id}', 'category', this.value)" ${record._deleted ? 'disabled' : ''}>
+                                ${categoryOptions}
                             </select>
                         </td>
                         <td>
                             <input type="text" class="input-field" value="${record.note}" placeholder="内容"
-                                onchange="updateRecord('${record.id}', 'note', this.value)">
+                                onchange="updateProjectRecord('${record.id}', 'note', this.value)" ${record._deleted ? 'disabled' : ''}>
+                        </td>
+                        <td>
+                            <span style="font-size: 0.9em; color: var(--color-text-secondary);">${projectName}</span>
                         </td>
                         <td>
                             <input type="number" class="input-field input-currency" value="${record.amount}" placeholder="0"
-                                onchange="updateRecord('${record.id}', 'amount', this.value)">
+                                onchange="updateProjectRecord('${record.id}', 'amount', this.value)" ${record._deleted ? 'disabled' : ''}>
                         </td>
                         <td style="text-align: center;">
-                            <button class="btn btn-icon btn-icon-error btn-icon-sm" onclick="deleteRecord('${record.id}')">
-                                <span class="material-symbols-outlined">delete</span>
-                            </button>
+                            <input type="checkbox" class="form-check-input" ${record._deleted ? 'checked' : ''}
+                                onchange="toggleDeleteProjectRecord('${record.id}')">
                         </td>
                     `;
                 } else {
@@ -842,6 +910,7 @@
                         <td>${record.date}</td>
                         <td>${record.category}</td>
                         <td>${record.note}</td>
+                        <td>${projectName}</td>
                         <td class="input-currency">¥ ${record.amount.toLocaleString()}</td>
                     `;
                 }
@@ -849,6 +918,43 @@
             });
 
             document.getElementById('modal-total-amount').textContent = total.toLocaleString();
+        }
+
+        function addProjectExpenseRow() {
+            const targetMonth = document.getElementById('modal-target-month').value;
+            const today = new Date().toISOString().slice(0, 10);
+            const defaultDate = (targetMonth && today.startsWith(targetMonth)) ? today : (targetMonth ? targetMonth + '-01' : today);
+
+            const newId = 'exp-' + Date.now();
+            const newRecord = {
+                id: newId,
+                projectId: currentModalProjectId,
+                date: defaultDate,
+                category: '', // Default empty
+                amount: 0,
+                note: ''
+            };
+            tempProjectRecords.push(newRecord);
+            renderModalTable();
+        }
+
+        function updateProjectRecord(id, field, value) {
+            const record = tempProjectRecords.find(r => r.id === id);
+            if (!record) return;
+
+            if (field === 'amount') {
+                record[field] = parseInt(value) || 0;
+            } else {
+                record[field] = value;
+            }
+            renderModalTable();
+        }
+
+        function toggleDeleteProjectRecord(id) {
+            const record = tempProjectRecords.find(r => r.id === id);
+            if (!record) return;
+            record._deleted = !record._deleted;
+            renderModalTable();
         }
 
         function addExpenseRow() {
@@ -912,23 +1018,22 @@
         }
 
         function closeMonthlyEditModal() {
-            if (confirm('保存されていない変更は破棄されます。よろしいですか？')) {
-                document.getElementById('modal-monthly-edit').style.display = 'none';
-                tempExpenseRecords = []; // Clear temp
-            }
+            // Confirmation removed
+            document.getElementById('modal-monthly-edit').style.display = 'none';
+            tempExpenseRecords = []; // Clear temp
         }
 
         function saveMonthlyEdit() {
             // Commit changes: remove deleted, merge existing
-            // Strategy: Replace records for ANY month we touched? 
-            // Simpler: We are editing everything in `tempExpenseRecords`. 
+            // Strategy: Replace records for ANY month we touched?
+            // Simpler: We are editing everything in `tempExpenseRecords`.
             // However, `tempExpenseRecords` initial state IS `expenseRecords`.
             // So we just filter out those marked `_deleted` and assign back.
 
             expenseRecords = tempExpenseRecords.filter(r => !r._deleted);
 
-            // Clean up temporary property if we want, but JS JSON.stringify usually ignores functions, 
-            // `_deleted` is just a prop. We can leave it or clean it. 
+            // Clean up temporary property if we want, but JS JSON.stringify usually ignores functions,
+            // `_deleted` is just a prop. We can leave it or clean it.
             // For now, simple assignment.
 
             document.getElementById('modal-monthly-edit').style.display = 'none';
@@ -969,20 +1074,21 @@
                     tr.style.textDecoration = 'line-through';
                 }
 
-                // Generate Project Options
-                let projectOptions = '';
-                Object.values(projectsData).forEach(p => {
-                    projectOptions += `<option value="${p.id}" ${p.id === record.projectId ? 'selected' : ''}>${p.name}</option>`;
-                });
+                // Project Options
+                let projectOptions = `<option value="" disabled ${!record.projectId ? 'selected' : ''}>--</option>` +
+                    Object.values(projectsData).map(p =>
+                        `<option value="${p.id}" ${p.id === record.projectId ? 'selected' : ''}>${p.name}</option>`
+                    ).join('');
 
-                // Generate Category Options
-                let categoryOptions = EXPENSE_CATEGORIES.map(c =>
-                    `<option value="${c}" ${c === record.category ? 'selected' : ''}>${c}</option>`
-                ).join('');
+                // Category Options
+                let categoryOptions = `<option value="" disabled ${!record.category ? 'selected' : ''}>--</option>` +
+                    EXPENSE_CATEGORIES.map(c =>
+                        `<option value="${c}" ${c === record.category ? 'selected' : ''}>${c}</option>`
+                    ).join('');
 
                 tr.innerHTML = `
                     <td>
-                        <input type="date" class="input-field" value="${record.date}" 
+                        <input type="date" class="input-field" value="${record.date}"
                             onchange="updateMonthlyRecord('${record.id}', 'date', this.value)" ${record._deleted ? 'disabled' : ''}>
                     </td>
                     <td>
@@ -1004,7 +1110,7 @@
                             onchange="updateMonthlyRecord('${record.id}', 'amount', this.value)" ${record._deleted ? 'disabled' : ''}>
                     </td>
                     <td style="text-align: center;">
-                        <input type="checkbox" class="form-check-input" ${record._deleted ? 'checked' : ''} 
+                        <input type="checkbox" class="form-check-input" ${record._deleted ? 'checked' : ''}
                             onchange="toggleDeleteMonthlyRecord('${record.id}')">
                     </td>
                 `;
@@ -1018,14 +1124,13 @@
             const today = new Date().toISOString().slice(0, 10);
             // Default to 1st of editing month
             const defaultDate = today.startsWith(editingMonth) ? today : (editingMonth + '-01');
-            const firstProjectId = Object.keys(projectsData)[0];
 
             const newId = 'exp-' + Date.now();
             const newRecord = {
                 id: newId,
-                projectId: firstProjectId,
                 date: defaultDate,
-                category: EXPENSE_CATEGORIES[0],
+                projectId: '', // Default empty
+                category: '', // Default empty
                 amount: 0,
                 note: ''
             };
