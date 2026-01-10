@@ -304,7 +304,8 @@
                                     合計: <span id="monthly-view-total"
                                         style="font-weight: bold; font-size: 1.2em;">0</span> 円
                                 </div>
-                                <button class="btn btn-icon btn-icon-primary btn-icon-sm" title="編集（デモ用）">
+                                <button class="btn btn-icon btn-icon-primary btn-icon-sm" title="一括編集"
+                                    onclick="openMonthlyEditModal()">
                                     <span class="material-symbols-outlined">edit</span>
                                 </button>
                             </div>
@@ -383,6 +384,62 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-neutral" onclick="closeModal()">閉じる</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Monthly Edit Modal -->
+    <div class="modal-backdrop" id="modal-monthly-edit" style="display: none;">
+        <div class="modal-content modal-lg" style="max-width: 1000px;">
+            <div class="modal-header">
+                <div style="display: flex; flex-direction: column;">
+                    <span style="font-size: 0.8em; color: var(--color-text-tertiary);">費用一括編集</span>
+                    <span id="modal-monthly-title" style="font-size: 1.2em; font-weight: bold;">--</span>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: var(--spacing-stack-md);">
+                    <div class="form-group" style="margin: 0;">
+                        <label class="form-label">対象月</label>
+                        <input type="month" id="modal-monthly-month-select" class="input-field"
+                            onchange="changeEditMonth(this.value)">
+                    </div>
+                    <div>
+                        <div style="text-align: right; font-size: 1.1em; font-weight: bold; margin-bottom: 4px;">
+                            合計: <span id="modal-monthly-total-amount">0</span> 円
+                        </div>
+                        <button class="btn btn-primary btn-sm" onclick="addMonthlyExpenseRow()">
+                            <span class="material-symbols-outlined"
+                                style="font-size: 1.2em; vertical-align: middle;">add</span>
+                            経費を追加
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container" style="max-height: 50vh; overflow-y: auto;">
+                    <table class="table expense-table" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th style="width: 140px;">日付</th>
+                                <th style="width: 180px;">勘定科目</th>
+                                <th>内容</th>
+                                <th style="width: 200px;">案件名</th>
+                                <th style="width: 120px;">金額</th>
+                                <th style="width: 60px; text-align: center;">削除</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modal-monthly-tbody">
+                            <!-- JS Generated -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Auto-save hint removed -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-neutral" onclick="closeMonthlyEditModal()">キャンセル</button>
+                <button class="btn btn-primary" onclick="saveMonthlyEdit()">保存</button>
             </div>
         </div>
     </div>
@@ -830,6 +887,170 @@
                 expenseRecords = expenseRecords.filter(r => r.id !== id);
                 renderModalTable();
             }
+        }
+
+        // --- Monthly Edit Modal Logic ---
+
+        let tempExpenseRecords = []; // Temporary storage for editing
+        let editingMonth = null;
+
+        function openMonthlyEditModal() {
+            const targetMonth = document.getElementById('monthly-view-month').value;
+            if (!targetMonth) return;
+
+            // Clone records
+            tempExpenseRecords = JSON.parse(JSON.stringify(expenseRecords));
+            editingMonth = targetMonth;
+
+            // Set Initial Values
+            const [year, month] = targetMonth.split('-');
+            document.getElementById('modal-monthly-title').textContent = `費用一括編集`;
+            document.getElementById('modal-monthly-month-select').value = targetMonth;
+
+            renderMonthlyEditTable();
+            document.getElementById('modal-monthly-edit').style.display = 'flex';
+        }
+
+        function closeMonthlyEditModal() {
+            if (confirm('保存されていない変更は破棄されます。よろしいですか？')) {
+                document.getElementById('modal-monthly-edit').style.display = 'none';
+                tempExpenseRecords = []; // Clear temp
+            }
+        }
+
+        function saveMonthlyEdit() {
+            // Commit changes: remove deleted, merge existing
+            // Strategy: Replace records for ANY month we touched? 
+            // Simpler: We are editing everything in `tempExpenseRecords`. 
+            // However, `tempExpenseRecords` initial state IS `expenseRecords`.
+            // So we just filter out those marked `_deleted` and assign back.
+
+            expenseRecords = tempExpenseRecords.filter(r => !r._deleted);
+
+            // Clean up temporary property if we want, but JS JSON.stringify usually ignores functions, 
+            // `_deleted` is just a prop. We can leave it or clean it. 
+            // For now, simple assignment.
+
+            document.getElementById('modal-monthly-edit').style.display = 'none';
+            renderMonthlyViewTable(); // Refresh main view
+            renderProjectGrid(); // Refresh project view as it shares data
+        }
+
+        function changeEditMonth(newMonth) {
+            editingMonth = newMonth;
+            renderMonthlyEditTable();
+        }
+
+        function renderMonthlyEditTable() {
+            const tbody = document.getElementById('modal-monthly-tbody');
+            tbody.innerHTML = '';
+
+            // Filter temp records by currently selected editing month
+            let monthlyRecords = tempExpenseRecords.filter(r => r.date.startsWith(editingMonth));
+
+            // Sort by Date Descending
+            monthlyRecords.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            let total = 0;
+
+            monthlyRecords.forEach(record => {
+                if (record._deleted) {
+                    // Skip deleted records from total calculation?
+                    // Better UI: Show them strikethrough or just don't show depending on req?
+                    // Req: "Checkbox to delete". Usually implies visible but marked.
+                    // Let's show them but greyed out.
+                } else {
+                    total += record.amount;
+                }
+
+                const tr = document.createElement('tr');
+                if (record._deleted) {
+                    tr.style.opacity = '0.5';
+                    tr.style.textDecoration = 'line-through';
+                }
+
+                // Generate Project Options
+                let projectOptions = '';
+                Object.values(projectsData).forEach(p => {
+                    projectOptions += `<option value="${p.id}" ${p.id === record.projectId ? 'selected' : ''}>${p.name}</option>`;
+                });
+
+                // Generate Category Options
+                let categoryOptions = EXPENSE_CATEGORIES.map(c =>
+                    `<option value="${c}" ${c === record.category ? 'selected' : ''}>${c}</option>`
+                ).join('');
+
+                tr.innerHTML = `
+                    <td>
+                        <input type="date" class="input-field" value="${record.date}" 
+                            onchange="updateMonthlyRecord('${record.id}', 'date', this.value)" ${record._deleted ? 'disabled' : ''}>
+                    </td>
+                    <td>
+                        <select class="input-field" onchange="updateMonthlyRecord('${record.id}', 'category', this.value)" ${record._deleted ? 'disabled' : ''}>
+                            ${categoryOptions}
+                        </select>
+                    </td>
+                    <td>
+                        <input type="text" class="input-field" value="${record.note}" placeholder="内容"
+                            onchange="updateMonthlyRecord('${record.id}', 'note', this.value)" ${record._deleted ? 'disabled' : ''}>
+                    </td>
+                    <td>
+                        <select class="input-field" onchange="updateMonthlyRecord('${record.id}', 'projectId', this.value)" ${record._deleted ? 'disabled' : ''}>
+                            ${projectOptions}
+                        </select>
+                    </td>
+                    <td>
+                        <input type="number" class="input-field input-currency" value="${record.amount}" placeholder="0"
+                            onchange="updateMonthlyRecord('${record.id}', 'amount', this.value)" ${record._deleted ? 'disabled' : ''}>
+                    </td>
+                    <td style="text-align: center;">
+                        <input type="checkbox" class="form-check-input" ${record._deleted ? 'checked' : ''} 
+                            onchange="toggleDeleteMonthlyRecord('${record.id}')">
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('modal-monthly-total-amount').textContent = total.toLocaleString();
+        }
+
+        function addMonthlyExpenseRow() {
+            const today = new Date().toISOString().slice(0, 10);
+            // Default to 1st of editing month
+            const defaultDate = today.startsWith(editingMonth) ? today : (editingMonth + '-01');
+            const firstProjectId = Object.keys(projectsData)[0];
+
+            const newId = 'exp-' + Date.now();
+            const newRecord = {
+                id: newId,
+                projectId: firstProjectId,
+                date: defaultDate,
+                category: EXPENSE_CATEGORIES[0],
+                amount: 0,
+                note: ''
+            };
+            tempExpenseRecords.push(newRecord);
+            renderMonthlyEditTable();
+        }
+
+        function updateMonthlyRecord(id, field, value) {
+            const record = tempExpenseRecords.find(r => r.id === id);
+            if (!record) return;
+
+            if (field === 'amount') {
+                record[field] = parseInt(value) || 0;
+            } else {
+                record[field] = value;
+            }
+            renderMonthlyEditTable();
+        }
+
+        function toggleDeleteMonthlyRecord(id) {
+            const record = tempExpenseRecords.find(r => r.id === id);
+            if (!record) return;
+
+            record._deleted = !record._deleted;
+            renderMonthlyEditTable();
         }
     </script>
 </body>
