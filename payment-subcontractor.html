@@ -162,15 +162,268 @@
 
             <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
 
-                <h1 style="margin: 0 0 var(--spacing-stack-md) 0;">外注先支払</h1>
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
+                    <h1 style="margin: 0;">外注先支払</h1>
+                    <!-- Bulk Print Button -->
+                    <button class="btn btn-neutral" onclick="alert('表示中の一覧を一括印刷します')">
+                        <span class="material-symbols-outlined">print</span> 一括印刷
+                    </button>
+                </div>
 
-                <div class="card">
-                    <div class="card-body">
-                        <p>これは「外注先支払」ページです。ここに内容を記述します。</p>
+                <!-- Controls Area -->
+                <div style="margin-bottom: var(--spacing-stack-md);">
+                    <div
+                        style="display: flex; justify-content: flex-end; align-items: center; flex-wrap: wrap; gap: var(--spacing-4);">
+
+                        <!-- Month Selector -->
+                        <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                            <button class="btn btn-icon btn-neutral" onclick="changeMonth(-1)"><span
+                                    class="material-symbols-outlined">chevron_left</span></button>
+                            <input type="month" id="target-month" class="input-field" style="width: auto;"
+                                onchange="renderData()">
+                            <button class="btn btn-icon btn-neutral" onclick="changeMonth(1)"><span
+                                    class="material-symbols-outlined">chevron_right</span></button>
+                        </div>
                     </div>
                 </div>
 
+                <!-- Filter & Sort Area -->
+                <div
+                    style="display: flex; gap: var(--spacing-stack-md); flex-wrap: wrap; margin-bottom: var(--spacing-stack-md);">
+                    <div class="card" style="flex: 1; min-width: 320px;">
+                        <div class="card-body"
+                            style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
+                            <div class="form-group" style="margin: 0; flex: 1; min-width: 200px;">
+                                <label class="form-label">外注先名検索</label>
+                                <input type="text" id="filter-keyword" class="input-field" placeholder="外注先名..."
+                                    oninput="renderData()">
+                            </div>
+                            <div class="form-group" style="margin: 0; min-width: 160px;">
+                                <label class="form-label">ステータス</label>
+                                <select id="filter-status" class="input-field" onchange="renderData()">
+                                    <option value="">すべて</option>
+                                    <option value="unconfirmed">未確定</option>
+                                    <option value="confirmed">確定済</option>
+                                    <option value="paid">支払済</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="flex: 0 0 auto;">
+                        <div class="card-body"
+                            style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
+                            <div class="form-group" style="margin: 0; width: 180px;">
+                                <label class="form-label">並び替え</label>
+                                <select id="sort-order" class="input-field" onchange="renderData()">
+                                    <option value="name_asc">外注先名 (あいうえお順)</option>
+                                    <option value="amount_desc">金額 (高い順)</option>
+                                    <option value="amount_asc">金額 (安い順)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary Section -->
+                <div
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-stack-md); margin-bottom: var(--spacing-stack-md);">
+                    <!-- Total Payment (Excl. Tax) -->
+                    <div class="card">
+                        <div class="card-body" style="text-align: center;">
+                            <div style="font-size: 0.9em; color: var(--color-text-tertiary); margin-bottom: 4px;">支払総額
+                                (税抜)</div>
+                            <div style="font-size: 1.5em; font-weight: bold;">¥ <span
+                                    id="summary-total-payment">0</span></div>
+                        </div>
+                    </div>
+                    <!-- Tax -->
+                    <div class="card">
+                        <div class="card-body" style="text-align: center;">
+                            <div style="font-size: 0.9em; color: var(--color-text-tertiary); margin-bottom: 4px;">内消費税
+                            </div>
+                            <div style="font-size: 1.5em; font-weight: bold;">¥ <span id="summary-total-tax">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Grand Total -->
+                    <div class="card" style="border-left: 4px solid var(--color-primary);">
+                        <div class="card-body" style="text-align: center;">
+                            <div
+                                style="font-size: 0.9em; color: var(--color-primary); font-weight: bold; margin-bottom: 4px;">
+                                税込合計</div>
+                            <div style="font-size: 1.5em; font-weight: bold; color: var(--color-primary);">¥ <span
+                                    id="summary-grand-total">0</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Table Area (Standalone) -->
+                <div class="table-container is-standalone">
+                    <table class="table" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th>外注先名</th>
+                                <th style="text-align: center; width: 80px;">件数</th>
+                                <th style="text-align: right; width: 150px;">支払額(税抜)</th>
+                                <th style="text-align: right; width: 150px;">税込合計</th>
+                                <th style="width: 120px; text-align: center;">ステータス</th>
+                                <th style="width: 180px; text-align: center;">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-main">
+                            <!-- Generated -->
+                        </tbody>
+                    </table>
+                </div>
+
             </div>
+
+            <!-- Script for Logic -->
+            <script>
+                // --- Dummy Data Definition ---
+                const SUBCONTRACTORS = [
+                    { id: 1, name: "テックサポート株式会社", kana: "てっくさぽーとかぶしきがいしゃ" },
+                    { id: 2, name: "クリーンサービス有限会社", kana: "くりーんさーびすゆうげんがいしゃ" },
+                    { id: 3, name: "デザインスタジオ・クロ", kana: "でざいんすたじおくろ" },
+                    { id: 4, name: "博多ロジスティクス", kana: "はかたろじすてぃくす" },
+                    { id: 5, name: "株式会社システムワン", kana: "かぶしきがいしゃしすてむわん" }
+                ];
+
+                // Random data generator
+                function generateData() {
+                    return SUBCONTRACTORS.map(sub => {
+                        const count = Math.floor(Math.random() * 3) + 1;
+                        const baseAmount = (Math.floor(Math.random() * 30) + 5) * 10000; // 50,000 - 350,000
+                        const tax = Math.floor(baseAmount * 0.1);
+                        const total = baseAmount + tax;
+
+                        // Status
+                        const status = ['unconfirmed', 'confirmed', 'paid'][Math.floor(Math.random() * 3)];
+
+                        return {
+                            id: sub.id,
+                            name: sub.name,
+                            kana: sub.kana,
+                            count: count,
+                            baseAmount: baseAmount,
+                            tax: tax,
+                            total: total,
+                            status: status
+                        };
+                    });
+                }
+
+                let currentData = [];
+
+                function initPage() {
+                    // Set current month
+                    const today = new Date();
+                    const year = today.getFullYear();
+                    const month = String(today.getMonth() + 1).padStart(2, '0');
+                    document.getElementById('target-month').value = `${year}-${month}`;
+
+                    // Generate Initial Data (also on initialization)
+                    currentData = generateData();
+                    renderData();
+                }
+
+                // Auto-run init
+                initPage();
+
+                function changeMonth(delta) {
+                    const input = document.getElementById('target-month');
+                    if (!input.value) return;
+
+                    const date = new Date(input.value + '-01');
+                    date.setMonth(date.getMonth() + delta);
+
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    input.value = `${year}-${month}`;
+
+                    // Regenerate data for "new month" simulation
+                    currentData = generateData();
+                    renderData();
+                }
+
+                function renderData() {
+                    const filterKeyword = document.getElementById('filter-keyword').value.toLowerCase();
+                    const filterStatus = document.getElementById('filter-status').value;
+                    const sortOrder = document.getElementById('sort-order').value;
+
+                    // Filter
+                    let displayData = currentData.filter(item => {
+                        // Keyword
+                        if (filterKeyword && !item.name.includes(filterKeyword) && !item.kana.includes(filterKeyword)) return false;
+
+                        // Status
+                        if (filterStatus && item.status !== filterStatus) {
+                            if (filterStatus === 'paid' && item.status !== 'paid') return false;
+                            if (filterStatus === 'confirmed' && item.status !== 'confirmed') return false;
+                            if (filterStatus === 'unconfirmed' && item.status !== 'unconfirmed') return false;
+                        }
+                        return true;
+                    });
+
+                    // Sort
+                    displayData.sort((a, b) => {
+                        if (sortOrder === 'name_asc') {
+                            return a.kana.localeCompare(b.kana);
+                        } else if (sortOrder === 'amount_desc') {
+                            return b.total - a.total;
+                        } else if (sortOrder === 'amount_asc') {
+                            return a.total - b.total;
+                        }
+                        return 0;
+                    });
+
+                    // Render Rows & Calc Totals
+                    const tbody = document.getElementById('tbody-main');
+                    tbody.innerHTML = '';
+
+                    let sumPayment = 0;
+                    let sumTax = 0;
+                    let sumGrandTotal = 0;
+
+                    displayData.forEach(item => {
+                        sumPayment += item.baseAmount;
+                        sumTax += item.tax;
+                        sumGrandTotal += item.total;
+
+                        const tr = document.createElement('tr');
+
+                        // Status Badge
+                        let statusBadge = '';
+                        if (item.status === 'unconfirmed') statusBadge = '<span class="badge badge-neutral">未確定</span>';
+                        else if (item.status === 'confirmed') statusBadge = '<span class="badge badge-primary">確定済</span>';
+                        else statusBadge = '<span class="badge badge-success">完了</span>';
+
+                        // Actions
+                        const actions = `
+                    <button class="btn btn-sm btn-neutral" onclick="alert('${item.name}の詳細を開きます')">詳細</button>
+                    <button class="btn btn-sm btn-neutral" onclick="alert('${item.name}の支払通知書を印刷します')"><span class="material-symbols-outlined" style="font-size: 1.2em;">print</span></button>
+                `;
+
+                        tr.innerHTML = `
+                    <td style="font-weight: 500;">${item.name}</td>
+                    <td style="text-align: center;">${item.count}件</td>
+                    <td style="text-align: right;">¥ ${item.baseAmount.toLocaleString()}</td>
+                    <td style="text-align: right; font-weight: bold;">¥ ${item.total.toLocaleString()}</td>
+                    <td style="text-align: center;">${statusBadge}</td>
+                    <td style="text-align: center; gap: 4px; display: flex; justify-content: center;">${actions}</td>
+                `;
+                        tbody.appendChild(tr);
+                    });
+
+                    // Update Summary
+                    document.getElementById('summary-total-payment').textContent = sumPayment.toLocaleString();
+                    document.getElementById('summary-total-tax').textContent = sumTax.toLocaleString();
+                    document.getElementById('summary-grand-total').textContent = sumGrandTotal.toLocaleString();
+                }
+
+            </script>
 
         </main>
     </div>
