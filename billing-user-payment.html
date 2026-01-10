@@ -300,71 +300,78 @@
 
             <!-- Payment Detail Modal -->
             <div class="modal-backdrop" id="modal-payment-detail" style="display: none;">
-                <div class="modal-content" style="max-width: 800px;">
+                <div class="modal-content" style="max-width: 600px;">
                     <div class="modal-header">
                         支給明細詳細 <span id="detail-user-name"
                             style="font-weight: normal; margin-left: 10px; font-size: 0.9em;"></span>
                     </div>
                     <div class="modal-body">
-                        <div style="display: flex; gap: var(--spacing-4); flex-wrap: wrap;">
-                            <!-- Wages Section -->
-                            <div style="flex: 1; min-width: 300px;">
-                                <h3
-                                    style="border-bottom: 2px solid var(--color-primary); padding-bottom: 4px; margin-bottom: 12px;">
-                                    支給の部</h3>
 
-                                <h4 style="font-size: 1em; color: var(--color-base-tertiary); margin-bottom: 8px;">基本工賃
-                                </h4>
-                                <table class="table" style="margin-bottom: 16px;">
-                                    <tbody id="detail-basic-wages">
-                                        <!-- Generated -->
-                                    </tbody>
-                                </table>
-
-                                <h4 style="font-size: 1em; color: var(--color-base-tertiary); margin-bottom: 8px;">加算手当
-                                </h4>
-                                <table class="table" style="margin-bottom: 16px;">
-                                    <tbody id="detail-allowances">
-                                        <!-- Generated -->
-                                    </tbody>
-                                </table>
-
+                        <!-- Summary Section -->
+                        <div
+                            style="display: flex; gap: var(--spacing-2); margin-bottom: var(--spacing-4); background-color: var(--color-base-secondary); padding: var(--spacing-3); border-radius: var(--radius-md);">
+                            <div
+                                style="flex: 1; text-align: center; border-right: 1px solid var(--color-base-quinary);">
                                 <div
-                                    style="text-align: right; font-weight: bold; padding: 8px; background-color: var(--color-base-secondary); border-radius: 4px;">
-                                    支給合計: ¥ <span id="detail-total-wages">0</span>
-                                </div>
+                                    style="font-size: var(--font-size-xs); color: var(--color-base-quaternary); margin-bottom: 2px;">
+                                    工賃合計</div>
+                                <div style="font-size: var(--font-size-lg); font-weight: bold;">¥ <span
+                                        id="detail-summary-wages">0</span></div>
                             </div>
-
-                            <!-- Deductions Section -->
-                            <div style="flex: 1; min-width: 300px;">
-                                <h3
-                                    style="border-bottom: 2px solid var(--color-danger); padding-bottom: 4px; margin-bottom: 12px;">
-                                    控除の部</h3>
-
-                                <table class="table" style="margin-bottom: 16px;">
-                                    <tbody id="detail-deductions">
-                                        <!-- Generated -->
-                                    </tbody>
-                                </table>
-
+                            <div
+                                style="flex: 1; text-align: center; border-right: 1px solid var(--color-base-quinary);">
                                 <div
-                                    style="text-align: right; font-weight: bold; padding: 8px; background-color: var(--color-base-secondary); border-radius: 4px;">
-                                    控除合計: ¥ <span id="detail-total-deductions">0</span>
-                                </div>
+                                    style="font-size: var(--font-size-xs); color: var(--color-base-quaternary); margin-bottom: 2px;">
+                                    控除合計</div>
+                                <div
+                                    style="font-size: var(--font-size-lg); font-weight: bold; color: var(--color-danger);">
+                                    ¥ <span id="detail-summary-deductions">0</span></div>
+                            </div>
+                            <div style="flex: 1; text-align: center;">
+                                <div
+                                    style="font-size: var(--font-size-xs); color: var(--color-base-quaternary); margin-bottom: 2px;">
+                                    支給額</div>
+                                <div
+                                    style="font-size: var(--font-size-lg); font-weight: bold; color: var(--color-primary);">
+                                    ¥ <span id="detail-summary-net">0</span></div>
                             </div>
                         </div>
 
-                        <!-- Net Payment -->
-                        <div
-                            style="margin-top: 24px; padding: 16px; background-color: var(--color-base-secondary); border-radius: 8px; text-align: center;">
-                            <div style="font-size: 0.9em; color: var(--color-base-tertiary);">差引支給額</div>
-                            <div style="font-size: 2em; font-weight: bold; color: var(--color-primary);">¥ <span
-                                    id="detail-net-payment">0</span></div>
+                        <!-- Stacked Sections -->
+                        <div style="margin-bottom: var(--spacing-4);">
+                            <h4
+                                style="font-size: 1em; color: var(--color-base-tertiary); margin-bottom: 8px; border-bottom: 2px solid var(--color-primary); padding-bottom: 4px;">
+                                工賃明細</h4>
+
+                            <div style="margin-bottom: 8px;">
+                                <div style="font-weight: bold; font-size: var(--font-size-sm); margin-bottom: 4px;">基本工賃
+                                </div>
+                                <table class="table">
+                                    <tbody id="detail-basic-wages"></tbody>
+                                </table>
+                            </div>
+
+                            <div>
+                                <div style="font-weight: bold; font-size: var(--font-size-sm); margin-bottom: 4px;">加算手当
+                                </div>
+                                <table class="table">
+                                    <tbody id="detail-allowances"></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4
+                                style="font-size: 1em; color: var(--color-base-tertiary); margin-bottom: 8px; border-bottom: 2px solid var(--color-danger); padding-bottom: 4px;">
+                                控除明細</h4>
+                            <table class="table">
+                                <tbody id="detail-deductions"></tbody>
+                            </table>
                         </div>
 
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-primary" onclick="closeDetailModal()">閉じる</button>
+                        <button class="btn btn-neutral" onclick="closeDetailModal()">閉じる</button>
                     </div>
                 </div>
             </div>
@@ -618,6 +625,11 @@
 
             document.getElementById('detail-user-name').textContent = user.name;
 
+            // Summary
+            document.getElementById('detail-summary-wages').textContent = user.wages.total.toLocaleString();
+            document.getElementById('detail-summary-deductions').textContent = user.deductions.total.toLocaleString();
+            document.getElementById('detail-summary-net').textContent = user.payment.toLocaleString();
+
             // Basic Wages
             const basic = user.wages.basic;
             const basicHtml = `
@@ -644,7 +656,6 @@
                 allowHtml = '<tr><td colspan="3" style="text-align: center; color: var(--color-text-tertiary);">なし</td></tr>';
             }
             document.getElementById('detail-allowances').innerHTML = allowHtml;
-            document.getElementById('detail-total-wages').textContent = user.wages.total.toLocaleString();
 
             // Deductions
             let deductHtml = '';
@@ -661,10 +672,6 @@
                 deductHtml = '<tr><td colspan="3" style="text-align: center; color: var(--color-text-tertiary);">なし</td></tr>';
             }
             document.getElementById('detail-deductions').innerHTML = deductHtml;
-            document.getElementById('detail-total-deductions').textContent = user.deductions.total.toLocaleString();
-
-            // Net
-            document.getElementById('detail-net-payment').textContent = user.payment.toLocaleString();
 
             document.getElementById('modal-payment-detail').style.display = 'flex';
         }
