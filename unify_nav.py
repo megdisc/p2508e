@@ -1,72 +1,8 @@
-<!DOCTYPE html>
-<html lang="ja">
+import os
+import re
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow">
-    <title>Compath - 国保連請求</title>
-
-    <link rel="stylesheet" href="globals.css">
-    <link rel="stylesheet" href="ui.css">
-
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-
-    <script>
-        // モーダル
-        function showModal(id) {
-            document.getElementById(id).style.display = 'flex';
-        }
-        function hideModal(id) {
-            document.getElementById(id).style.display = 'none';
-        }
-
-        // タブ
-        function activateTab(tabGroup, tabId) {
-            // リンクのアクティブ状態を切り替え
-            // (注: シェル変数  と誤認されないよう ${...} とエスケープ)
-            const links = document.querySelectorAll(`#${tabGroup} .tab-link`);
-            links.forEach(link => link.classList.remove('is-active'));
-            document.querySelector(`#${tabGroup} .tab-link[onclick*="'${tabId}'"]`).classList.add('is-active');
-
-            // コンテンツの表示を切り替え
-            const contents = document.querySelectorAll(`#${tabGroup}-content .tab-content`);
-            contents.forEach(content => content.classList.remove('is-active'));
-            document.getElementById(tabId).classList.add('is-active');
-        }
-
-        // サイドバーの現在地連動（アコーディオン自動展開）
-        document.addEventListener("DOMContentLoaded", () => {
-            const currentFile = window.location.pathname.split("/").pop();
-            document.querySelectorAll(".sidebar-nav a").forEach(link => {
-                if (link.getAttribute("href") === currentFile) {
-                    link.classList.add("active");
-                    const details = link.closest("details");
-                    if (details) details.open = true;
-                }
-            });
-        });
-    </script>
-</head>
-
-<body>
-
-    <div class="page-wrapper">
-
-        <aside class="sidebar">
-
-            <div class="sidebar-header">
-                <div style="width: 100%; text-align: center;">
-                    <div style="margin-bottom: var(--spacing-stack-xs);">Compath</div>
-                    <select class="input-field">
-                        <option value="tenjin">こんぱす天神</option>
-                        <option value="hakata">こんぱす博多</option>
-                    </select>
-                </div>
-            </div>
-
-                        <nav class="sidebar-nav">
+# Master Nav Content from index.html
+MASTER_NAV = """            <nav class="sidebar-nav">
                 <a href="index.html" class="nav-link">トップ</a>
                 <details class="nav-accordion">
                     <summary>施設情報</summary>
@@ -138,33 +74,66 @@
                 </details>
                 <a href="account.html" class="nav-link">ユーザーアカウント</a>
                 <a href="styleguide.html" class="nav-link">スタイルガイド</a>
-            </nav>
+            </nav>"""
 
-            <div class="sidebar-footer">
-                <div class="user-info">
-                    <span class="user-name">田中 健司</span>
-                    <a href="#">ログアウト</a>
-                </div>
-            </div>
+# JS for Active State
+ACTIVE_STATE_JS = """        // サイドバーの現在地連動（アコーディオン自動展開）
+        document.addEventListener("DOMContentLoaded", () => {
+            const currentFile = window.location.pathname.split("/").pop();
+            document.querySelectorAll(".sidebar-nav a").forEach(link => {
+                if (link.getAttribute("href") === currentFile) {
+                    link.classList.add("active");
+                    const details = link.closest("details");
+                    if (details) details.open = true;
+                }
+            });
+        });"""
 
-        </aside>
-        <main class="main-content">
+TARGET_DIR = "/home/nomadlab/projects/p2508e"
 
-            <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
+def update_file(filepath):
+    print(f"Processing {filepath}...")
+    try:
+        with open(filepath, 'r', encoding='utf-8') as f:
+            content = f.read()
+    except Exception as e:
+        print(f"Error reading {filepath}: {e}")
+        return
 
-                <h1 style="margin: 0 0 var(--spacing-stack-md) 0;">国保連請求</h1>
+    # Regex to find the sidebar-nav block
+    # capture everything from <nav class="sidebar-nav"> to </nav>
+    # Use dotall to match newlines
+    pattern = re.compile(r'<nav class="sidebar-nav">.*?</nav>', re.DOTALL)
+    
+    new_content = content
+    if pattern.search(content):
+        new_content = pattern.sub(MASTER_NAV, content)
+    else:
+        print(f"Warning: Could not find sidebar-nav in {filepath}")
+        
+    # Special handling for savings-settings.html to add JS
+    if "savings-settings.html" in filepath:
+        if "サイドバーの現在地連動" not in new_content:
+            # Insert JS before </head>
+            js_injection = f"""    <script>
+{ACTIVE_STATE_JS}
+    </script>
+"""
+            new_content = new_content.replace('</head>', f'{js_injection}</head>')
+            print(f"  -> Injected JS")
 
-                <div class="card">
-                    <div class="card-body">
-                        <p>これは「国保連請求」ページです。ここに内容を記述します。</p>
-                    </div>
-                </div>
+    if content != new_content:
+        with open(filepath, 'w', encoding='utf-8') as f:
+            f.write(new_content)
+        print(f"  -> Updated")
+    else:
+        print(f"  -> No changes needed")
 
-            </div>
+def main():
+    for filename in os.listdir(TARGET_DIR):
+        if filename.endswith(".html") and filename != "index.html" and not filename.startswith("k_"):
+            filepath = os.path.join(TARGET_DIR, filename)
+            update_file(filepath)
 
-        </main>
-    </div>
-
-</body>
-
-</html>
+if __name__ == "__main__":
+    main()
