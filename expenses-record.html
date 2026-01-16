@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>Compath - 費用記録</title>
+    <title>Compath - その他費用支払</title>
 
     <link rel="stylesheet" href="globals.css">
     <link rel="stylesheet" href="ui.css">
@@ -85,6 +85,19 @@
             color: var(--color-text-primary);
         }
     </style>
+    <script>
+        // サイドバーの現在地連動（アコーディオン自動展開）
+        document.addEventListener("DOMContentLoaded", () => {
+            const currentFile = window.location.pathname.split("/").pop();
+            document.querySelectorAll(".sidebar-nav a").forEach(link => {
+                if (link.getAttribute("href") === currentFile) {
+                    link.classList.add("active");
+                    const details = link.closest("details");
+                    if (details) details.open = true;
+                }
+            });
+        });
+    </script>
 </head>
 
 <body>
@@ -102,7 +115,7 @@
                 </div>
             </div>
             <!-- Navigation -->
-                        <nav class="sidebar-nav">
+            <nav class="sidebar-nav">
                 <a href="index.html" class="nav-link">トップ</a>
                 <details class="nav-accordion">
                     <summary>施設情報</summary>
@@ -150,7 +163,6 @@
                     <ul>
                         <li><a href="projects.html">案件情報</a></li>
                         <li><a href="schedule.html">進捗状況</a></li>
-                        <li><a href="expenses-record.html">費用記録</a></li>
                     </ul>
                 </details>
                 <details class="nav-accordion">
@@ -160,6 +172,7 @@
                         <li><a href="billing-customer.html">顧客請求</a></li>
                         <li><a href="payment-subcontractor.html">外注先支払</a></li>
                         <li><a href="billing-user-payment.html">利用者支払・請求</a></li>
+                        <li><a href="expenses-record.html">その他費用支払</a></li>
                     </ul>
                 </details>
                 <a href="accounting-documents.html" class="nav-link">年次会計</a>
@@ -184,7 +197,7 @@
             <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
 
                 <div style="margin-bottom: var(--spacing-stack-md);">
-                    <h1 style="margin: 0 0 var(--spacing-stack-sm) 0;">費用記録</h1>
+                    <h1 style="margin: 0 0 var(--spacing-stack-sm) 0;">その他費用支払</h1>
 
                     <div
                         style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--spacing-4);">
