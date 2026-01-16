@@ -202,11 +202,11 @@
                     <div style="display: flex; gap: var(--spacing-2);">
                         <!-- Bulk Edit Button -->
                         <button class="btn btn-success" onclick="openMonthlyEditModal()">
-                            <span class="material-symbols-outlined">edit</span> 一括編集
+                            <span class="material-symbols-outlined">edit</span> 追加・編集
                         </button>
                         <!-- Bulk Print Button -->
                         <button class="btn btn-primary" onclick="alert('表示中の一覧を一括印刷します')">
-                            <span class="material-symbols-outlined">print</span> 一括印刷
+                            <span class="material-symbols-outlined">print</span> 印刷
                         </button>
                     </div>
                 </div>
@@ -281,7 +281,6 @@
                                 <th>内容</th>
                                 <th>案件名</th>
                                 <th style="width: 120px; text-align: right;">金額</th>
-                                <th style="width: 100px; text-align: center;">操作</th>
                             </tr>
                         </thead>
                         <tbody id="tbody-main">
@@ -501,18 +500,12 @@
                 const projectName = project ? project.name : r.projectId;
 
                 const tr = document.createElement('tr');
-                // Actions (Edit only for now)
-                const actions = `
-                    <button class="btn btn-icon btn-icon-sm btn-icon-neutral" onclick="openMonthlyEditModal('${targetMonth}')" title="編集"><span class="material-symbols-outlined">edit</span></button>
-                `;
-
                 tr.innerHTML = `
                     <td>${r.date}</td>
                     <td>${r.category}</td>
                     <td>${r.note}</td>
                     <td>${projectName}</td>
                     <td style="text-align: right; font-weight: bold;">¥ ${r.amount.toLocaleString()}</td>
-                    <td style="text-align: center;">${actions}</td>
                 `;
                 tbody.appendChild(tr);
             });
