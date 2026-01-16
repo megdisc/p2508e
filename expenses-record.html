@@ -196,210 +196,102 @@
         <main class="main-content">
             <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
 
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
+                    <h1 style="margin: 0;">その他費用支払</h1>
+                    <div style="display: flex; gap: var(--spacing-2);">
+                        <!-- Bulk Edit Button -->
+                        <button class="btn btn-success" onclick="openMonthlyEditModal()">
+                            <span class="material-symbols-outlined">edit</span> 一括編集
+                        </button>
+                        <!-- Bulk Print Button -->
+                        <button class="btn btn-primary" onclick="alert('表示中の一覧を一括印刷します')">
+                            <span class="material-symbols-outlined">print</span> 一括印刷
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Controls Area -->
                 <div style="margin-bottom: var(--spacing-stack-md);">
-                    <h1 style="margin: 0 0 var(--spacing-stack-sm) 0;">その他費用支払</h1>
-
                     <div
-                        style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--spacing-4);">
-                        <!-- View Toggle (Monthly Default) -->
-                        <div class="view-toggle" style="display: inline-flex;">
-                            <input type="radio" id="toggle-view-monthly" name="view-mode" value="monthly" checked
-                                onchange="toggleView('monthly')">
-                            <label for="toggle-view-monthly">月別表示</label>
+                        style="display: flex; justify-content: flex-end; align-items: center; flex-wrap: wrap; gap: var(--spacing-4);">
 
-                            <input type="radio" id="toggle-view-project" name="view-mode" value="project"
-                                onchange="toggleView('project')">
-                            <label for="toggle-view-project">案件別表示</label>
-                        </div>
-
-                        <!-- Monthly Controls (Visible in Monthly View) -->
-                        <div id="controls-monthly" style="display: flex; align-items: center; gap: var(--spacing-2);">
-                            <button class="btn btn-icon btn-neutral"><span
+                        <!-- Month Selector -->
+                        <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                            <button class="btn btn-icon btn-neutral" onclick="changeMonth(-1)"><span
                                     class="material-symbols-outlined">chevron_left</span></button>
-                            <input type="month" id="monthly-view-month" class="input-field" style="width: auto;"
-                                onchange="renderMonthlyViewTable()">
-                            <button class="btn btn-icon btn-neutral"><span
+                            <input type="month" id="target-month" class="input-field" style="width: auto;"
+                                onchange="renderData()">
+                            <button class="btn btn-icon btn-neutral" onclick="changeMonth(1)"><span
                                     class="material-symbols-outlined">chevron_right</span></button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Project View -->
-                <div id="view-project" style="display: none;">
-
-                    <!-- Filter & Sort -->
-                    <div
-                        style="display: flex; gap: var(--spacing-stack-md); flex-wrap: wrap; margin-bottom: var(--spacing-stack-md);">
-                        <div class="card" style="flex: 1; min-width: 320px;">
-                            <div class="card-body"
-                                style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
-                                <div class="form-group" style="margin: 0; flex: 1; min-width: 200px;">
-                                    <label class="form-label">キーワード検索</label>
-                                    <input type="text" id="project-search" class="input-field" placeholder="案件名..."
-                                        oninput="renderProjectGrid()">
-                                </div>
-                                <div class="form-group" style="margin: 0; min-width: 160px;">
-                                    <label class="form-label">ステータス</label>
-                                    <select id="project-status-filter" class="input-field"
-                                        onchange="renderProjectGrid()">
-                                        <option value="">すべて</option>
-                                        <option value="in-progress">進行中</option>
-                                        <option value="completed">完了</option>
-                                        <option value="not-started">未着手</option>
-                                        <option value="cancelled">中止</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Project Grid -->
-                    <div id="project-grid" class="card-grid">
-                        <!-- JS Generated -->
-                    </div>
-                </div><!-- End Project View -->
-
-                <!-- Monthly View -->
-                <div id="view-monthly">
-                    <!-- Filter & Sort -->
-                    <div
-                        style="display: flex; gap: var(--spacing-stack-md); flex-wrap: wrap; margin-bottom: var(--spacing-stack-md);">
-                        <!-- Filter Card -->
-                        <div class="card" style="flex: 1; min-width: 320px;">
-                            <div class="card-body"
-                                style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
-                                <div class="form-group" style="margin: 0; min-width: 200px;">
-                                    <label class="form-label">案件</label>
-                                    <select id="monthly-view-project-filter" class="input-field"
-                                        onchange="renderMonthlyViewTable()">
-                                        <option value="">すべて</option>
-                                        <!-- JS Generated -->
-                                    </select>
-                                </div>
-                                <div class="form-group" style="margin: 0; min-width: 160px;">
-                                    <label class="form-label">勘定科目</label>
-                                    <select id="monthly-view-category-filter" class="input-field"
-                                        onchange="renderMonthlyViewTable()">
-                                        <option value="">すべて</option>
-                                        <!-- JS Generated -->
-                                    </select>
-                                </div>
-                                <div class="form-group" style="margin: 0; flex: 1; min-width: 200px;">
-                                    <label class="form-label">フリーワード</label>
-                                    <input type="text" id="monthly-view-search" class="input-field"
-                                        placeholder="内容で検索..." oninput="renderMonthlyViewTable()">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Sort Card -->
-                        <div class="card" style="flex: 0 0 auto;">
-                            <div class="card-body"
-                                style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
-                                <div class="form-group" style="margin: 0; width: 180px;">
-                                    <label class="form-label">並び替え</label>
-                                    <select id="monthly-view-sort" class="input-field"
-                                        onchange="renderMonthlyViewTable()">
-                                        <option value="date_desc">日付 (新しい順)</option>
-                                        <option value="date_asc">日付 (古い順)</option>
-                                        <option value="amount_desc">金額 (高い順)</option>
-                                        <option value="amount_asc">金額 (安い順)</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Monthly Table -->
-                    <div class="card">
-                        <div class="card-header"
-                            style="display: flex; justify-content: space-between; align-items: center;">
-                            <span>月別費用一覧</span>
-                            <div style="display: flex; align-items: center; gap: var(--spacing-4);">
-                                <div style="font-size: 0.9em;">
-                                    合計: <span id="monthly-view-total"
-                                        style="font-weight: bold; font-size: 1.2em;">0</span> 円
-                                </div>
-                                <button class="btn btn-icon btn-icon-primary btn-icon-sm" title="一括編集"
-                                    onclick="openMonthlyEditModal()">
-                                    <span class="material-symbols-outlined">edit</span>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-container">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th style="width: 120px;">日付</th>
-                                            <th style="width: 160px;">勘定科目</th>
-                                            <th>内容</th>
-                                            <th>案件名</th>
-                                            <th style="width: 120px; text-align: right;">金額</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="monthly-view-tbody">
-                                        <!-- JS Generated -->
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </main>
-    </div>
-
-    <!-- Project Expenses Modal -->
-    <div class="modal-backdrop" id="modal-project-expenses" style="display: none;">
-        <div class="modal-content modal-lg" style="max-width: 1000px;">
-            <div class="modal-header">
-                <div style="display: flex; flex-direction: column;">
-                    <span id="modal-title-label"
-                        style="font-size: 0.8em; color: var(--color-text-tertiary);">費用管理</span>
-                    <span id="modal-project-name" style="font-size: 1.2em; font-weight: bold;">--</span>
-                </div>
-            </div>
-            <div class="modal-body">
-
+                <!-- Filter & Sort Area -->
                 <div
-                    style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: var(--spacing-stack-md);">
-                    <div class="form-group" style="margin: 0;">
-                        <label class="form-label">表示月</label>
-                        <input type="month" id="modal-target-month" class="input-field" onchange="renderModalTable()">
-                    </div>
-                    <div>
-                        <div style="text-align: right; font-size: 1.1em; font-weight: bold; margin-bottom: 4px;">
-                            合計: <span id="modal-total-amount">0</span> 円
+                    style="display: flex; gap: var(--spacing-stack-md); flex-wrap: wrap; margin-bottom: var(--spacing-stack-md);">
+                    <div class="card" style="flex: 1; min-width: 320px;">
+                        <div class="card-body"
+                            style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
+                            <div class="form-group" style="margin: 0; min-width: 160px;">
+                                <label class="form-label">勘定科目</label>
+                                <select id="filter-category" class="input-field" onchange="renderData()">
+                                    <option value="">すべて</option>
+                                    <!-- JS Generated -->
+                                </select>
+                            </div>
+                            <div class="form-group" style="margin: 0; flex: 1; min-width: 200px;">
+                                <label class="form-label">キーワード検索</label>
+                                <input type="text" id="filter-keyword" class="input-field" placeholder="内容、案件名..."
+                                    oninput="renderData()">
+                            </div>
                         </div>
-                        <button id="btn-add-expense" class="btn btn-primary btn-sm" onclick="addExpenseRow()">
-                            <span class="material-symbols-outlined"
-                                style="font-size: 1.2em; vertical-align: middle;">add</span>
-                            経費を追加
-                        </button>
+                    </div>
+
+                    <div class="card" style="flex: 0 0 auto;">
+                        <div class="card-body"
+                            style="display: flex; gap: var(--spacing-4); flex-wrap: wrap; align-items: flex-end;">
+                            <div class="form-group" style="margin: 0; width: 180px;">
+                                <label class="form-label">並び替え</label>
+                                <select id="sort-order" class="input-field" onchange="renderData()">
+                                    <option value="date_desc">日付 (新しい順)</option>
+                                    <option value="date_asc">日付 (古い順)</option>
+                                    <option value="amount_desc">金額 (高い順)</option>
+                                    <option value="amount_asc">金額 (安い順)</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="table-container">
-                    <table class="table expense-table" style="width: 100%;">
-                        <thead id="modal-table-header">
-                            <!-- JS Generated -->
+                <!-- Summary Section -->
+                <div id="summary-section"
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-stack-md); margin-bottom: var(--spacing-stack-md);">
+                    <!-- JS Generated -->
+                </div>
+
+                <!-- Table Area (Standalone) -->
+                <div class="table-container is-standalone" style="margin-bottom: var(--spacing-stack-xl);">
+                    <table class="table" style="width: 100%;">
+                        <thead>
+                            <tr>
+                                <th style="width: 120px;">日付</th>
+                                <th style="width: 160px;">勘定科目</th>
+                                <th>内容</th>
+                                <th>案件名</th>
+                                <th style="width: 120px; text-align: right;">金額</th>
+                                <th style="width: 100px; text-align: center;">操作</th>
+                            </tr>
                         </thead>
-                        <tbody id="modal-expense-tbody">
+                        <tbody id="tbody-main">
                             <!-- JS Generated -->
                         </tbody>
                     </table>
                 </div>
 
-                <!-- Auto-save hint removed -->
-
             </div>
-            <div class="modal-footer" id="modal-project-footer">
-                <!-- Buttons injected by JS -->
-                <button class="btn btn-neutral" onclick="closeModal()">閉じる</button>
-            </div>
-        </div>
+        </main>
     </div>
 
     <!-- Monthly Edit Modal -->
@@ -448,8 +340,6 @@
                         </tbody>
                     </table>
                 </div>
-
-                <!-- Auto-save hint removed -->
             </div>
             <div class="modal-footer">
                 <button class="btn btn-neutral" onclick="closeMonthlyEditModal()">キャンセル</button>
@@ -461,62 +351,14 @@
     <script>
         // --- Data Definitions ---
 
-        // Projects Data
+        // Projects Data (Used for looking up project names)
         const projectsData = {
-            'project-1': {
-                id: 'project-1',
-                name: 'DM封入作業',
-                status: 'in-progress',
-                type: 'single',
-                source: 'external',
-                budget: { revenue: 300000, reserves: 10000, expenses: 50000 },
-                actuals: { revenue: 0, reserves: 0 }
-            },
-            'project-2': {
-                id: 'project-2',
-                name: '自主製品（パン）製造・販売',
-                status: 'in-progress',
-                type: 'continuous',
-                source: 'internal',
-                budget: { revenue: 150000, reserves: 5000, expenses: 80000 },
-                actuals: { revenue: 50000, reserves: 1000 }
-            },
-            'project-3': {
-                id: 'project-3',
-                name: '施設外就労（清掃）',
-                status: 'not-started',
-                type: 'continuous',
-                source: 'external',
-                budget: { revenue: 200000, reserves: 10000, expenses: 90000 },
-                actuals: { revenue: 0, reserves: 0 }
-            },
-            'project-4': {
-                id: 'project-4',
-                name: '地域バザー出店',
-                status: 'completed',
-                type: 'single',
-                source: 'internal',
-                budget: { revenue: 50000, reserves: 2500, expenses: 15000 },
-                actuals: { revenue: 48000, reserves: 2400 }
-            },
-            'project-5': {
-                id: 'project-5',
-                name: '花見イベント販売',
-                status: 'cancelled',
-                type: 'single',
-                source: 'internal',
-                budget: { revenue: 0, reserves: 0, expenses: 0 },
-                actuals: { revenue: 0, reserves: 0 }
-            },
-            'project-6': {
-                id: 'project-6',
-                name: '新規カフェ出店計画',
-                status: 'pending',
-                type: 'continuous',
-                source: 'internal',
-                budget: { revenue: 0, reserves: 0, expenses: 0 },
-                actuals: { revenue: 0, reserves: 0 }
-            }
+            'project-1': { id: 'project-1', name: 'DM封入作業' },
+            'project-2': { id: 'project-2', name: '自主製品（パン）製造・販売' },
+            'project-3': { id: 'project-3', name: '施設外就労（清掃）' },
+            'project-4': { id: 'project-4', name: '地域バザー出店' },
+            'project-5': { id: 'project-5', name: '花見イベント販売' },
+            'project-6': { id: 'project-6', name: '新規カフェ出店計画' }
         };
 
         const EXPENSE_CATEGORIES = [
@@ -531,7 +373,7 @@
             '雑費'
         ];
 
-        // Initial Expense Records (Expanded for Demo)
+        // Initial Expense Records
         let expenseRecords = [
             { id: 'exp-1', projectId: 'project-2', date: '2025-11-05', category: '材料費', amount: 15000, note: 'パン生地用小麦粉' },
             { id: 'exp-2', projectId: 'project-2', date: '2025-11-12', category: '消耗品費', amount: 2500, note: '包装用フィルム' },
@@ -543,63 +385,20 @@
             { id: 'exp-8', projectId: 'project-4', date: '2025-10-25', category: '雑費', amount: 5000, note: '出店登録料' }
         ];
 
-        let currentModalProjectId = null;
-        let currentModalMode = 'view'; // 'view' or 'edit'
-        let tempProjectRecords = []; // Temporary storage for Project Edit Modal
+        let tempEditRecords = [];
 
         document.addEventListener('DOMContentLoaded', () => {
-            let searchDebounceTimeout;
-
-            // --- Initialization ---
-            // Initialize Date Inputs to Current Month
-            const today = new Date();
-            const yearStr = today.getFullYear();
-            const monthStr = String(today.getMonth() + 1).padStart(2, '0');
-            const currentMonth = `${yearStr}-${monthStr}`;
-
-            document.getElementById('modal-target-month').value = currentMonth;
-            document.getElementById('monthly-view-month').value = '2025-11'; // Set to a month with data for demo
+            // Check if we want to default to 2025-11 for demo purposes since data is there
+            document.getElementById('target-month').value = '2025-11';
 
             // Initialize Filters
-            initMonthlyViewFilters();
-            renderMonthlyViewTable();
+            initFilters();
+            renderData();
         });
 
-        // --- View Toggle Logic ---
-        function toggleView(mode) {
-            const projectView = document.getElementById('view-project');
-            const monthlyView = document.getElementById('view-monthly');
-            const controlsMonthly = document.getElementById('controls-monthly');
 
-            if (mode === 'monthly') {
-                projectView.style.display = 'none';
-                monthlyView.style.display = 'block';
-                controlsMonthly.style.display = 'flex';
-                renderMonthlyViewTable();
-            } else {
-                projectView.style.display = 'block';
-                monthlyView.style.display = 'none';
-                controlsMonthly.style.display = 'none';
-                renderProjectGrid();
-            }
-        }
-
-        // --- Monthly View Logic ---
-
-        function initMonthlyViewFilters() {
-            // Project Filter
-            const projectSelect = document.getElementById('monthly-view-project-filter');
-            // Clear existing options first to avoid duplicates if called multiple times
-            projectSelect.innerHTML = '<option value="">すべて</option>';
-            Object.values(projectsData).forEach(p => {
-                const option = document.createElement('option');
-                option.value = p.id;
-                option.textContent = p.name;
-                projectSelect.appendChild(option);
-            });
-
-            // Category Filter
-            const catSelect = document.getElementById('monthly-view-category-filter');
+        function initFilters() {
+            const catSelect = document.getElementById('filter-category');
             catSelect.innerHTML = '<option value="">すべて</option>';
             EXPENSE_CATEGORIES.forEach(c => {
                 const option = document.createElement('option');
@@ -609,25 +408,41 @@
             });
         }
 
-        function renderMonthlyViewTable() {
-            const tbody = document.getElementById('monthly-view-tbody');
+        function changeMonth(delta) {
+            const input = document.getElementById('target-month');
+            if (!input.value) return;
+
+            const date = new Date(input.value + '-01');
+            date.setMonth(date.getMonth() + delta);
+
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            input.value = `${year}-${month}`;
+
+            renderData();
+        }
+
+        function renderData() {
+            const tbody = document.getElementById('tbody-main');
             tbody.innerHTML = '';
 
-            const targetMonth = document.getElementById('monthly-view-month').value;
-            const projectFilter = document.getElementById('monthly-view-project-filter').value;
-            const categoryFilter = document.getElementById('monthly-view-category-filter').value;
-            const searchKey = document.getElementById('monthly-view-search').value.toLowerCase();
-            const sortOption = document.getElementById('monthly-view-sort').value;
+            const summaryContainer = document.getElementById('summary-section');
+            summaryContainer.innerHTML = '';
 
+            const targetMonth = document.getElementById('target-month').value;
+            const categoryFilter = document.getElementById('filter-category').value;
+            const searchKey = document.getElementById('filter-keyword').value.toLowerCase();
+            const sortOption = document.getElementById('sort-order').value;
+
+            // Filter
             let filtered = expenseRecords.filter(r => {
-                // Month Filter
                 if (targetMonth && !r.date.startsWith(targetMonth)) return false;
-                // Project Filter
-                if (projectFilter && r.projectId !== projectFilter) return false;
-                // Category Filter
                 if (categoryFilter && r.category !== categoryFilter) return false;
-                // Search
-                if (searchKey && !r.note.toLowerCase().includes(searchKey)) return false;
+                if (searchKey) {
+                    const project = projectsData[r.projectId];
+                    const projectName = project ? project.name.toLowerCase() : '';
+                    if (!r.note.toLowerCase().includes(searchKey) && !projectName.includes(searchKey)) return false;
+                }
                 return true;
             });
 
@@ -640,425 +455,100 @@
                 return 0;
             });
 
-            let total = 0;
+            // Calculate Summaries
+            let totalAmount = 0;
+            const categoryTotals = {};
 
             filtered.forEach(r => {
-                total += r.amount;
+                totalAmount += r.amount;
+                if (!categoryTotals[r.category]) categoryTotals[r.category] = 0;
+                categoryTotals[r.category] += r.amount;
+            });
+
+            // Render Summary Cards
+            // 1. Grand Total Card (Highlighted)
+            const grandTotalCard = document.createElement('div');
+            grandTotalCard.className = 'card';
+            grandTotalCard.style.borderLeft = '4px solid var(--color-primary)';
+            grandTotalCard.innerHTML = `
+                <div class="card-body" style="text-align: center;">
+                    <div style="font-size: 0.9em; color: var(--color-primary); font-weight: bold; margin-bottom: 4px;">費用総額</div>
+                    <div style="font-size: 1.5em; font-weight: bold; color: var(--color-primary);">¥ ${totalAmount.toLocaleString()}</div>
+                </div>
+            `;
+            summaryContainer.appendChild(grandTotalCard);
+
+            // 2. Category Cards
+            // Sort categories by amount desc for better visualization
+            const sortedCategories = Object.keys(categoryTotals).sort((a, b) => categoryTotals[b] - categoryTotals[a]);
+
+            sortedCategories.forEach(cat => {
+                const amount = categoryTotals[cat];
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <div class="card-body" style="text-align: center;">
+                        <div style="font-size: 0.9em; color: var(--color-text-tertiary); margin-bottom: 4px;">${cat}</div>
+                        <div style="font-size: 1.5em; font-weight: bold;">¥ ${amount.toLocaleString()}</div>
+                    </div>
+                `;
+                summaryContainer.appendChild(card);
+            });
+
+            // Render Table
+            filtered.forEach(r => {
                 const project = projectsData[r.projectId];
-                const projectName = project ? project.name : '不明な案件';
+                const projectName = project ? project.name : r.projectId;
 
                 const tr = document.createElement('tr');
+                // Actions (Edit only for now)
+                const actions = `
+                    <button class="btn btn-icon btn-icon-sm btn-icon-neutral" onclick="openMonthlyEditModal('${targetMonth}')" title="編集"><span class="material-symbols-outlined">edit</span></button>
+                `;
+
                 tr.innerHTML = `
                     <td>${r.date}</td>
                     <td>${r.category}</td>
                     <td>${r.note}</td>
                     <td>${projectName}</td>
-                    <td class="input-currency">¥ ${r.amount.toLocaleString()}</td>
+                    <td style="text-align: right; font-weight: bold;">¥ ${r.amount.toLocaleString()}</td>
+                    <td style="text-align: center;">${actions}</td>
                 `;
                 tbody.appendChild(tr);
             });
-
-            document.getElementById('monthly-view-total').textContent = total.toLocaleString();
-        }
-
-        // --- Grid Rendering ---
-
-        function renderProjectGrid() {
-            const container = document.getElementById('project-grid');
-            container.innerHTML = '';
-
-            const searchKey = document.getElementById('project-search').value.toLowerCase();
-            const statusFilter = document.getElementById('project-status-filter').value;
-
-            Object.values(projectsData).forEach(project => {
-                if (searchKey && !project.name.toLowerCase().includes(searchKey)) return;
-                if (statusFilter && project.status !== statusFilter) return;
-
-                const pExpenses = expenseRecords.filter(r => r.projectId === project.id);
-                const actualExpenses = pExpenses.reduce((sum, r) => sum + r.amount, 0);
-
-                let badgeClass = 'badge-neutral';
-                let statusText = '不明';
-                switch (project.status) {
-                    case 'in-progress': badgeClass = 'badge-primary'; statusText = '進行中'; break;
-                    case 'completed': badgeClass = 'badge-success'; statusText = '完了'; break;
-                    case 'not-started': badgeClass = 'badge-neutral'; statusText = '未着手'; break;
-                    case 'cancelled': badgeClass = 'badge-error'; statusText = '中止'; break;
-                    case 'pending': badgeClass = 'badge-warning'; statusText = '保留'; break;
-                }
-
-                let sourceBadge = '';
-                if (project.source === 'external') {
-                    sourceBadge = '<span class="badge badge-neutral">受託</span>';
-                } else if (project.source === 'internal') {
-                    sourceBadge = '<span class="badge badge-neutral">自主</span>';
-                }
-
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.innerHTML = `
-                    <div class="card-header" style="display: flex; justify-content: space-between; align-items: flex-start;">
-                        <div>
-                            <div style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-1);">
-                                ${project.name}
-                            </div>
-                            <div style="display: flex; gap: var(--spacing-2);">
-                                <span class="badge ${badgeClass}">${statusText}</span>
-                                <span class="badge badge-neutral">${project.type === 'continuous' ? '継続' : '単発'}</span>
-                                ${sourceBadge}
-                            </div>
-                        </div>
-                        <div style="display: flex; gap: var(--spacing-2); flex-shrink: 0; margin-left: var(--spacing-3);">
-                            <button class="btn btn-icon btn-icon-primary" title="編集" onclick="openExpenseModal('${project.id}', 'edit')">
-                                <span class="material-symbols-outlined">edit</span>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body">
-                         <table class="card-summary-table">
-                            <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>予算</th>
-                                    <th>実績</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="row-header">収入総額</td>
-                                    <td>¥ ${project.budget.revenue.toLocaleString()}</td>
-                                    <td>¥ ${project.actuals.revenue.toLocaleString()}</td>
-                                </tr>
-                                <tr>
-                                    <td class="row-header">積立金総額</td>
-                                    <td>¥ ${project.budget.reserves.toLocaleString()}</td>
-                                    <td>¥ ${project.actuals.reserves.toLocaleString()}</td>
-                                </tr>
-                                <tr>
-                                    <td class="row-header">費用総額</td>
-                                    <td>¥ ${project.budget.expenses.toLocaleString()}</td>
-                                    <td style="font-weight: bold;">¥ ${actualExpenses.toLocaleString()}</td>
-                                </tr>
-                            </tbody>
-                         </table>
-                         <div style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
-                             <button class="btn btn-neutral" onclick="openExpenseModal('${project.id}', 'view')">詳細</button>
-                         </div>
-                    </div>
-                `;
-                container.appendChild(card);
-            });
-        }
-
-        // --- Modal Logic ---
-
-        // --- Modal Logic ---
-
-        function openExpenseModal(projectId, mode = 'view') {
-            currentModalProjectId = projectId;
-            currentModalMode = mode;
-            const project = projectsData[projectId];
-
-            document.getElementById('modal-project-name').textContent = project.name;
-
-            // Header Title
-            // Header Title
-            const titleLabel = document.getElementById('modal-title-label');
-            titleLabel.textContent = mode === 'edit' ? '費用編集' : '費用詳細（閲覧）';
-
-            // Add Button Handling (via JS injection or display toggle)
-            const addBtn = document.getElementById('btn-add-expense');
-            // We use a different button strategy or update this existing one.
-            // Let's rely on render logic to show/hide the Add button if it exists, or inject it.
-            // The existing HTML has `btn-add-expense`.
-            if (mode === 'edit') {
-                addBtn.style.display = 'inline-flex';
-                addBtn.onclick = addProjectExpenseRow; // Re-bind to new function
-            } else {
-                addBtn.style.display = 'none';
-            }
-
-            // Init Temp Data if Edit
-            if (mode === 'edit') {
-                // Clone all records for this project
-                tempProjectRecords = JSON.parse(JSON.stringify(
-                    expenseRecords.filter(r => r.projectId === projectId)
-                ));
-            }
-
-            updateProjectModalFooter();
-            renderModalTable();
-            document.getElementById('modal-project-expenses').style.display = 'flex';
-        }
-
-        function closeModal() {
-            // Confirmation removed as per request
-            document.getElementById('modal-project-expenses').style.display = 'none';
-            currentModalProjectId = null;
-            tempProjectRecords = [];
-            renderProjectGrid();
-        }
-
-        function updateProjectModalFooter() {
-            const footer = document.getElementById('modal-project-footer');
-            if (currentModalMode === 'edit') {
-                footer.innerHTML = `
-                    <button class="btn btn-neutral" onclick="closeModal()">キャンセル</button>
-                    <button class="btn btn-primary" onclick="saveProjectEdit()">保存</button>
-                `;
-            } else {
-                footer.innerHTML = `
-                    <button class="btn btn-neutral" onclick="closeModal()">閉じる</button>
-                `;
-            }
-        }
-
-        function saveProjectEdit() {
-            // Remove old records for this project
-            expenseRecords = expenseRecords.filter(r => r.projectId !== currentModalProjectId);
-
-            // Add new records (excluding deleted)
-            const newRecords = tempProjectRecords.filter(r => !r._deleted);
-            expenseRecords.push(...newRecords);
-
-            // Refresh
-            document.getElementById('modal-project-expenses').style.display = 'none';
-            currentModalProjectId = null;
-            renderProjectGrid();
-            renderMonthlyViewTable(); // Update background view if needed
-        }
-
-        function renderModalTable() {
-            const thead = document.getElementById('modal-table-header');
-            const tbody = document.getElementById('modal-expense-tbody');
-            tbody.innerHTML = '';
-
-            // Header
-            if (currentModalMode === 'edit') {
-                thead.innerHTML = `
-                    <tr>
-                        <th style="width: 140px;">日付</th>
-                        <th style="width: 180px;">勘定科目</th>
-                        <th>内容</th>
-                        <th style="width: 200px;">案件名</th>
-                        <th style="width: 120px;">金額</th>
-                        <th style="width: 60px; text-align: center;">削除</th>
-                    </tr>
-                `;
-            } else {
-                thead.innerHTML = `
-                    <tr>
-                        <th style="width: 140px;">日付</th>
-                        <th style="width: 180px;">勘定科目</th>
-                        <th>内容</th>
-                        <th>案件名</th>
-                        <th style="width: 120px;">金額</th>
-                    </tr>
-                `;
-            }
-
-            const targetMonth = document.getElementById('modal-target-month').value;
-
-            let displayRecords = [];
-            if (currentModalMode === 'edit') {
-                displayRecords = tempProjectRecords;
-            } else {
-                displayRecords = expenseRecords.filter(r => r.projectId === currentModalProjectId);
-            }
-
-            if (targetMonth) {
-                displayRecords = displayRecords.filter(r => r.date.startsWith(targetMonth));
-            }
-
-            displayRecords.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-            let total = 0;
-            const projectName = projectsData[currentModalProjectId].name;
-
-            displayRecords.forEach(record => {
-                if (!record._deleted) {
-                    total += record.amount;
-                }
-
-                const tr = document.createElement('tr');
-                if (record._deleted) {
-                    tr.style.opacity = '0.5';
-                    tr.style.textDecoration = 'line-through';
-                }
-
-                if (currentModalMode === 'edit') {
-                    // Edit Mode (Inputs) - Project Name is FIXED text
-                    // Generate Category Options
-                    let categoryOptions = `<option value="" disabled ${!record.category ? 'selected' : ''}>--</option>` +
-                        EXPENSE_CATEGORIES.map(c =>
-                            `<option value="${c}" ${c === record.category ? 'selected' : ''}>${c}</option>`
-                        ).join('');
-
-                    tr.innerHTML = `
-                        <td>
-                            <input type="date" class="input-field" value="${record.date}"
-                                onchange="updateProjectRecord('${record.id}', 'date', this.value)" ${record._deleted ? 'disabled' : ''}>
-                        </td>
-                        <td>
-                            <select class="input-field" onchange="updateProjectRecord('${record.id}', 'category', this.value)" ${record._deleted ? 'disabled' : ''}>
-                                ${categoryOptions}
-                            </select>
-                        </td>
-                        <td>
-                            <input type="text" class="input-field" value="${record.note}" placeholder="内容"
-                                onchange="updateProjectRecord('${record.id}', 'note', this.value)" ${record._deleted ? 'disabled' : ''}>
-                        </td>
-                        <td>
-                            <span style="font-size: 0.9em; color: var(--color-text-secondary);">${projectName}</span>
-                        </td>
-                        <td>
-                            <input type="number" class="input-field input-currency" value="${record.amount}" placeholder="0"
-                                onchange="updateProjectRecord('${record.id}', 'amount', this.value)" ${record._deleted ? 'disabled' : ''}>
-                        </td>
-                        <td style="text-align: center;">
-                            <input type="checkbox" class="form-check-input" ${record._deleted ? 'checked' : ''}
-                                onchange="toggleDeleteProjectRecord('${record.id}')">
-                        </td>
-                    `;
-                } else {
-                    // View Mode (Text)
-                    tr.innerHTML = `
-                        <td>${record.date}</td>
-                        <td>${record.category}</td>
-                        <td>${record.note}</td>
-                        <td>${projectName}</td>
-                        <td class="input-currency">¥ ${record.amount.toLocaleString()}</td>
-                    `;
-                }
-                tbody.appendChild(tr);
-            });
-
-            document.getElementById('modal-total-amount').textContent = total.toLocaleString();
-        }
-
-        function addProjectExpenseRow() {
-            const targetMonth = document.getElementById('modal-target-month').value;
-            const today = new Date().toISOString().slice(0, 10);
-            const defaultDate = (targetMonth && today.startsWith(targetMonth)) ? today : (targetMonth ? targetMonth + '-01' : today);
-
-            const newId = 'exp-' + Date.now();
-            const newRecord = {
-                id: newId,
-                projectId: currentModalProjectId,
-                date: defaultDate,
-                category: '', // Default empty
-                amount: 0,
-                note: ''
-            };
-            tempProjectRecords.push(newRecord);
-            renderModalTable();
-        }
-
-        function updateProjectRecord(id, field, value) {
-            const record = tempProjectRecords.find(r => r.id === id);
-            if (!record) return;
-
-            if (field === 'amount') {
-                record[field] = parseInt(value) || 0;
-            } else {
-                record[field] = value;
-            }
-            renderModalTable();
-        }
-
-        function toggleDeleteProjectRecord(id) {
-            const record = tempProjectRecords.find(r => r.id === id);
-            if (!record) return;
-            record._deleted = !record._deleted;
-            renderModalTable();
-        }
-
-        function addExpenseRow() {
-            if (currentModalMode !== 'edit') return;
-            const targetMonth = document.getElementById('modal-target-month').value;
-            const today = new Date().toISOString().slice(0, 10);
-            const defaultDate = today.startsWith(targetMonth) ? today : (targetMonth + '-01');
-
-            const newId = 'exp-' + Date.now();
-            const newRecord = {
-                id: newId,
-                projectId: currentModalProjectId,
-                date: defaultDate,
-                category: EXPENSE_CATEGORIES[0],
-                amount: 0,
-                note: ''
-            };
-            expenseRecords.push(newRecord);
-            renderModalTable();
-        }
-
-        function updateRecord(id, field, value) {
-            const record = expenseRecords.find(r => r.id === id);
-            if (!record) return;
-
-            if (field === 'amount') {
-                record[field] = parseInt(value) || 0;
-                renderModalTable();
-            } else {
-                record[field] = value;
-            }
-        }
-
-        function deleteRecord(id) {
-            if (confirm('この経費記録を削除しますか？')) {
-                expenseRecords = expenseRecords.filter(r => r.id !== id);
-                renderModalTable();
-            }
         }
 
         // --- Monthly Edit Modal Logic ---
 
-        let tempExpenseRecords = []; // Temporary storage for editing
-        let editingMonth = null;
-
-        function openMonthlyEditModal() {
-            const targetMonth = document.getElementById('monthly-view-month').value;
+        function openMonthlyEditModal(explicitMonth) {
+            const targetMonth = explicitMonth || document.getElementById('target-month').value;
             if (!targetMonth) return;
 
-            // Clone records
-            tempExpenseRecords = JSON.parse(JSON.stringify(expenseRecords));
-            editingMonth = targetMonth;
-
-            // Set Initial Values
-            const [year, month] = targetMonth.split('-');
-            document.getElementById('modal-monthly-title').textContent = `費用一括編集`;
             document.getElementById('modal-monthly-month-select').value = targetMonth;
+            document.getElementById('modal-monthly-title').textContent = targetMonth.replace('-', '年') + '月';
+
+            // Clone records for this month
+            tempEditRecords = JSON.parse(JSON.stringify(
+                expenseRecords.filter(r => r.date.startsWith(targetMonth))
+            ));
 
             renderMonthlyEditTable();
             document.getElementById('modal-monthly-edit').style.display = 'flex';
         }
 
         function closeMonthlyEditModal() {
-            // Confirmation removed
             document.getElementById('modal-monthly-edit').style.display = 'none';
-            tempExpenseRecords = []; // Clear temp
+            tempEditRecords = [];
         }
 
-        function saveMonthlyEdit() {
-            // Commit changes: remove deleted, merge existing
-            // Strategy: Replace records for ANY month we touched?
-            // Simpler: We are editing everything in `tempExpenseRecords`.
-            // However, `tempExpenseRecords` initial state IS `expenseRecords`.
-            // So we just filter out those marked `_deleted` and assign back.
+        function changeEditMonth(monthStr) {
+            if (!monthStr) return;
+            document.getElementById('modal-monthly-title').textContent = monthStr.replace('-', '年') + '月';
 
-            expenseRecords = tempExpenseRecords.filter(r => !r._deleted);
-
-            // Clean up temporary property if we want, but JS JSON.stringify usually ignores functions,
-            // `_deleted` is just a prop. We can leave it or clean it.
-            // For now, simple assignment.
-
-            document.getElementById('modal-monthly-edit').style.display = 'none';
-            renderMonthlyViewTable(); // Refresh main view
-            renderProjectGrid(); // Refresh project view as it shares data
-        }
-
-        function changeEditMonth(newMonth) {
-            editingMonth = newMonth;
+            // Reload temp records for the new month from MAIN source (discarding unsaved changes of previous month)
+            tempEditRecords = JSON.parse(JSON.stringify(
+                expenseRecords.filter(r => r.date.startsWith(monthStr))
+            ));
             renderMonthlyEditTable();
         }
 
@@ -1066,69 +556,37 @@
             const tbody = document.getElementById('modal-monthly-tbody');
             tbody.innerHTML = '';
 
-            // Filter temp records by currently selected editing month
-            let monthlyRecords = tempExpenseRecords.filter(r => r.date.startsWith(editingMonth));
-
-            // Sort by Date Descending
-            monthlyRecords.sort((a, b) => new Date(b.date) - new Date(a.date));
-
             let total = 0;
 
-            monthlyRecords.forEach(record => {
-                if (record._deleted) {
-                    // Skip deleted records from total calculation?
-                    // Better UI: Show them strikethrough or just don't show depending on req?
-                    // Req: "Checkbox to delete". Usually implies visible but marked.
-                    // Let's show them but greyed out.
-                } else {
-                    total += record.amount;
-                }
+            // Sort by date
+            tempEditRecords.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            tempEditRecords.forEach(r => {
+                if (!r._deleted) total += r.amount;
 
                 const tr = document.createElement('tr');
-                if (record._deleted) {
+                if (r._deleted) {
                     tr.style.opacity = '0.5';
                     tr.style.textDecoration = 'line-through';
                 }
 
-                // Project Options
-                let projectOptions = `<option value="" disabled ${!record.projectId ? 'selected' : ''}>--</option>` +
-                    Object.values(projectsData).map(p =>
-                        `<option value="${p.id}" ${p.id === record.projectId ? 'selected' : ''}>${p.name}</option>`
-                    ).join('');
+                // Projects Options
+                const projectOptions = Object.values(projectsData).map(p =>
+                    `<option value="${p.id}" ${p.id === r.projectId ? 'selected' : ''}>${p.name}</option>`
+                ).join('');
 
                 // Category Options
-                let categoryOptions = `<option value="" disabled ${!record.category ? 'selected' : ''}>--</option>` +
-                    EXPENSE_CATEGORIES.map(c =>
-                        `<option value="${c}" ${c === record.category ? 'selected' : ''}>${c}</option>`
-                    ).join('');
+                const categoryOptions = EXPENSE_CATEGORIES.map(c =>
+                    `<option value="${c}" ${c === r.category ? 'selected' : ''}>${c}</option>`
+                ).join('');
 
                 tr.innerHTML = `
-                    <td>
-                        <input type="date" class="input-field" value="${record.date}"
-                            onchange="updateMonthlyRecord('${record.id}', 'date', this.value)" ${record._deleted ? 'disabled' : ''}>
-                    </td>
-                    <td>
-                        <select class="input-field" onchange="updateMonthlyRecord('${record.id}', 'category', this.value)" ${record._deleted ? 'disabled' : ''}>
-                            ${categoryOptions}
-                        </select>
-                    </td>
-                    <td>
-                        <input type="text" class="input-field" value="${record.note}" placeholder="内容"
-                            onchange="updateMonthlyRecord('${record.id}', 'note', this.value)" ${record._deleted ? 'disabled' : ''}>
-                    </td>
-                    <td>
-                        <select class="input-field" onchange="updateMonthlyRecord('${record.id}', 'projectId', this.value)" ${record._deleted ? 'disabled' : ''}>
-                            ${projectOptions}
-                        </select>
-                    </td>
-                    <td>
-                        <input type="number" class="input-field input-currency" value="${record.amount}" placeholder="0"
-                            onchange="updateMonthlyRecord('${record.id}', 'amount', this.value)" ${record._deleted ? 'disabled' : ''}>
-                    </td>
-                    <td style="text-align: center;">
-                        <input type="checkbox" class="form-check-input" ${record._deleted ? 'checked' : ''}
-                            onchange="toggleDeleteMonthlyRecord('${record.id}')">
-                    </td>
+                    <td><input type="date" class="input-field" value="${r.date}" onchange="updateEditRecord('${r.id}', 'date', this.value)" ${r._deleted ? 'disabled' : ''}></td>
+                    <td><select class="input-field" onchange="updateEditRecord('${r.id}', 'category', this.value)" ${r._deleted ? 'disabled' : ''}>${categoryOptions}</select></td>
+                    <td><input type="text" class="input-field" value="${r.note}" onchange="updateEditRecord('${r.id}', 'note', this.value)" ${r._deleted ? 'disabled' : ''}></td>
+                    <td><select class="input-field" onchange="updateEditRecord('${r.id}', 'projectId', this.value)" ${r._deleted ? 'disabled' : ''}><option value="">--</option>${projectOptions}</select></td>
+                    <td><input type="number" class="input-field input-currency" value="${r.amount}" onchange="updateEditRecord('${r.id}', 'amount', this.value)" ${r._deleted ? 'disabled' : ''}></td>
+                    <td style="text-align: center;"><button class="btn btn-icon btn-icon-sm btn-icon-danger" onclick="toggleDeleteEditRecord('${r.id}')"><span class="material-symbols-outlined">${r._deleted ? 'undo' : 'delete'}</span></button></td>
                 `;
                 tbody.appendChild(tr);
             });
@@ -1137,43 +595,55 @@
         }
 
         function addMonthlyExpenseRow() {
+            const monthStr = document.getElementById('modal-monthly-month-select').value;
             const today = new Date().toISOString().slice(0, 10);
-            // Default to 1st of editing month
-            const defaultDate = today.startsWith(editingMonth) ? today : (editingMonth + '-01');
+            const defaultDate = (monthStr && today.startsWith(monthStr)) ? today : (monthStr ? monthStr + '-01' : today);
 
-            const newId = 'exp-' + Date.now();
-            const newRecord = {
+            const newId = 'new-' + Date.now();
+            tempEditRecords.push({
                 id: newId,
                 date: defaultDate,
-                projectId: '', // Default empty
-                category: '', // Default empty
-                amount: 0,
-                note: ''
-            };
-            tempExpenseRecords.push(newRecord);
+                category: EXPENSE_CATEGORIES[0],
+                note: '',
+                projectId: '',
+                amount: 0
+            });
             renderMonthlyEditTable();
         }
 
-        function updateMonthlyRecord(id, field, value) {
-            const record = tempExpenseRecords.find(r => r.id === id);
-            if (!record) return;
-
-            if (field === 'amount') {
-                record[field] = parseInt(value) || 0;
-            } else {
-                record[field] = value;
+        function updateEditRecord(id, field, value) {
+            const rec = tempEditRecords.find(r => r.id === id);
+            if (rec) {
+                if (field === 'amount') rec[field] = parseInt(value) || 0;
+                else rec[field] = value;
+                renderMonthlyEditTable();
             }
-            renderMonthlyEditTable();
         }
 
-        function toggleDeleteMonthlyRecord(id) {
-            const record = tempExpenseRecords.find(r => r.id === id);
-            if (!record) return;
-
-            record._deleted = !record._deleted;
-            renderMonthlyEditTable();
+        function toggleDeleteEditRecord(id) {
+            const rec = tempEditRecords.find(r => r.id === id);
+            if (rec) {
+                rec._deleted = !rec._deleted;
+                renderMonthlyEditTable();
+            }
         }
+
+        function saveMonthlyEdit() {
+            const monthStr = document.getElementById('modal-monthly-month-select').value;
+
+            // Remove old records for this month from main data
+            expenseRecords = expenseRecords.filter(r => !r.date.startsWith(monthStr));
+
+            // Add new/modified records (excluding deleted)
+            const activeRecords = tempEditRecords.filter(r => !r._deleted);
+            expenseRecords.push(...activeRecords);
+
+            closeMonthlyEditModal();
+            renderData();
+        }
+
     </script>
+
 </body>
 
 </html>
