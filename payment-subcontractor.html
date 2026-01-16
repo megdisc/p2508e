@@ -66,7 +66,7 @@
                 </div>
             </div>
 
-                        <nav class="sidebar-nav">
+            <nav class="sidebar-nav">
                 <a href="index.html" class="nav-link">トップ</a>
                 <details class="nav-accordion">
                     <summary>施設情報</summary>
@@ -309,6 +309,78 @@
                 </div>
             </div>
 
+            <!-- Detail Modal -->
+            <div class="modal-backdrop" id="modal-subcontractor-detail" style="display: none;">
+                <div class="modal-content" style="width: 800px; max-width: 95vw;">
+                    <div class="modal-header" id="detail-modal-header">
+                        支払詳細
+                    </div>
+                    <div class="modal-body">
+                        <div class="card" style="margin-bottom: var(--spacing-stack-md);">
+                            <div class="card-body">
+                                <dl class="data-list">
+                                    <div>
+                                        <dt>外注先名</dt>
+                                        <dd id="detail-subcontractor-name">-</dd>
+                                    </div>
+                                    <div>
+                                        <dt>ステータス</dt>
+                                        <dd id="detail-status">-</dd>
+                                    </div>
+                                    <div>
+                                        <dt>支払日</dt>
+                                        <dd id="detail-payment-date">-</dd>
+                                    </div>
+                                    <div>
+                                        <dt>支払額 (税込)</dt>
+                                        <dd style="font-weight: bold; font-size: 1.2em;" id="detail-total-amount">¥ -
+                                        </dd>
+                                    </div>
+                                </dl>
+                            </div>
+                        </div>
+
+                        <h3 style="margin-bottom: var(--spacing-stack-sm);">支払明細</h3>
+                        <div class="table-container is-standalone">
+                            <table class="table" style="width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th>品目</th>
+                                        <th style="width: 100px; text-align: right;">単価</th>
+                                        <th style="width: 80px; text-align: right;">数量</th>
+                                        <th style="width: 120px; text-align: right;">金額 (税抜)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="detail-tbody">
+                                    <!-- Generated -->
+                                </tbody>
+                                <tfoot>
+                                    <tr style="background-color: var(--color-bg-subtle); font-weight: bold;">
+                                        <td colspan="3" style="text-align: right;">小計 (税抜)</td>
+                                        <td style="text-align: right;" id="detail-subtotal">¥ -</td>
+                                    </tr>
+                                    <tr style="background-color: var(--color-bg-subtle); font-weight: bold;">
+                                        <td colspan="3" style="text-align: right;">消費税 (10%)</td>
+                                        <td style="text-align: right;" id="detail-tax">¥ -</td>
+                                    </tr>
+                                    <tr
+                                        style="background-color: var(--color-base-primary); font-weight: bold; font-size: 1.1em;">
+                                        <td colspan="3" style="text-align: right; border-bottom: none;">合計 (税込)</td>
+                                        <td style="text-align: right; border-bottom: none; color: var(--color-primary);"
+                                            id="detail-grand-total">¥ -</td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-neutral" onclick="closeDetailModal()">閉じる</button>
+                        <button class="btn btn-primary" onclick="alert('印刷プレビューを表示します')"><span
+                                class="material-symbols-outlined">print</span> 印刷</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Script for Logic -->
             <script>
                 // --- Dummy Data Definition ---
@@ -455,7 +527,7 @@
 
                         // Actions
                         const actions = `
-                    <button class="btn btn-sm btn-neutral" onclick="alert('${item.name}の詳細を開きます')">詳細</button>
+                    <button class="btn btn-sm btn-neutral" onclick="openDetailModal(${item.id})">詳細</button>
                     <button class="btn btn-icon btn-icon-sm btn-icon-success" onclick="openStatusModal(${item.id})"><span class="material-symbols-outlined">edit</span></button>
                     <button class="btn btn-icon btn-icon-sm btn-icon-primary" onclick="alert('${item.name}の支払通知書を印刷します')"><span class="material-symbols-outlined">print</span></button>
                 `;
@@ -507,6 +579,69 @@
                         renderData();
                         closeStatusModal();
                     }
+                }
+
+                // --- Detail Modal Logic ---
+                function openDetailModal(id) {
+                    const sub = currentData.find(s => s.id === id);
+                    if (!sub) return;
+
+                    // Header Info
+                    document.getElementById('detail-modal-header').textContent = `${sub.name} - 支払詳細`;
+                    document.getElementById('detail-subcontractor-name').textContent = sub.name;
+                    document.getElementById('detail-payment-date').textContent = sub.paymentDate;
+                    document.getElementById('detail-total-amount').textContent = `¥ ${sub.total.toLocaleString()}`;
+
+                    // Status Badge
+                    let statusClass = 'badge-neutral';
+                    let statusText = '未確定';
+                    if (sub.status === 'confirmed') { statusClass = 'badge-primary'; statusText = '確定済'; }
+                    else if (sub.status === 'paid') { statusClass = 'badge-success'; statusText = '支払済'; }
+                    document.getElementById('detail-status').innerHTML = `<span class="badge ${statusClass}">${statusText}</span>`;
+
+                    // Generate Mock Line Items
+                    const tbody = document.getElementById('detail-tbody');
+                    tbody.innerHTML = '';
+
+                    let remainingAmount = sub.baseAmount;
+                    const itemCount = sub.count;
+
+                    for (let i = 0; i < itemCount; i++) {
+                        const isLast = i === itemCount - 1;
+                        let itemAmount = 0;
+
+                        if (isLast) {
+                            itemAmount = remainingAmount;
+                        } else {
+                            itemAmount = Math.floor((remainingAmount / (itemCount - i)) * (0.8 + Math.random() * 0.4));
+                            itemAmount = Math.round(itemAmount / 100) * 100;
+                            if (itemAmount <= 0) itemAmount = 1000;
+                            remainingAmount -= itemAmount;
+                        }
+
+                        const tr = document.createElement('tr');
+                        const itemNames = ['DM封入作業代行', '配送業務委託', '清掃業務委託', 'デザイン制作', 'システム保守', '軽作業請負'];
+                        const itemName = itemNames[i % itemNames.length] + (i > itemNames.length ? ` (${i + 1})` : '');
+
+                        tr.innerHTML = `
+                            <td>${itemName}</td>
+                            <td style="text-align: right;">¥ ${itemAmount.toLocaleString()}</td>
+                            <td style="text-align: right;">1</td>
+                            <td style="text-align: right;">¥ ${itemAmount.toLocaleString()}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    }
+
+                    // Footer Totals
+                    document.getElementById('detail-subtotal').textContent = `¥ ${sub.baseAmount.toLocaleString()}`;
+                    document.getElementById('detail-tax').textContent = `¥ ${sub.tax.toLocaleString()}`;
+                    document.getElementById('detail-grand-total').textContent = `¥ ${sub.total.toLocaleString()}`;
+
+                    document.getElementById('modal-subcontractor-detail').style.display = 'flex';
+                }
+
+                function closeDetailModal() {
+                    document.getElementById('modal-subcontractor-detail').style.display = 'none';
                 }
 
             </script>
