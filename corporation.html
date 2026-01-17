@@ -66,7 +66,7 @@
                 </div>
             </div>
 
-                        <nav class="sidebar-nav">
+            <nav class="sidebar-nav">
                 <a href="index.html" class="nav-link">トップ</a>
                 <details class="nav-accordion">
                     <summary>施設情報</summary>
@@ -188,22 +188,6 @@
                                 <dd>2020年4月1日</dd>
                             </div>
                             <div>
-                                <dt>インボイス番号</dt>
-                                <dd>T1234567890123</dd>
-                            </div>
-                            <div>
-                                <dt>消費税課税方式</dt>
-                                <dd>免税事業者</dd>
-                            </div>
-                            <div>
-                                <dt>適用会計基準</dt>
-                                <dd>就労支援事業会計処理基準</dd>
-                            </div>
-                            <div>
-                                <dt>決算期</dt>
-                                <dd>12月31日</dd>
-                            </div>
-                            <div>
                                 <dt>代表者名</dt>
                                 <dd>代表 太郎</dd>
                             </div>
@@ -220,6 +204,13 @@
                                 <dd>092-123-4568</dd>
                             </div>
                         </dl>
+
+                        <div
+                            style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle); display: flex; flex-wrap: wrap; gap: var(--spacing-3);">
+                            <button class="btn btn-neutral" onclick="showModal('modal-accounting-info')">
+                                会計・税務情報
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -227,207 +218,246 @@
 
         </main>
 
+        <!-- New Display Modal for Accounting Info -->
+        <div class="modal-backdrop" id="modal-accounting-info" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    会計・税務情報
+                </div>
+                <div class="modal-body">
+                    <dl class="data-list">
+                        <div>
+                            <dt>決算期</dt>
+                            <dd>12月31日</dd>
+                        </div>
+                        <div>
+                            <dt>インボイス番号</dt>
+                            <dd>T1234567890123</dd>
+                        </div>
+                        <div>
+                            <dt>消費税課税方式</dt>
+                            <dd>免税事業者</dd>
+                        </div>
+                        <div>
+                            <dt>適用会計基準</dt>
+                            <dd>就労支援事業会計処理基準</dd>
+                        </div>
+                    </dl>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" onclick="hideModal('modal-accounting-info')">
+                        閉じる
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <div class="modal-backdrop" id="modal-edit-corporation" style="display: none;">
             <div class="modal-content">
                 <div class="modal-header">
                     法人情報の編集
                 </div>
                 <div class="modal-body">
+                    <nav class="tabs-nav" id="tab-group-edit-corp">
+                        <a class="tab-link is-active"
+                            onclick="activateTab('tab-group-edit-corp', 'tab-edit-corp-1')">基本情報</a>
+                        <a class="tab-link" onclick="activateTab('tab-group-edit-corp', 'tab-edit-corp-2')">会計・税務情報</a>
+                    </nav>
 
                     <form id="corporation-edit-form">
+                        <div id="tab-group-edit-corp-content">
 
-                        <div
-                            style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4);">
-
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label class="form-label" for="corp-name">法人名</label>
-                                <input type="text" id="corp-name" class="input-field" value="株式会社こんぱす">
-                            </div>
-
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label class="form-label" for="corp-number">法人番号</label>
-                                <input type="number" id="corp-number" class="input-field" value="1234567890123"
-                                    placeholder="13桁の半角数字">
-                            </div>
-
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label class="form-label" for="corp-type">法人種別</label>
-                                <select id="corp-type" class="input-field">
-                                    <option value="kk" selected>株式会社</option>
-                                    <option value="npo">NPO法人</option>
-                                    <option value="swc">社会福祉法人</option>
-                                    <option value="assoc">一般社団法人</option>
-                                    <option value="other">その他</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label class="form-label">設立年月日</label>
-                                <div style="display: flex; align-items: center; gap: var(--spacing-2);">
-                                    <select id="corp-est-year" class="input-field">
-                                        <option value="2020" selected>2020年</option>
-                                        <option value="2021">2021年</option>
-                                        <option value="2022">2022年</option>
-                                        <!-- More years as needed -->
-                                    </select>
-                                    <select id="corp-est-month" class="input-field">
-                                        <option value="4" selected>4月</option>
-                                        <!-- other months -->
-                                    </select>
-                                    <select id="corp-est-day" class="input-field">
-                                        <option value="1" selected>1日</option>
-                                        <!-- other days -->
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label class="form-label">決算期</label>
-                                <div style="display: flex; align-items: center; gap: var(--spacing-2);">
-                                    <select id="corp-fiscal-month" class="input-field">
-                                        <option value="1">1月</option>
-                                        <option value="2">2月</option>
-                                        <option value="3">3月</option>
-                                        <option value="4">4月</option>
-                                        <option value="5">5月</option>
-                                        <option value="6">6月</option>
-                                        <option value="7">7月</option>
-                                        <option value="8">8月</option>
-                                        <option value="9">9月</option>
-                                        <option value="10">10月</option>
-                                        <option value="11">11月</option>
-                                        <option value="12" selected>12月</option>
-                                    </select>
-                                    <select id="corp-fiscal-day" class="input-field">
-                                        <option value="1">1日</option>
-                                        <option value="2">2日</option>
-                                        <option value="3">3日</option>
-                                        <option value="4">4日</option>
-                                        <option value="5">5日</option>
-                                        <option value="6">6日</option>
-                                        <option value="7">7日</option>
-                                        <option value="8">8日</option>
-                                        <option value="9">9日</option>
-                                        <option value="10">10日</option>
-                                        <option value="11">11日</option>
-                                        <option value="12">12日</option>
-                                        <option value="13">13日</option>
-                                        <option value="14">14日</option>
-                                        <option value="15">15日</option>
-                                        <option value="16">16日</option>
-                                        <option value="17">17日</option>
-                                        <option value="18">18日</option>
-                                        <option value="19">19日</option>
-                                        <option value="20">20日</option>
-                                        <option value="21">21日</option>
-                                        <option value="22">22日</option>
-                                        <option value="23">23日</option>
-                                        <option value="24">24日</option>
-                                        <option value="25">25日</option>
-                                        <option value="26">26日</option>
-                                        <option value="27">27日</option>
-                                        <option value="28">28日</option>
-                                        <option value="29">29日</option>
-                                        <option value="30">30日</option>
-                                        <option value="31" selected>31日</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label class="form-label" for="corp-representative">代表者名</label>
-                                <input type="text" id="corp-representative" class="input-field" value="代表 太郎">
-                            </div>
-                        </div>
-
-                        <div
-                            style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-6);">
-
-                            <div class="form-group" style="margin-bottom: 0; grid-column: 1 / 2;">
-                                <label class="form-label" for="corp-zip1">郵便番号</label>
-                                <div style="display: flex; align-items: center; gap: var(--spacing-2);">
-                                    <input type="text" id="corp-zip1" class="input-field" value="810" placeholder="810">
-                                    <span>-</span>
-                                    <input type="text" id="corp-zip2" class="input-field" value="0001"
-                                        placeholder="0001">
-                                </div>
-                            </div>
-
-                            <div class="form-group" style="margin-bottom: 0; grid-column: 1 / -1;">
-                                <label class="form-label" for="corp-address1">住所</label>
+                            <!-- Tab 1: Basic Info -->
+                            <div class="tab-content is-active" id="tab-edit-corp-1">
                                 <div
-                                    style="display: grid; grid-template-columns: 1fr 1.5fr 1.5fr; gap: var(--spacing-3);">
-                                    <select id="corp-address1" class="input-field">
-                                        <option value="">都道府県</option>
-                                        <option value="福岡県" selected>福岡県</option>
-                                    </select>
-                                    <input type="text" id="corp-address2" class="input-field" value="福岡市中央区天神1-1-1"
-                                        placeholder="市区町村丁目番地">
-                                    <input type="text" id="corp-address3" class="input-field" value="天神ビル 5F"
-                                        placeholder="建物名・部屋番号">
+                                    style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-4);">
+
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label class="form-label" for="corp-name">法人名</label>
+                                        <input type="text" id="corp-name" class="input-field" value="株式会社こんぱす">
+                                    </div>
+
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label class="form-label" for="corp-number">法人番号</label>
+                                        <input type="number" id="corp-number" class="input-field" value="1234567890123"
+                                            placeholder="13桁の半角数字">
+                                    </div>
+
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label class="form-label" for="corp-type">法人種別</label>
+                                        <select id="corp-type" class="input-field">
+                                            <option value="kk" selected>株式会社</option>
+                                            <option value="npo">NPO法人</option>
+                                            <option value="swc">社会福祉法人</option>
+                                            <option value="assoc">一般社団法人</option>
+                                            <option value="other">その他</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label class="form-label">設立年月日</label>
+                                        <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                            <select id="corp-est-year" class="input-field">
+                                                <option value="2020" selected>2020年</option>
+                                                <option value="2021">2021年</option>
+                                                <option value="2022">2022年</option>
+                                            </select>
+                                            <select id="corp-est-month" class="input-field">
+                                                <option value="4" selected>4月</option>
+                                            </select>
+                                            <select id="corp-est-day" class="input-field">
+                                                <option value="1" selected>1日</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label class="form-label" for="corp-representative">代表者名</label>
+                                        <input type="text" id="corp-representative" class="input-field" value="代表 太郎">
+                                    </div>
+                                </div>
+
+                                <div
+                                    style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-6);">
+
+                                    <div class="form-group" style="margin-bottom: 0; grid-column: 1 / 2;">
+                                        <label class="form-label" for="corp-zip1">郵便番号</label>
+                                        <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                            <input type="text" id="corp-zip1" class="input-field" value="810"
+                                                placeholder="810">
+                                            <span>-</span>
+                                            <input type="text" id="corp-zip2" class="input-field" value="0001"
+                                                placeholder="0001">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" style="margin-bottom: 0; grid-column: 1 / -1;">
+                                        <label class="form-label" for="corp-address1">住所</label>
+                                        <div
+                                            style="display: grid; grid-template-columns: 1fr 1.5fr 1.5fr; gap: var(--spacing-3);">
+                                            <select id="corp-address1" class="input-field">
+                                                <option value="">都道府県</option>
+                                                <option value="福岡県" selected>福岡県</option>
+                                            </select>
+                                            <input type="text" id="corp-address2" class="input-field"
+                                                value="福岡市中央区天神1-1-1" placeholder="市区町村丁目番地">
+                                            <input type="text" id="corp-address3" class="input-field" value="天神ビル 5F"
+                                                placeholder="建物名・部屋番号">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div
+                                    style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-6);">
+
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label class="form-label" for="corp-phone1">電話番号</label>
+                                        <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                            <input type="text" id="corp-phone1" class="input-field" value="092">
+                                            <span>-</span>
+                                            <input type="text" id="corp-phone2" class="input-field" value="123">
+                                            <span>-</span>
+                                            <input type="text" id="corp-phone3" class="input-field" value="4567">
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label class="form-label" for="corp-fax1">FAX番号</label>
+                                        <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                            <input type="text" id="corp-fax1" class="input-field" value="092">
+                                            <span>-</span>
+                                            <input type="text" id="corp-fax2" class="input-field" value="123">
+                                            <span>-</span>
+                                            <input type="text" id="corp-fax3" class="input-field" value="4568">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+
+                            <!-- Tab 2: Accounting Info -->
+                            <div class="tab-content" id="tab-edit-corp-2">
+                                <div
+                                    style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-4);">
+
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label class="form-label">決算期</label>
+                                        <div style="display: flex; align-items: center; gap: var(--spacing-2);">
+                                            <select id="corp-fiscal-month" class="input-field">
+                                                <option value="1">1月</option>
+                                                <option value="2">2月</option>
+                                                <option value="3">3月</option>
+                                                <option value="4">4月</option>
+                                                <option value="5">5月</option>
+                                                <option value="6">6月</option>
+                                                <option value="7">7月</option>
+                                                <option value="8">8月</option>
+                                                <option value="9">9月</option>
+                                                <option value="10">10月</option>
+                                                <option value="11">11月</option>
+                                                <option value="12" selected>12月</option>
+                                            </select>
+                                            <select id="corp-fiscal-day" class="input-field">
+                                                <option value="1">1日</option>
+                                                <option value="2">2日</option>
+                                                <option value="3">3日</option>
+                                                <option value="4">4日</option>
+                                                <option value="5">5日</option>
+                                                <option value="6">6日</option>
+                                                <option value="7">7日</option>
+                                                <option value="8">8日</option>
+                                                <option value="9">9日</option>
+                                                <option value="10">10日</option>
+                                                <option value="11">11日</option>
+                                                <option value="12">12日</option>
+                                                <option value="13">13日</option>
+                                                <option value="14">14日</option>
+                                                <option value="15">15日</option>
+                                                <option value="16">16日</option>
+                                                <option value="17">17日</option>
+                                                <option value="18">18日</option>
+                                                <option value="19">19日</option>
+                                                <option value="20">20日</option>
+                                                <option value="21">21日</option>
+                                                <option value="22">22日</option>
+                                                <option value="23">23日</option>
+                                                <option value="24">24日</option>
+                                                <option value="25">25日</option>
+                                                <option value="26">26日</option>
+                                                <option value="27">27日</option>
+                                                <option value="28">28日</option>
+                                                <option value="29">29日</option>
+                                                <option value="30">30日</option>
+                                                <option value="31" selected>31日</option>
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label class="form-label" for="corp-invoice">インボイス番号</label>
+                                        <input type="text" id="corp-invoice" class="input-field" value="T1234567890123"
+                                            placeholder="T + 13桁の数字">
+                                    </div>
+
+                                    <div class="form-group" style="margin-bottom: 0;">
+                                        <label class="form-label" for="corp-tax-method">消費税課税方式</label>
+                                        <select id="corp-tax-method" class="input-field">
+                                            <option value="exempt" selected>免税事業者</option>
+                                            <option value="simple">簡易課税</option>
+                                            <option value="standard">本則課税</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group" style="margin-bottom: 0; grid-column: 1 / -1;">
+                                        <label class="form-label" for="corp-accounting">適用会計基準</label>
+                                        <select id="corp-accounting" class="input-field">
+                                            <option value="support" selected>就労支援事業会計処理基準</option>
+                                            <option value="social_welfare">社会福祉法人会計基準</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
                         </div>
-
-                        <div
-                            style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4); margin-top: var(--spacing-6);">
-
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label class="form-label" for="corp-phone1">電話番号</label>
-                                <div style="display: flex; align-items: center; gap: var(--spacing-2);">
-                                    <input type="text" id="corp-phone1" class="input-field" value="092">
-                                    <span>-</span>
-                                    <input type="text" id="corp-phone2" class="input-field" value="123">
-                                    <span>-</span>
-                                    <input type="text" id="corp-phone3" class="input-field" value="4567">
-                                </div>
-                            </div>
-
-                            <div class="form-group" style="margin-bottom: 0;">
-                                <label class="form-label" for="corp-fax1">FAX番号</label>
-                                <div style="display: flex; align-items: center; gap: var(--spacing-2);">
-                                    <input type="text" id="corp-fax1" class="input-field" value="092">
-                                    <span>-</span>
-                                    <input type="text" id="corp-fax2" class="input-field" value="123">
-                                    <span>-</span>
-                                    <input type="text" id="corp-fax3" class="input-field" value="4568">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div
-                            style="margin-top: var(--spacing-6); padding-top: var(--spacing-4); border-top: 1px solid var(--color-border-divider);">
-                            <h3
-                                style="font-size: var(--font-size-md); font-weight: var(--font-weight-bold); margin-bottom: var(--spacing-4);">
-                                会計・税務情報</h3>
-
-                            <div
-                                style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--spacing-4); row-gap: var(--spacing-4);">
-                                <div class="form-group" style="margin-bottom: 0;">
-                                    <label class="form-label" for="corp-invoice">インボイス番号</label>
-                                    <input type="text" id="corp-invoice" class="input-field" value="T1234567890123"
-                                        placeholder="T + 13桁の数字">
-                                </div>
-
-                                <div class="form-group" style="margin-bottom: 0;">
-                                    <label class="form-label" for="corp-tax-method">消費税課税方式</label>
-                                    <select id="corp-tax-method" class="input-field">
-                                        <option value="exempt" selected>免税事業者</option>
-                                        <option value="simple">簡易課税</option>
-                                        <option value="standard">本則課税</option>
-                                    </select>
-                                </div>
-
-                                <div class="form-group" style="margin-bottom: 0; grid-column: 1 / -1;">
-                                    <label class="form-label" for="corp-accounting">適用会計基準</label>
-                                    <select id="corp-accounting" class="input-field">
-                                        <option value="support" selected>就労支援事業会計処理基準</option>
-                                        <option value="social_welfare">社会福祉法人会計基準</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
                     </form>
                 </div>
                 <div class="modal-footer">
