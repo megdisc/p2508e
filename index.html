@@ -133,296 +133,123 @@
                 <div
                     style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
                     <h1 style="margin: 0;">トップ</h1>
-                    <div style="font: var(--font-body-sm); color: var(--color-base-tertiary);">
-                        2025年12月25日 (木)
+                    <div id="current-date-display"
+                        style="font: var(--font-body-sm); color: var(--color-base-tertiary);">
+                        <!-- JS Generated -->
                     </div>
                 </div>
 
-                <!-- Summary Cards -->
+                <!-- 1. Reminder / Alerts -->
+                <div id="dashboard-alerts" style="margin-bottom: var(--spacing-stack-md);">
+                    <!-- JS Generated -->
+                </div>
+
+                <!-- 2. Status Cards -->
                 <div class="card-grid"
-                    style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 32px;">
-                    <!-- Attendance Card -->
+                    style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-bottom: 32px;">
+                    <!-- User Status -->
                     <div class="card">
                         <div class="card-body">
                             <div
-                                style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                                <div style="font: var(--font-body-sm); color: var(--color-base-quaternary);">本日の通所</div>
-                                <span class="material-symbols-outlined"
-                                    style="color: var(--color-semantic-primary-main);">groups</span>
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                <h3 style="margin: 0; font-size: var(--font-size-md); font-weight: bold;">本日の利用者</h3>
+                                <a href="attendance.html" class="btn btn-icon btn-icon-sm btn-icon-neutral"><span
+                                        class="material-symbols-outlined">arrow_forward</span></a>
                             </div>
-                            <div style="display: flex; align-items: baseline; gap: 4px;">
-                                <span
-                                    style="font-size: 32px; font-weight: 700; color: var(--color-theme-main);">18</span>
-                                <span style="font-size: 14px; color: var(--color-base-tertiary);">/ 20名</span>
+                            <!-- Gauge -->
+                            <div
+                                style="display: flex; height: 12px; border-radius: 6px; overflow: hidden; margin-bottom: 12px; background: var(--color-base-secondary);">
+                                <div id="gauge-users-attending"
+                                    style="width: 0%; background: var(--color-semantic-primary-main);" title="通所"></div>
+                                <div id="gauge-users-home"
+                                    style="width: 0%; background: var(--color-semantic-success-main);" title="在宅"></div>
+                                <div id="gauge-users-absent"
+                                    style="width: 0%; background: var(--color-semantic-error-main);" title="欠席"></div>
+                                <div id="gauge-users-off"
+                                    style="width: 0%; background: var(--color-semantic-neutral-main);" title="お休み">
+                                </div>
+                                <div id="gauge-users-other" style="width: 0%; background: var(--color-base-quaternary);"
+                                    title="その他"></div>
                             </div>
-                            <div style="margin-top: 8px; display: flex; gap: 8px;">
-                                <span class="badge badge-success">出席率 90%</span>
+                            <!-- Breakdown (Legend) -->
+                            <div id="users-breakdown" class="data-list"
+                                style="grid-template-columns: repeat(3, 1fr); gap: 8px;">
+                                <!-- JS Generated -->
                             </div>
                         </div>
                     </div>
 
-                    <!-- Staff Card -->
+                    <!-- Staff Status -->
                     <div class="card">
                         <div class="card-body">
                             <div
-                                style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                                <div style="font: var(--font-body-sm); color: var(--color-base-quaternary);">出勤職員</div>
-                                <span class="material-symbols-outlined"
-                                    style="color: var(--color-semantic-success-main);">badge</span>
+                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                <h3 style="margin: 0; font-size: var(--font-size-md); font-weight: bold;">本日の職員</h3>
+                                <a href="staff.html" class="btn btn-icon btn-icon-sm btn-icon-neutral"><span
+                                        class="material-symbols-outlined">arrow_forward</span></a>
                             </div>
-                            <div style="display: flex; align-items: baseline; gap: 4px;">
-                                <span
-                                    style="font-size: 32px; font-weight: 700; color: var(--color-theme-main);">5</span>
-                                <span style="font-size: 14px; color: var(--color-base-tertiary);">/ 6名</span>
-                            </div>
-                            <div style="margin-top: 8px; font-size: 12px; color: var(--color-base-tertiary);">
-                                早番: 2名 / 遅番: 3名
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Sales Progress Card -->
-                    <div class="card">
-                        <div class="card-body">
+                            <!-- Gauge -->
                             <div
-                                style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                                <div style="font: var(--font-body-sm); color: var(--color-base-quaternary);">今月の生産活動売上
-                                </div>
-                                <span class="material-symbols-outlined"
-                                    style="color: var(--color-semantic-warning-main);">payments</span>
+                                style="display: flex; height: 12px; border-radius: 6px; overflow: hidden; margin-bottom: 12px; background: var(--color-base-secondary);">
+                                <div id="gauge-staff-present"
+                                    style="width: 0%; background: var(--color-semantic-primary-main);" title="出勤"></div>
+                                <div id="gauge-staff-remote"
+                                    style="width: 0%; background: var(--color-semantic-success-main);" title="在宅"></div>
+                                <div id="gauge-staff-absent"
+                                    style="width: 0%; background: var(--color-semantic-neutral-main);" title="不在"></div>
                             </div>
-                            <div style="display: flex; align-items: baseline; gap: 4px;">
-                                <span
-                                    style="font-size: 32px; font-weight: 700; color: var(--color-theme-main);">¥325,000</span>
-                            </div>
-                            <div style="margin-top: 12px;">
-                                <div
-                                    style="display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; color: var(--color-base-quaternary);">
-                                    <span>目標: ¥450,000</span>
-                                    <span>72%</span>
-                                </div>
-                                <div
-                                    style="width: 100%; height: 6px; background: var(--color-base-secondary); border-radius: 3px; overflow: hidden;">
-                                    <div
-                                        style="width: 72%; height: 100%; background: var(--color-semantic-warning-main); border-radius: 3px;">
-                                    </div>
-                                </div>
+                            <!-- Breakdown -->
+                            <div id="staff-breakdown" class="data-list"
+                                style="grid-template-columns: repeat(3, 1fr); gap: 8px;">
+                                <!-- JS Generated -->
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
-                    <!-- Left Column: Tasks & Production -->
-                    <div style="display: flex; flex-direction: column; gap: 24px;">
-
-                        <!-- Alerts / Tasks Section -->
-                        <div class="card">
-                            <div class="card-header"
-                                style="display: flex; justify-content: space-between; align-items: center;">
-                                <span>要対応・アラート</span>
-                                <span class="badge badge-error">3件</span>
-                            </div>
-                            <div class="card-body" style="padding: 0;">
-                                <div class="table-container">
-                                    <table class="table">
-                                        <thead>
-                                            <tr>
-                                                <th style="width: 120px;">種別</th>
-                                                <th>内容</th>
-                                                <th style="width: 100px;">期限</th>
-                                                <th style="width: 80px;"></th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td><span class="badge badge-warning">未提出</span></td>
-                                                <td style="font-weight: 500;">12/24 日報未提出 (佐藤 職員)</td>
-                                                <td style="color: var(--color-base-error);">本日中</td>
-                                                <td style="text-align: right;"><button
-                                                        class="btn btn-icon btn-icon-neutral"
-                                                        style="width: 28px; height: 28px;"><span
-                                                            class="material-symbols-outlined"
-                                                            style="font-size: 18px;">arrow_forward</span></button></td>
-                                            </tr>
-                                            <tr>
-                                                <td><span class="badge badge-primary">承認依頼</span></td>
-                                                <td style="font-weight: 500;">12月度 国保連請求データ承認</td>
-                                                <td>12/28</td>
-                                                <td style="text-align: right;"><button
-                                                        class="btn btn-icon btn-icon-neutral"
-                                                        style="width: 28px; height: 28px;"><span
-                                                            class="material-symbols-outlined"
-                                                            style="font-size: 18px;">arrow_forward</span></button></td>
-                                            </tr>
-                                            <tr>
-                                                <td><span class="badge badge-neutral">期限切迫</span></td>
-                                                <td style="font-weight: 500;">個別支援計画モニタリング (田中 様)</td>
-                                                <td>12/31</td>
-                                                <td style="text-align: right;"><button
-                                                        class="btn btn-icon btn-icon-neutral"
-                                                        style="width: 28px; height: 28px;"><span
-                                                            class="material-symbols-outlined"
-                                                            style="font-size: 18px;">arrow_forward</span></button></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Production Activity Chart (Placeholder) -->
-                        <div class="card">
-                            <div class="card-header">
-                                <span>生産活動売上推移</span>
-                            </div>
-                            <div class="card-body">
-                                <div
-                                    style="height: 200px; display: flex; align-items: flex-end; justify-content: space-around; padding-bottom: 24px; border-bottom: 1px solid var(--palette-gray-200);">
-                                    <!-- Simple CSS Chart Bars -->
-                                    <div
-                                        style="display: flex; flex-direction: column; align-items: center; gap: 8px; width: 40px;">
-                                        <div
-                                            style="width: 100%; height: 120px; background: var(--palette-blue-200); border-radius: 4px 4px 0 0;">
-                                        </div>
-                                        <span style="font-size: 12px; color: var(--color-base-tertiary);">10月</span>
-                                    </div>
-                                    <div
-                                        style="display: flex; flex-direction: column; align-items: center; gap: 8px; width: 40px;">
-                                        <div
-                                            style="width: 100%; height: 140px; background: var(--palette-blue-200); border-radius: 4px 4px 0 0;">
-                                        </div>
-                                        <span style="font-size: 12px; color: var(--color-base-tertiary);">11月</span>
-                                    </div>
-                                    <div
-                                        style="display: flex; flex-direction: column; align-items: center; gap: 8px; width: 40px;">
-                                        <div
-                                            style="width: 100%; height: 100px; background: var(--palette-blue-500); border-radius: 4px 4px 0 0;">
-                                        </div>
-                                        <span
-                                            style="font-size: 12px; color: var(--color-base-primary); font-weight: 600;">12月</span>
-                                    </div>
-                                    <div
-                                        style="display: flex; flex-direction: column; align-items: center; gap: 8px; width: 40px;">
-                                        <div
-                                            style="width: 100%; height: 160px; background: var(--palette-gray-100); border-radius: 4px 4px 0 0; border: 1px dashed var(--palette-gray-300);">
-                                        </div>
-                                        <span style="font-size: 12px; color: var(--color-base-tertiary);">1月(予)</span>
-                                    </div>
-                                    <div
-                                        style="display: flex; flex-direction: column; align-items: center; gap: 8px; width: 40px;">
-                                        <div
-                                            style="width: 100%; height: 150px; background: var(--palette-gray-100); border-radius: 4px 4px 0 0; border: 1px dashed var(--palette-gray-300);">
-                                        </div>
-                                        <span style="font-size: 12px; color: var(--color-base-tertiary);">2月(予)</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
+                <!-- 3. Weekly Schedule -->
+                <div class="card" style="margin-bottom: 32px;">
+                    <div class="card-header">
+                        7日間予定
                     </div>
+                    <div class="card-body" style="padding: 0;">
+                        <div class="table-container" style="border: none; box-shadow: none;">
+                            <table class="table" style="table-layout: fixed;">
+                                <thead>
+                                    <tr id="weekly-schedule-header">
+                                        <!-- JS Generated -->
+                                    </tr>
+                                </thead>
+                                <tbody id="weekly-schedule-body">
+                                    <!-- JS Generated -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
 
-                    <!-- Right Column: Schedule -->
-                    <div style="display: flex; flex-direction: column; gap: 24px;">
-                        <div class="card" style="height: 100%;">
-                            <div class="card-header">
-                                <span>本日のスケジュール</span>
-                            </div>
-                            <div class="card-body">
-                                <div style="display: flex; flex-direction: column; gap: 16px;">
-                                    <!-- Timeline Item -->
-                                    <div style="display: flex; gap: 12px;">
-                                        <div style="display: flex; flex-direction: column; align-items: center;">
-                                            <div
-                                                style="width: 8px; height: 8px; border-radius: 50%; background: var(--palette-green-500);">
-                                            </div>
-                                            <div
-                                                style="width: 2px; flex: 1; background: var(--palette-gray-200); margin-top: 4px;">
-                                            </div>
-                                        </div>
-                                        <div style="padding-bottom: 16px;">
-                                            <div
-                                                style="font-size: 12px; color: var(--color-base-tertiary); margin-bottom: 2px;">
-                                                09:00</div>
-                                            <div style="font-weight: 600; font-size: 14px;">朝礼・送迎開始</div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Timeline Item -->
-                                    <div style="display: flex; gap: 12px;">
-                                        <div style="display: flex; flex-direction: column; align-items: center;">
-                                            <div
-                                                style="width: 8px; height: 8px; border-radius: 50%; background: var(--palette-blue-500);">
-                                            </div>
-                                            <div
-                                                style="width: 2px; flex: 1; background: var(--palette-gray-200); margin-top: 4px;">
-                                            </div>
-                                        </div>
-                                        <div style="padding-bottom: 16px;">
-                                            <div
-                                                style="font-size: 12px; color: var(--color-base-tertiary); margin-bottom: 2px;">
-                                                10:00</div>
-                                            <div style="font-weight: 600; font-size: 14px;">午前の作業開始</div>
-                                            <div
-                                                style="font-size: 12px; color: var(--color-base-secondary); margin-top: 4px; background: var(--palette-gray-50); padding: 8px; border-radius: 4px;">
-                                                ・箱折り (A班)<br>
-                                                ・ラベル貼り (B班)
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Timeline Item -->
-                                    <div style="display: flex; gap: 12px;">
-                                        <div style="display: flex; flex-direction: column; align-items: center;">
-                                            <div
-                                                style="width: 8px; height: 8px; border-radius: 50%; background: var(--palette-orange-500);">
-                                            </div>
-                                            <div
-                                                style="width: 2px; flex: 1; background: var(--palette-gray-200); margin-top: 4px;">
-                                            </div>
-                                        </div>
-                                        <div style="padding-bottom: 16px;">
-                                            <div
-                                                style="font-size: 12px; color: var(--color-base-tertiary); margin-bottom: 2px;">
-                                                12:00</div>
-                                            <div style="font-weight: 600; font-size: 14px;">昼休憩</div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Timeline Item -->
-                                    <div style="display: flex; gap: 12px;">
-                                        <div style="display: flex; flex-direction: column; align-items: center;">
-                                            <div
-                                                style="width: 8px; height: 8px; border-radius: 50%; background: var(--palette-blue-500);">
-                                            </div>
-                                            <div
-                                                style="width: 2px; flex: 1; background: var(--palette-gray-200); margin-top: 4px;">
-                                            </div>
-                                        </div>
-                                        <div style="padding-bottom: 16px;">
-                                            <div
-                                                style="font-size: 12px; color: var(--color-base-tertiary); margin-bottom: 2px;">
-                                                13:00</div>
-                                            <div style="font-weight: 600; font-size: 14px;">午後の作業開始</div>
-                                        </div>
-                                    </div>
-
-                                    <!-- Timeline Item -->
-                                    <div style="display: flex; gap: 12px;">
-                                        <div style="display: flex; flex-direction: column; align-items: center;">
-                                            <div
-                                                style="width: 8px; height: 8px; border-radius: 50%; background: var(--palette-gray-400);">
-                                            </div>
-                                        </div>
-                                        <div>
-                                            <div
-                                                style="font-size: 12px; color: var(--color-base-tertiary); margin-bottom: 2px;">
-                                                15:30</div>
-                                            <div style="font-weight: 600; font-size: 14px;">送迎・終礼</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                <!-- 4. Projects Summary -->
+                <div class="card">
+                    <div class="card-header"
+                        style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>案件サマリー (現在稼働中)</span>
+                        <a href="projects.html" class="btn btn-sm btn-neutral">すべて見る</a>
+                    </div>
+                    <div class="card-body" style="padding: 0;">
+                        <div class="table-container" style="border: none; box-shadow: none;">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>案件名</th>
+                                        <th style="width: 100px;">納期</th>
+                                        <th style="width: 140px;">進捗</th>
+                                        <th style="width: 120px;">担当</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="projects-summary-body">
+                                    <!-- JS Generated -->
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -430,6 +257,186 @@
             </div>
         </main>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCurrentDate();
+            renderAlerts();
+            renderStatusGauges();
+            renderWeeklySchedule();
+            renderProjectsSummary();
+        });
+
+        function renderCurrentDate() {
+            const now = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' };
+            document.getElementById('current-date-display').textContent = now.toLocaleDateString('ja-JP', options);
+        }
+
+        // --- Mock Data & Rendering ---
+
+        function renderAlerts() {
+            const alerts = [
+                { type: 'error', message: '【重要】10月分 請求書発行期限が迫っています (残り2日)' },
+                { type: 'warning', message: '個別支援計画の未作成が3件あります' }
+            ];
+
+            const container = document.getElementById('dashboard-alerts');
+            let html = '';
+            alerts.forEach(a => {
+                const className = a.type === 'error' ? 'alert-error' : 'alert-warning';
+                const icon = a.type === 'error' ? 'error' : 'warning';
+                html += `
+                    <div class="alert ${className}" style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                        <span class="material-symbols-outlined" style="font-size: 20px;">${icon}</span>
+                        <span>${a.message}</span>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function renderStatusGauges() {
+            // Users Data
+            const users = {
+                total: 20,
+                breakdown: [
+                    { key: 'attending', label: '通所', count: 12, color: 'var(--color-semantic-primary-main)' },
+                    { key: 'home', label: '在宅', count: 3, color: 'var(--color-semantic-success-main)' },
+                    { key: 'absent', label: '欠席', count: 1, color: 'var(--color-semantic-error-main)' },
+                    { key: 'off', label: 'お休み', count: 2, color: 'var(--color-semantic-neutral-main)' },
+                    { key: 'other', label: 'その他', count: 2, color: 'var(--color-base-quaternary)' }
+                ]
+            };
+
+            // Staff Data
+            const staff = {
+                total: 6,
+                breakdown: [
+                    { key: 'present', label: '出勤', count: 4, color: 'var(--color-semantic-primary-main)' },
+                    { key: 'remote', label: '在宅', count: 1, color: 'var(--color-semantic-success-main)' },
+                    { key: 'absent', label: '不在', count: 1, color: 'var(--color-semantic-neutral-main)' }
+                ]
+            };
+
+            // Render Function
+            const renderGauge = (data, prefix) => {
+                const breakdownContainer = document.getElementById(prefix + '-breakdown');
+                let breakdownHtml = '';
+
+                data.breakdown.forEach(item => {
+                    // Update Gauge Width
+                    const widthStart = (item.count / data.total) * 100;
+                    const bar = document.getElementById(`gauge-${prefix}-${item.key}`);
+                    if (bar) bar.style.width = widthStart + '%';
+
+                    // Update Breakdown List
+                    breakdownHtml += `
+                        <div style="display: flex; align-items: center; gap: 4px;">
+                            <div style="width: 8px; height: 8px; border-radius: 50%; background: ${item.color};"></div>
+                            <span style="font-size: 12px; color: var(--color-base-tertiary);">${item.label}</span>
+                            <span style="font-size: 14px; font-weight: bold;">${item.count}名</span>
+                        </div>
+                    `;
+                });
+                breakdownContainer.innerHTML = breakdownHtml;
+            };
+
+            renderGauge(users, 'users');
+            renderGauge(staff, 'staff');
+        }
+
+        function renderWeeklySchedule() {
+            const headerRow = document.getElementById('weekly-schedule-header');
+            const bodyBody = document.getElementById('weekly-schedule-body');
+
+            // Generate next 7 days
+            const days = [];
+            const today = new Date();
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(today);
+                d.setDate(today.getDate() + i);
+                days.push(d);
+            }
+
+            // Render Header
+            let headerHtml = '';
+            days.forEach((d, index) => {
+                const label = index === 0 ? '本日' : `${d.getMonth() + 1}/${d.getDate()} (${['日', '月', '火', '水', '木', '金', '土'][d.getDay()]})`;
+                const isWeekend = d.getDay() === 0 || d.getDay() === 6;
+                const bgStyle = index === 0 ? 'background-color: var(--color-semantic-primary-sub); font-weight: bold;' : (isWeekend ? 'color: var(--color-semantic-error-main);' : '');
+                headerHtml += `<th style="padding: 8px; ${bgStyle}">${label}</th>`;
+            });
+            headerRow.innerHTML = headerHtml;
+
+            // Render Body Row (Status)
+            // Mock Status: Open/Close
+            const statuses = ['開所', '開所', '開所', '開所', '開所', '休所', '休所']; // Simple mock logic
+
+            let statusHtml = '<tr>';
+            statuses.forEach((s, i) => {
+                const badgeClass = s === '開所' ? 'badge-success' : 'badge-neutral';
+                statusHtml += `<td style="padding: 12px 4px;"><span class="badge ${badgeClass}" style="font-size: 10px;">${s}</span></td>`;
+            });
+            statusHtml += '</tr>';
+
+            // Render Body Row (Counts)
+            // Mock Counts: Attending/Home/Off
+            // Just displaying random numbers for demo
+            let countsHtml = '<tr>';
+            days.forEach((d, i) => {
+                if (statuses[i] === '休所') {
+                    countsHtml += '<td>-</td>';
+                } else {
+                    countsHtml += `
+                        <td style="vertical-align: top; padding: 8px;">
+                            <div style="font-size: 11px; text-align: left; margin-left: 10px;">
+                                <div style="color: var(--color-semantic-primary-main);">通所: ${12 + i % 3}</div>
+                                <div style="color: var(--color-semantic-success-main);">在宅: ${3 + i % 2}</div>
+                                <div style="color: var(--color-base-tertiary);">休み: ${2}</div>
+                            </div>
+                        </td>
+                    `;
+                }
+            });
+            countsHtml += '</tr>';
+
+            bodyBody.innerHTML = statusHtml + countsHtml;
+        }
+
+        function renderProjectsSummary() {
+            const projects = [
+                { name: 'DM封入作業', due: '10/31', progress: 80, staff: '佐藤' },
+                { name: 'パン製造・販売', due: '毎日', progress: 100, staff: '田中' },
+                { name: '施設外就労(清掃)', due: '毎週水', progress: 50, staff: '鈴木' },
+                { name: 'バザー出店準備', due: '11/15', progress: 30, staff: '高橋' }
+            ];
+
+            const tbody = document.getElementById('projects-summary-body');
+            let html = '';
+            projects.forEach(p => {
+                let progressColor = 'var(--color-semantic-primary-main)';
+                if (p.progress >= 100) progressColor = 'var(--color-semantic-success-main)';
+                else if (p.progress < 50) progressColor = 'var(--color-semantic-warning-main)';
+
+                html += `
+                    <tr>
+                        <td style="font-weight: bold;">${p.name}</td>
+                        <td>${p.due}</td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="flex: 1; height: 6px; background: var(--color-base-secondary); border-radius: 3px; overflow: hidden;">
+                                    <div style="width: ${p.progress}%; height: 100%; background: ${progressColor};"></div>
+                                </div>
+                                <span style="font-size: 12px;">${p.progress}%</span>
+                            </div>
+                        </td>
+                        <td>${p.staff}</td>
+                    </tr>
+                `;
+            });
+            tbody.innerHTML = html;
+        }
+    </script>
 </body>
 
 </html>
