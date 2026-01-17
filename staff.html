@@ -61,7 +61,7 @@
                     </select>
                 </div>
             </div>
-                        <nav class="sidebar-nav">
+            <nav class="sidebar-nav">
                 <a href="index.html" class="nav-link">トップ</a>
                 <details class="nav-accordion">
                     <summary>施設情報</summary>
@@ -236,6 +236,12 @@
                                     <dd>090-1111-2222</dd>
                                 </div>
                             </dl>
+                            <div
+                                style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle);">
+                                <button class="btn btn-neutral" onclick="showModal('modal-shift-display')">
+                                    シフト
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -273,6 +279,12 @@
                                     <dd>080-3333-4444</dd>
                                 </div>
                             </dl>
+                            <div
+                                style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle);">
+                                <button class="btn btn-neutral" onclick="showModal('modal-shift-display')">
+                                    シフト
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -310,6 +322,12 @@
                                     <dd>070-5555-6666</dd>
                                 </div>
                             </dl>
+                            <div
+                                style="margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: var(--border-subtle);">
+                                <button class="btn btn-neutral" onclick="showModal('modal-shift-display')">
+                                    シフト
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -323,6 +341,10 @@
                         職員情報の編集
                     </div>
                     <div class="modal-body">
+                        <nav class="tabs-nav" id="tab-group-edit">
+                            <a class="tab-link is-active" onclick="activateTab('tab-group-edit', 'tab-edit-1')">基本情報</a>
+                            <a class="tab-link" onclick="activateTab('tab-group-edit', 'tab-edit-2')">シフト</a>
+                        </nav>
 
                         <div id="tab-group-edit-content">
                             <div class="tab-content is-active" id="tab-edit-1">
@@ -403,6 +425,158 @@
                                 </div>
 
                             </div>
+
+                            <div class="tab-content" id="tab-edit-2">
+                                <div class="table-container">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>曜日</th>
+                                                <th>勤務区分</th>
+                                                <th>勤務時間 (開始)</th>
+                                                <th>勤務時間 (終了)</th>
+                                                <th>休憩</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Mon-Sun Rows (Mock) -->
+                                            <tr>
+                                                <td>月</td>
+                                                <td>
+                                                    <select class="input-field">
+                                                        <option value="work" selected>出勤</option>
+                                                        <option value="off">公休</option>
+                                                        <option value="paid_leave">有給</option>
+                                                    </select>
+                                                </td>
+                                                <td><input type="time" class="input-field" value="09:00"></td>
+                                                <td><input type="time" class="input-field" value="18:00"></td>
+                                                <td>
+                                                    <select class="input-field">
+                                                        <option value="60" selected>60分</option>
+                                                        <option value="45">45分</option>
+                                                        <option value="0">なし</option>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>火</td>
+                                                <td>
+                                                    <select class="input-field">
+                                                        <option value="work" selected>出勤</option>
+                                                        <option value="off">公休</option>
+                                                        <option value="paid_leave">有給</option>
+                                                    </select>
+                                                </td>
+                                                <td><input type="time" class="input-field" value="09:00"></td>
+                                                <td><input type="time" class="input-field" value="18:00"></td>
+                                                <td>
+                                                    <select class="input-field">
+                                                        <option value="60" selected>60分</option>
+                                                        <option value="45">45分</option>
+                                                        <option value="0">なし</option>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>水</td>
+                                                <td>
+                                                    <select class="input-field">
+                                                        <option value="work" selected>出勤</option>
+                                                        <option value="off">公休</option>
+                                                        <option value="paid_leave">有給</option>
+                                                    </select>
+                                                </td>
+                                                <td><input type="time" class="input-field" value="09:00"></td>
+                                                <td><input type="time" class="input-field" value="18:00"></td>
+                                                <td>
+                                                    <select class="input-field">
+                                                        <option value="60" selected>60分</option>
+                                                        <option value="45">45分</option>
+                                                        <option value="0">なし</option>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>木</td>
+                                                <td>
+                                                    <select class="input-field">
+                                                        <option value="work" selected>出勤</option>
+                                                        <option value="off">公休</option>
+                                                        <option value="paid_leave">有給</option>
+                                                    </select>
+                                                </td>
+                                                <td><input type="time" class="input-field" value="09:00"></td>
+                                                <td><input type="time" class="input-field" value="18:00"></td>
+                                                <td>
+                                                    <select class="input-field">
+                                                        <option value="60" selected>60分</option>
+                                                        <option value="45">45分</option>
+                                                        <option value="0">なし</option>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>金</td>
+                                                <td>
+                                                    <select class="input-field">
+                                                        <option value="work" selected>出勤</option>
+                                                        <option value="off">公休</option>
+                                                        <option value="paid_leave">有給</option>
+                                                    </select>
+                                                </td>
+                                                <td><input type="time" class="input-field" value="09:00"></td>
+                                                <td><input type="time" class="input-field" value="18:00"></td>
+                                                <td>
+                                                    <select class="input-field">
+                                                        <option value="60" selected>60分</option>
+                                                        <option value="45">45分</option>
+                                                        <option value="0">なし</option>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>土</td>
+                                                <td>
+                                                    <select class="input-field">
+                                                        <option value="work">出勤</option>
+                                                        <option value="off" selected>公休</option>
+                                                        <option value="paid_leave">有給</option>
+                                                    </select>
+                                                </td>
+                                                <td><input type="time" class="input-field" value=""></td>
+                                                <td><input type="time" class="input-field" value=""></td>
+                                                <td>
+                                                    <select class="input-field">
+                                                        <option value="60">60分</option>
+                                                        <option value="45">45分</option>
+                                                        <option value="0" selected>なし</option>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td>日</td>
+                                                <td>
+                                                    <select class="input-field">
+                                                        <option value="work">出勤</option>
+                                                        <option value="off" selected>公休</option>
+                                                        <option value="paid_leave">有給</option>
+                                                    </select>
+                                                </td>
+                                                <td><input type="time" class="input-field" value=""></td>
+                                                <td><input type="time" class="input-field" value=""></td>
+                                                <td>
+                                                    <select class="input-field">
+                                                        <option value="60">60分</option>
+                                                        <option value="45">45分</option>
+                                                        <option value="0" selected>なし</option>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
 
                     </div>
@@ -414,6 +588,72 @@
                             保存する
                         </button>
                     </div>
+                </div>
+            </div>
+
+            <div class="modal-backdrop" id="modal-shift-display" style="display: none;">
+                <div class="modal-content">
+                    <div class="modal-header">シフト (田中 健司)</div>
+                    <div class="modal-body">
+                        <div class="table-container">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>曜日</th>
+                                        <th>勤務区分</th>
+                                        <th>勤務時間</th>
+                                        <th>休憩</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>月</td>
+                                        <td><span class="badge badge-primary">出勤</span></td>
+                                        <td>09:00 - 18:00</td>
+                                        <td>60分</td>
+                                    </tr>
+                                    <tr>
+                                        <td>火</td>
+                                        <td><span class="badge badge-primary">出勤</span></td>
+                                        <td>09:00 - 18:00</td>
+                                        <td>60分</td>
+                                    </tr>
+                                    <tr>
+                                        <td>水</td>
+                                        <td><span class="badge badge-primary">出勤</span></td>
+                                        <td>09:00 - 18:00</td>
+                                        <td>60分</td>
+                                    </tr>
+                                    <tr>
+                                        <td>木</td>
+                                        <td><span class="badge badge-primary">出勤</span></td>
+                                        <td>09:00 - 18:00</td>
+                                        <td>60分</td>
+                                    </tr>
+                                    <tr>
+                                        <td>金</td>
+                                        <td><span class="badge badge-primary">出勤</span></td>
+                                        <td>09:00 - 18:00</td>
+                                        <td>60分</td>
+                                    </tr>
+                                    <tr>
+                                        <td>土</td>
+                                        <td><span class="badge badge-neutral">公休</span></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>日</td>
+                                        <td><span class="badge badge-neutral">公休</span></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer"><button class="btn btn-neutral"
+                            onclick="hideModal('modal-shift-display')">閉じる</button></div>
                 </div>
             </div>
 
