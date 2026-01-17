@@ -62,6 +62,20 @@
                 }
             });
         }
+
+        // 事業所人員入力切り替え
+        function toggleOfficePersonnelInput(role, method) {
+            const selectContainer = document.getElementById(`${role}-input-select`);
+            const directContainer = document.getElementById(`${role}-input-direct`);
+
+            if (method === 'select') {
+                selectContainer.style.display = 'block';
+                directContainer.style.display = 'none';
+            } else {
+                selectContainer.style.display = 'none';
+                directContainer.style.display = 'block';
+            }
+        }
     </script>
 </head>
 
@@ -81,7 +95,7 @@
                 </div>
             </div>
 
-                        <nav class="sidebar-nav">
+            <nav class="sidebar-nav">
                 <a href="index.html" class="nav-link">トップ</a>
                 <details class="nav-accordion">
                     <summary>施設情報</summary>
@@ -335,22 +349,102 @@
                                             placeholder="10桁の半角数字">
                                     </div>
 
-                                    <div class="form-group" style="margin-bottom: 0;">
-                                        <label class="form-label" for="office-manager">管理者名</label>
-                                        <input type="text" id="office-manager" class="input-field" value="管理者 一郎"
-                                            disabled>
-                                        <p
-                                            style="font-size: var(--font-size-xs); color: var(--color-base-quaternary); margin-top: var(--spacing-1);">
-                                            ※管理者は職員情報より設定してください</p>
+                                    <!-- Administrator (grid-column: span 2) -->
+                                    <div class="form-group" style="margin-bottom: 0; grid-column: span 2;">
+                                        <label class="form-label">管理者名</label>
+                                        <div style="display: flex; gap: var(--spacing-2);">
+                                            <select class="input-field" style="width: auto; min-width: 220px;"
+                                                onchange="toggleOfficePersonnelInput('manager', this.value)">
+                                                <option value="select">ユーザーアカウントから選択</option>
+                                                <option value="direct">直接入力</option>
+                                            </select>
+                                            <div style="flex: 1;">
+                                                <div id="manager-input-select">
+                                                    <select id="office-manager-select" class="input-field">
+                                                        <option value="田中 健司">田中 健司</option>
+                                                        <option value="管理者 一郎">管理者 一郎</option>
+                                                        <option value="他 候補">他 候補...</option>
+                                                    </select>
+                                                </div>
+                                                <div id="manager-input-direct" style="display: none;">
+                                                    <input type="text" id="office-manager-direct" class="input-field"
+                                                        value="管理者 一郎">
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
 
-                                    <div class="form-group" style="margin-bottom: 0;">
-                                        <label class="form-label" for="office-svc-manager">サービス管理責任者</label>
-                                        <input type="text" id="office-svc-manager" class="input-field" value="サビ管 花子"
-                                            disabled>
-                                        <p
-                                            style="font-size: var(--font-size-xs); color: var(--color-base-quaternary); margin-top: var(--spacing-1);">
-                                            ※サビ管は職員情報より設定してください</p>
+                                    <!-- Service Manager (grid-column: span 2) -->
+                                    <div class="form-group" style="margin-bottom: 0; grid-column: span 2;">
+                                        <label class="form-label">サービス管理責任者</label>
+                                        <div style="display: flex; gap: var(--spacing-2);">
+                                            <select class="input-field" style="width: auto; min-width: 220px;"
+                                                onchange="toggleOfficePersonnelInput('svc', this.value)">
+                                                <option value="select">ユーザーアカウントから選択</option>
+                                                <option value="direct">直接入力</option>
+                                            </select>
+                                            <div style="flex: 1;">
+                                                <div id="svc-input-select">
+                                                    <select id="office-svc-manager-select" class="input-field">
+                                                        <option value="伊藤 良子">伊藤 良子</option>
+                                                        <option value="サビ管 花子">サビ管 花子</option>
+                                                        <option value="他 候補">他 候補...</option>
+                                                    </select>
+                                                </div>
+                                                <div id="svc-input-direct" style="display: none;">
+                                                    <input type="text" id="office-svc-manager-direct"
+                                                        class="input-field" value="サビ管 花子">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Vocational Instructor (New) -->
+                                    <div class="form-group" style="margin-bottom: 0; grid-column: span 2;">
+                                        <label class="form-label">職業指導員</label>
+                                        <div style="display: flex; gap: var(--spacing-2);">
+                                            <select class="input-field" style="width: auto; min-width: 220px;"
+                                                onchange="toggleOfficePersonnelInput('instructor', this.value)">
+                                                <option value="select">ユーザーアカウントから選択</option>
+                                                <option value="direct">直接入力</option>
+                                            </select>
+                                            <div style="flex: 1;">
+                                                <div id="instructor-input-select">
+                                                    <select id="office-instructor-select" class="input-field">
+                                                        <option value="渡辺 三郎">渡辺 三郎</option>
+                                                        <option value="指導員 A">指導員 A</option>
+                                                    </select>
+                                                </div>
+                                                <div id="instructor-input-direct" style="display: none;">
+                                                    <input type="text" id="office-instructor-direct" class="input-field"
+                                                        value="">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Life Support Worker (New) -->
+                                    <div class="form-group" style="margin-bottom: 0; grid-column: span 2;">
+                                        <label class="form-label">生活支援員</label>
+                                        <div style="display: flex; gap: var(--spacing-2);">
+                                            <select class="input-field" style="width: auto; min-width: 220px;"
+                                                onchange="toggleOfficePersonnelInput('assistant', this.value)">
+                                                <option value="select">ユーザーアカウントから選択</option>
+                                                <option value="direct">直接入力</option>
+                                            </select>
+                                            <div style="flex: 1;">
+                                                <div id="assistant-input-select">
+                                                    <select id="office-assistant-select" class="input-field">
+                                                        <option value="支援員 B">支援員 B</option>
+                                                        <option value="支援員 C">支援員 C</option>
+                                                    </select>
+                                                </div>
+                                                <div id="assistant-input-direct" style="display: none;">
+                                                    <input type="text" id="office-assistant-direct" class="input-field"
+                                                        value="">
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
 
                                     <div class="form-group" style="margin-bottom: 0;">
