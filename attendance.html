@@ -456,7 +456,8 @@
                         <div class="card-header"
                             style="display: flex; justify-content: space-between; align-items: center;">
                             <div>職員勤怠一覧</div>
-                            <button class="btn btn-icon btn-icon-primary" title="一括編集">
+                            <button class="btn btn-icon btn-icon-primary" onclick="showModal('modal-edit-staff-daily')"
+                                title="一括編集">
                                 <span class="material-symbols-outlined">edit</span>
                             </button>
                         </div>
@@ -975,6 +976,96 @@
                     <button class="btn btn-neutral" onclick="hideModal('modal-edit-daily')">キャンセル</button>
                     <button class="btn btn-primary"
                         onclick="hideModal('modal-edit-daily'); alert('保存しました');">保存する</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-backdrop" id="modal-edit-staff-daily" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    職員勤怠の編集 (2025年11月22日)
+                </div>
+                <div class="modal-body">
+                    <p style="margin-bottom: var(--spacing-stack-md);">
+                        本日の職員勤怠状況を登録・編集します。
+                    </p>
+
+                    <div class="table-container">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 20%;">氏名</th>
+                                    <th style="width: 20%;">ステータス</th>
+                                    <th style="width: 30%;">勤務時間</th>
+                                    <th style="width: 30%;">備考</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>田中 健司</td>
+                                    <td>
+                                        <select class="input-field">
+                                            <option value="present" selected>出勤</option>
+                                            <option value="paid_leave">有給</option>
+                                            <option value="public_holiday">公休</option>
+                                            <option value="absent">欠勤</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 4px;">
+                                            <input type="time" class="input-field" value="09:00">
+                                            <span>~</span>
+                                            <input type="time" class="input-field" value="18:00">
+                                        </div>
+                                    </td>
+                                    <td><input type="text" class="input-field" value=""></td>
+                                </tr>
+                                <tr>
+                                    <td>鈴木 一郎</td>
+                                    <td>
+                                        <select class="input-field">
+                                            <option value="present" selected>出勤</option>
+                                            <option value="paid_leave">有給</option>
+                                            <option value="public_holiday">公休</option>
+                                            <option value="absent">欠勤</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 4px;">
+                                            <input type="time" class="input-field" value="09:00">
+                                            <span>~</span>
+                                            <input type="time" class="input-field" value="18:00">
+                                        </div>
+                                    </td>
+                                    <td><input type="text" class="input-field" value=""></td>
+                                </tr>
+                                <tr>
+                                    <td>佐藤 花子</td>
+                                    <td>
+                                        <select class="input-field">
+                                            <option value="present">出勤</option>
+                                            <option value="paid_leave">有給</option>
+                                            <option value="public_holiday" selected>公休</option>
+                                            <option value="absent">欠勤</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; align-items: center; gap: 4px;">
+                                            <input type="time" class="input-field" disabled>
+                                            <span>~</span>
+                                            <input type="time" class="input-field" disabled>
+                                        </div>
+                                    </td>
+                                    <td><input type="text" class="input-field" value=""></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-neutral" onclick="hideModal('modal-edit-staff-daily')">キャンセル</button>
+                    <button class="btn btn-primary"
+                        onclick="hideModal('modal-edit-staff-daily'); alert('保存しました');">保存する</button>
                 </div>
             </div>
         </div>
