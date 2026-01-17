@@ -14,58 +14,6 @@
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
     <style>
-        /* ガントチャート風タイムラインのスタイル */
-        .timeline-container {
-            position: relative;
-            width: 100%;
-            height: 1.5rem;
-            background-color: var(--color-base-secondary);
-            border-radius: var(--border-radius-full);
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-        }
-
-        /* タイムラインのバー */
-        .timeline-bar {
-            position: absolute;
-            top: 0.05rem;
-            bottom: 0.05rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 var(--spacing-2);
-            font-size: 0.75rem;
-            font-weight: bold;
-            color: var(--color-base-primary);
-            border-radius: var(--border-radius-full);
-            box-shadow: var(--box-shadow-sm);
-            white-space: nowrap;
-            overflow: hidden;
-        }
-
-        /* ステータス別の色 */
-        .timeline-bar.present {
-            background-color: var(--color-semantic-primary-main);
-        }
-
-        .timeline-bar.remote {
-            background-color: var(--color-semantic-success-main);
-        }
-
-        .timeline-bar.late {
-            background-color: var(--color-semantic-warning-main);
-        }
-
-        /* 目盛り線 */
-        .timeline-grid {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            border-left: 1px dashed var(--color-base-quinary);
-            z-index: 0;
-        }
-
         /* テーブル調整 */
         .table td {
             vertical-align: middle;

@@ -916,53 +916,135 @@
                             <table class="table">
                                 <thead>
                                     <tr>
-                                        <th>曜日</th>
-                                        <th>利用ステータス</th>
-                                        <th>利用時間</th>
-                                        <th>サービス</th>
+                                        <th style="width: 10%;">曜日</th>
+                                        <th style="width: 15%;">利用ステータス</th>
+                                        <th style="width: 45%;">利用時間</th>
+                                        <th style="width: 10%;">休憩</th>
+                                        <th style="width: 20%;">サービス</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
                                         <td>日</td>
                                         <td><span class="badge badge-neutral">お休み</span></td>
-                                        <td></td>
+                                        <td>
+                                            <div class="timeline-container">
+                                                <div class="timeline-grid" style="left: 25%;"></div>
+                                                <div class="timeline-grid" style="left: 50%;"></div>
+                                                <div class="timeline-grid" style="left: 75%;"></div>
+                                            </div>
+                                        </td>
+                                        <td>0分</td>
                                         <td></td>
                                     </tr>
                                     <tr>
                                         <td>月</td>
                                         <td><span class="badge badge-primary">通所</span></td>
-                                        <td>10:00 - 15:00</td>
-                                        <td>昼食</td>
+                                        <td>
+                                            <div class="timeline-container">
+                                                <div class="timeline-grid" style="left: 25%;"></div>
+                                                <div class="timeline-grid" style="left: 50%;"></div>
+                                                <div class="timeline-grid" style="left: 75%;"></div>
+                                                <div class="timeline-bar present" style="left: 12.5%; width: 50%;">
+                                                    <span style="margin-left: 8px;">10:00</span>
+                                                    <span style="margin-right: 8px;">15:00</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>60分</td>
+                                        <td>
+                                            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                                <span class="badge badge-neutral">昼食</span>
+                                            </div>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td>火</td>
                                         <td><span class="badge badge-primary">通所</span></td>
-                                        <td>10:00 - 15:00</td>
-                                        <td>昼食</td>
+                                        <td>
+                                            <div class="timeline-container">
+                                                <div class="timeline-grid" style="left: 25%;"></div>
+                                                <div class="timeline-grid" style="left: 50%;"></div>
+                                                <div class="timeline-grid" style="left: 75%;"></div>
+                                                <div class="timeline-bar present" style="left: 12.5%; width: 50%;">
+                                                    <span style="margin-left: 8px;">10:00</span>
+                                                    <span style="margin-right: 8px;">15:00</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>60分</td>
+                                        <td>
+                                            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                                <span class="badge badge-neutral">昼食</span>
+                                            </div>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td>水</td>
                                         <td><span class="badge badge-neutral">お休み</span></td>
-                                        <td></td>
+                                        <td>
+                                            <div class="timeline-container">
+                                                <div class="timeline-grid" style="left: 25%;"></div>
+                                                <div class="timeline-grid" style="left: 50%;"></div>
+                                                <div class="timeline-grid" style="left: 75%;"></div>
+                                            </div>
+                                        </td>
+                                        <td>0分</td>
                                         <td></td>
                                     </tr>
                                     <tr>
                                         <td>木</td>
                                         <td><span class="badge badge-primary">通所</span></td>
-                                        <td>10:00 - 15:00</td>
-                                        <td>昼食</td>
+                                        <td>
+                                            <div class="timeline-container">
+                                                <div class="timeline-grid" style="left: 25%;"></div>
+                                                <div class="timeline-grid" style="left: 50%;"></div>
+                                                <div class="timeline-grid" style="left: 75%;"></div>
+                                                <div class="timeline-bar present" style="left: 12.5%; width: 50%;">
+                                                    <span style="margin-left: 8px;">10:00</span>
+                                                    <span style="margin-right: 8px;">15:00</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>60分</td>
+                                        <td>
+                                            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                                <span class="badge badge-neutral">昼食</span>
+                                            </div>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td>金</td>
                                         <td><span class="badge badge-primary">通所</span></td>
-                                        <td>10:00 - 15:00</td>
-                                        <td>昼食</td>
+                                        <td>
+                                            <div class="timeline-container">
+                                                <div class="timeline-grid" style="left: 25%;"></div>
+                                                <div class="timeline-grid" style="left: 50%;"></div>
+                                                <div class="timeline-grid" style="left: 75%;"></div>
+                                                <div class="timeline-bar present" style="left: 12.5%; width: 50%;">
+                                                    <span style="margin-left: 8px;">10:00</span>
+                                                    <span style="margin-right: 8px;">15:00</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>60分</td>
+                                        <td>
+                                            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                                <span class="badge badge-neutral">昼食</span>
+                                            </div>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td>土</td>
                                         <td><span class="badge badge-neutral">お休み</span></td>
-                                        <td></td>
+                                        <td>
+                                            <div class="timeline-container">
+                                                <div class="timeline-grid" style="left: 25%;"></div>
+                                                <div class="timeline-grid" style="left: 50%;"></div>
+                                                <div class="timeline-grid" style="left: 75%;"></div>
+                                            </div>
+                                        </td>
+                                        <td>0分</td>
                                         <td></td>
                                     </tr>
                                 </tbody>
