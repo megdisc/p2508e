@@ -439,7 +439,26 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <!-- Mon-Sun Rows (Mock) -->
+                                            <!-- Sun-Sat Rows (Mock) -->
+                                            <tr>
+                                                <td>日</td>
+                                                <td>
+                                                    <select class="input-field">
+                                                        <option value="work">出勤</option>
+                                                        <option value="off" selected>公休</option>
+                                                        <option value="paid_leave">有給</option>
+                                                    </select>
+                                                </td>
+                                                <td><input type="time" class="input-field" value=""></td>
+                                                <td><input type="time" class="input-field" value=""></td>
+                                                <td>
+                                                    <select class="input-field">
+                                                        <option value="60">60分</option>
+                                                        <option value="45">45分</option>
+                                                        <option value="0" selected>なし</option>
+                                                    </select>
+                                                </td>
+                                            </tr>
                                             <tr>
                                                 <td>月</td>
                                                 <td>
@@ -554,25 +573,6 @@
                                                     </select>
                                                 </td>
                                             </tr>
-                                            <tr>
-                                                <td>日</td>
-                                                <td>
-                                                    <select class="input-field">
-                                                        <option value="work">出勤</option>
-                                                        <option value="off" selected>公休</option>
-                                                        <option value="paid_leave">有給</option>
-                                                    </select>
-                                                </td>
-                                                <td><input type="time" class="input-field" value=""></td>
-                                                <td><input type="time" class="input-field" value=""></td>
-                                                <td>
-                                                    <select class="input-field">
-                                                        <option value="60">60分</option>
-                                                        <option value="45">45分</option>
-                                                        <option value="0" selected>なし</option>
-                                                    </select>
-                                                </td>
-                                            </tr>
                                         </tbody>
                                     </table>
                                 </div>
@@ -607,6 +607,12 @@
                                 </thead>
                                 <tbody>
                                     <tr>
+                                        <td>日</td>
+                                        <td><span class="badge badge-neutral">公休</span></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
                                         <td>月</td>
                                         <td><span class="badge badge-primary">出勤</span></td>
                                         <td>09:00 - 18:00</td>
@@ -638,12 +644,6 @@
                                     </tr>
                                     <tr>
                                         <td>土</td>
-                                        <td><span class="badge badge-neutral">公休</span></td>
-                                        <td></td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <td>日</td>
                                         <td><span class="badge badge-neutral">公休</span></td>
                                         <td></td>
                                         <td></td>
