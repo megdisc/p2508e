@@ -61,7 +61,7 @@
                     </select>
                 </div>
             </div>
-                        <nav class="sidebar-nav">
+            <nav class="sidebar-nav">
                 <a href="index.html" class="nav-link">トップ</a>
                 <details class="nav-accordion">
                     <summary>施設情報</summary>
@@ -489,6 +489,7 @@
                                                 <th>利用</th>
                                                 <th>利用時間 (開始)</th>
                                                 <th>利用時間 (終了)</th>
+                                                <th>休憩</th>
                                                 <th>昼食</th>
                                                 <th>送迎</th>
                                             </tr>
@@ -503,6 +504,13 @@
                                                     </select></td>
                                                 <td><input type="time" class="input-field"></td>
                                                 <td><input type="time" class="input-field"></td>
+                                                <td>
+                                                    <div style="display: flex; align-items: center; gap: 4px;">
+                                                        <input type="number" class="input-field" value="0"
+                                                            style="width: 80px;">
+                                                        <span>分</span>
+                                                    </div>
+                                                </td>
                                                 <td><select class="input-field">
                                                         <option value="none" selected>なし</option>
                                                         <option value="yes">あり</option>
@@ -523,6 +531,13 @@
                                                     </select></td>
                                                 <td><input type="time" class="input-field" value="10:00"></td>
                                                 <td><input type="time" class="input-field" value="15:00"></td>
+                                                <td>
+                                                    <div style="display: flex; align-items: center; gap: 4px;">
+                                                        <input type="number" class="input-field" value="60"
+                                                            style="width: 80px;">
+                                                        <span>分</span>
+                                                    </div>
+                                                </td>
                                                 <td><select class="input-field">
                                                         <option value="none">なし</option>
                                                         <option value="yes" selected>あり</option>
@@ -543,6 +558,13 @@
                                                     </select></td>
                                                 <td><input type="time" class="input-field" value="10:00"></td>
                                                 <td><input type="time" class="input-field" value="15:00"></td>
+                                                <td>
+                                                    <div style="display: flex; align-items: center; gap: 4px;">
+                                                        <input type="number" class="input-field" value="60"
+                                                            style="width: 80px;">
+                                                        <span>分</span>
+                                                    </div>
+                                                </td>
                                                 <td><select class="input-field">
                                                         <option value="none">なし</option>
                                                         <option value="yes" selected>あり</option>
@@ -563,6 +585,13 @@
                                                     </select></td>
                                                 <td><input type="time" class="input-field" value="10:00"></td>
                                                 <td><input type="time" class="input-field" value="15:00"></td>
+                                                <td>
+                                                    <div style="display: flex; align-items: center; gap: 4px;">
+                                                        <input type="number" class="input-field" value="60"
+                                                            style="width: 80px;">
+                                                        <span>分</span>
+                                                    </div>
+                                                </td>
                                                 <td><select class="input-field">
                                                         <option value="none">なし</option>
                                                         <option value="yes" selected>あり</option>
@@ -583,6 +612,13 @@
                                                     </select></td>
                                                 <td><input type="time" class="input-field" value="10:00"></td>
                                                 <td><input type="time" class="input-field" value="15:00"></td>
+                                                <td>
+                                                    <div style="display: flex; align-items: center; gap: 4px;">
+                                                        <input type="number" class="input-field" value="60"
+                                                            style="width: 80px;">
+                                                        <span>分</span>
+                                                    </div>
+                                                </td>
                                                 <td><select class="input-field">
                                                         <option value="none">なし</option>
                                                         <option value="yes" selected>あり</option>
@@ -603,6 +639,13 @@
                                                     </select></td>
                                                 <td><input type="time" class="input-field" value="10:00"></td>
                                                 <td><input type="time" class="input-field" value="15:00"></td>
+                                                <td>
+                                                    <div style="display: flex; align-items: center; gap: 4px;">
+                                                        <input type="number" class="input-field" value="60"
+                                                            style="width: 80px;">
+                                                        <span>分</span>
+                                                    </div>
+                                                </td>
                                                 <td><select class="input-field">
                                                         <option value="none">なし</option>
                                                         <option value="yes" selected>あり</option>
@@ -623,6 +666,13 @@
                                                     </select></td>
                                                 <td><input type="time" class="input-field"></td>
                                                 <td><input type="time" class="input-field"></td>
+                                                <td>
+                                                    <div style="display: flex; align-items: center; gap: 4px;">
+                                                        <input type="number" class="input-field" value="0"
+                                                            style="width: 80px;">
+                                                        <span>分</span>
+                                                    </div>
+                                                </td>
                                                 <td><select class="input-field">
                                                         <option value="none" selected>なし</option>
                                                         <option value="yes">あり</option>
@@ -682,53 +732,148 @@
                             <table class="table">
                                 <thead>
                                     <tr>
-                                        <th>曜日</th>
-                                        <th>利用ステータス</th>
-                                        <th>利用時間</th>
-                                        <th>サービス</th>
+                                        <th style="width: 10%;">曜日</th>
+                                        <th style="width: 15%;">利用ステータス</th>
+                                        <th style="width: 45%;">利用時間</th>
+                                        <th style="width: 10%;">休憩</th>
+                                        <th style="width: 20%;">サービス</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
                                         <td>日</td>
                                         <td><span class="badge badge-neutral">お休み</span></td>
-                                        <td></td>
+                                        <td>
+                                            <div class="timeline-container">
+                                                <div class="timeline-grid" style="left: 25%;"></div>
+                                                <div class="timeline-grid" style="left: 50%;"></div>
+                                                <div class="timeline-grid" style="left: 75%;"></div>
+                                            </div>
+                                        </td>
+                                        <td>0分</td>
                                         <td></td>
                                     </tr>
                                     <tr>
                                         <td>月</td>
                                         <td><span class="badge badge-primary">通所</span></td>
-                                        <td>10:00 - 15:00</td>
-                                        <td>昼食, 送迎(往復)</td>
+                                        <td>
+                                            <div class="timeline-container">
+                                                <div class="timeline-grid" style="left: 25%;"></div>
+                                                <div class="timeline-grid" style="left: 50%;"></div>
+                                                <div class="timeline-grid" style="left: 75%;"></div>
+                                                <div class="timeline-bar present" style="left: 12.5%; width: 50%;">
+                                                    <span style="margin-left: 8px;">10:00</span>
+                                                    <span style="margin-right: 8px;">15:00</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>60分</td>
+                                        <td>
+                                            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                                <span class="badge badge-neutral">昼食</span>
+                                                <span class="badge badge-neutral">送迎(往復)</span>
+                                            </div>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td>火</td>
                                         <td><span class="badge badge-primary">通所</span></td>
-                                        <td>10:00 - 15:00</td>
-                                        <td>昼食, 送迎(往復)</td>
+                                        <td>
+                                            <div class="timeline-container">
+                                                <div class="timeline-grid" style="left: 25%;"></div>
+                                                <div class="timeline-grid" style="left: 50%;"></div>
+                                                <div class="timeline-grid" style="left: 75%;"></div>
+                                                <div class="timeline-bar present" style="left: 12.5%; width: 50%;">
+                                                    <span style="margin-left: 8px;">10:00</span>
+                                                    <span style="margin-right: 8px;">15:00</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>60分</td>
+                                        <td>
+                                            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                                <span class="badge badge-neutral">昼食</span>
+                                                <span class="badge badge-neutral">送迎(往復)</span>
+                                            </div>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td>水</td>
                                         <td><span class="badge badge-primary">通所</span></td>
-                                        <td>10:00 - 15:00</td>
-                                        <td>昼食, 送迎(往復)</td>
+                                        <td>
+                                            <div class="timeline-container">
+                                                <div class="timeline-grid" style="left: 25%;"></div>
+                                                <div class="timeline-grid" style="left: 50%;"></div>
+                                                <div class="timeline-grid" style="left: 75%;"></div>
+                                                <div class="timeline-bar present" style="left: 12.5%; width: 50%;">
+                                                    <span style="margin-left: 8px;">10:00</span>
+                                                    <span style="margin-right: 8px;">15:00</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>60分</td>
+                                        <td>
+                                            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                                <span class="badge badge-neutral">昼食</span>
+                                                <span class="badge badge-neutral">送迎(往復)</span>
+                                            </div>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td>木</td>
                                         <td><span class="badge badge-primary">通所</span></td>
-                                        <td>10:00 - 15:00</td>
-                                        <td>昼食, 送迎(往復)</td>
+                                        <td>
+                                            <div class="timeline-container">
+                                                <div class="timeline-grid" style="left: 25%;"></div>
+                                                <div class="timeline-grid" style="left: 50%;"></div>
+                                                <div class="timeline-grid" style="left: 75%;"></div>
+                                                <div class="timeline-bar present" style="left: 12.5%; width: 50%;">
+                                                    <span style="margin-left: 8px;">10:00</span>
+                                                    <span style="margin-right: 8px;">15:00</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>60分</td>
+                                        <td>
+                                            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                                <span class="badge badge-neutral">昼食</span>
+                                                <span class="badge badge-neutral">送迎(往復)</span>
+                                            </div>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td>金</td>
                                         <td><span class="badge badge-primary">通所</span></td>
-                                        <td>10:00 - 15:00</td>
-                                        <td>昼食, 送迎(往復)</td>
+                                        <td>
+                                            <div class="timeline-container">
+                                                <div class="timeline-grid" style="left: 25%;"></div>
+                                                <div class="timeline-grid" style="left: 50%;"></div>
+                                                <div class="timeline-grid" style="left: 75%;"></div>
+                                                <div class="timeline-bar present" style="left: 12.5%; width: 50%;">
+                                                    <span style="margin-left: 8px;">10:00</span>
+                                                    <span style="margin-right: 8px;">15:00</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>60分</td>
+                                        <td>
+                                            <div style="display: flex; gap: 4px; flex-wrap: wrap;">
+                                                <span class="badge badge-neutral">昼食</span>
+                                                <span class="badge badge-neutral">送迎(往復)</span>
+                                            </div>
+                                        </td>
                                     </tr>
                                     <tr>
                                         <td>土</td>
                                         <td><span class="badge badge-neutral">お休み</span></td>
-                                        <td></td>
+                                        <td>
+                                            <div class="timeline-container">
+                                                <div class="timeline-grid" style="left: 25%;"></div>
+                                                <div class="timeline-grid" style="left: 50%;"></div>
+                                                <div class="timeline-grid" style="left: 75%;"></div>
+                                            </div>
+                                        </td>
+                                        <td>0分</td>
                                         <td></td>
                                     </tr>
                                 </tbody>

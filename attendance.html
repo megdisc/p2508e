@@ -219,7 +219,7 @@
                     </select>
                 </div>
             </div>
-                        <nav class="sidebar-nav">
+            <nav class="sidebar-nav">
                 <a href="index.html" class="nav-link">トップ</a>
                 <details class="nav-accordion">
                     <summary>施設情報</summary>
@@ -378,7 +378,7 @@
                     <div class="card">
                         <div class="card-header"
                             style="display: flex; justify-content: space-between; align-items: center;">
-                            <div>出欠一覧</div>
+                            <div>利用者出欠一覧</div>
                             <button class="btn btn-icon btn-icon-primary" onclick="showModal('modal-edit-daily')"
                                 title="一括編集">
                                 <span class="material-symbols-outlined">edit</span>
@@ -497,6 +497,95 @@
                                             </td>
                                             <td>-</td>
                                             <td>入院中</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card" style="margin-top: var(--spacing-stack-md);">
+                        <div class="card-header"
+                            style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>職員勤怠一覧</div>
+                            <button class="btn btn-icon btn-icon-primary" title="一括編集">
+                                <span class="material-symbols-outlined">edit</span>
+                            </button>
+                        </div>
+
+                        <div class="card-body">
+                            <div
+                                style="display: flex; gap: var(--spacing-4); margin-bottom: var(--spacing-4); font-size: var(--font-size-sm); color: var(--color-base-quaternary); align-items: center; flex-wrap: wrap;">
+                                <div><span style="font-weight: bold; color: var(--color-base-tertiary);">全 3 名</span>
+                                </div>
+                                <div
+                                    style="border-left: 1px solid var(--color-base-quinary); padding-left: var(--spacing-4);">
+                                    出勤: <span
+                                        style="font-weight: bold; color: var(--color-semantic-primary-main);">2</span>
+                                </div>
+                                <div>公休: <span style="font-weight: bold; color: var(--color-base-tertiary);">1</span>
+                                </div>
+                                <div>有給: <span
+                                        style="font-weight: bold; color: var(--color-semantic-success-main);">0</span>
+                                </div>
+                            </div>
+
+                            <div class="table-container">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th style="width: 20%;">氏名</th>
+                                            <th style="width: 10%;">ステータス</th>
+                                            <th style="width: 45%;">勤務時間</th>
+                                            <th style="width: 25%;">備考</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>田中 健司</td>
+                                            <td class="cell-status"><span class="badge badge-primary">出勤</span></td>
+                                            <td>
+                                                <div class="timeline-container">
+                                                    <div class="timeline-grid" style="left: 25%;"></div>
+                                                    <div class="timeline-grid" style="left: 50%;"></div>
+                                                    <div class="timeline-grid" style="left: 75%;"></div>
+                                                    <div class="timeline-bar present"
+                                                        style="left: 4.16%; width: 37.5%;">
+                                                        <span style="margin-left: 8px;">09:00</span>
+                                                        <span style="margin-right: 8px;">18:00</span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>-</td>
+                                        </tr>
+                                        <tr>
+                                            <td>鈴木 一郎</td>
+                                            <td class="cell-status"><span class="badge badge-primary">出勤</span></td>
+                                            <td>
+                                                <div class="timeline-container">
+                                                    <div class="timeline-grid" style="left: 25%;"></div>
+                                                    <div class="timeline-grid" style="left: 50%;"></div>
+                                                    <div class="timeline-grid" style="left: 75%;"></div>
+                                                    <div class="timeline-bar present"
+                                                        style="left: 4.16%; width: 37.5%;">
+                                                        <span style="margin-left: 8px;">09:00</span>
+                                                        <span style="margin-right: 8px;">18:00</span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>-</td>
+                                        </tr>
+                                        <tr>
+                                            <td>佐藤 花子</td>
+                                            <td class="cell-status"><span class="badge badge-neutral">公休</span></td>
+                                            <td>
+                                                <div class="timeline-container">
+                                                    <div class="timeline-grid" style="left: 25%;"></div>
+                                                    <div class="timeline-grid" style="left: 50%;"></div>
+                                                    <div class="timeline-grid" style="left: 75%;"></div>
+                                                </div>
+                                            </td>
+                                            <td>-</td>
                                         </tr>
                                     </tbody>
                                 </table>
