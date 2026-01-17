@@ -5,23 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow">
-    <title>Compath スタイルガイド (v5 分割版)</title>
+    <title>Compath ダッシュボード</title>
     <link rel="stylesheet" href="globals.css">
     <link rel="stylesheet" href="ui.css">
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <script>
-        function showModal(id) { document.getElementById(id).style.display = 'flex'; }
-        function hideModal(id) { document.getElementById(id).style.display = 'none'; }
-        function activateTab(tabGroup, tabId) {
-            const links = document.querySelectorAll(`#${tabGroup} .tab-link`);
-            links.forEach(link => link.classList.remove('is-active'));
-            document.querySelector(`#${tabGroup} .tab-link[onclick*="'${tabId}'"]`).classList.add('is-active');
-            const contents = document.querySelectorAll(`#${tabGroup}-content .tab-content`);
-            contents.forEach(content => content.classList.remove('is-active'));
-            document.getElementById(tabId).classList.add('is-active');
-        }
-
         // サイドバーの現在地連動（アコーディオン自動展開）
         document.addEventListener("DOMContentLoaded", () => {
             const currentFile = window.location.pathname.split("/").pop();
@@ -130,23 +119,27 @@
         </aside>
         <main class="main-content">
             <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
+
+                <!-- Header: Date & Title -->
                 <div
                     style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
-                    <h1 style="margin: 0;">トップ</h1>
-                    <div id="current-date-display"
-                        style="font: var(--font-body-sm); color: var(--color-base-tertiary);">
-                        <!-- JS Generated -->
+                    <div>
+                        <div id="current-date-display"
+                            style="font-size: var(--font-size-md); color: var(--color-base-tertiary); margin-bottom: 4px;">
+                        </div>
+                        <h1 style="margin: 0; font-size: 24px;">ダッシュボード</h1>
                     </div>
                 </div>
 
-                <!-- 1. Reminder / Alerts -->
-                <div id="dashboard-alerts" style="margin-bottom: var(--spacing-stack-md);">
+                <!-- 1. Reminder / Alerts Area -->
+                <div id="dashboard-alerts" style="margin-bottom: 24px;">
                     <!-- JS Generated -->
                 </div>
 
-                <!-- 2. Status Cards -->
-                <div class="card-grid"
-                    style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-bottom: 32px;">
+                <!-- 2. Daily Status (User / Staff) -->
+                <div
+                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-bottom: 32px;">
+
                     <!-- User Status -->
                     <div class="card">
                         <div class="card-body">
@@ -213,17 +206,8 @@
                         7日間予定
                     </div>
                     <div class="card-body" style="padding: 0;">
-                        <div class="table-container" style="border: none; box-shadow: none;">
-                            <table class="table" style="table-layout: fixed;">
-                                <thead>
-                                    <tr id="weekly-schedule-header">
-                                        <!-- JS Generated -->
-                                    </tr>
-                                </thead>
-                                <tbody id="weekly-schedule-body">
-                                    <!-- JS Generated -->
-                                </tbody>
-                            </table>
+                        <div id="weekly-schedule-grid" class="calendar-grid">
+                            <!-- JS Generated -->
                         </div>
                     </div>
                 </div>
@@ -257,6 +241,49 @@
             </div>
         </main>
     </div>
+    <style>
+        /* Calendar Grid Styles from attendance.html */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 1px;
+            background-color: var(--color-base-secondary);
+            border: 1px solid var(--color-base-quinary);
+        }
+
+        .calendar-header {
+            background-color: var(--color-table-header-background);
+            padding: var(--spacing-2);
+            text-align: center;
+            font-weight: bold;
+            font-size: var(--font-size-sm);
+            border-bottom: var(--border-width-sm) solid var(--color-base-quinary);
+        }
+
+        .calendar-cell {
+            background-color: var(--color-base-primary);
+            min-height: 100px;
+            padding: var(--spacing-2);
+            font-size: var(--font-size-sm);
+            /* cursor: pointer; */
+            /* transition: background-color 0.2s; */
+        }
+
+        .calendar-date {
+            font-weight: bold;
+            margin-bottom: var(--spacing-1);
+        }
+
+        .day-off {
+            background-color: var(--palette-FDD);
+            color: var(--color-semantic-error-main);
+        }
+
+        .day-sat {
+            background-color: var(--palette-CEF);
+            color: var(--color-semantic-primary-main);
+        }
+    </style>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             renderCurrentDate();
@@ -275,20 +302,20 @@
         // --- Mock Data & Rendering ---
 
         function renderAlerts() {
+            // Styleguide-compliant alerts (using alert-error/warning classes directly)
             const alerts = [
-                { type: 'error', message: '【重要】10月分 請求書発行期限が迫っています (残り2日)' },
-                { type: 'warning', message: '個別支援計画の未作成が3件あります' }
+                { type: 'error', prefix: '重要', message: '10月分 請求書発行期限が迫っています (残り2日)' },
+                { type: 'warning', prefix: '未完了', message: '個別支援計画の未作成が3件あります' }
             ];
 
             const container = document.getElementById('dashboard-alerts');
             let html = '';
             alerts.forEach(a => {
                 const className = a.type === 'error' ? 'alert-error' : 'alert-warning';
-                const icon = a.type === 'error' ? 'error' : 'warning';
+                // Matching styleguide pattern: <strong>Label:</strong> Message
                 html += `
-                    <div class="alert ${className}" style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                        <span class="material-symbols-outlined" style="font-size: 20px;">${icon}</span>
-                        <span>${a.message}</span>
+                    <div class="${className}" style="margin-bottom: 8px;">
+                        <strong>${a.prefix}:</strong> ${a.message}
                     </div>
                 `;
             });
@@ -346,8 +373,7 @@
         }
 
         function renderWeeklySchedule() {
-            const headerRow = document.getElementById('weekly-schedule-header');
-            const bodyBody = document.getElementById('weekly-schedule-body');
+            const container = document.getElementById('weekly-schedule-grid');
 
             // Generate next 7 days
             const days = [];
@@ -358,49 +384,60 @@
                 days.push(d);
             }
 
-            // Render Header
-            let headerHtml = '';
+            // Generate Headers (and Cells)
+            let html = '';
+
+            // Headers
             days.forEach((d, index) => {
-                const label = index === 0 ? '本日' : `${d.getMonth() + 1}/${d.getDate()} (${['日', '月', '火', '水', '木', '金', '土'][d.getDay()]})`;
-                const isWeekend = d.getDay() === 0 || d.getDay() === 6;
-                const bgStyle = index === 0 ? 'background-color: var(--color-semantic-primary-sub); font-weight: bold;' : (isWeekend ? 'color: var(--color-semantic-error-main);' : '');
-                headerHtml += `<th style="padding: 8px; ${bgStyle}">${label}</th>`;
+                const dayName = ['日', '月', '火', '水', '木', '金', '土'][d.getDay()];
+                let classes = 'calendar-header';
+                if (d.getDay() === 0) classes += ' day-off';
+                if (d.getDay() === 6) classes += ' day-sat';
+
+                html += `<div class="${classes}">${dayName}</div>`;
             });
-            headerRow.innerHTML = headerHtml;
 
-            // Render Body Row (Status)
-            // Mock Status: Open/Close
-            const statuses = ['開所', '開所', '開所', '開所', '開所', '休所', '休所']; // Simple mock logic
+            // Cells
+            days.forEach((d, index) => {
+                const dateNum = d.getDate();
+                let classes = 'calendar-cell';
 
-            let statusHtml = '<tr>';
-            statuses.forEach((s, i) => {
-                const badgeClass = s === '開所' ? 'badge-success' : 'badge-neutral';
-                statusHtml += `<td style="padding: 12px 4px;"><span class="badge ${badgeClass}" style="font-size: 10px;">${s}</span></td>`;
-            });
-            statusHtml += '</tr>';
+                // Coloring logic similar to attendance.html
+                if (d.getDay() === 0) classes += ' day-off';
+                // if (d.getDay() === 6) classes += ' day-sat'; // Optional: if visual design requires Sat color in body
 
-            // Render Body Row (Counts)
-            // Mock Counts: Attending/Home/Off
-            // Just displaying random numbers for demo
-            let countsHtml = '<tr>';
-            days.forEach((d, i) => {
-                if (statuses[i] === '休所') {
-                    countsHtml += '<td>-</td>';
-                } else {
-                    countsHtml += `
-                        <td style="vertical-align: top; padding: 8px;">
-                            <div style="font-size: 11px; text-align: left; margin-left: 10px;">
-                                <div style="color: var(--color-semantic-primary-main);">通所: ${12 + i % 3}</div>
-                                <div style="color: var(--color-semantic-success-main);">在宅: ${3 + i % 2}</div>
-                                <div style="color: var(--color-base-tertiary);">休み: ${2}</div>
-                            </div>
-                        </td>
+                // Mock Status
+                const isClosed = (d.getDay() === 0 || d.getDay() === 6); // Mock: Weekend closed
+                const statusBadge = isClosed
+                    ? '<span class="badge badge-neutral">休所</span>'
+                    : '<span class="badge badge-success">開所</span>';
+
+                // Mock Metadata
+                let metaHtml = '';
+                if (!isClosed) {
+                    metaHtml = `
+                        <div style="margin-top: 4px; font-size: 11px;">
+                            <div style="display:flex; justify-content:space-between;"><span>通所:</span> <span>${12 + index % 3}</span></div>
+                            <div style="display:flex; justify-content:space-between;"><span>在宅:</span> <span>${3 + index % 2}</span></div>
+                        </div>
                     `;
+                } else {
+                    metaHtml = `<div style="margin-top: 4px; font-size: 11px; color: var(--color-base-tertiary); text-align: center;">-</div>`;
                 }
-            });
-            countsHtml += '</tr>';
 
-            bodyBody.innerHTML = statusHtml + countsHtml;
+                html += `
+                    <div class="${classes}">
+                        <div class="calendar-date" style="display:flex; justify-content:space-between; align-items:center;">
+                            <span>${dateNum}</span>
+                            ${index === 0 ? '<span style="font-size:10px; color:var(--color-semantic-primary-main); border:1px solid currentColor; padding:0 2px; border-radius:2px;">今日</span>' : ''}
+                        </div>
+                        <div style="text-align:center; margin-bottom:4px;">${statusBadge}</div>
+                        ${metaHtml}
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
         }
 
         function renderProjectsSummary() {
