@@ -411,7 +411,7 @@
 
                 // Coloring logic similar to attendance.html
                 if (d.getDay() === 0) classes += ' day-off';
-                // if (d.getDay() === 6) classes += ' day-sat'; // Optional: if visual design requires Sat color in body
+                if (d.getDay() === 6) classes += ' day-sat';
 
                 // Mock Status
                 const isClosed = (d.getDay() === 0 || d.getDay() === 6); // Mock: Weekend closed
