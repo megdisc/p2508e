@@ -134,66 +134,75 @@
                     <!-- JS Generated -->
                 </div>
 
-                <!-- 2. Daily Status (User / Staff) -->
-                <div
-                    style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-bottom: 32px;">
-
-                    <!-- User Status -->
-                    <div class="card">
-                        <div class="card-body">
-                            <div
-                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                                <h3 style="margin: 0; font-size: var(--font-size-md); font-weight: bold;">本日の利用者</h3>
-                                <a href="attendance.html" class="btn btn-icon btn-icon-sm btn-icon-neutral"><span
-                                        class="material-symbols-outlined">arrow_forward</span></a>
-                            </div>
-                            <!-- Gauge -->
-                            <div
-                                style="display: flex; height: 12px; border-radius: 6px; overflow: hidden; margin-bottom: 12px; background: var(--color-base-secondary);">
-                                <div id="gauge-users-attending"
-                                    style="width: 0%; background: var(--color-semantic-primary-main);" title="通所"></div>
-                                <div id="gauge-users-home"
-                                    style="width: 0%; background: var(--color-semantic-success-main);" title="在宅"></div>
-                                <div id="gauge-users-absent"
-                                    style="width: 0%; background: var(--color-semantic-error-main);" title="欠席"></div>
-                                <div id="gauge-users-off"
-                                    style="width: 0%; background: var(--color-semantic-neutral-main);" title="お休み">
-                                </div>
-                                <div id="gauge-users-other" style="width: 0%; background: var(--color-base-quaternary);"
-                                    title="その他"></div>
-                            </div>
-                            <!-- Breakdown (Legend) -->
-                            <div id="users-breakdown" class="data-list"
-                                style="grid-template-columns: repeat(3, 1fr); gap: 8px;">
-                                <!-- JS Generated -->
-                            </div>
-                        </div>
+                <!-- 2. Daily Status (Unified) -->
+                <div class="card" style="margin-bottom: 32px;">
+                    <div class="card-header">
+                        本日の状況
                     </div>
+                    <div class="card-body">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
 
-                    <!-- Staff Status -->
-                    <div class="card">
-                        <div class="card-body">
-                            <div
-                                style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                                <h3 style="margin: 0; font-size: var(--font-size-md); font-weight: bold;">本日の職員</h3>
-                                <a href="staff.html" class="btn btn-icon btn-icon-sm btn-icon-neutral"><span
-                                        class="material-symbols-outlined">arrow_forward</span></a>
+                            <!-- User Status -->
+                            <div>
+                                <div
+                                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                    <h3 style="margin: 0; font-size: var(--font-size-md); font-weight: bold;">利用者</h3>
+                                    <a href="attendance.html" class="btn btn-icon btn-icon-sm btn-icon-neutral"><span
+                                            class="material-symbols-outlined">arrow_forward</span></a>
+                                </div>
+                                <!-- Gauge -->
+                                <div
+                                    style="display: flex; height: 12px; border-radius: 6px; overflow: hidden; margin-bottom: 12px; background: var(--color-base-secondary);">
+                                    <div id="gauge-users-attending"
+                                        style="width: 0%; background: var(--color-semantic-primary-main);" title="通所">
+                                    </div>
+                                    <div id="gauge-users-home"
+                                        style="width: 0%; background: var(--color-semantic-success-main);" title="在宅">
+                                    </div>
+                                    <div id="gauge-users-absent"
+                                        style="width: 0%; background: var(--color-semantic-error-main);" title="欠席">
+                                    </div>
+                                    <div id="gauge-users-off"
+                                        style="width: 0%; background: var(--color-semantic-neutral-main);" title="お休み">
+                                    </div>
+                                    <div id="gauge-users-other"
+                                        style="width: 0%; background: var(--color-base-quaternary);" title="その他"></div>
+                                </div>
+                                <!-- Breakdown (Legend) -->
+                                <div id="users-breakdown" class="data-list"
+                                    style="grid-template-columns: repeat(2, 1fr); gap: 8px;">
+                                    <!-- JS Generated -->
+                                </div>
                             </div>
-                            <!-- Gauge -->
-                            <div
-                                style="display: flex; height: 12px; border-radius: 6px; overflow: hidden; margin-bottom: 12px; background: var(--color-base-secondary);">
-                                <div id="gauge-staff-present"
-                                    style="width: 0%; background: var(--color-semantic-primary-main);" title="出勤"></div>
-                                <div id="gauge-staff-remote"
-                                    style="width: 0%; background: var(--color-semantic-success-main);" title="在宅"></div>
-                                <div id="gauge-staff-absent"
-                                    style="width: 0%; background: var(--color-semantic-neutral-main);" title="不在"></div>
+
+                            <!-- Staff Status -->
+                            <div style="border-left: 1px solid var(--color-base-tertiary); padding-left: 32px;">
+                                <div
+                                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                    <h3 style="margin: 0; font-size: var(--font-size-md); font-weight: bold;">職員</h3>
+                                    <a href="staff.html" class="btn btn-icon btn-icon-sm btn-icon-neutral"><span
+                                            class="material-symbols-outlined">arrow_forward</span></a>
+                                </div>
+                                <!-- Gauge -->
+                                <div
+                                    style="display: flex; height: 12px; border-radius: 6px; overflow: hidden; margin-bottom: 12px; background: var(--color-base-secondary);">
+                                    <div id="gauge-staff-present"
+                                        style="width: 0%; background: var(--color-semantic-primary-main);" title="出勤">
+                                    </div>
+                                    <div id="gauge-staff-remote"
+                                        style="width: 0%; background: var(--color-semantic-success-main);" title="在宅">
+                                    </div>
+                                    <div id="gauge-staff-absent"
+                                        style="width: 0%; background: var(--color-semantic-neutral-main);" title="不在">
+                                    </div>
+                                </div>
+                                <!-- Breakdown -->
+                                <div id="staff-breakdown" class="data-list"
+                                    style="grid-template-columns: repeat(2, 1fr); gap: 8px;">
+                                    <!-- JS Generated -->
+                                </div>
                             </div>
-                            <!-- Breakdown -->
-                            <div id="staff-breakdown" class="data-list"
-                                style="grid-template-columns: repeat(3, 1fr); gap: 8px;">
-                                <!-- JS Generated -->
-                            </div>
+
                         </div>
                     </div>
                 </div>
