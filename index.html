@@ -4,482 +4,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex, nofollow">
-    <title>Compath ダッシュボード</title>
+    <title>ログイン | p2508e</title>
     <link rel="stylesheet" href="globals.css">
-    <link rel="stylesheet" href="ui.css">
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-    <script>
-        // サイドバーの現在地連動（アコーディオン自動展開）
-        document.addEventListener("DOMContentLoaded", () => {
-            const currentFile = window.location.pathname.split("/").pop();
-            document.querySelectorAll(".sidebar-nav a").forEach(link => {
-                if (link.getAttribute("href") === currentFile) {
-                    link.classList.add("active");
-                    const details = link.closest("details");
-                    if (details) details.open = true;
-                }
-            });
-        });
-    </script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, var(--palette-126) 0%, var(--palette-066) 100%);
+            font-family: var(--font-family-base);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Ambient background shapes for premium feel */
+        .ambient-shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            z-index: 0;
+        }
+
+        .shape-1 {
+            width: 500px;
+            height: 500px;
+            background-color: var(--palette-FC0);
+            top: -150px;
+            right: -100px;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .shape-2 {
+            width: 400px;
+            height: 400px;
+            background-color: var(--palette-066);
+            bottom: -100px;
+            left: -50px;
+            animation: float 15s infinite ease-in-out reverse;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            50% {
+                transform: translate(50px, 50px);
+            }
+
+            100% {
+                transform: translate(0, 0);
+            }
+        }
+
+        .login-card {
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 3rem;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .login-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .login-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--palette-126);
+            margin-bottom: 2rem;
+            letter-spacing: 0.05em;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem 1.25rem;
+            border: 2px solid transparent;
+            background: #f0f2f5;
+            border-radius: 12px;
+            font-size: 1rem;
+            color: var(--palette-333);
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            background: #fff;
+            border-color: var(--palette-126);
+            box-shadow: 0 0 0 4px rgba(17, 34, 102, 0.1);
+        }
+
+        .form-input::placeholder {
+            color: #aaa;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 1rem;
+            background: var(--palette-126);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(17, 34, 102, 0.3);
+            margin-top: 1rem;
+        }
+
+        .login-btn:hover {
+            background: var(--palette-066);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 102, 102, 0.4);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .forgot-password {
+            margin-top: 1.5rem;
+            display: block;
+            color: var(--palette-666);
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .forgot-password:hover {
+            color: var(--palette-126);
+        }
+
+        .brand-logo {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--palette-126);
+        }
+    </style>
 </head>
 
 <body>
-    <div class="page-wrapper">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <div style="width: 100%; text-align: center;">
-                    <div style="margin-bottom: var(--spacing-stack-xs);">Compath</div>
-                    <select class="input-field">
-                        <option value="tenjin">こんぱす天神</option>
-                        <option value="hakata">こんぱす博多</option>
-                    </select>
-                </div>
+    <div class="ambient-shape shape-1"></div>
+    <div class="ambient-shape shape-2"></div>
+
+    <div class="login-card">
+        <div class="brand-logo">⌘</div>
+        <h1 class="login-title">LOGIN</h1>
+        <form action="top.html">
+            <div class="form-group">
+                <input type="text" class="form-input" placeholder="メールアドレス">
             </div>
-            <nav class="sidebar-nav">
-                <a href="index.html" class="nav-link">トップ</a>
-                <details class="nav-accordion">
-                    <summary>施設情報</summary>
-                    <ul>
-                        <li><a href="corporation.html">法人情報</a></li>
-                        <li><a href="office.html">事業所情報</a></li>
-                    </ul>
-                </details>
-                <details class="nav-accordion">
-                    <summary>職員・利用者情報</summary>
-                    <ul>
-                        <li><a href="staff.html">職員情報</a></li>
-                        <li><a href="members.html">利用者情報</a></li>
-                    </ul>
-                </details>
-
-                <a href="partners.html" class="nav-link">取引先情報</a>
-                <details class="nav-accordion">
-                    <summary>スキル情報</summary>
-                    <ul>
-                        <li><a href="skills-settings.html">スキル設定</a></li>
-                        <li><a href="skills-evaluation.html">スキル評価</a></li>
-                    </ul>
-                </details>
-                <details class="nav-accordion">
-                    <summary>工賃・控除情報</summary>
-                    <ul>
-                        <li><a href="wages-settings.html">工賃設定</a></li>
-                        <li><a href="deductions-settings.html">控除設定</a></li>
-                        <li><a href="wages-evaluation.html">工賃レベル評価</a></li>
-                    </ul>
-                </details>
-
-                <a href="savings-settings.html" class="nav-link">積立金設定</a>
-
-                <a href="attendance.html" class="nav-link">出欠状況</a>
-                <details class="nav-accordion">
-                    <summary>福祉事業活動</summary>
-                    <ul>
-                        <li><a href="support-plans.html">個別支援計画</a></li>
-                    </ul>
-                </details>
-                <details class="nav-accordion">
-                    <summary>生産活動</summary>
-                    <ul>
-                        <li><a href="projects.html">案件情報</a></li>
-                        <li><a href="schedule.html">進捗状況</a></li>
-                    </ul>
-                </details>
-                <details class="nav-accordion">
-                    <summary>月次会計</summary>
-                    <ul>
-                        <li><a href="billing-national-health.html">国保連請求</a></li>
-                        <li><a href="billing-customer.html">顧客請求</a></li>
-                        <li><a href="payment-subcontractor.html">外注先支払</a></li>
-                        <li><a href="billing-user-payment.html">利用者支払・請求</a></li>
-                        <li><a href="expenses-record.html">その他費用支払</a></li>
-                    </ul>
-                </details>
-                <a href="accounting-documents.html" class="nav-link">年次会計</a>
-                <details class="nav-accordion">
-                    <summary>分析</summary>
-                    <ul>
-                        <li><a href="analytics-production.html">生産活動収支分析</a></li>
-                        <li><a href="analytics-wages.html">平均工賃分析</a></li>
-
-                        <li><a href="analytics-savings.html">積立金分析</a></li>
-                    </ul>
-                </details>
-                <a href="account.html" class="nav-link">ユーザーアカウント</a>
-                <a href="styleguide.html" class="nav-link">スタイルガイド</a>
-            </nav>
-            <div class="sidebar-footer">
-                <div class="user-info">
-                    <span class="user-name">田中 健司</span>
-                    <a href="#">ログアウト</a>
-                </div>
+            <div class="form-group">
+                <input type="password" class="form-input" placeholder="パスワード">
             </div>
-        </aside>
-        <main class="main-content">
-            <div class="container" style="padding-top: 32px; padding-bottom: 64px;">
-
-                <!-- Header: Date & Title -->
-                <div
-                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-stack-md);">
-                    <h1 style="margin: 0;">トップ</h1>
-                    <div id="current-date-display"
-                        style="font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); color: var(--color-theme-main);">
-                    </div>
-                </div>
-
-                <!-- 1. Reminder / Alerts Area -->
-                <div id="dashboard-alerts" style="margin-bottom: 24px;">
-                    <!-- JS Generated -->
-                </div>
-
-                <!-- 2. Daily Status (Unified) -->
-                <div class="card" style="margin-bottom: 32px;">
-                    <div class="card-header"
-                        style="display: flex; justify-content: space-between; align-items: center;">
-                        <span>本日の状況</span>
-                        <a href="attendance.html#daily" class="btn btn-sm btn-neutral">詳細</a>
-                    </div>
-                    <div class="card-body">
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
-
-                            <!-- User Status -->
-                            <div>
-                                <div
-                                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                                    <h3 style="margin: 0; font-size: var(--font-size-md); font-weight: bold;">利用者</h3>
-                                </div>
-                                <!-- Gauge -->
-                                <div
-                                    style="display: flex; height: 12px; border-radius: 6px; overflow: hidden; margin-bottom: 12px; background: var(--color-base-secondary);">
-                                    <div id="gauge-users-attending"
-                                        style="width: 0%; background: var(--color-semantic-primary-main);" title="通所">
-                                    </div>
-                                    <div id="gauge-users-home"
-                                        style="width: 0%; background: var(--color-semantic-success-main);" title="在宅">
-                                    </div>
-                                    <div id="gauge-users-absent"
-                                        style="width: 0%; background: var(--color-semantic-error-main);" title="欠席">
-                                    </div>
-                                    <div id="gauge-users-off"
-                                        style="width: 0%; background: var(--color-semantic-neutral-main);" title="お休み">
-                                    </div>
-                                    <div id="gauge-users-other"
-                                        style="width: 0%; background: var(--color-base-quaternary);" title="その他"></div>
-                                </div>
-                                <!-- Breakdown (Legend) -->
-                                <div id="users-breakdown" class="data-list"
-                                    style="grid-template-columns: repeat(2, 1fr); gap: 8px;">
-                                    <!-- JS Generated -->
-                                </div>
-                            </div>
-
-                            <!-- Staff Status -->
-                            <div>
-                                <div
-                                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                                    <h3 style="margin: 0; font-size: var(--font-size-md); font-weight: bold;">職員</h3>
-                                </div>
-                                <!-- Gauge -->
-                                <div
-                                    style="display: flex; height: 12px; border-radius: 6px; overflow: hidden; margin-bottom: 12px; background: var(--color-base-secondary);">
-                                    <div id="gauge-staff-present"
-                                        style="width: 0%; background: var(--color-semantic-primary-main);" title="出勤">
-                                    </div>
-                                    <div id="gauge-staff-remote"
-                                        style="width: 0%; background: var(--color-semantic-success-main);" title="在宅">
-                                    </div>
-                                    <div id="gauge-staff-absent"
-                                        style="width: 0%; background: var(--color-semantic-neutral-main);" title="不在">
-                                    </div>
-                                </div>
-                                <!-- Breakdown -->
-                                <div id="staff-breakdown" class="data-list"
-                                    style="grid-template-columns: repeat(2, 1fr); gap: 8px;">
-                                    <!-- JS Generated -->
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 3. Weekly Schedule -->
-                <div class="card" style="margin-bottom: 32px;">
-                    <div class="card-header"
-                        style="display: flex; justify-content: space-between; align-items: center;">
-                        <span>7日間予定</span>
-                        <a href="attendance.html#monthly" class="btn btn-sm btn-neutral">詳細</a>
-                    </div>
-                    <div class="card-body" style="padding: 0;">
-                        <div id="weekly-schedule-grid" class="calendar-grid">
-                            <!-- JS Generated -->
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 4. Projects Summary -->
-                <div class="card">
-                    <div class="card-header"
-                        style="display: flex; justify-content: space-between; align-items: center;">
-                        <span>稼働中の案件</span>
-                        <a href="schedule.html" class="btn btn-sm btn-neutral">詳細</a>
-                    </div>
-                    <div class="card-body" style="padding: 0;">
-                        <div class="table-container" style="border: none; box-shadow: none;">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>案件名</th>
-                                        <th style="width: 100px;">納期</th>
-                                        <th style="width: 140px;">進捗</th>
-                                        <th style="width: 120px;">担当</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="projects-summary-body">
-                                    <!-- JS Generated -->
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </main>
+            <button type="submit" class="login-btn">ログイン</button>
+        </form>
+        <a href="#" class="forgot-password">パスワードをお忘れですか？</a>
     </div>
-    <style>
-        /* Calendar Grid Styles from attendance.html */
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 1px;
-            background-color: var(--color-base-secondary);
-            border: 1px solid var(--color-base-quinary);
-        }
 
-        .calendar-header {
-            background-color: var(--color-table-header-background);
-            padding: var(--spacing-2);
-            text-align: center;
-            font-weight: bold;
-            font-size: var(--font-size-sm);
-            border-bottom: var(--border-width-sm) solid var(--color-base-quinary);
-        }
-
-        .calendar-cell {
-            background-color: var(--color-base-primary);
-            min-height: 100px;
-            padding: var(--spacing-2);
-            font-size: var(--font-size-sm);
-            /* cursor: pointer; */
-            /* transition: background-color 0.2s; */
-        }
-
-        .calendar-date {
-            font-weight: bold;
-            margin-bottom: var(--spacing-1);
-        }
-
-        .day-off {
-            background-color: var(--palette-FDD);
-            color: var(--color-semantic-error-main);
-        }
-
-        .day-sat {
-            background-color: var(--palette-CEF);
-            color: var(--color-semantic-primary-main);
-        }
-    </style>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            renderCurrentDate();
-            renderAlerts();
-            renderStatusGauges();
-            renderWeeklySchedule();
-            renderProjectsSummary();
+            const card = document.querySelector('.login-card');
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+
+            setTimeout(() => {
+                card.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 100);
         });
-
-        function renderCurrentDate() {
-            const now = new Date();
-            const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'short' };
-            document.getElementById('current-date-display').textContent = now.toLocaleDateString('ja-JP', options);
-        }
-
-        // --- Mock Data & Rendering ---
-
-        function renderAlerts() {
-            // Styleguide-compliant alerts (using alert-error/warning classes directly)
-            const alerts = [
-                { type: 'error', prefix: '重要', message: '10月分 請求書発行期限が迫っています (残り2日)' },
-                { type: 'warning', prefix: '未完了', message: '個別支援計画の未作成が3件あります' }
-            ];
-
-            const container = document.getElementById('dashboard-alerts');
-            let html = '';
-            alerts.forEach(a => {
-                const className = a.type === 'error' ? 'alert-error' : 'alert-warning';
-                // Matching styleguide pattern: <strong>Label:</strong> Message
-                html += `
-                    <div class="${className}" style="margin-bottom: 8px;">
-                        <strong>${a.prefix}:</strong> ${a.message}
-                    </div>
-                `;
-            });
-            container.innerHTML = html;
-        }
-
-        function renderStatusGauges() {
-            // Users Data
-            const users = {
-                total: 20,
-                breakdown: [
-                    { key: 'attending', label: '通所', count: 12, color: 'var(--color-semantic-primary-main)' },
-                    { key: 'home', label: '在宅', count: 3, color: 'var(--color-semantic-success-main)' },
-                    { key: 'absent', label: '欠席', count: 1, color: 'var(--color-semantic-error-main)' },
-                    { key: 'off', label: 'お休み', count: 2, color: 'var(--color-semantic-neutral-main)' },
-                    { key: 'other', label: 'その他', count: 2, color: 'var(--color-base-quaternary)' }
-                ]
-            };
-
-            // Staff Data
-            const staff = {
-                total: 6,
-                breakdown: [
-                    { key: 'present', label: '出勤', count: 4, color: 'var(--color-semantic-primary-main)' },
-                    { key: 'remote', label: '在宅', count: 1, color: 'var(--color-semantic-success-main)' },
-                    { key: 'absent', label: '不在', count: 1, color: 'var(--color-semantic-neutral-main)' }
-                ]
-            };
-
-            // Render Function
-            const renderGauge = (data, prefix) => {
-                const breakdownContainer = document.getElementById(prefix + '-breakdown');
-                let breakdownHtml = '';
-
-                data.breakdown.forEach(item => {
-                    // Update Gauge Width
-                    const widthStart = (item.count / data.total) * 100;
-                    const bar = document.getElementById(`gauge-${prefix}-${item.key}`);
-                    if (bar) bar.style.width = widthStart + '%';
-
-                    // Update Breakdown List
-                    breakdownHtml += `
-                        <div style="display: flex; align-items: center; gap: 4px;">
-                            <div style="width: 8px; height: 8px; border-radius: 50%; background: ${item.color};"></div>
-                            <span style="font-size: 12px; color: var(--color-base-tertiary);">${item.label}</span>
-                            <span style="font-size: 14px; font-weight: bold;">${item.count}名</span>
-                        </div>
-                    `;
-                });
-                breakdownContainer.innerHTML = breakdownHtml;
-            };
-
-            renderGauge(users, 'users');
-            renderGauge(staff, 'staff');
-        }
-
-        function renderWeeklySchedule() {
-            const container = document.getElementById('weekly-schedule-grid');
-
-            // Generate next 7 days
-            const days = [];
-            const today = new Date();
-            for (let i = 0; i < 7; i++) {
-                const d = new Date(today);
-                d.setDate(today.getDate() + i);
-                days.push(d);
-            }
-
-            // Generate Headers (and Cells)
-            let html = '';
-
-            // Headers
-            days.forEach((d, index) => {
-                const dayName = ['日', '月', '火', '水', '木', '金', '土'][d.getDay()];
-                let classes = 'calendar-header';
-                if (d.getDay() === 0) classes += ' day-off';
-                if (d.getDay() === 6) classes += ' day-sat';
-
-                html += `<div class="${classes}">${dayName}</div>`;
-            });
-
-            // Cells
-            days.forEach((d, index) => {
-                const dateNum = d.getDate();
-                let classes = 'calendar-cell';
-
-                // Coloring logic similar to attendance.html
-                if (d.getDay() === 0) classes += ' day-off';
-                if (d.getDay() === 6) classes += ' day-sat';
-
-                // Mock Status
-                const isClosed = (d.getDay() === 0 || d.getDay() === 6); // Mock: Weekend closed
-                const statusBadge = isClosed
-                    ? '<span class="badge badge-neutral">休所</span>'
-                    : '<span class="badge badge-success">開所</span>';
-
-                // Mock Metadata
-                let metaHtml = '';
-                if (!isClosed) {
-                    metaHtml = `
-                        <div style="margin-top: 4px; font-size: 11px;">
-                            <div style="display:flex; justify-content:space-between;"><span>通所:</span> <span>${12 + index % 3}</span></div>
-                            <div style="display:flex; justify-content:space-between;"><span>在宅:</span> <span>${3 + index % 2}</span></div>
-                        </div>
-                    `;
-                } else {
-                    metaHtml = `<div style="margin-top: 4px; font-size: 11px; color: var(--color-base-tertiary); text-align: center;">-</div>`;
-                }
-
-                html += `
-                    <div class="${classes}">
-                        <div class="calendar-date" style="display:flex; justify-content:space-between; align-items:center;">
-                            <span>${dateNum}</span>
-                            ${index === 0 ? '<span style="font-size:10px; color:var(--color-semantic-primary-main); border:1px solid currentColor; padding:0 2px; border-radius:2px;">今日</span>' : ''}
-                        </div>
-                        <div style="text-align:center; margin-bottom:4px;">${statusBadge}</div>
-                        ${metaHtml}
-                    </div>
-                `;
-            });
-
-            container.innerHTML = html;
-        }
-
-        function renderProjectsSummary() {
-            const projects = [
-                { name: 'DM封入作業', due: '10/31', progress: 80, staff: '佐藤' },
-                { name: 'パン製造・販売', due: '毎日', progress: 100, staff: '田中' },
-                { name: '施設外就労(清掃)', due: '毎週水', progress: 50, staff: '鈴木' },
-                { name: 'バザー出店準備', due: '11/15', progress: 30, staff: '高橋' }
-            ];
-
-            const tbody = document.getElementById('projects-summary-body');
-            let html = '';
-            projects.forEach(p => {
-                let progressColor = 'var(--color-semantic-primary-main)';
-                if (p.progress >= 100) progressColor = 'var(--color-semantic-success-main)';
-                else if (p.progress < 50) progressColor = 'var(--color-semantic-warning-main)';
-
-                html += `
-                    <tr>
-                        <td style="font-weight: bold;">${p.name}</td>
-                        <td>${p.due}</td>
-                        <td>
-                            <div style="display: flex; align-items: center; gap: 8px;">
-                                <div style="flex: 1; height: 6px; background: var(--color-base-secondary); border-radius: 3px; overflow: hidden;">
-                                    <div style="width: ${p.progress}%; height: 100%; background: ${progressColor};"></div>
-                                </div>
-                                <span style="font-size: 12px;">${p.progress}%</span>
-                            </div>
-                        </td>
-                        <td>${p.staff}</td>
-                    </tr>
-                `;
-            });
-            tbody.innerHTML = html;
-        }
     </script>
 </body>
 

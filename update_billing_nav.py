@@ -13,7 +13,7 @@ target_files = [
     "deductions-settings.html",
     "expenses-record copy.html",
     "expenses-record.html",
-    "index.html",
+    "top.html",
     "members.html",
     "office.html",
     "partners.html",
